@@ -1,0 +1,16 @@
+main.page-component {
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 1.625rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.page-component.page-component--center {
+  justify-content: center;
+  align-items: center;
+}

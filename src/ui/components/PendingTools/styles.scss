@@ -1,0 +1,11 @@
+.dialogContent {
+  @apply max-w-fit;
+}
+
+.skeleton {
+  @apply w-[80%] h-[50px] #{!important};
+}
+
+.product__skeleton {
+  @apply w-[80%] h-[40px] #{!important};
+}

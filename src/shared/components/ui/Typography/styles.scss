@@ -1,0 +1,63 @@
+.typography {
+  margin: 0;
+  padding: 0;
+  margin-top: 0.625rem;
+  margin-bottom: 0.625rem;
+  display: block;
+}
+
+p.typography {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1rem;
+}
+
+h1.typography {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h2.typography {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1rem;
+}
+
+h3.typography {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1rem;
+}
+
+h4.typography {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+h5.typography {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.typography.typography--bold {
+  font-weight: 700;
+}
+
+.typography.typography--thin {
+  font-weight: 400;
+}
+
+.typography.typography--primary-color {
+  color: #172b4d;
+}
+
+.typography.typography--primary-color {
+  color: rgb(103, 58, 183);
+}
+
+.typography.typography--gray-color {
+  color: rgb(105, 117, 134);
+}
