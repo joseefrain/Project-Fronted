@@ -57,7 +57,6 @@ export default function Categories() {
   };
 
   const handleEdit = (id: string) => {
-    // store.dispatch(updateBranchs({ branch: newBranch, id }));
     setEditingSucursal(true);
     setIsDialogOpen(true);
   };
