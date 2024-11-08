@@ -50,7 +50,9 @@ export default function PendingTools() {
 
   useEffect(() => {
     if (!user?.sucursalId) return;
-    store.dispatch(getPendingTransfers(user.sucursalId._id));
+    if (user?.sucursalId?._id) {
+      store.dispatch(getPendingTransfers(user?.sucursalId?._id));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

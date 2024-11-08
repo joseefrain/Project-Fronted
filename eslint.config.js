@@ -35,6 +35,7 @@ export default [
 
     rules: {
       'react-hooks/rules-of-hooks': 'error',
+      'react/react-in-jsx-scope': 'off',
       'react-hooks/exhaustive-deps': 'warn',
       'react-refresh/only-export-components': [
         'warn',
@@ -45,7 +46,7 @@ export default [
         { argsIgnorePattern: '^_' },
       ],
       '@typescript-eslint/explicit-module-boundary-types': 'off',
-      'react/react-in-jsx-scope': 'off',
+
       ...js.configs.recommended.rules,
     },
   },
