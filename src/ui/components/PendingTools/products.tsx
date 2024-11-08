@@ -117,7 +117,7 @@ export default function PendingProductsByTransfer() {
         comentarioRecibido: '',
         estadoEquipo: '',
         precio: Number(shipment.inventarioSucursalId.precio.$numberDecimal),
-        recibido: false,
+        recibido: true,
         estadoProducto: '',
         puntoReCompra: Number(shipment.inventarioSucursalId.puntoReCompra),
       }));
