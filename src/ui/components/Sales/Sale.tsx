@@ -97,6 +97,7 @@ export const Sale = ({ products, setProducts }: ISaleProps) => {
       discount: null,
       groupId: selectedProduct?.grupoId ?? '',
       clientType: supplierMode ? 'Proveedor' : 'Regular',
+      inventarioSucursalId: selectedProduct?.inventarioSucursalId ?? '',
     };
 
     const isExistentProduct = productSale.find(
