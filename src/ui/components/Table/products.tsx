@@ -33,7 +33,7 @@ export function Products() {
 
   const fetchData = async () => {
     if (user?.sucursalId) {
-      const response = await GetBranches(user.sucursalId._id);
+      const response = await GetBranches(user.sucursalId._id ?? '');
       setProducts(response);
     } else {
       console.log('admin user debe obtener productos generales');

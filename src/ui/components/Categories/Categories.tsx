@@ -19,6 +19,8 @@ import { deleteGroupSlice } from '@/app/slices/groups';
 import { store } from '@/app/store';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import React from 'react';
+
 export const CategoriesCard = ({
   categoriesData,
   onEdit,

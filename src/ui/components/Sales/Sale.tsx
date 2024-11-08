@@ -188,8 +188,8 @@ export const Sale = ({ products, setProducts }: ISaleProps) => {
   const handleProccessSale = () => {
     setProcesingSale(true);
     const newSale: ISale = {
-      userId: user?._id ?? '',
-      sucursalId: user?.sucursalId?._id ?? selectedBranch?._id,
+      userId: user?._id || '',
+      sucursalId: user?.sucursalId?._id || selectedBranch?._id || '',
       products: productSale,
       subtotal: saleSummary.subTotal,
       total: saleSummary.total,

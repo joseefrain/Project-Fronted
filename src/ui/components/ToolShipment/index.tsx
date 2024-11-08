@@ -108,7 +108,7 @@ export default function ToolShipment() {
   };
 
   const handleLoadBranch = async () => {
-    if (user?.sucursalId) {
+    if (user?.sucursalId?._id) {
       const response = await GetBranches(user.sucursalId._id);
 
       store.dispatch(

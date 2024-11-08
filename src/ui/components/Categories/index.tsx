@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChartColumnStacked, Group } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -56,10 +56,10 @@ export default function Categories() {
     }
   };
 
-  const handleEdit = (id: string) => {
-    setEditingSucursal(true);
-    setIsDialogOpen(true);
-  };
+  //   const handleEdit = (id: string) => {
+  //     setEditingSucursal(true);
+  //     setIsDialogOpen(true);
+  //   };
 
   const openDialog = (isEdit: boolean) => {
     setEditingSucursal(isEdit);
