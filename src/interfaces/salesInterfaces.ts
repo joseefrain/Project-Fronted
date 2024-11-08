@@ -61,6 +61,7 @@ export interface IProductSale {
   productName: string;
   quantity: number;
   price: number;
+  inventarioSucursalId: string;
   discount: null | {
     id: string;
     name: string;

@@ -112,14 +112,14 @@ export default function PendingProductsByTransfer() {
         comentarioEnvio: shipment.comentarioEnvio ?? '',
         cantidadEnviada: shipment.cantidad,
         inventarioSucursalId: shipment.inventarioSucursalId._id,
-        cantidad: 0,
+        cantidad: shipment.cantidad,
         archivosAdjuntosRecibido: [],
         comentarioRecibido: '',
         estadoEquipo: '',
-        precio: 0,
+        precio: Number(shipment.inventarioSucursalId.precio.$numberDecimal),
         recibido: false,
         estadoProducto: '',
-        puntoReCompra: 0,
+        puntoReCompra: Number(shipment.inventarioSucursalId.puntoReCompra),
       }));
 
     setShipments(formattedShipmentData);

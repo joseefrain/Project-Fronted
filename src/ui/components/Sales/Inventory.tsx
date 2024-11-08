@@ -76,7 +76,11 @@ export const Inventory = ({ products, handleLoadBranch }: InventoryProps) => {
                 <TableCell className="text-center">
                   ${product.precio.$numberDecimal}
                 </TableCell>
-                <TableCell className="text-center">{product.stock}</TableCell>
+                <TableCell
+                  className={`text-center ${Number(product.puntoReCompra) >= product.stock ? 'text-red-500 font-semibold' : ''}`}
+                >
+                  {product.stock}
+                </TableCell>
                 <TableCell className="text-center">
                   {product.puntoReCompra}
                 </TableCell>
