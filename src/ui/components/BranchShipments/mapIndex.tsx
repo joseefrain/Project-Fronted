@@ -18,8 +18,8 @@ import {
   IShippedOrder,
 } from '@/interfaces/transferInterfaces';
 import { useNavigate } from 'react-router-dom';
-import { store } from '@/app/store';
-import { setSelectItemDetail } from '@/app/slices/transferSlice';
+// import { store } from '@/app/store';
+// import { setSelectItemDetail } from '@/app/slices/transferSlice';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 interface IImageGridCardProps {
@@ -32,7 +32,7 @@ interface IOrder {
   order: IShippedOrder;
   items: IDetalleSelected | null;
 }
-export const MapIndex = ({ order, items }: IOrder) => {
+export const MapIndex = ({ order }: IOrder) => {
   const imageSources = [
     order.firmaEnvio ?? '',
     ...(order.archivosAdjuntos ?? []),
@@ -40,10 +40,10 @@ export const MapIndex = ({ order, items }: IOrder) => {
 
   const navigate = useNavigate();
 
-  const handleSelectItem = (items: IDetalleSelected) => {
-    console.log(items, 'items');
-    store.dispatch(setSelectItemDetail(items));
-  };
+  //   const handleSelectItem = (items: IDetalleSelected) => {
+  //     console.log(items, 'items');
+  //     store.dispatch(setSelectItemDetail(items));
+  //   };
 
   return (
     <TableRow key={order._id} className="cursor-pointer">

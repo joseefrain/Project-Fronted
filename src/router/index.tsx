@@ -16,7 +16,6 @@ import { ViewProucts } from '@/shared/components/ui/TabsListTable/products';
 import DiscountManager from '@/ui/components/Discount';
 import SalesInventorySystem from '@/ui/components/Sales';
 import Dashboard from '@/ui/components/Dashboard';
-import { ProductsCategories } from '@/ui/components/Categories/ProductsCategories';
 
 export const Router = () => {
   return (
