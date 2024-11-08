@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
-    "start": "vite serve dist -s -n -l -p $PORT"
+    "start": "serve -s dist -l $PORT"
   },
   "dependencies": {
     "@nextui-org/react": "^2.4.8",
