@@ -121,6 +121,7 @@ export const SummaryPendingTools = ({
                           parseInt(e.target.value)
                         )
                       }
+                      disabled
                     />
                   </TableCell>
                   <TableCell>
@@ -135,6 +136,7 @@ export const SummaryPendingTools = ({
                           parseInt(e.target.value)
                         )
                       }
+                      disabled
                     />
                   </TableCell>
                   <TableCell>
@@ -149,6 +151,7 @@ export const SummaryPendingTools = ({
                           parseInt(e.target.value)
                         )
                       }
+                      disabled
                     />
                   </TableCell>
                   <TableCell>
