@@ -86,7 +86,7 @@ export const handleProductSaleAlerts = (
     toast.warning(`El stock de ${nombre} se ha agotado`);
   }
 
-  if (puntoRecompra <= stock) {
+  if (puntoRecompra >= stock) {
     toast.warning(`El stock de ${nombre} es menor o igual al punto recompra`);
   }
 };

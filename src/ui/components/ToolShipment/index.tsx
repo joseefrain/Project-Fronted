@@ -182,7 +182,11 @@ export default function ToolShipment() {
                         <TableCell>{tool.nombre}</TableCell>
                         <TableCell>{tool.id}</TableCell>
                         <TableCell>{tool?.puntoReCompra}</TableCell>
-                        <TableCell>{tool.stock} unidades</TableCell>
+                        <TableCell
+                          className={`${Number(tool.puntoReCompra) >= tool.stock ? 'text-red-500 font-semibold' : ''}`}
+                        >
+                          {tool.stock} unidades
+                        </TableCell>
                         <TableCell>
                           <Input
                             type="number"
