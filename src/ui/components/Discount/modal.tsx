@@ -27,6 +27,7 @@ import { format } from 'date-fns';
 import { Branch } from '@/interfaces/branchInterfaces';
 import { IRoles } from '@/app/slices/login';
 import { IDescuentoCreate } from '@/interfaces/salesInterfaces';
+import React from 'react';
 
 interface IndexModalProps {
   isModalOpen: boolean;

@@ -14,10 +14,7 @@ import ProductsTable from './ProductTable';
 import { useAppSelector } from '@/app/hooks';
 import { getAllGroupsSlice } from '@/app/slices/groups';
 import { GetBranches } from '@/shared/helpers/Branchs';
-import {
-  createProduct,
-  searchForStockProductsAtBranch,
-} from '@/app/slices/branchSlice';
+import { searchForStockProductsAtBranch } from '@/app/slices/branchSlice';
 import { InventarioSucursalWithPopulated } from '@/interfaces/transferInterfaces';
 import { Boxes } from 'lucide-react';
 import Pagination from '@/shared/components/ui/Pagination/Pagination';
@@ -25,12 +22,8 @@ import Pagination from '@/shared/components/ui/Pagination/Pagination';
 export function ProductFormExist() {
   const user = useAppSelector((state) => state.auth.signIn.user);
 
-  const [products, setProducts] = useState<ITablaBranch[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState<string[]>([
-    'active',
-    'draft',
-  ]);
+  const [, setProducts] = useState<ITablaBranch[]>([]);
+  const [searchTerm] = useState('');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(20);
@@ -47,7 +40,7 @@ export function ProductFormExist() {
   );
 
   const fetchData2 = async () => {
-    if (user?.sucursalId) {
+    if (user?.sucursalId?._id) {
       const response = await store
         .dispatch(searchForStockProductsAtBranch(user.sucursalId._id))
         .unwrap();
@@ -90,7 +83,7 @@ export function ProductFormExist() {
   }, [selectedGroup]);
 
   const fetchData = async () => {
-    if (!user?.sucursalId) return;
+    if (!user?.sucursalId || !user.sucursalId._id) return;
     const response = await GetBranches(user.sucursalId._id);
     setProducts(response);
   };
