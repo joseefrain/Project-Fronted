@@ -36,6 +36,12 @@ import { useParams } from 'react-router-dom';
 import { Loader } from '@/shared/components/ui/Loader';
 import { ListOrdered } from 'lucide-react';
 import Pagination from '@/shared/components/ui/Pagination/Pagination';
+import { Button } from '../../../components/ui/button';
+import {
+  findBranchById,
+  getFilteredBranches,
+  getSelectedBranchFromLocalStorage,
+} from '../../../shared/helpers/branchHelpers';
 
 const orderStatusOptions = [
   { value: 'Todos', label: 'Ver Todos' },
@@ -46,13 +52,16 @@ const orderStatusOptions = [
 ];
 
 export const ShippedOrders = () => {
+  const selectedBranchFromLocalStorage = getSelectedBranchFromLocalStorage();
   const DataAlls = useAppSelector((state) => state.transfer.data);
   const branches = useAppSelector((state) => state.branches.data);
   const userRoles = useAppSelector((state) => state.auth.signIn.user);
-  const dataFilterID = branches.filter(
-    (branch) => branch._id === userRoles?.sucursalId?._id
+  const filteredBranche = getFilteredBranches(
+    branches,
+    userRoles?.role || '',
+    selectedBranchFromLocalStorage
   );
-  const filteredBranche = userRoles?.role === 'root' ? branches : dataFilterID;
+
   const [selectedBranch, setSelectedBranch] = useState<{
     nombre: string;
     _id: string;
@@ -63,20 +72,23 @@ export const ShippedOrders = () => {
   const [selectedStatus, setSelectedStatus] = useState<string>('Todos');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const fetchData = async () => {
-    if (!Id) return;
-    setLoading(true);
-    const response = await store.dispatch(OrdersReceivedById(Id));
-    setItems(response.payload as IDetalleSelected);
-    setLoading(false);
-  };
+  useEffect(() => {
+    const branch = findBranchById(branches, selectedBranchFromLocalStorage);
+    if (branch) {
+      setSelectedBranch({ nombre: branch.nombre, _id: branch._id ?? '' });
+    }
+  }, [branches]);
 
   useEffect(() => {
-    if (filteredBranche.length === 1 && !selectedBranch) {
+    if (
+      userRoles?.role !== 'root' &&
+      filteredBranche.length === 1 &&
+      !selectedBranch
+    ) {
       const branch = filteredBranche[0];
       setSelectedBranch({ nombre: branch.nombre, _id: branch._id ?? '' });
     }
-  }, [filteredBranche, selectedBranch]);
+  }, [filteredBranche, selectedBranch, userRoles]);
 
   useEffect(() => {
     if (selectedBranch) {
@@ -89,20 +101,21 @@ export const ShippedOrders = () => {
     }
   }, [selectedBranch]);
 
-  const handleSelectChangeBranch = (value: string) => {
-    const branch = branches.find((b) => b._id === value);
-    if (branch) {
-      setSelectedBranch({ nombre: branch.nombre, _id: branch._id ?? '' });
-    }
-  };
-
-  const handleStatusChange = (value: string) => {
-    setSelectedStatus(value);
+  const fetchData = async () => {
+    if (!Id) return;
+    setLoading(true);
+    const response = await store.dispatch(OrdersReceivedById(Id));
+    setItems(response.payload as IDetalleSelected);
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchData();
   }, [Id]);
+
+  const handleStatusChange = (value: string) => {
+    setSelectedStatus(value);
+  };
 
   const filteredProducts = DataAlls?.filter((product) => {
     const matchesNombre = product.nombre
@@ -118,15 +131,20 @@ export const ShippedOrders = () => {
     const matchesStatus =
       selectedStatus === 'Todos' || product.estatusTraslado === selectedStatus;
 
+    const matchesSucursal = selectedBranch
+      ? product.sucursalDestinoId._id === selectedBranch._id ||
+        product.sucursalOrigenId._id === selectedBranch._id
+      : true;
+
     return (
       (matchesNombre || matchesSucursalDestino || matchesSucursalOrigen) &&
-      matchesStatus
+      matchesStatus &&
+      matchesSucursal
     );
   });
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredProducts.slice(
@@ -173,26 +191,13 @@ export const ShippedOrders = () => {
               />
               {userRoles?.role === 'root' && (
                 <div className="mb-4">
-                  <Select onValueChange={handleSelectChangeBranch}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seleccione Sucursal" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {filteredBranche.map((branch) => (
-                        <SelectItem
-                          key={branch._id}
-                          value={branch._id as string}
-                        >
-                          {branch.nombre}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Button>
+                    {selectedBranch ? `Sucursal: ${selectedBranch.nombre}` : ''}
+                  </Button>
                 </div>
               )}
             </div>
           </div>
-
           {loading ? (
             <div className="flex justify-center items-center h-40">
               <Loader />
@@ -211,22 +216,16 @@ export const ShippedOrders = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {currentItems && currentItems.length > 0 ? (
+                {currentItems &&
+                  currentItems.length > 0 &&
                   currentItems.map((order) => (
                     <MapIndex order={order} items={items} key={order._id} />
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center">
-                      No hay órdenes para mostrar.
-                    </TableCell>
-                  </TableRow>
-                )}
+                  ))}
               </TableBody>
             </Table>
           ) : (
             <div className="flex justify-center items-center h-40 text-red-600">
-              Seleccione una sucursal
+              No hay productos enviados en esta sucursal
             </div>
           )}
         </CardContent>

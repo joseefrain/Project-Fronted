@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SendHorizonal, SendToBack } from 'lucide-react';
 import CustomSelect from './customSelect';
@@ -8,7 +8,11 @@ import { useAppSelector } from '@/app/hooks';
 import { GetBranches } from '@/shared/helpers/Branchs';
 import { store } from '@/app/store';
 import { ITool } from '@/interfaces/transferInterfaces';
-import { Select, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  getSelectedBranchFromLocalStorage,
+  findBranchById,
+} from '@/shared/helpers/branchHelpers';
+import { Button } from '../../../components/ui/button';
 
 export interface IConsolidatedShipment {
   selectedBranch:
@@ -26,28 +30,32 @@ export const ConsolidatedShipment = ({
   setShipmentTools,
 }: IConsolidatedShipment) => {
   const user = useAppSelector((state) => state.auth.signIn.user);
+  const branches = useAppSelector((state) => state.branches.data);
   const [sourceBranch, setSourceBranch] = useState<Branch | null>(null);
+  const branchIdFromLocalStorage = getSelectedBranchFromLocalStorage();
+
+  useEffect(() => {
+    if (branchIdFromLocalStorage) {
+      const branch = findBranchById(branches, branchIdFromLocalStorage);
+      if (branch) {
+        setSourceBranch(branch);
+        handleLoadBranch(branch);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [branches, branchIdFromLocalStorage]);
 
   const handleLoadBranch = async (branch: Branch | null) => {
     if (!branch) return store.dispatch(updateSelectedBranch(null));
 
-    if (branch) {
-      const response = await GetBranches(branch._id ?? '');
+    const response = await GetBranches(branch._id ?? '');
+    store.dispatch(
+      updateSelectedBranch({
+        ...branch,
+        products: response,
+      })
+    );
 
-      store.dispatch(
-        updateSelectedBranch({
-          ...branch,
-          products: response,
-        })
-      );
-    }
-
-    setShipmentTools([]);
-  };
-
-  const handleChangeBranch = (branch: Branch | null) => {
-    handleLoadBranch(branch);
-    setSourceBranch(branch);
     setShipmentTools([]);
   };
 
@@ -61,18 +69,16 @@ export const ConsolidatedShipment = ({
       </CardHeader>
       <CardContent>
         <div className="flex items-center justify-between mb-4">
-          {user?.sucursalId ? (
-            <Select>
-              <SelectTrigger className="w-[300px]" disabled>
-                <SelectValue placeholder={user.sucursalId.nombre} />
-              </SelectTrigger>
-            </Select>
-          ) : (
-            <CustomSelect
-              sourceBranchId={sourceBranch?._id ?? ''}
-              handleBranchSelect={handleChangeBranch}
-            />
-          )}
+          <Button
+            type="button"
+            className="w-[300px] px-4 py-2 bg-gray-200 text-gray-800 rounded"
+            disabled={!sourceBranch}
+          >
+            {sourceBranch
+              ? sourceBranch.nombre
+              : user?.sucursalId?.nombre || 'Seleccionar Sucursal'}
+          </Button>
+
           <SendHorizonal />
           <CustomSelect
             sourceBranchId={selectedBranch?._id ?? ''}
