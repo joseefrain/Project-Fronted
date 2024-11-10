@@ -88,6 +88,7 @@ export interface ILoginSlice {
   signUp: Iauth;
   status: statusProgressLogin;
   error?: string;
+  isOpen: boolean;
 }
 
 const initialState: ILoginSlice = {
@@ -99,6 +100,7 @@ const initialState: ILoginSlice = {
   },
   status: 'idle',
   error: '',
+  isOpen: false,
 };
 
 export const LoginSlice = createSlice({
@@ -123,9 +125,16 @@ export const LoginSlice = createSlice({
         status: 'unauthenticated',
       };
       removeFromLocalStorage('user');
+      removeFromLocalStorage('selectedBranch');
     },
     errorLogin: (state, { payload }: PayloadAction<string>) => {
       state.error = payload;
+    },
+    openDrawer: (state) => {
+      state.isOpen = true;
+    },
+    closeDrawer: (state) => {
+      state.isOpen = false;
     },
   },
   extraReducers: (builder) => {
@@ -148,5 +157,6 @@ export const LoginSlice = createSlice({
   },
 });
 
-export const { updateSignIn, updateSignUp, logout } = LoginSlice.actions;
+export const { updateSignIn, updateSignUp, logout, openDrawer, closeDrawer } =
+  LoginSlice.actions;
 export const loginReducer = LoginSlice.reducer;

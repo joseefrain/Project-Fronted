@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { PieChart, Pie, Cell, Legend, Tooltip } from 'recharts';
 import { ReactNode } from 'react';
+import { BranchDrawer } from '../ModalBranchs';
 
 export default function Dashboard() {
   const salesData = [
@@ -35,7 +36,7 @@ export default function Dashboard() {
     <div className="min-h-screen ">
       <div className="mx-auto space-y-8 px-[7rem]">
         <h1 className="mb-8 text-4xl font-bold text-gray-800">Dashboard</h1>
-
+        <BranchDrawer />
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <StatCard
             title="Ventas"
