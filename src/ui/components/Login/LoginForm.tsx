@@ -1,7 +1,7 @@
-import { InicioSesion } from '@/app/slices/login';
+import { InicioSesion, openDrawer } from '@/app/slices/login';
 import { store } from '@/app/store';
 import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { toast, Toaster } from 'sonner';
@@ -18,6 +18,7 @@ const LoginForm = () => {
     password: '',
     role: 'user',
   });
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCredentials({
@@ -33,7 +34,8 @@ const LoginForm = () => {
         .dispatch(InicioSesion({ userCredentials: credentials }))
         .unwrap();
       toast.success('Sesión iniciada exitosamente');
-      <Navigate to="/" />;
+      store.dispatch(openDrawer());
+      navigate('/');
     } catch (error) {
       toast.error('Error al iniciar sesión: ' + error);
     }
