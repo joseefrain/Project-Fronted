@@ -35,7 +35,7 @@ const LoginForm = () => {
         .unwrap();
       toast.success('Sesión iniciada exitosamente');
 
-      if (credentials.role === 'root') {
+      if (credentials.username === 'root') {
         store.dispatch(openDrawer());
       }
       navigate('/');
