@@ -77,6 +77,7 @@ export const ShippedOrders = () => {
     if (branch) {
       setSelectedBranch({ nombre: branch.nombre, _id: branch._id ?? '' });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [branches]);
 
   useEffect(() => {
