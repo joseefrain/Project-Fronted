@@ -8,7 +8,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { DoorClosed, Store } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Dialog,
@@ -18,6 +18,11 @@ import {
   DialogTitle,
 } from '../../../../components/ui/dialog';
 import { ModalBranchs } from '../../../../ui/components/ModalBranchs';
+import {
+  findBranchById,
+  getSelectedBranchFromLocalStorage,
+} from '../../../helpers/branchHelpers';
+import { fetchBranches } from '../../../../app/slices/branchSlice';
 
 export const ProfileUser = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -37,6 +42,25 @@ export const ProfileUser = () => {
     setEditingSucursal(isEdit);
     setIsDialogOpen(true);
   };
+
+  const selectedBranchFromLocalStorage = getSelectedBranchFromLocalStorage();
+  const branches = useAppSelector((state) => state.branches.data);
+  const [selectedBranch, setSelectedBranch] = useState<{
+    nombre: string;
+    _id: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const branch = findBranchById(branches, selectedBranchFromLocalStorage);
+    if (branch) {
+      setSelectedBranch({ nombre: branch.nombre, _id: branch._id ?? '' });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [branches]);
+
+  useEffect(() => {
+    store.dispatch(fetchBranches()).unwrap();
+  }, []);
 
   return (
     <>
@@ -73,7 +97,8 @@ export const ProfileUser = () => {
         <div className="flex flex-col items-center justify-center ">
           <h1 className="text-xl font-bold capitalize">{user?.username}</h1>
           <p className="text-sm text-muted-foreground">
-            {user?.role} - {user?.sucursalId?.nombre}
+            {user?.role} -{' '}
+            {selectedBranch ? selectedBranch.nombre : user?.sucursalId?.nombre}
           </p>
         </div>
         <Popover>

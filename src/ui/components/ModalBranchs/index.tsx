@@ -8,11 +8,8 @@ import './styles.scss';
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
   DrawerHeader,
-  DrawerTrigger,
 } from '../../../components/ui/drawer';
-import { useDispatch } from 'react-redux';
 import { closeDrawer } from '../../../app/slices/login';
 
 export const ModalBranchs = () => {
@@ -23,6 +20,7 @@ export const ModalBranchs = () => {
   }, []);
 
   const handleSelectBranch = (branch: Branch) => {
+    store.dispatch(closeDrawer());
     store.dispatch(setSelectedBranch(branch));
     localStorage.setItem('selectedBranch', JSON.stringify(branch._id));
   };
@@ -65,16 +63,12 @@ export const ModalBranchs = () => {
 
 export const BranchDrawer = () => {
   const isDrawerOpen = useAppSelector((state) => state.auth.isOpen);
-  const dispatch = useDispatch();
 
   return (
-    <Drawer open={isDrawerOpen} onOpenChange={() => dispatch(closeDrawer())}>
-      <DrawerTrigger asChild></DrawerTrigger>
-      <DrawerContent>
+    <Drawer open={isDrawerOpen} dismissible={false} disablePreventScroll>
+      <DrawerContent className="  mb-[10rem] ">
         <div className="mx-auto w-full max-w-sm">
-          <DrawerHeader>
-            <DrawerDescription></DrawerDescription>
-          </DrawerHeader>
+          <DrawerHeader>Seleciona una sucursal, para continuar</DrawerHeader>
           <div className="p-4 pb-0">
             <div className="flex items-center justify-center space-x-2">
               <ModalBranchs />

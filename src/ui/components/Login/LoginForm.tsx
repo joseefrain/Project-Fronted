@@ -34,7 +34,10 @@ const LoginForm = () => {
         .dispatch(InicioSesion({ userCredentials: credentials }))
         .unwrap();
       toast.success('Sesión iniciada exitosamente');
-      store.dispatch(openDrawer());
+
+      if (credentials.username === 'root') {
+        store.dispatch(openDrawer());
+      }
       navigate('/');
     } catch (error) {
       toast.error('Error al iniciar sesión: ' + error);
