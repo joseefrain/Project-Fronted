@@ -16,13 +16,11 @@ import {
 import { IProductSale } from '@/interfaces/salesInterfaces';
 
 export interface IProductSaleProps {
-  procesingSale: boolean;
   products: IProductSale[];
   handleRemoveProductSale: (productId: string) => void;
 }
 
 export const ProductSale = ({
-  procesingSale,
   products,
   handleRemoveProductSale,
 }: IProductSaleProps) => {
@@ -80,12 +78,12 @@ export const ProductSale = ({
             </TableCell>
             <TableCell className="text-center">
               <Button
-                disabled={procesingSale}
-                variant="destructive"
-                size="sm"
+                className="border-red-500"
+                variant="outline"
+                size="icon"
                 onClick={() => handleRemoveProductSale(item.productId)}
               >
-                <Trash2 />
+                <Trash2 color="red" />
               </Button>
             </TableCell>
           </TableRow>

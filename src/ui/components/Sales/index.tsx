@@ -1,7 +1,7 @@
 'use client';
 
 import { Sale } from './Sale';
-import { Inventory } from './Inventory';
+import { Cashier } from './Inventory';
 import { SaleHistory } from './SaleHistory';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useEffect, useState } from 'react';
@@ -9,12 +9,19 @@ import { useAppSelector } from '@/app/hooks';
 import { Branch, ITablaBranch } from '@/interfaces/branchInterfaces';
 import { GetBranches } from '@/shared/helpers/Branchs';
 import { store } from '@/app/store';
-import { updateSelectedBranch } from '@/app/slices/branchSlice';
+import {
+  fetchBranchById,
+  updateSelectedBranch,
+} from '@/app/slices/branchSlice';
 import { getDiscountsByBranch } from '@/app/slices/salesSlice';
+import { getSelectedBranchFromLocalStorage } from '@/shared/helpers/branchHelpers';
+import { IProductSale } from '@/interfaces/salesInterfaces';
 
 export default function SalesInventorySystem() {
   const user = useAppSelector((state) => state.auth.signIn.user);
+  const branchStoraged = getSelectedBranchFromLocalStorage();
   const [products, setProducts] = useState<ITablaBranch[]>([]);
+  const [productSale, setProductSale] = useState<IProductSale[]>([]);
 
   const loadProductsByBranch = async (branch: Branch) => {
     const response = await GetBranches(branch._id ?? '');
@@ -39,7 +46,13 @@ export default function SalesInventorySystem() {
   };
 
   useEffect(() => {
-    handleLoadBranch(user?.sucursalId);
+    const branchId = !user?.sucursalId
+      ? (branchStoraged ?? '')
+      : (user?.sucursalId._id ?? '');
+
+    store.dispatch(fetchBranchById(branchId)).then((response) => {
+      handleLoadBranch(response.payload as Branch);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -65,11 +78,16 @@ export default function SalesInventorySystem() {
 
         <TabsContent value="sale">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 h-[36rem] max-h-[36rem]">
-            <Inventory
+            <Sale
               products={products}
-              handleLoadBranch={handleLoadBranch}
+              productSale={productSale}
+              setProducts={setProducts}
+              setProductSale={setProductSale}
             />
-            <Sale products={products} setProducts={setProducts} />
+            <Cashier
+              productSale={productSale}
+              setProductSale={setProductSale}
+            />
           </div>
         </TabsContent>
         <TabsContent value="history">

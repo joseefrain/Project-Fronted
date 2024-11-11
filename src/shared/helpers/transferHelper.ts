@@ -54,14 +54,15 @@ export const incomingShipmentTableHeaders = [
   { key: 'acciones', label: 'Acciones' },
 ];
 
-export const getFormatedDate = (date: Date) => {
+export const getFormatedDate = (date: Date, incluirHora: boolean = false) => {
   if (date === null) return '-';
   const fecha = new Date(date);
   const opciones: Intl.DateTimeFormatOptions = {
-    weekday: 'short' as 'short',
-    day: 'numeric' as 'numeric',
-    month: 'short' as 'short',
-    year: 'numeric' as 'numeric',
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    ...(incluirHora && { hour: '2-digit', minute: '2-digit', hour12: true }),
   };
   const fechaFormateada = fecha.toLocaleDateString('es-ES', opciones);
   return fechaFormateada;
