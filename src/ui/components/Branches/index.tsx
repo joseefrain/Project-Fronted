@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Store } from 'lucide-react';
 import { Button } from '@/components/ui/button';
