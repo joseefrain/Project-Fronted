@@ -13,11 +13,12 @@ import {
   fetchBranchById,
   updateSelectedBranch,
 } from '@/app/slices/branchSlice';
-import { getDiscountsByBranch } from '@/app/slices/salesSlice';
+import { getCasherById, getDiscountsByBranch } from '@/app/slices/salesSlice';
 import { getSelectedBranchFromLocalStorage } from '@/shared/helpers/branchHelpers';
 import { IProductSale } from '@/interfaces/salesInterfaces';
 
 export default function SalesInventorySystem() {
+  const cashierId = useAppSelector((state) => state.auth.signIn.cajaId);
   const user = useAppSelector((state) => state.auth.signIn.user);
   const branchStoraged = getSelectedBranchFromLocalStorage();
   const [products, setProducts] = useState<ITablaBranch[]>([]);
@@ -33,6 +34,7 @@ export default function SalesInventorySystem() {
       })
     );
     setProducts(response);
+    await store.dispatch(getCasherById(cashierId ?? ''));
     await store.dispatch(getDiscountsByBranch(branch._id ?? ''));
   };
 

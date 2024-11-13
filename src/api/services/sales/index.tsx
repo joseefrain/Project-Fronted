@@ -37,3 +37,9 @@ export const getSaleByBranchId = async (id: string): Promise<AxiosResponse> => {
   const response = await axiosInstance.get(`/${id}/branch`);
   return response;
 };
+
+export const getCashier = async (id: string): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Cashier);
+  const response = await axiosInstance.get(`/${id}`);
+  return response;
+};

@@ -78,4 +78,7 @@ export interface ISale {
   subtotal: number;
   total: number;
   discount: number;
+  monto: number;
+  cambioCliente: number;
+  cajaId: string;
 }

@@ -1,11 +1,12 @@
 import {
   createDiscount,
   getAllDiscounts,
+  getCashier,
   getDiscountByBranchId,
   getSaleByBranchId,
   postSale,
 } from '@/api/services/sales';
-import { IStatus } from '@/interfaces/branchInterfaces';
+import { Branch, IStatus } from '@/interfaces/branchInterfaces';
 import {
   ISale,
   IDescuentoCreate,
@@ -13,8 +14,27 @@ import {
 } from '@/interfaces/salesInterfaces';
 import { handleThunkError } from '@/shared/utils/errorHandlers';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IUser } from './login';
+
+export interface ICaja {
+  _id: string;
+  sucursalId: Branch;
+  usuarioAperturaId: IUser;
+  montoInicial: {
+    $numberDecimal: number;
+  };
+  montoEsperado: {
+    $numberDecimal: number;
+  };
+  montoFinalDeclarado?: number;
+  diferencia?: number;
+  fechaApertura: Date;
+  fechaCierre?: Date | null;
+  estado: 'abierta' | 'cerrada';
+}
 
 interface SalesState {
+  caja: ICaja | null;
   sales: ISale[];
   discounts: IDescuentoCreate[];
   branchDiscounts: IListDescuentoResponse;
@@ -24,6 +44,7 @@ interface SalesState {
 }
 
 const initialState: SalesState = {
+  caja: null,
   sales: [],
   discounts: [],
   branchSales: [],
@@ -90,6 +111,18 @@ export const getSalesByBranch = createAsyncThunk(
   }
 );
 
+export const getCasherById = createAsyncThunk(
+  'auth/getCashierByBranchId',
+  async (id: string) => {
+    try {
+      const response = await getCashier(id);
+      return response.data;
+    } catch (error) {
+      return handleThunkError(error);
+    }
+  }
+);
+
 const salesSlice = createSlice({
   name: 'sales',
   initialState,
@@ -132,6 +165,9 @@ const salesSlice = createSlice({
       .addCase(getSalesByBranch.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
         state.branchSales = payload;
+      })
+      .addCase(getCasherById.fulfilled, (state, { payload }) => {
+        state.caja = payload;
       });
   },
 });

@@ -51,7 +51,11 @@ export interface ICashierProps {
 }
 
 export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
-  const [cashInRegister, setCashInRegister] = useState(5000);
+  const caja = store.getState().sales.caja;
+  const user = store.getState().auth.signIn.user;
+  const branchSelected = store.getState().branches.selectedBranch;
+
+  const [cashInRegister, setCashInRegister] = useState(0);
   const [registeredCustomers] = useState([
     { id: '1', name: 'Arleys Gatica', credit: 1000, creditUsed: 0 },
     { id: '2', name: 'Carlos Duarte', credit: 1500, creditUsed: 500 },
@@ -61,11 +65,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   const [customerType, setCustomerType] = useState<'registered' | 'general'>(
     'general'
   );
-
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'credit'>('cash');
-
-  const user = store.getState().auth.signIn.user;
-  const branchSelected = store.getState().branches.selectedBranch;
 
   const [open, setOpen] = useState(false);
   const [cashReceived, setCashReceived] = useState<string>('');
@@ -123,6 +123,9 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
       subtotal: saleSummary.subTotal,
       total: saleSummary.total,
       discount: saleSummary.totalDiscount,
+      cambioCliente: saleSummary.change,
+      monto: Number(cashReceived),
+      cajaId: caja?._id ?? '',
     };
 
     const request = store
@@ -154,6 +157,11 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
     setProcessingSale(false);
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    if (!caja) return;
+    setCashInRegister(Number(caja.montoInicial.$numberDecimal));
+  }, [caja]);
 
   return (
     <>
