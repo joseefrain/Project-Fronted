@@ -113,7 +113,6 @@ export const handlePrintInvoice = ({
   customers,
   customer,
   customerType,
-  productSale,
   paymentMethod,
   cashReceived,
   saleSummary,
@@ -141,19 +140,20 @@ export const handlePrintInvoice = ({
     60
   );
 
-  const tableColumn = ['Producto', 'Cantidad', 'Precio', 'Total'];
-  const tableRows = productSale.map((item) => [
-    item.productName,
-    item.quantity,
-    `$${item.price.toFixed(2)}`,
-    `$${(item.price * item.quantity).toFixed(2)}`,
-  ]);
+  // const tableColumn = ['Producto', 'Cantidad', 'Precio', 'Total'];
+  // const tableRows = productSale.map((item) => [
+  //   item.productName,
+  //   item.quantity,
+  //   `$${item.price.toFixed(2)}`,
+  //   `$${(item.price * item.quantity).toFixed(2)}`,
+  // ]);
 
-  doc.autoTable({
-    startY: 70,
-    head: [tableColumn],
-    body: tableRows,
-  });
+
+  // doc.autoTable({
+  //   startY: 70,
+  //   head: [tableColumn],
+  //   body: tableRows,
+  // });
 
   const finalY = (doc as any).lastAutoTable.finalY || 70;
   doc.text(`Total: $${saleSummary.total.toFixed(2)}`, 20, finalY + 10);
