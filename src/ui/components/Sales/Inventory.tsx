@@ -160,7 +160,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
 
   useEffect(() => {
     if (!caja) return;
-    setCashInRegister(Number(caja.montoInicial.$numberDecimal));
+    setCashInRegister(Number(caja.montoEsperado.$numberDecimal));
   }, [caja]);
 
   return (
