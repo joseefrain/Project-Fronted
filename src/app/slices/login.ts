@@ -16,6 +16,7 @@ export interface IUser {
 export interface IToken {
   token: string;
   user?: IUser;
+  cajaId?: string;
 }
 
 const saveToLocalStorage = (key: string, value: any) => {
@@ -75,6 +76,7 @@ export interface IAuthSlice {
     sucursalId?: Branch;
   };
   status: statusLoguer;
+  cajaId?: string;
 }
 
 const initialStateLogin: IAuthSlice = getFromLocalStorage('user') || {
@@ -111,6 +113,7 @@ export const LoginSlice = createSlice({
       state.signIn = {
         token: action.payload.token,
         user: action.payload.user,
+        cajaId: action.payload.cajaId,
         status: 'authenticated',
       };
       saveToLocalStorage('user', state.signIn);
@@ -122,6 +125,7 @@ export const LoginSlice = createSlice({
       state.signIn = {
         token: '',
         user: undefined,
+        cajaId: undefined,
         status: 'unauthenticated',
       };
       removeFromLocalStorage('user');
@@ -143,6 +147,7 @@ export const LoginSlice = createSlice({
     });
     builder.addCase(InicioSesion.fulfilled, (state, { payload }) => {
       state.signIn = {
+        cajaId: payload.cajaId,
         token: payload.token,
         user: payload.user,
         status: 'authenticated',

@@ -5,9 +5,10 @@ import {
   createBranch,
   deleteBranchById,
   getAll,
-  getBranchesById,
+  getProductsByBranchId,
   getForStockProductsAtBranch,
   updateBranch,
+  getBranchById,
 } from '../../api/services/branch';
 import {
   handleAsyncThunkError,
@@ -23,11 +24,11 @@ import { InventarioSucursalWithPopulated } from '@/interfaces/transferInterfaces
 import { deleteProduct } from '@/api/services/transfer';
 import { createTablaBranch } from '@/api/services/products';
 
-export const fetchBranchesById = createAsyncThunk<ITablaBranch[], string>(
-  'branches/fetchById',
+export const fetchProductsByBranchId = createAsyncThunk<ITablaBranch[], string>(
+  'branches/fetchProductsById',
   async (id: string, { rejectWithValue }) => {
     try {
-      const response: ITablaBranch[] = await getBranchesById(id);
+      const response: ITablaBranch[] = await getProductsByBranchId(id);
       return response;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
@@ -120,6 +121,19 @@ export const removeProduct = createAsyncThunk(
   }
 );
 
+export const fetchBranchById = createAsyncThunk(
+  'branches/fetchById',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await getBranchById(id);
+      console.log(response);
+      return response;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
 const initialState: BranchState = {
   data: [],
   selectedBranch: null,
@@ -181,11 +195,11 @@ const branchesSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message || 'unknown error';
       })
-      .addCase(fetchBranchesById.pending, (state) => {
+      .addCase(fetchProductsByBranchId.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(
-        fetchBranchesById.fulfilled,
+        fetchProductsByBranchId.fulfilled,
         (state, { payload }: PayloadAction<ITablaBranch[]>) => {
           state.selectedBranch = {
             ...state.selectedBranch!,

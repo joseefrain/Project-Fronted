@@ -26,7 +26,9 @@ export const getAll = async (): Promise<AxiosResponse> => {
   return response.data;
 };
 
-export const getBranchesById = async (id: string): Promise<ITablaBranch[]> => {
+export const getProductsByBranchId = async (
+  id: string
+): Promise<ITablaBranch[]> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Branch);
   const response = await axiosInstance.get(`/${id}/products`);
   return response.data;
@@ -50,4 +52,10 @@ export const deleteBranchById = async (id: string): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Branch);
   const response = await axiosInstance.delete(`/${id}`);
   return response;
+};
+
+export const getBranchById = async (id: string): Promise<ITablaBranch[]> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Branch);
+  const response = await axiosInstance.get(`/${id}`);
+  return response.data;
 };

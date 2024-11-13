@@ -1,25 +1,12 @@
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import {
-  Check,
-  ChevronsUpDown,
-  CirclePlus,
-  ShoppingBag,
-  ShoppingCart,
-  Truck,
-} from 'lucide-react';
+import { Check, ChevronsUpDown, Plus, ShoppingBag, Truck } from 'lucide-react';
 import { ProductSale } from './ProductSale';
 import { ITablaBranch } from '@/interfaces/branchInterfaces';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Popover,
   PopoverContent,
@@ -40,24 +27,25 @@ import {
   applyDiscounts,
   handleProductSaleAlerts,
 } from '@/shared/helpers/salesHelper';
-import { toast, Toaster } from 'sonner';
-import { IProductSale, ISale } from '@/interfaces/salesInterfaces';
-import { createSale } from '@/app/slices/salesSlice';
-import { store } from '@/app/store';
+import { IProductSale } from '@/interfaces/salesInterfaces';
 
 export interface ISaleProps {
   products: ITablaBranch[];
+  productSale: IProductSale[];
+  setProductSale: React.Dispatch<React.SetStateAction<IProductSale[]>>;
   setProducts: React.Dispatch<React.SetStateAction<ITablaBranch[]>>;
 }
 
-export const Sale = ({ products, setProducts }: ISaleProps) => {
-  const user = useAppSelector((state) => state.auth.signIn.user);
+export const Sale = ({
+  products,
+  setProducts,
+  productSale,
+  setProductSale,
+}: ISaleProps) => {
   const selectedBranch = useAppSelector(
     (state) => state.branches.selectedBranch
   );
   const discounts = useAppSelector((state) => state.sales.branchDiscounts);
-
-  const [procesingSale, setProcesingSale] = useState(false);
   const [open, setOpen] = useState(false);
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
@@ -65,7 +53,6 @@ export const Sale = ({ products, setProducts }: ISaleProps) => {
   const [selectedProduct, setSelectedProduct] = useState<ITablaBranch | null>(
     null
   );
-  const [productSale, setProductSale] = useState<IProductSale[]>([]);
 
   const handleSelectProduct = (productId: string) => {
     const product = products.find((p) => p.id === productId);
@@ -130,7 +117,7 @@ export const Sale = ({ products, setProducts }: ISaleProps) => {
     }
 
     const updatedProducts = products.map((item) => {
-      const newStock = item.stock - productWithDiscount.quantity;
+      const newStock = item.stock - quantity;
 
       handleProductSaleAlerts(
         item.nombre,
@@ -142,6 +129,10 @@ export const Sale = ({ products, setProducts }: ISaleProps) => {
         ? { ...item, stock: newStock }
         : item;
     });
+
+    setSelectedProduct((prev) =>
+      prev ? { ...prev, stock: prev.stock - quantity } : null
+    );
 
     setProducts(updatedProducts);
     setQuantity(0);
@@ -162,59 +153,9 @@ export const Sale = ({ products, setProducts }: ISaleProps) => {
       item.id === productId ? { ...item, stock: item.stock + quantity } : item
     );
     setProducts(updatedProducts);
-  };
-
-  const saleSummary = useMemo(() => {
-    if (productSale.length === 0)
-      return { subTotal: 0, totalDiscount: 0, total: 0 };
-
-    const subTotal = productSale.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
+    setSelectedProduct((prev) =>
+      prev ? { ...prev, stock: prev.stock + quantity } : null
     );
-    const totalDiscount = productSale.reduce(
-      (sum, item) => sum + (item.discount?.amount || 0),
-      0
-    );
-    const total = subTotal - totalDiscount;
-
-    return {
-      subTotal,
-      totalDiscount,
-      total,
-    };
-  }, [productSale]);
-
-  const handleProccessSale = () => {
-    setProcesingSale(true);
-    const newSale: ISale = {
-      userId: user?._id || '',
-      sucursalId: user?.sucursalId?._id || selectedBranch?._id || '',
-      products: productSale,
-      subtotal: saleSummary.subTotal,
-      total: saleSummary.total,
-      discount: saleSummary.totalDiscount,
-    };
-
-    const request = store
-      .dispatch(createSale(newSale))
-      .unwrap()
-      .catch(() => {
-        setProcesingSale(false);
-        return Promise.reject();
-      })
-      .then(() => {
-        setTimeout(() => {
-          setProductSale([]);
-          setProcesingSale(false);
-        }, 1000);
-      });
-
-    toast.promise(request, {
-      loading: 'Procesando...',
-      success: 'Venta procesada exitosamente',
-      error: 'Error al procesar la venta',
-    });
   };
 
   const cleanFieldsByBranchChange = () => {
@@ -227,6 +168,7 @@ export const Sale = ({ products, setProducts }: ISaleProps) => {
 
   useEffect(() => {
     cleanFieldsByBranchChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedBranch]);
 
   return (
@@ -234,14 +176,13 @@ export const Sale = ({ products, setProducts }: ISaleProps) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ShoppingBag />
-          Gestionar venta
+          Gestionar Productos
         </CardTitle>
       </CardHeader>
       <CardContent className="h-[80%]">
         <div className="flex items-center mb-4 space-x-2">
           <Switch
             className="p-0"
-            disabled={procesingSale}
             checked={supplierMode}
             onCheckedChange={setSupplierMode}
           />
@@ -256,16 +197,14 @@ export const Sale = ({ products, setProducts }: ISaleProps) => {
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
-                  disabled={procesingSale || products.length === 0}
+                  disabled={products.length === 0}
                   variant="outline"
                   role="combobox"
                   aria-expanded={open}
                   className="justify-between w-full"
                 >
                   {selectedProduct
-                    ? products.find(
-                        (product) => product.id === selectedProduct.id
-                      )?.nombre
+                    ? selectedProduct.nombre
                     : 'Selecciona producto'}
                   <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                 </Button>
@@ -307,12 +246,20 @@ export const Sale = ({ products, setProducts }: ISaleProps) => {
             </Popover>
           </div>
           <div className="flex flex-col gap-1 w-[20%]">
+            <Label className="text-xs">Disponible</Label>
+            <Input
+              className="w-full text-center"
+              value={selectedProduct ? selectedProduct.stock : 0}
+              disabled
+            />
+          </div>
+          <div className="flex flex-col gap-1 w-[20%]">
             <Label className="text-xs">Cantidad</Label>
             <Input
               type="number"
               id="branch-select"
               value={selectedProduct ? quantity : 0}
-              disabled={!selectedProduct || procesingSale}
+              disabled={!selectedProduct}
               onChange={(e) =>
                 handleQuantityChange(
                   selectedProduct?.id!,
@@ -325,13 +272,13 @@ export const Sale = ({ products, setProducts }: ISaleProps) => {
             />
           </div>
           {supplierMode && (
-            <div className="flex flex-col gap-1 w-[20%]">
+            <div className="flex flex-col gap-1 w-[25%]">
               <Label className="text-xs">Precio</Label>
               <Input
                 type="number"
                 id="branch-select"
                 value={selectedProduct ? price : 0}
-                disabled={!selectedProduct || procesingSale}
+                disabled={!selectedProduct}
                 onChange={(e) =>
                   handlePriceChange(
                     selectedProduct?.id!,
@@ -346,41 +293,20 @@ export const Sale = ({ products, setProducts }: ISaleProps) => {
           <div className="flex flex-col justify-end gap-1 w-[10%]">
             <Button
               className="w-full text-xs"
-              disabled={
-                !selectedProduct || quantity <= 0 || price <= 0 || procesingSale
-              }
+              disabled={!selectedProduct || quantity <= 0 || price <= 0}
               onClick={handleAddProductSale}
             >
-              <CirclePlus />
+              <Plus />
             </Button>
           </div>
         </div>
         <div className="product__sale__list">
           <ProductSale
-            procesingSale={procesingSale}
             products={productSale}
             handleRemoveProductSale={handleRemoveProductSale}
           />
         </div>
       </CardContent>
-      <CardFooter className="flex items-center justify-between py-0 px-[1.5rem]">
-        <span>Subtotal: ${saleSummary.subTotal.toFixed(2)}</span>
-        <span className="text-green-600">
-          Descuento: ${saleSummary.totalDiscount.toFixed(2)}
-        </span>
-        <span className="font-bold">
-          Total: ${saleSummary.total.toFixed(2)}
-        </span>
-        <Button
-          disabled={productSale.length === 0 || procesingSale}
-          onClick={handleProccessSale}
-          className="h-[2rem]"
-        >
-          Procesar
-          <ShoppingCart />
-        </Button>
-      </CardFooter>
-      <Toaster richColors />
     </Card>
   );
 };
