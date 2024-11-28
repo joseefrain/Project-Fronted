@@ -16,6 +16,7 @@ import { ViewProucts } from '@/shared/components/ui/TabsListTable/products';
 import DiscountManager from '@/ui/components/Discount';
 import SalesInventorySystem from '@/ui/components/Sales';
 import Dashboard from '@/ui/components/Dashboard';
+import { MainContacts } from '../ui/components/clients/main';
 export const Router = () => {
   return (
     <Routes>
@@ -174,6 +175,19 @@ export const Router = () => {
           element={
             <Layout>
               <SalesInventorySystem />
+            </Layout>
+          }
+        />
+      </Route>
+      <Route
+        path="/Contacts"
+        element={<RequireAuth rolesAllowed={['admin', 'user', 'root']} />}
+      >
+        <Route
+          path="/Contacts"
+          element={
+            <Layout>
+              <MainContacts />
             </Layout>
           }
         />
