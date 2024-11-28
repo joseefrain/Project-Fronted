@@ -8,6 +8,7 @@ export enum PATH_LIST {
   Transfer = 'transfer',
   SalesDiscounts = 'venta/descuentos',
   Sales = 'venta/',
+  Cashier = 'cashRegister',
 }
 
 export const createAxiosInstance = (
