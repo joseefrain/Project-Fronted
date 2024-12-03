@@ -8,7 +8,6 @@ export const addEntity = createAsyncThunk(
   async (entity: any, { rejectWithValue }) => {
     try {
       const response = await createEntity(entity);
-      console.log(response, 'response');
       return response.data;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
