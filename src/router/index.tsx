@@ -16,7 +16,8 @@ import { ViewProucts } from '@/shared/components/ui/TabsListTable/products';
 import DiscountManager from '@/ui/components/Discount';
 import SalesInventorySystem from '@/ui/components/Sales';
 import Dashboard from '@/ui/components/Dashboard';
-import { MainContacts } from '../ui/components/clients/main';
+import { ViewEntities } from '../shared/components/ui/TabsListTable/entities';
+
 export const Router = () => {
   return (
     <Routes>
@@ -187,7 +188,7 @@ export const Router = () => {
           path="/Contacts"
           element={
             <Layout>
-              <MainContacts />
+              <ViewEntities />
             </Layout>
           }
         />

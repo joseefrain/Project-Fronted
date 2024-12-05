@@ -1,19 +1,33 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { store } from '../../../app/store';
-import { addEntity, getEntities } from '../../../app/slices/entities';
+import { addEntity } from '../../../app/slices/entities';
 import {
   IEntities,
   IEntitiesContactInfo,
   IEntitiesGeneralInfo,
   IEntityType,
 } from '../../../interfaces/entitiesInterfaces';
-import { useAppSelector } from '../../../app/hooks';
 
-export const FormularioContactoDinamico = () => {
+interface AddContactProps {
+  initialData: IEntities | null;
+  onClose: () => void;
+}
+
+export const AddContact = ({ initialData, onClose }: AddContactProps) => {
+  const fields = [
+    { label: 'Número de identificación *', name: 'identificationNumber' },
+    { label: 'Departamento *', name: 'department' },
+    { label: 'País *', name: 'country' },
+    { label: 'Dirección *', name: 'address' },
+    { label: 'Nombre completo *', name: 'name' },
+    { label: 'Correo electrónico', name: 'email', type: 'email' },
+    { label: 'Teléfono móvil', name: 'mobilePhone', type: 'tel' },
+    { label: 'Teléfono fijo', name: 'telephone', type: 'tel' },
+  ];
+
   const [formData, setFormData] = useState<
     IEntitiesContactInfo & IEntitiesGeneralInfo
   >({
@@ -28,6 +42,7 @@ export const FormularioContactoDinamico = () => {
   });
 
   const [entityType, setEntityType] = useState<IEntityType>('customer');
+  const dataType = entityType === 'supplier' ? 'Proveedor' : 'Cliente';
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -35,34 +50,84 @@ export const FormularioContactoDinamico = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        identificationNumber:
+          initialData.generalInformation.identificationNumber || '',
+        department: initialData.generalInformation.department || '',
+        country: initialData.generalInformation.country || '',
+        address: initialData.generalInformation.address || '',
+        name: initialData.generalInformation.name || '',
+        email: initialData.contactInformation.email || '',
+        mobilePhone: initialData.contactInformation.mobilePhone || '',
+        telephone: initialData.contactInformation.telephone || '',
+      });
+    } else {
+      setFormData({
+        identificationNumber: '',
+        department: '',
+        country: '',
+        address: '',
+        name: '',
+        email: '',
+        mobilePhone: '',
+        telephone: '',
+      });
+    }
+  }, [initialData]);
+
   const handleAddingEntity = async () => {
     setLoading(true);
 
     try {
-      const entidadAEnviar: IEntities = {
-        generalInformation: {
-          identificationNumber: formData.identificationNumber,
-          department: formData.department,
-          country: formData.country,
-          address: formData.address,
-          name: formData.name,
-        },
-        contactInformation: {
-          email: formData.email,
-          mobilePhone: formData.mobilePhone,
-          telephone: formData.telephone,
-        },
-        commercialInformation: {
-          paymentTerm: '',
-          seller: '',
-        },
-        state: undefined,
-        Products: [],
-        entities: 'cliente',
-        type: entityType,
-      };
+      if (initialData) {
+        const entidadAEnviar: IEntities = {
+          ...initialData,
+          generalInformation: {
+            identificationNumber: formData.identificationNumber,
+            department: formData.department,
+            country: formData.country,
+            address: formData.address,
+            name: formData.name,
+          },
+          contactInformation: {
+            email: formData.email,
+            mobilePhone: formData.mobilePhone,
+            telephone: formData.telephone,
+          },
+          entities: dataType,
+          type: entityType,
+        };
 
-      await store.dispatch(addEntity(entidadAEnviar)).unwrap();
+        await store.dispatch(addEntity(entidadAEnviar)).unwrap();
+      } else {
+        const entidadAEnviar: IEntities = {
+          generalInformation: {
+            identificationNumber: formData.identificationNumber,
+            department: formData.department,
+            country: formData.country,
+            address: formData.address,
+            name: formData.name,
+          },
+          contactInformation: {
+            email: formData.email,
+            mobilePhone: formData.mobilePhone,
+            telephone: formData.telephone,
+          },
+          commercialInformation: {
+            paymentTerm: '',
+            seller: '',
+          },
+          state: undefined,
+          Products: [],
+          entities: dataType,
+          type: entityType,
+        };
+
+        //updateEntity(entidadAEnviar); remp
+        await store.dispatch(addEntity(entidadAEnviar)).unwrap();
+      }
 
       setFormData({
         identificationNumber: '',
@@ -74,29 +139,18 @@ export const FormularioContactoDinamico = () => {
         mobilePhone: '',
         telephone: '',
       });
+      onClose();
     } catch (error) {
-      console.error('Error al crear la entidad:', error);
+      console.error('Error al crear o actualizar la entidad:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const allEntities = useAppSelector((state) => state.entities.data);
-  useEffect(() => {
-    const fetchData = async () => {
-      await store.dispatch(getEntities()).unwrap();
-    };
-    fetchData();
-  }, []);
-  console.log(allEntities, 'allEntities');
-
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="">
       <div className="flex justify-between items-center p-4 border-b">
         <h2 className="text-xl font-semibold text-gray-800">Nuevo contacto</h2>
-        <Button variant="ghost" size="icon" aria-label="Cerrar">
-          <X className="h-6 w-6" />
-        </Button>
       </div>
 
       <form className="p-6 space-y-6">
@@ -125,92 +179,23 @@ export const FormularioContactoDinamico = () => {
           </Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="identificationNumber">
-              Número de identificación *
-            </Label>
-            <Input
-              id="identificationNumber"
-              name="identificationNumber"
-              value={formData.identificationNumber}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="department">Departamento *</Label>
-            <Input
-              id="department"
-              name="department"
-              value={formData.department}
-              onChange={handleInputChange}
-            />
-          </div>
+          {fields.map((field) => (
+            <div className="space-y-2" key={field.name}>
+              <Label htmlFor={field.name}>{field.label}</Label>
+              <Input
+                id={field.name}
+                name={field.name as keyof typeof formData}
+                type={field.type || 'text'}
+                value={formData[field.name as keyof typeof formData]}
+                onChange={handleInputChange}
+              />
+            </div>
+          ))}
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="country">País *</Label>
-          <Input
-            id="country"
-            name="country"
-            value={formData.country}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="address">Dirección *</Label>
-          <Input
-            id="address"
-            name="address"
-            value={formData.address}
-            onChange={handleInputChange}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="Name">Nombre completo *</Label>
-          <Input
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="email">Correo electrónico</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Ejemplo@email.com"
-              value={formData.email}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="mobilePhone">Teléfono móvil</Label>
-            <Input
-              id="mobilePhone"
-              name="mobilePhone"
-              type="tel"
-              value={formData.mobilePhone}
-              onChange={handleInputChange}
-            />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="telephone">Teléfono fijo</Label>
-          <Input
-            id="telephone"
-            name="telephone"
-            type="tel"
-            value={formData.telephone}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="flex justify-between items-center pt-6 border-t">
+        <div className="flex justify-center items-center pt-6 w-full h-full">
           <Button
             onClick={handleAddingEntity}
-            className="bg-teal-600 hover:bg-teal-700 text-white"
+            className="bg-black  text-white"
             disabled={loading}
           >
             {loading ? 'Creando...' : 'Crear contacto'}

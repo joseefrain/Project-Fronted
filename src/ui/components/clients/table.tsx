@@ -7,14 +7,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Pencil, Trash } from 'lucide-react';
-import { Branch, ITablaBranch } from '@/interfaces/branchInterfaces';
+import { Branch } from '@/interfaces/branchInterfaces';
 import { IRoles } from '@/app/slices/login';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { IEntities } from '../../../interfaces/entitiesInterfaces';
 
 interface IUserRole {
   _id: string;
@@ -24,21 +19,25 @@ interface IUserRole {
 }
 
 interface ProductsTableProps {
-  products: ITablaBranch[];
+  currentItems: IEntities[];
   userRoles?: IUserRole | undefined;
+  handleEditContact: (contactData: IEntities) => void;
 }
 
-export const TablaContacts = ({ products, userRoles }: ProductsTableProps) => {
+export const TablaContacts = ({
+  currentItems,
+  userRoles,
+  handleEditContact,
+}: ProductsTableProps) => {
   return (
     <>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
-            <TableHead className="w-fit">Description</TableHead>
-            <TableHead>Sucursal</TableHead>
-            <TableHead>Stock</TableHead>
-            <TableHead>Price</TableHead>
+            <TableHead className="w-fit">Identificacion</TableHead>
+            <TableHead>Telefono</TableHead>
+            <TableHead>Tipo</TableHead>
             {userRoles?.role !== 'admin' && (
               <TableHead>
                 <span className="">Actions</span>
@@ -47,24 +46,25 @@ export const TablaContacts = ({ products, userRoles }: ProductsTableProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products?.map((product) => (
-            <TableRow key={product.inventarioSucursalId}>
-              <TableCell className="font-medium">{product?.nombre}</TableCell>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger className="w-64 overflow-hidden whitespace-nowrap text-ellipsis">
-                    {product.descripcion}
-                  </TooltipTrigger>
-                  <TooltipContent>{product.descripcion}</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <TableCell>{product.nombreSucursal}</TableCell>
-              <TableCell>{product.stock}</TableCell>
-              <TableCell>{`$${product.precio.$numberDecimal}`}</TableCell>
+          {currentItems?.map((product) => (
+            <TableRow key={product._id}>
+              <TableCell className="font-medium">
+                {product?.generalInformation.name}
+              </TableCell>
               <TableCell>
-                {userRoles?.role !== 'admin' && product.nombreSucursal && (
+                {product.generalInformation.identificationNumber}
+              </TableCell>
+              <TableCell>{product.contactInformation.telephone}</TableCell>
+              <TableCell>
+                {product.type === 'customer' ? 'Cliente' : 'Proveedor'}
+              </TableCell>
+              <TableCell>
+                {userRoles?.role !== 'admin' && (
                   <div className="flex items-center gap-3">
-                    <div className="">
+                    <div
+                      onClick={() => handleEditContact(product)}
+                      className=""
+                    >
                       <Pencil className="mr-2 h-4 w-4 cursor-pointer" />
                     </div>
                     <div>
