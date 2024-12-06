@@ -11,6 +11,7 @@ import {
   Repeat,
   ShoppingBag,
   ShoppingCart,
+  SquareUser,
   Store,
   UserPlus,
 } from 'lucide-react';
@@ -38,6 +39,7 @@ export const Layout = ({ children }: LayoutProps) => {
     ...(roleUsers === 'root' || roleUsers === 'admin'
       ? [{ name: 'USUARIOS', path: '/register', icon: <UserPlus /> }]
       : []),
+    { name: 'CONTACTOS', path: '/contacts', icon: <SquareUser /> },
   ];
 
   return (
