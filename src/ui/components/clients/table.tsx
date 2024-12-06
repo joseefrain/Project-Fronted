@@ -10,6 +10,7 @@ import { Pencil, Trash } from 'lucide-react';
 import { Branch } from '@/interfaces/branchInterfaces';
 import { IRoles } from '@/app/slices/login';
 import { IEntities } from '../../../interfaces/entitiesInterfaces';
+import { useNavigate } from 'react-router-dom';
 
 interface IUserRole {
   _id: string;
@@ -29,6 +30,8 @@ export const TablaContacts = ({
   userRoles,
   handleEditContact,
 }: ProductsTableProps) => {
+  const navigate = useNavigate();
+
   return (
     <>
       <Table>
@@ -47,7 +50,10 @@ export const TablaContacts = ({
         </TableHeader>
         <TableBody>
           {currentItems?.map((product) => (
-            <TableRow key={product._id}>
+            <TableRow
+              key={product._id}
+              onClick={() => navigate(`/contacts/${product._id}`)}
+            >
               <TableCell className="font-medium">
                 {product?.generalInformation.name}
               </TableCell>

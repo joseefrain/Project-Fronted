@@ -34,6 +34,7 @@ export interface IEntities {
   Products?: ITablaBranch[];
   entities: string;
   type: IEntityType;
+  _id?: string;
 }
 
 export type IEntityType = 'customer' | 'supplier';
