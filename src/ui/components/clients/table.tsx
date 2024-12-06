@@ -11,6 +11,8 @@ import { Branch } from '@/interfaces/branchInterfaces';
 import { IRoles } from '@/app/slices/login';
 import { IEntities } from '../../../interfaces/entitiesInterfaces';
 import { useNavigate } from 'react-router-dom';
+import { setSelectedEntity } from '../../../app/slices/entities';
+import { store } from '../../../app/store';
 
 interface IUserRole {
   _id: string;
@@ -31,6 +33,11 @@ export const TablaContacts = ({
   handleEditContact,
 }: ProductsTableProps) => {
   const navigate = useNavigate();
+
+  const handleSelectEntity = (entity: IEntities) => {
+    store.dispatch(setSelectedEntity(entity));
+    navigate(`/contacts/${entity._id}`);
+  };
 
   return (
     <>
@@ -53,7 +60,7 @@ export const TablaContacts = ({
             <TableRow key={product._id}>
               <TableCell
                 className="font-medium"
-                onClick={() => navigate(`/contacts/${product._id}`)}
+                onClick={() => handleSelectEntity(product)}
               >
                 {product?.generalInformation.name}
               </TableCell>

@@ -39,6 +39,10 @@ const entitiesSlice = createSlice({
     addEntities: (state, action: PayloadAction<any>) => {
       state.data.push(action.payload);
     },
+
+    setSelectedEntity: (state, action: PayloadAction<IEntities | null>) => {
+      state.selectedEntity = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -55,5 +59,5 @@ const entitiesSlice = createSlice({
   },
 });
 
-export const { addEntities } = entitiesSlice.actions;
+export const { addEntities, setSelectedEntity } = entitiesSlice.actions;
 export const entitiesReducer = entitiesSlice.reducer;
