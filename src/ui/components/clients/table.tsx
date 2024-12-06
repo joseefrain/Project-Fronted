@@ -50,11 +50,11 @@ export const TablaContacts = ({
         </TableHeader>
         <TableBody>
           {currentItems?.map((product) => (
-            <TableRow
-              key={product._id}
-              onClick={() => navigate(`/contacts/${product._id}`)}
-            >
-              <TableCell className="font-medium">
+            <TableRow key={product._id}>
+              <TableCell
+                className="font-medium"
+                onClick={() => navigate(`/contacts/${product._id}`)}
+              >
                 {product?.generalInformation.name}
               </TableCell>
               <TableCell>

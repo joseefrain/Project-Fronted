@@ -3,16 +3,19 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Building2, Mail, Phone, MapPin, User, Calendar } from 'lucide-react';
-import React from 'react';
-import { IClient } from '../../../interfaces/clientsInterfaces';
+import React, { useEffect } from 'react';
+import { IEntities } from '../../../interfaces/entitiesInterfaces';
+import { useAppSelector } from '../../../app/hooks';
+import { store } from '../../../app/store';
+import { getEntities } from '../../../app/slices/entities';
 
-const client: IClient = {
+const client: IEntities = {
   generalInformation: {
     identificationNumber: '123456789',
     department: 'Antioquia',
     country: 'Colombia',
     address: '123 Main Street',
-    Name: 'Juan Perez',
+    name: 'Juan Perez',
   },
   contactInformation: {
     email: 'client@example.com',
@@ -30,9 +33,21 @@ const client: IClient = {
     amountPayable: 5000,
   },
   entities: 'Client',
+  type: 'customer',
 };
 
 export const Contacts = () => {
+  const allEntities = useAppSelector((state) => state.entities.data);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await store.dispatch(getEntities()).unwrap();
+    };
+    fetchData();
+  }, []);
+
+  console.log(allEntities, 'allEntities');
+
   return (
     <div className="container mx-auto py-10">
       <Card className="w-full max-w-4xl mx-auto">
@@ -45,12 +60,12 @@ export const Contacts = () => {
                   alt="Client Avatar"
                 />
                 <AvatarFallback>
-                  {client.generalInformation.Name[0]}
+                  {client.generalInformation.name[0]}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <CardTitle className="text-2xl">
-                  {client.generalInformation.Name}
+                  {client.generalInformation.name}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
                   Client since 2023
