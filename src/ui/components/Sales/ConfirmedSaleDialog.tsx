@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,6 +9,12 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  ICreditMethod,
+  IPaymentMethod,
+  IProductSale,
+} from '@/interfaces/salesInterfaces';
+import { handlePrintInvoice } from '@/shared/helpers/salesHelper';
 import { getFormatedDate } from '@/shared/helpers/transferHelper';
 import {
   BadgeDollarSign,
@@ -17,6 +22,7 @@ import {
   Banknote,
   CalendarCheck,
   Captions,
+  Clock,
   Coins,
   FileDown,
   Printer,
@@ -24,8 +30,7 @@ import {
   Store,
   User,
 } from 'lucide-react';
-import { handlePrintInvoice } from '@/shared/helpers/salesHelper';
-import { IProductSale } from '@/interfaces/salesInterfaces';
+import React from 'react';
 import { ISaleSummary } from './Inventory';
 
 export interface IReportField {
@@ -44,8 +49,10 @@ export interface IConfirmedSaleDialog {
   customers: Array<any>;
   customerType: string;
   productSale: Array<IProductSale>;
-  paymentMethod: string;
+  paymentMethod: IPaymentMethod;
   saleSummary: ISaleSummary;
+  creditMethod: ICreditMethod;
+  months: string;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleCloseModal: () => void;
 }
@@ -64,6 +71,8 @@ export const ConfirmedSaleDialog = ({
   customers,
   productSale,
   paymentMethod,
+  creditMethod,
+  months,
 }: IConfirmedSaleDialog) => {
   const onPrintInvoice = () => {
     handlePrintInvoice({
@@ -96,7 +105,7 @@ export const ConfirmedSaleDialog = ({
         <div className="flex flex-col items-center justify-start gap-4 my-4">
           <ReportField
             label="Sucursal"
-            value={branchName ?? ''}
+            value={branchName.toUpperCase() ?? ''}
             icon={<Store className="mr-3" />}
           />
           <ReportField
@@ -116,9 +125,27 @@ export const ConfirmedSaleDialog = ({
           />
           <ReportField
             label="Método de Pago"
-            value="EFECTIVO"
+            value={
+              paymentMethod === IPaymentMethod.CASH ? 'EFECTIVO' : 'CRÉDITO'
+            }
             icon={<Receipt className="mr-3" />}
           />
+          {paymentMethod === IPaymentMethod.CREDIT && (
+            <>
+              <ReportField
+                label="Modalidad de crédito"
+                value={creditMethod}
+                icon={<User className="mr-3" />}
+              />
+              {creditMethod === ICreditMethod.PLAZO && (
+                <ReportField
+                  label="Meses"
+                  value={months}
+                  icon={<Clock className="mr-3" />}
+                />
+              )}
+            </>
+          )}
           <ReportField
             label="Subtotal"
             value={`$${saleSummary.total.toFixed(2)}`}
@@ -134,16 +161,20 @@ export const ConfirmedSaleDialog = ({
             value={`$${saleSummary.total.toFixed(2)}`}
             icon={<BadgeDollarSign className="mr-3" />}
           />
-          <ReportField
-            label="Efectivo"
-            value={`$${cashReceived}`}
-            icon={<Banknote className="mr-3" />}
-          />
-          <ReportField
-            label="Cambio"
-            value={`$${saleSummary.change.toFixed(2)}`}
-            icon={<Coins className="mr-3" />}
-          />
+          {paymentMethod === IPaymentMethod.CASH && (
+            <>
+              <ReportField
+                label="Efectivo"
+                value={`$${cashReceived}`}
+                icon={<Banknote className="mr-3" />}
+              />
+              <ReportField
+                label="Cambio"
+                value={`$${saleSummary.change.toFixed(2)}`}
+                icon={<Coins className="mr-3" />}
+              />
+            </>
+          )}
         </div>
         <DialogFooter className="saled__btn">
           <Button onClick={onPrintInvoice}>
