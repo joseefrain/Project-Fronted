@@ -119,11 +119,13 @@ export const Sale = ({
     const updatedProducts = products.map((item) => {
       const newStock = item.stock - quantity;
 
-      handleProductSaleAlerts(
-        item.nombre,
-        newStock,
-        selectedProduct?.puntoReCompra ?? 0
-      );
+      if (item.id === productWithDiscount.productId) {
+        handleProductSaleAlerts(
+          item.nombre,
+          newStock,
+          selectedProduct?.puntoReCompra ?? 0
+        );
+      }
 
       return item.id === productWithDiscount.productId
         ? { ...item, stock: newStock }
