@@ -35,7 +35,7 @@ export const Contacts = () => {
                   src="/placeholder-avatar.jpg"
                   alt="Client Avatar"
                 />
-                <AvatarFallback>
+                <AvatarFallback className="font-bold font-onest text-[1.5rem]">
                   {client.generalInformation.name[0]}
                 </AvatarFallback>
               </Avatar>
@@ -57,22 +57,22 @@ export const Contacts = () => {
                 <InfoCard
                   icon={Building2}
                   label="Amount Receivable"
-                  value={`$${client.state.amountReceivable}`}
+                  value={`$${Math.floor(Number(client.state.amountReceivable?.$numberDecimal ?? 0))}`}
                 />
                 <InfoCard
                   icon={Building2}
                   label="Advances Received"
-                  value={`$${client.state.advancesReceipts ?? 0}`}
+                  value={`$${Math.floor(Number(client.state.advancesReceipts?.$numberDecimal ?? 0))}`}
                 />
                 <InfoCard
                   icon={Building2}
                   label="Advances Delivered"
-                  value={`$${client.state.advancesDelivered ?? 0}`}
+                  value={`$${Math.floor(Number(client.state.advancesDelivered?.$numberDecimal ?? 0))}`}
                 />
                 <InfoCard
                   icon={Building2}
                   label="Amount Payable"
-                  value={`$${client.state.amountPayable ?? 0}`}
+                  value={`$${Math.floor(Number(client.state.amountPayable?.$numberDecimal ?? 0))}`}
                 />
               </div>
             )}
