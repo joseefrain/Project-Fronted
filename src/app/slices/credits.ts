@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { handleThunkError } from '../../shared/utils/errorHandlers';
-import { ICreditsState } from '../../interfaces/creditsInterfaces';
+import { ICredit, ICreditsState } from '../../interfaces/creditsInterfaces';
 import { fetchCreditsByBranch } from '../../api/services/credits';
 
 export const getCreditsByBranch = createAsyncThunk(
@@ -16,6 +16,7 @@ export const getCreditsByBranch = createAsyncThunk(
 );
 
 const initialState: ICreditsState = {
+  creditSelected: null,
   credits: [],
   status: 'idle',
   error: null,
@@ -24,7 +25,11 @@ const initialState: ICreditsState = {
 const creditsSlice = createSlice({
   name: 'credits',
   initialState,
-  reducers: {},
+  reducers: {
+    setSelectedCredit: (state, action: PayloadAction<ICredit | null>) => {
+      state.creditSelected = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getCreditsByBranch.pending, (state) => {
@@ -38,6 +43,5 @@ const creditsSlice = createSlice({
   },
 });
 
-// eslint-disable-next-line no-empty-pattern
-export const {} = creditsSlice.actions;
+export const { setSelectedCredit } = creditsSlice.actions;
 export const creditsReducer = creditsSlice.reducer;

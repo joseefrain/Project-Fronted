@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/app/hooks';
 import { store } from '@/app/store';
 import {
@@ -9,13 +10,11 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { SearchComponent } from '@/shared/components/ui/Search';
-import { User } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { WalletCards } from 'lucide-react';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import { TablaCredits } from './table';
 import { getCreditsByBranch } from '../../../app/slices/credits';
 import { getSelectedBranchFromLocalStorage } from '../../../shared/helpers/branchHelpers';
-import { ICredit } from '../../../interfaces/creditsInterfaces';
 
 interface MainContactsProps {
   filterType: string;
@@ -33,12 +32,12 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
 
   const filteredProducts = Credits.filter((credit) =>
     filterType === 'historial'
-      ? true
+      ? credit.estadoCredito === 'CERRADO'
       : credit.modalidadCredito === filterType.toUpperCase()
-  ).filter(
-    (product) =>
-      product?.entidadId.generalInformation.name ??
-      ''.toLowerCase().includes(searchTerm.toLowerCase())
+  ).filter((product) =>
+    product?.entidadId.generalInformation.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -48,14 +47,6 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
     indexOfLastItem
   );
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-
-  const handleEditCredit = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    contactData: ICredit
-  ) => {
-    e.stopPropagation();
-    console.log(contactData);
-  };
 
   useEffect(() => {
     const branchId = !user?.sucursalId
@@ -71,11 +62,11 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <User size={20} />
+              <WalletCards size={20} />
               <CardTitle>
                 {filterType === 'historial'
                   ? 'Historial de créditos'
-                  : filterType === 'pagos'
+                  : filterType === 'pago'
                     ? 'Créditos a pagos'
                     : 'Créditos a plazos'}
               </CardTitle>
@@ -83,7 +74,7 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
             <CardDescription>
               {filterType === 'historial'
                 ? 'Visualización de los créditos finalizados'
-                : `Gestione sus a ${filterType}`}
+                : `Gestione sus créditos a ${filterType}s`}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -97,13 +88,10 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
 
             {currentItems.length === 0 ? (
               <span className="flex justify-center w-full text-sm text-center text-muted-foreground">
-                No hay créditos en esta sucursal
+                {`No hay créditos ${filterType === 'historial' ? 'finalizados' : filterType === 'plazo' ? 'a plazos' : 'a pagos'} en esta sucursal`}
               </span>
             ) : (
-              <TablaCredits
-                currentItems={currentItems}
-                handleEditCredit={handleEditCredit}
-              />
+              <TablaCredits currentItems={currentItems} />
             )}
           </CardContent>
           <CardFooter className="flex items-center justify-between">

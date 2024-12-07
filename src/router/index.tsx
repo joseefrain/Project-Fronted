@@ -210,11 +210,11 @@ export const Router = () => {
         />
       </Route>
       <Route
-        path="/payments"
+        path="/credits/:id"
         element={<RequireAuth rolesAllowed={['admin', 'user', 'root']} />}
       >
         <Route
-          path="/payments"
+          path="/credits/:id"
           element={
             <Layout>
               <CreditPaymentSystem />

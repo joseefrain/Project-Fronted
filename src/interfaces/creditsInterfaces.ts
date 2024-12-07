@@ -1,8 +1,14 @@
+import { IUser } from '../app/slices/login';
 import { IStatus } from './branchInterfaces';
 import { IEntities } from './entitiesInterfaces';
-import { ISale } from './salesInterfaces';
+import {
+  IPaymentMethod,
+  IProductSale,
+  ITypeTransaction,
+} from './salesInterfaces';
 
 export interface ICreditsState {
+  creditSelected: ICredit | null;
   credits: ICredit[];
   status: IStatus;
   error: string | null;
@@ -37,7 +43,7 @@ export interface ICredit {
   saldoCredito: number;
   estadoCredito: TypeEstadoCredito;
   fecheInicio: Date;
-  transaccionId: ISale;
+  transaccionId: ICreditSale;
   deleted_at: Date | null;
   plazoCredito: number;
   cuotaMensual: number;
@@ -45,4 +51,20 @@ export interface ICredit {
   pagoMinimoMensual: number;
   pagosCredito: IPagoCredito[];
   cuotasCredito: ICuotasCredito[];
+}
+
+export interface ICreditSale {
+  usuarioId: IUser;
+  sucursalId: string;
+  products: IProductSale[];
+  subtotal: number;
+  total: number;
+  discount: number;
+  monto: number;
+  cambioCliente: number;
+  cajaId: string;
+  entidadId?: string;
+  paymentMethod: IPaymentMethod;
+  tipoTransaccion: ITypeTransaction;
+  credito?: ICredit;
 }
