@@ -5,7 +5,7 @@ import {
   ICredit,
   IPostPagoCredito,
 } from '../../../interfaces/creditsInterfaces';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PaymentProgress } from './PaymentProgress';
 import { store } from '../../../app/store';
 import { payCredit } from '../../../app/slices/credits';
@@ -20,10 +20,7 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
   const [amount, setAmount] = useState<number>(0.0);
   const [processingSale, setProcessingSale] = useState(false);
 
-  const cuotasPagadas =
-    creditSelected?.cuotasCredito.filter((pago) => pago.estadoPago === 'PAGADO')
-      .length ?? 0;
-  const creditoPagado = creditSelected?.cuotasCredito.length === cuotasPagadas;
+  const creditoPagado = Number(creditSelected?.saldoPendiente) === 0;
 
   const handleSubmit = () => {
     setProcessingSale(true);
@@ -54,6 +51,32 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
     });
   };
 
+  const getValidAmount = (amount: string) => {
+    const amountNumber = Number(amount);
+
+    if (!creditSelected) return amountNumber;
+
+    if (creditSelected?.modalidadCredito === 'PLAZO') {
+      return creditSelected.cuotaMensual.$numberDecimal;
+    }
+
+    return amountNumber < creditSelected!.pagoMinimoMensual.$numberDecimal
+      ? creditSelected!.pagoMinimoMensual.$numberDecimal
+      : amountNumber > creditSelected!.saldoPendiente.$numberDecimal
+        ? creditSelected!.saldoPendiente.$numberDecimal
+        : amountNumber;
+  };
+
+  useEffect(() => {
+    if (!creditSelected) return;
+
+    setAmount(
+      creditSelected!.modalidadCredito === 'PLAZO'
+        ? creditSelected!.cuotaMensual.$numberDecimal
+        : creditSelected!.pagoMinimoMensual.$numberDecimal
+    );
+  }, [creditSelected]);
+
   return (
     <>
       <div className="flex flex-col justify-between w-2/4 gap-[14px]">
@@ -78,15 +101,13 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
                   type="number"
                   placeholder={'0.00'}
                   value={amount}
-                  onChange={(e) =>
-                    setAmount(
-                      Number(e.target.value) >
-                        creditSelected!.saldoPendiente.$numberDecimal
-                        ? (creditSelected?.saldoPendiente.$numberDecimal ?? 0)
-                        : Number(e.target.value)
-                    )
+                  onChange={(e) => setAmount(Number(e.target.value))}
+                  onBlur={(e) => setAmount(getValidAmount(e.target.value))}
+                  disabled={
+                    processingSale ||
+                    creditoPagado ||
+                    creditSelected?.modalidadCredito === 'PLAZO'
                   }
-                  disabled={processingSale || creditoPagado}
                   min={0}
                   max={creditSelected?.saldoPendiente.$numberDecimal}
                 />
