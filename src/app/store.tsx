@@ -7,6 +7,7 @@ import { groupsReducer } from './slices/groups';
 import { transferReducer } from './slices/transferSlice';
 import { salesReducer } from './slices/salesSlice';
 import { entitiesReducer } from './slices/entities';
+import { creditsReducer } from './slices/credits';
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     transfer: transferReducer,
     sales: salesReducer,
     entities: entitiesReducer,
+    credits: creditsReducer,
   },
 });
 

@@ -6,6 +6,7 @@ import { useAppSelector } from '@/app/hooks';
 import { Toaster } from '@/components/ui/toaster';
 import {
   BadgeDollarSign,
+  CreditCard,
   Group,
   House,
   Repeat,
@@ -32,6 +33,7 @@ export const Layout = ({ children }: LayoutProps) => {
       ? [{ name: 'SUCURSALES', path: '/branches', icon: <Store /> }]
       : []),
     { name: 'VENTAS', path: '/sales', icon: <ShoppingBag /> },
+    { name: 'CRÉDITOS', path: '/credits', icon: <CreditCard /> },
     { name: 'PRODUCTOS', path: '/products', icon: <ShoppingCart /> },
     { name: 'CATEGORÍAS', path: '/categories', icon: <Group /> },
     { name: 'DESCUENTOS', path: '/DiscountManager', icon: <BadgeDollarSign /> },
