@@ -35,7 +35,7 @@ export const Contacts = () => {
                   src="/placeholder-avatar.jpg"
                   alt="Client Avatar"
                 />
-                <AvatarFallback>
+                <AvatarFallback className="font-bold font-onest text-[1.5rem]">
                   {client.generalInformation.name[0]}
                 </AvatarFallback>
               </Avatar>
