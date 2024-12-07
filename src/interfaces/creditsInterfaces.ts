@@ -26,9 +26,9 @@ export interface IPagoCredito {
 }
 
 export interface ICuotasCredito {
-  numeroCuota: number;
-  montoCuota: number;
-  montoCapital: number;
+  numeroCuota: { $numberDecimal: number };
+  montoCuota: { $numberDecimal: number };
+  montoCapital: { $numberDecimal: number };
   fechaVencimiento: Date;
   estadoPago: EstadoPagoCuata;
   fechaCuota: Date;
@@ -40,15 +40,16 @@ export interface ICredit {
   entidadId: IEntities;
   tipoCredito: TypeCredito;
   modalidadCredito: ModalidadCredito;
-  saldoCredito: number;
+  saldoCredito: { $numberDecimal: number };
+  saldoPendiente: { $numberDecimal: number };
   estadoCredito: TypeEstadoCredito;
   fecheInicio: Date;
   transaccionId: ICreditSale;
   deleted_at: Date | null;
   plazoCredito: number;
-  cuotaMensual: number;
+  cuotaMensual: { $numberDecimal: number };
   fechaVencimiento: Date;
-  pagoMinimoMensual: number;
+  pagoMinimoMensual: { $numberDecimal: number };
   pagosCredito: IPagoCredito[];
   cuotasCredito: ICuotasCredito[];
 }
@@ -67,4 +68,10 @@ export interface ICreditSale {
   paymentMethod: IPaymentMethod;
   tipoTransaccion: ITypeTransaction;
   credito?: ICredit;
+}
+
+export interface IPostPagoCredito {
+  creditoIdStr: string;
+  montoPago: number;
+  modalidadCredito: ModalidadCredito;
 }

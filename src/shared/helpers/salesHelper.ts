@@ -148,7 +148,6 @@ export const handlePrintInvoice = ({
   //   `$${(item.price * item.quantity).toFixed(2)}`,
   // ]);
 
-
   // doc.autoTable({
   //   startY: 70,
   //   head: [tableColumn],
@@ -170,4 +169,18 @@ export const handlePrintInvoice = ({
 
   doc.text('¡Gracias por su compra!', 105, 280, { align: 'center' });
   doc.save('factura.pdf');
+};
+
+export const esFechaMayor = (fecha1: Date, fecha2: Date): boolean => {
+  const f1 = new Date(
+    fecha1.getFullYear(),
+    fecha1.getMonth(),
+    fecha1.getDate()
+  );
+  const f2 = new Date(
+    fecha2.getFullYear(),
+    fecha2.getMonth(),
+    fecha2.getDate()
+  );
+  return f1.getTime() > f2.getTime();
 };
