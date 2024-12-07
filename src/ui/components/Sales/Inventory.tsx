@@ -59,6 +59,8 @@ import { toast, Toaster } from 'sonner';
 import { createSale } from '../../../app/slices/salesSlice';
 import { ConfirmedSaleDialog } from './ConfirmedSaleDialog';
 import './style.scss';
+import { useAppSelector } from '../../../app/hooks';
+import { getEntities } from '../../../app/slices/entities';
 
 export interface ISaleSummary {
   subTotal: number;
@@ -77,18 +79,20 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   const caja = store.getState().sales.caja;
   const user = store.getState().auth.signIn.user;
   const branchSelected = store.getState().branches.selectedBranch;
+  const allEntities = useAppSelector((state) => state.entities.data);
+
+  const registeredCustomers = allEntities.filter(
+    (entity) => entity.type === 'customer'
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await store.dispatch(getEntities()).unwrap();
+    };
+    fetchData();
+  }, []);
 
   const [cashInRegister, setCashInRegister] = useState(0);
-  const [registeredCustomers] = useState([
-    {
-      id: '672edfa6285e202690507670',
-      name: 'Arleys Gatica',
-      credit: 1000,
-      creditUsed: 0,
-    },
-    { id: '2', name: 'Carlos Duarte', credit: 1500, creditUsed: 500 },
-    { id: '3', name: 'Junior Hurtado', credit: 500, creditUsed: 200 },
-  ]);
 
   const [customerType, setCustomerType] = useState<ICustomerType>(
     ICustomerType.GENERAL
@@ -288,8 +292,8 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                       className="justify-between w-full"
                     >
                       {customer
-                        ? registeredCustomers.find((c) => c.id === customer)
-                            ?.name
+                        ? registeredCustomers.find((c) => c._id === customer)
+                            ?.generalInformation.name
                         : 'Seleccionar cliente'}
                       <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                     </Button>
@@ -307,11 +311,11 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                         <CommandGroup>
                           {registeredCustomers.map((client) => (
                             <CommandItem
-                              key={client.id}
-                              value={client.name}
+                              key={client._id}
+                              value={client.generalInformation.name}
                               onSelect={() => {
                                 setCustomer(
-                                  client.id === customer ? '' : client.id!
+                                  client._id === customer ? '' : client._id!
                                 );
                                 setOpen(false);
                               }}
@@ -320,12 +324,12 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                               <Check
                                 className={cn(
                                   'mr-2 h-4 w-4',
-                                  customer === client.id
+                                  customer === client._id
                                     ? 'opacity-100'
                                     : 'opacity-0'
                                 )}
                               />
-                              {client.name}
+                              {client.generalInformation.name}
                             </CommandItem>
                           ))}
                         </CommandGroup>
