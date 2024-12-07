@@ -1,7 +1,15 @@
+import { ArrowDown, Eye, FolderSync, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Eye, ArrowDown, Search, FolderSync } from 'lucide-react';
 
+import { useAppSelector } from '@/app/hooks';
+import { getPendingTransfers } from '@/app/slices/transferSlice';
+import { store } from '@/app/store';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -11,23 +19,15 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tabs } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { IStatus } from '@/interfaces/branchInterfaces';
+import { IPendingTransfer } from '@/interfaces/transferInterfaces';
+import DetallesEnvio from '@/shared/components/ui/Details';
 import {
   getFormatedDate,
   incomingShipmentTableHeaders,
 } from '@/shared/helpers/transferHelper';
-import { store } from '@/app/store';
-import { getPendingTransfers } from '@/app/slices/transferSlice';
-import { useAppSelector } from '@/app/hooks';
-import { IPendingTransfer } from '@/interfaces/transferInterfaces';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Link } from 'react-router-dom';
-import DetallesEnvio from '@/shared/components/ui/Details';
-import { Skeleton } from '@/components/ui/skeleton';
 import './styles.scss';
-import { IStatus } from '@/interfaces/branchInterfaces';
 
 export default function PendingTools() {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -57,7 +57,7 @@ export default function PendingTools() {
   }, []);
 
   return (
-    <div className="container mx-auto ">
+    <div className="container mx-auto font-onest">
       <Tabs defaultValue="receive">
         <Card className="product__list">
           <CardHeader>

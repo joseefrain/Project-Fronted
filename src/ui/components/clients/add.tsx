@@ -1,9 +1,9 @@
-import { ChangeEvent, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { store } from '../../../app/store';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { addEntity } from '../../../app/slices/entities';
+import { store } from '../../../app/store';
 import {
   IEntities,
   IEntitiesContactInfo,
@@ -149,17 +149,17 @@ export const AddContact = ({ initialData, onClose }: AddContactProps) => {
 
   return (
     <div className="">
-      <div className="flex justify-between items-center p-4 border-b">
+      <div className="flex items-center justify-between p-4 border-b">
         <h2 className="text-xl font-semibold text-gray-800">Nuevo contacto</h2>
       </div>
 
       <form className="p-6 space-y-6">
-        <div className="flex rounded-md overflow-hidden border">
+        <div className="flex overflow-hidden border rounded-md">
           <Button
             className={`flex-1 rounded-none ${
               entityType === 'customer'
                 ? 'bg-primary text-primary-foreground'
-                : 'bg-background'
+                : 'bg-background text-black hover:text-white'
             }`}
             onClick={() => setEntityType('customer')}
             type="button"
@@ -169,8 +169,8 @@ export const AddContact = ({ initialData, onClose }: AddContactProps) => {
           <Button
             className={`flex-1 rounded-none ${
               entityType === 'supplier'
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-background'
+                ? 'bg-primary text-primary-foreground hover:bg-primary'
+                : 'bg-background text-black hover:text-white'
             }`}
             onClick={() => setEntityType('supplier')}
             type="button"
@@ -178,7 +178,7 @@ export const AddContact = ({ initialData, onClose }: AddContactProps) => {
             Proveedor
           </Button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {fields.map((field) => (
             <div className="space-y-2" key={field.name}>
               <Label htmlFor={field.name}>{field.label}</Label>
@@ -192,10 +192,10 @@ export const AddContact = ({ initialData, onClose }: AddContactProps) => {
             </div>
           ))}
         </div>
-        <div className="flex justify-center items-center pt-6 w-full h-full">
+        <div className="flex items-center justify-center w-full h-full pt-6">
           <Button
             onClick={handleAddingEntity}
-            className="bg-black  text-white"
+            className="text-white bg-black"
             disabled={loading}
           >
             {loading ? 'Creando...' : 'Crear contacto'}

@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -7,6 +6,7 @@ import {
 } from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
 import { MessageSquare, MessageSquareMore, Pencil, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 export interface ICommentProps {
   children?: React.ReactNode;
@@ -71,7 +71,7 @@ const Comment = ({
         )}
       </PopoverTrigger>
       <PopoverContent side="top" className="w-80">
-        <div className="space-y-4">
+        <div className="space-y-4 font-onest">
           <div className="flex items-center space-x-2">
             <div className="flex items-center justify-center w-8 h-8 font-semibold rounded-full bg-primary text-primary-foreground">
               A

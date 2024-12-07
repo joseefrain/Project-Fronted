@@ -1,3 +1,4 @@
+import { IRoles } from '@/app/slices/login';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -21,12 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Branch } from '@/interfaces/branchInterfaces';
+import { IDescuentoCreate } from '@/interfaces/salesInterfaces';
 import { cn } from '@/lib/utils';
 import { SelectSearch } from '@/shared/components/ui/SelectSearch';
 import { format } from 'date-fns';
-import { Branch } from '@/interfaces/branchInterfaces';
-import { IRoles } from '@/app/slices/login';
-import { IDescuentoCreate } from '@/interfaces/salesInterfaces';
 import React from 'react';
 
 interface IndexModalProps {
@@ -85,7 +85,7 @@ export const IndexModal = ({
     <>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogTrigger asChild></DialogTrigger>
-        <DialogContent>
+        <DialogContent className="font-onest">
           <DialogHeader>
             <DialogTitle>
               {editingId ? 'Edit Discount' : 'Add Discount'}

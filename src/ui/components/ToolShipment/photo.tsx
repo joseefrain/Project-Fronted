@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -7,15 +7,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Plus, Trash2, Camera, Image } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { Camera, Image, Plus, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 export interface IImages {
   handleSaveImages?: (images: string[]) => void;
@@ -82,7 +82,7 @@ export default function Images({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent side="top" className="w-[350px] p-0">
+      <PopoverContent side="top" className="w-[350px] p-0 font-onest">
         <Card className="border-0 shadow-none">
           <CardHeader className="flex flex-row items-center pb-2 space-x-2">
             <div className="flex items-center justify-center w-8 h-8 font-semibold rounded-full bg-primary text-primary-foreground">
@@ -103,7 +103,7 @@ export default function Images({
                   </div>
                 ))
               ) : (
-                <span className="pl-1 font-sans text-sm text-gray-500 ">
+                <span className="pl-1 text-sm text-gray-500 font-onest ">
                   No hay imágenes
                 </span>
               )}

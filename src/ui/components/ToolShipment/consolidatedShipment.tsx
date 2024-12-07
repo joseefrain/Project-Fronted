@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { SendHorizonal, SendToBack } from 'lucide-react';
-import CustomSelect from './customSelect';
-import { updateSelectedBranch } from '@/app/slices/branchSlice';
-import { Branch, ITablaBranch } from '@/interfaces/branchInterfaces';
 import { useAppSelector } from '@/app/hooks';
-import { GetBranches } from '@/shared/helpers/Branchs';
+import { updateSelectedBranch } from '@/app/slices/branchSlice';
 import { store } from '@/app/store';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Branch, ITablaBranch } from '@/interfaces/branchInterfaces';
 import { ITool } from '@/interfaces/transferInterfaces';
 import {
-  getSelectedBranchFromLocalStorage,
   findBranchById,
+  getSelectedBranchFromLocalStorage,
 } from '@/shared/helpers/branchHelpers';
+import { GetBranches } from '@/shared/helpers/Branchs';
+import { SendHorizonal, SendToBack } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../../../components/ui/button';
+import CustomSelect from './customSelect';
 
 export interface IConsolidatedShipment {
   selectedBranch:
@@ -71,7 +71,7 @@ export const ConsolidatedShipment = ({
         <div className="flex items-center justify-between mb-4">
           <Button
             type="button"
-            className="w-[300px] px-4 py-2 bg-gray-200 text-gray-800 rounded"
+            className="w-[200px] px-4 py-2 bg-gray-200 text-gray-800 rounded"
             disabled={!sourceBranch}
           >
             {sourceBranch

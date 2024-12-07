@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { ChartColumnStacked, Group } from 'lucide-react';
+import { useAppSelector } from '@/app/hooks';
+import {
+  AddingGroups,
+  createGroupSlice,
+  getAllGroupsSlice,
+  setSelectCategory,
+} from '@/app/slices/groups';
+import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,20 +16,13 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { CategoriesCard } from './Categories';
-import { store } from '@/app/store';
-import { useAppSelector } from '@/app/hooks';
-import { Label } from '@radix-ui/react-label';
-import {
-  AddingGroups,
-  createGroupSlice,
-  getAllGroupsSlice,
-  setSelectCategory,
-} from '@/app/slices/groups';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { toast, Toaster } from 'sonner';
 import { IProductoGroups } from '@/interfaces/branchInterfaces';
-import { Typography } from '@/shared/components/ui/Typography';
+import { Label } from '@radix-ui/react-label';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { ChartColumnStacked } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { toast, Toaster } from 'sonner';
+import { CategoriesCard } from './Categories';
 
 export default function Categories() {
   const categories = useAppSelector((state) => state.categories.groups);
@@ -78,18 +77,14 @@ export default function Categories() {
     <>
       <Toaster richColors position="bottom-right" />
       <div className="container mx-auto ">
-        <div className="flex items-center w-full gap-3">
-          <Group size={40} />
-          <Typography component="h2" className="mb-4 font-medium text-black">
-            Categorías
-          </Typography>
-        </div>
-        <br />
-        <nav className="flex flex-col mb-6 space-y-4 sm:flex-row sm:items-center gap-5 sm:space-y-0">
+        <h1 className="text-4xl font-bold text-gray-800 font-onest w-[38%]">
+          Categorías
+        </h1>
+        <nav className="flex flex-col gap-5 mb-6 space-y-4 mt-9 sm:flex-row sm:items-center sm:space-y-0">
           <div className="flex items-center space-x-4">
             <Input
-              placeholder="Buscar por nombre de la categorias"
-              className="w-full sm:w-[34.5rem]"
+              placeholder="Buscar categorías"
+              className="w-full sm:w-[26.5rem] font-onest"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -97,10 +92,10 @@ export default function Categories() {
           <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
             <Button
               onClick={() => openDialog(false)}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto font-onest"
             >
-              <ChartColumnStacked className="mr-2 h-4 w-4" />
-              Agregar Categoria
+              <ChartColumnStacked className="w-4 h-4 mr-2" />
+              Agregar
             </Button>
           </div>
         </nav>
@@ -113,17 +108,15 @@ export default function Categories() {
             }
           }}
         >
-          <DialogContent>
+          <DialogContent className="font-onest">
             <DialogHeader>
               <DialogTitle>
-                {editingSucursal
-                  ? 'Editar Categorias'
-                  : 'Agregar Nueva Categorias'}
+                {editingSucursal ? 'Editar categoría' : 'Agregar categoría'}
               </DialogTitle>
               <DialogDescription>
                 {editingSucursal
-                  ? 'Modifica los detalles de la Categorias aquí.'
-                  : 'Ingresa los detalles de la nueva Categorias.'}
+                  ? 'Modifica los detalles de la categoría aquí.'
+                  : 'Ingresa los detalles de la categoría.'}
               </DialogDescription>
             </DialogHeader>
 

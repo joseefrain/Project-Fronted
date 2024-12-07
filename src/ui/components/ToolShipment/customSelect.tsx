@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useAppSelector } from '@/app/hooks';
 import {
   Select,
@@ -8,6 +7,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Branch } from '@/interfaces/branchInterfaces';
+import { useState } from 'react';
 
 export interface ICustomSelect {
   sourceBranchId: string;
@@ -44,14 +44,18 @@ const CustomSelect = ({
 
   return (
     <Select onValueChange={handleSelectChangeBranch}>
-      <SelectTrigger className="w-[300px]">
+      <SelectTrigger className="w-[200px]">
         <SelectValue placeholder="Seleccione Sucursal">
           {selectedWarehouse?.nombre ?? ''}
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
         {filteredWarehouses.map((branch) => (
-          <SelectItem key={branch._id} value={branch._id as string}>
+          <SelectItem
+            key={branch._id}
+            value={branch._id as string}
+            className="font-onest"
+          >
             {branch.nombre}
           </SelectItem>
         ))}

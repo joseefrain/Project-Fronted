@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Boxes, Search } from 'lucide-react';
+import { useAppSelector } from '@/app/hooks';
+import { fetchBranches, updateSelectedBranch } from '@/app/slices/branchSlice';
+import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -11,18 +14,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { TabsContent } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAppSelector } from '@/app/hooks';
+import { ITool } from '@/interfaces/transferInterfaces';
+import { GetBranches } from '@/shared/helpers/Branchs';
+import { Boxes, PlusCircle, Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { ConsolidatedShipment } from './consolidatedShipment';
+import './styles.scss';
 import { SummaryTools } from './summaryTools';
 import { ToolTransfer } from './toolTransfer';
-import './styles.scss';
-import { GetBranches } from '@/shared/helpers/Branchs';
-import { store } from '@/app/store';
-import { fetchBranches, updateSelectedBranch } from '@/app/slices/branchSlice';
-import { ITool } from '@/interfaces/transferInterfaces';
-import { Skeleton } from '@/components/ui/skeleton';
-import './styles.scss';
 
 export default function ToolShipment() {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -140,7 +139,7 @@ export default function ToolShipment() {
   }, []);
 
   return (
-    <div className="container mx-auto ">
+    <div className="container mx-auto font-onest">
       <TabsContent value="send">
         <div className="branch__grid">
           <Card className="product__list">
@@ -164,10 +163,9 @@ export default function ToolShipment() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Herramientas</TableHead>
-                    <TableHead>Código</TableHead>
-                    <TableHead>Punto de compra</TableHead>
-                    <TableHead>Cantidad disponible</TableHead>
-                    <TableHead>Cantidad a enviar</TableHead>
+                    <TableHead>Stock mínimo</TableHead>
+                    <TableHead>Disponible</TableHead>
+                    <TableHead>Cantidad</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -180,12 +178,13 @@ export default function ToolShipment() {
                     filteredTools.map((tool) => (
                       <TableRow key={tool.id}>
                         <TableCell>{tool.nombre}</TableCell>
-                        <TableCell>{tool.id}</TableCell>
-                        <TableCell>{tool?.puntoReCompra}</TableCell>
+                        <TableCell className="text-center">
+                          {tool?.puntoReCompra}
+                        </TableCell>
                         <TableCell
-                          className={`${Number(tool.puntoReCompra) >= tool.stock ? 'text-red-500 font-semibold' : ''}`}
+                          className={` text-center ${Number(tool.puntoReCompra) >= tool.stock ? 'text-red-500 font-semibold' : ''}`}
                         >
-                          {tool.stock} unidades
+                          {tool.stock}
                         </TableCell>
                         <TableCell>
                           <Input
@@ -199,16 +198,17 @@ export default function ToolShipment() {
                             }
                             min={0}
                             max={tool.stock}
+                            className="w-[80%]"
                           />
                         </TableCell>
                         <TableCell>
                           <Button
                             disabled={tool.quantityToSend <= 0}
                             variant="default"
-                            size="sm"
                             onClick={() => handleShipmentTool(tool)}
+                            className="w-[40px] flex items-center justify-center"
                           >
-                            Agregar
+                            <PlusCircle className="w-4 h-4" />
                           </Button>
                         </TableCell>
                       </TableRow>

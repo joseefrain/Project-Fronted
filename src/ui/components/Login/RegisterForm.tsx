@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '@/app/hooks';
 import { fetchBranches } from '@/app/slices/branchSlice';
 import { RegistroUsuario } from '@/app/slices/login';
@@ -6,7 +5,9 @@ import { store } from '@/app/store';
 import { ITablaBranch } from '@/interfaces/branchInterfaces';
 import { GetBranches } from '@/shared/helpers/Branchs';
 import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
 
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -16,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast, Toaster } from 'sonner';
 
@@ -111,7 +111,7 @@ const RegisterForm = () => {
       <Toaster richColors position="bottom-right" />
       <motion.form
         onSubmit={handleSubmit}
-        className="w-full max-w-md p-6 mx-auto mt-10 rounded-lg shadow-md auth-form bg-gray-50"
+        className="w-full max-w-md p-6 mx-auto mt-10 rounded-lg shadow-md auth-form bg-gray-50 font-onest"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
