@@ -29,8 +29,7 @@ export function CreditSummary({ creditSelected }: CreditSummaryProps) {
 
   const isDeadlineCredit = creditSelected?.modalidadCredito === 'PLAZO';
 
-  const creditoPagado =
-    Number(creditSelected?.saldoPendiente.$numberDecimal) === 0;
+  const creditoPagado = creditSelected?.estadoCredito === 'CERRADO';
 
   return (
     <Card
