@@ -62,17 +62,17 @@ export const Contacts = () => {
                 <InfoCard
                   icon={Building2}
                   label="Advances Received"
-                  value={`$${client.state.advancesReceipts}`}
+                  value={`$${client.state.advancesReceipts ?? 0}`}
                 />
                 <InfoCard
                   icon={Building2}
                   label="Advances Delivered"
-                  value={`$${client.state.advancesDelivered}`}
+                  value={`$${client.state.advancesDelivered ?? 0}`}
                 />
                 <InfoCard
                   icon={Building2}
                   label="Amount Payable"
-                  value={`$${client.state.amountPayable}`}
+                  value={`$${client.state.amountPayable ?? 0}`}
                 />
               </div>
             )}
