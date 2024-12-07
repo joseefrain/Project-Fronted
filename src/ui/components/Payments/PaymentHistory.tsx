@@ -8,21 +8,14 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import './styles.scss';
+import { ICredit } from '../../../interfaces/creditsInterfaces';
+import { getFormatedDate } from '../../../shared/helpers/transferHelper';
 
-export function PaymentHistory() {
-  const payments = [
-    { date: '01/06/2023', amount: 500, type: 'Cuota', status: 'Pagado' },
-    { date: '15/05/2023', amount: 200, type: 'Abono', status: 'Procesado' },
-    { date: '01/05/2023', amount: 500, type: 'Cuota', status: 'Pagado' },
-    { date: '20/04/2023', amount: 100, type: 'Abono', status: 'Procesado' },
-    { date: '01/04/2023', amount: 500, type: 'Cuota', status: 'Pagado' },
-    { date: '01/06/2023', amount: 500, type: 'Cuota', status: 'Pagado' },
-    { date: '15/05/2023', amount: 200, type: 'Abono', status: 'Procesado' },
-    { date: '01/05/2023', amount: 500, type: 'Cuota', status: 'Pagado' },
-    { date: '20/04/2023', amount: 100, type: 'Abono', status: 'Procesado' },
-    { date: '01/04/2023', amount: 500, type: 'Cuota', status: 'Pagado' },
-  ];
+export interface IPaymentHistoryProps {
+  creditSelected: ICredit | null;
+}
 
+export function PaymentHistory({ creditSelected }: IPaymentHistoryProps) {
   return (
     <Card className="credit__history">
       <CardHeader>
@@ -32,21 +25,31 @@ export function PaymentHistory() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="font-onest">Fecha</TableHead>
-              <TableHead className="font-onest">Monto</TableHead>
-              <TableHead className="font-onest">Tipo</TableHead>
-              <TableHead className="font-onest">Estado</TableHead>
+              <TableHead className="text-center font-onest"># Cuota</TableHead>
+              <TableHead className="text-center font-onest">Fecha</TableHead>
+              <TableHead className="text-center font-onest">Monto</TableHead>
+              <TableHead className="text-center font-onest">Estado</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {payments.map((payment, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-onest">{payment.date}</TableCell>
-                <TableCell className="font-onest">${payment.amount}</TableCell>
-                <TableCell className="font-onest">{payment.type}</TableCell>
-                <TableCell className="font-onest">{payment.status}</TableCell>
-              </TableRow>
-            ))}
+            {creditSelected?.cuotasCredito
+              .filter((cuota) => cuota.estadoPago === 'PAGADO')
+              .map((payment, index) => (
+                <TableRow key={index}>
+                  <TableCell className="text-center font-onest">
+                    {payment.numeroCuota}
+                  </TableCell>
+                  <TableCell className="text-center font-onest">
+                    {getFormatedDate(payment.fechaCuota)}
+                  </TableCell>
+                  <TableCell className="text-center font-onest">
+                    ${payment.montoCuota.$numberDecimal}
+                  </TableCell>
+                  <TableCell className="text-center font-onest">
+                    {payment.estadoPago}
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </CardContent>

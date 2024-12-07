@@ -26,6 +26,7 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
   const creditoPagado = creditSelected?.cuotasCredito.length === cuotasPagadas;
 
   const handleSubmit = () => {
+    setProcessingSale(true);
     const data: IPostPagoCredito = {
       creditoIdStr: creditSelected?._id ?? '',
       montoPago: amount,

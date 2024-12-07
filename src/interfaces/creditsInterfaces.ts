@@ -26,7 +26,7 @@ export interface IPagoCredito {
 }
 
 export interface ICuotasCredito {
-  numeroCuota: { $numberDecimal: number };
+  numeroCuota: number;
   montoCuota: { $numberDecimal: number };
   montoCapital: { $numberDecimal: number };
   fechaVencimiento: Date;
