@@ -8,7 +8,7 @@ export function CreditSummary({ paymentType }: CreditSummaryProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
+        <CardTitle className="font-onest">
           {paymentType === 'abono' ? 'Resumen de Abono' : 'Resumen de Crédito'}
         </CardTitle>
       </CardHeader>
@@ -17,34 +17,36 @@ export function CreditSummary({ paymentType }: CreditSummaryProps) {
           {paymentType === 'abono' ? (
             <>
               <p>
-                <strong>Total de deuda:</strong> $10,000
+                <strong className="font-onest">Total de deuda:</strong> $10,000
               </p>
               <p>
-                <strong>Próximo pago:</strong> 15/07/2023
+                <strong className="font-onest">Próximo pago:</strong> 15/07/2023
               </p>
               <p>
-                <strong>Monto mínimo de abono:</strong> $100
+                <strong className="font-onest">Monto mínimo de abono:</strong>{' '}
+                $100
               </p>
             </>
           ) : (
             <>
               <p>
-                <strong>Monto total del crédito:</strong> $10,000
+                <strong className="font-onest">Monto total del crédito:</strong>{' '}
+                $10,000
               </p>
               <p>
-                <strong>Cuotas totales:</strong> 24
+                <strong className="font-onest">Cuotas totales:</strong> 24
               </p>
               <p>
-                <strong>Cuotas pagadas:</strong> 12
+                <strong className="font-onest">Cuotas pagadas:</strong> 12
               </p>
               <p>
-                <strong>Saldo pendiente:</strong> $6,000
+                <strong className="font-onest">Saldo pendiente:</strong> $6,000
               </p>
               <p>
-                <strong>Próximo pago:</strong> 15/07/2023
+                <strong className="font-onest">Próximo pago:</strong> 15/07/2023
               </p>
               <p>
-                <strong>Monto de cuota:</strong> $500
+                <strong className="font-onest">Monto de cuota:</strong> $500
               </p>
             </>
           )}
