@@ -13,3 +13,19 @@
 .card__header {
   @apply flex flex-col gap-4 mt-0 space-y-0 #{!important};
 }
+
+.progress__bar {
+  @apply w-full;
+}
+
+.complete {
+  div {
+    @apply bg-green-500 #{!important};
+  }
+}
+
+.incomplete {
+  div {
+    @apply bg-primary #{!important};
+  }
+}

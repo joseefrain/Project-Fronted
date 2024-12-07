@@ -20,6 +20,11 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
   const [amount, setAmount] = useState<number>(0.0);
   const [processingSale, setProcessingSale] = useState(false);
 
+  const cuotasPagadas =
+    creditSelected?.cuotasCredito.filter((pago) => pago.estadoPago === 'PAGADO')
+      .length ?? 0;
+  const creditoPagado = creditSelected?.cuotasCredito.length === cuotasPagadas;
+
   const handleSubmit = () => {
     const data: IPostPagoCredito = {
       creditoIdStr: creditSelected?._id ?? '',
@@ -50,11 +55,11 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
 
   return (
     <>
-      <div className="flex flex-col justify-between w-2/4">
+      <div className="flex flex-col justify-between w-2/4 gap-[14px]">
         {creditSelected?.modalidadCredito === 'PLAZO' && (
           <PaymentProgress creditSelected={creditSelected} />
         )}
-        <Card className="w-full">
+        <Card className="w-full h-full">
           <CardHeader>
             <CardTitle className="font-onest">
               {creditSelected?.modalidadCredito === 'PAGO'
@@ -72,15 +77,24 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
                   type="number"
                   placeholder={'0.00'}
                   value={amount}
-                  onChange={(e) => setAmount(Number(e.target.value))}
-                  disabled={processingSale}
+                  onChange={(e) =>
+                    setAmount(
+                      Number(e.target.value) >
+                        creditSelected!.saldoPendiente.$numberDecimal
+                        ? (creditSelected?.saldoPendiente.$numberDecimal ?? 0)
+                        : Number(e.target.value)
+                    )
+                  }
+                  disabled={processingSale || creditoPagado}
+                  min={0}
+                  max={creditSelected?.saldoPendiente.$numberDecimal}
                 />
               </div>
               <Button
                 type="submit"
-                className="w-full font-onest"
+                className="w-full font-onest hover:disabled:cursor-not-allowed"
                 onClick={handleSubmit}
-                disabled={processingSale || amount <= 0}
+                disabled={processingSale || amount <= 0 || creditoPagado}
               >
                 {creditSelected?.modalidadCredito === 'PAGO'
                   ? 'Abonar'
