@@ -86,10 +86,12 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const dataToSubmit = {
-      ...credentials,
-      sucursalId: selectedBranch?._id || '',
-    };
+
+    const { ...rest } = credentials;
+    const dataToSubmit =
+      credentials.role === 'root'
+        ? rest
+        : { ...rest, sucursalId: selectedBranch?._id || '' };
 
     try {
       await store.dispatch(RegistroUsuario(dataToSubmit)).unwrap();
@@ -201,6 +203,7 @@ const RegisterForm = () => {
             </SelectContent>
           </Select>
         </div>
+
         <button
           type="submit"
           className="w-full text-white bg-black hover:bg-blue-700"
