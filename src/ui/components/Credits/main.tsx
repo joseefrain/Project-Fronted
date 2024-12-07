@@ -33,7 +33,8 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
   const filteredProducts = Credits.filter((credit) =>
     filterType === 'historial'
       ? credit.estadoCredito === 'CERRADO'
-      : credit.modalidadCredito === filterType.toUpperCase()
+      : credit.modalidadCredito === filterType.toUpperCase() &&
+        credit.estadoCredito === 'ABIERTO'
   ).filter((product) =>
     product?.entidadId.generalInformation.name
       .toLowerCase()
