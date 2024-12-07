@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useEffect, useState } from 'react';
 import { ICredit } from '../../../interfaces/creditsInterfaces';
+import './styles.scss';
 
 export interface IPaymentProgressProps {
   creditSelected: ICredit | null;
@@ -30,7 +31,10 @@ export function PaymentProgress({ creditSelected }: IPaymentProgressProps) {
         <CardTitle className="font-onest">Progreso del Pago</CardTitle>
       </CardHeader>
       <CardContent>
-        <Progress value={progress} className="w-full" />
+        <Progress
+          value={progress}
+          className={`progress__bar ${progress === 100 ? 'complete' : 'incomplete'}`}
+        />
         <p className="mt-2 text-sm text-left font-onest">
           Has pagado el {progress}% de tu deuda total
         </p>
