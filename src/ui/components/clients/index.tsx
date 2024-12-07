@@ -4,40 +4,12 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Building2, Mail, Phone, MapPin, User, Calendar } from 'lucide-react';
 import React, { useEffect } from 'react';
-import { IEntities } from '../../../interfaces/entitiesInterfaces';
-// import { useAppSelector } from '../../../app/hooks';
+import { useAppSelector } from '../../../app/hooks';
 import { store } from '../../../app/store';
 import { getEntities } from '../../../app/slices/entities';
 
-const client: IEntities = {
-  generalInformation: {
-    identificationNumber: '123456789',
-    department: 'Antioquia',
-    country: 'Colombia',
-    address: '123 Main Street',
-    name: 'Juan Perez',
-  },
-  contactInformation: {
-    email: 'client@example.com',
-    mobilePhone: '3001234567',
-    telephone: '6041234567',
-  },
-  commercialInformation: {
-    paymentTerm: 'Immediate',
-    seller: 'John Doe',
-  },
-  state: {
-    amountReceivable: 10000,
-    advancesReceipts: 2000,
-    advancesDelivered: 1500,
-    amountPayable: 5000,
-  },
-  entities: 'Client',
-  type: 'customer',
-};
-
 export const Contacts = () => {
-  //   const allEntities = useAppSelector((state) => state.entities.data);
+  const allEntities = useAppSelector((state) => state.entities.selectedEntity);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,6 +17,12 @@ export const Contacts = () => {
     };
     fetchData();
   }, []);
+
+  if (!allEntities) {
+    return <p className="text-center">Loading...</p>;
+  }
+
+  const client = allEntities;
 
   return (
     <div className="container mx-auto py-10">
@@ -65,13 +43,10 @@ export const Contacts = () => {
                 <CardTitle className="text-2xl">
                   {client.generalInformation.name}
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Client since 2023
-                </p>
               </div>
             </div>
             <Badge variant="outline" className="text-sm">
-              Client
+              {client.type === 'customer' ? 'Client' : 'Proveedor'}
             </Badge>
           </div>
         </CardHeader>
