@@ -20,7 +20,7 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
   const [amount, setAmount] = useState<number>(0.0);
   const [processingSale, setProcessingSale] = useState(false);
 
-  const creditoPagado = Number(creditSelected?.saldoPendiente) === 0;
+  const creditoPagado = creditSelected?.estadoCredito === 'CERRADO';
 
   const handleSubmit = () => {
     setProcessingSale(true);
