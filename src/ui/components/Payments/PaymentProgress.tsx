@@ -26,17 +26,17 @@ export function PaymentProgress({ creditSelected }: IPaymentProgressProps) {
   }, [creditSelected]);
 
   return (
-    <Card className="pt-4">
+    <Card className="pt-[10px]">
       <CardHeader className="py-2">
         <CardTitle className="font-onest">Progreso del Pago</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pb-[10px]">
         <Progress
           value={progress}
           className={`progress__bar ${progress === 100 ? 'complete' : 'incomplete'}`}
         />
         <p className="mt-2 text-sm text-left font-onest">
-          Has pagado el {progress}% de tu deuda total
+          Se ha pagado el {progress}% de la deuda total
         </p>
       </CardContent>
     </Card>

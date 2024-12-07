@@ -41,7 +41,7 @@ export const CreditPaymentSystem = () => {
           <PaymentForm creditSelected={creditSelected} />
         </div>
       </div>
-      <PaymentHistory />
+      <PaymentHistory creditSelected={creditSelected} />
     </div>
   );
 };
