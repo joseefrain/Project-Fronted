@@ -49,7 +49,6 @@ import {
   Clock,
   CreditCard,
   HandCoins,
-  MapPin,
   Phone,
   Receipt,
   User,
@@ -81,7 +80,12 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
 
   const [cashInRegister, setCashInRegister] = useState(0);
   const [registeredCustomers] = useState([
-    { id: '1', name: 'Arleys Gatica', credit: 1000, creditUsed: 0 },
+    {
+      id: '672edfa6285e202690507670',
+      name: 'Arleys Gatica',
+      credit: 1000,
+      creditUsed: 0,
+    },
     { id: '2', name: 'Carlos Duarte', credit: 1500, creditUsed: 500 },
     { id: '3', name: 'Junior Hurtado', credit: 500, creditUsed: 200 },
   ]);
@@ -207,20 +211,13 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
 
   return (
     <>
-      <Card className="shadow-lg bg-white/80 backdrop-blur-sm">
+      <Card className="shadow-lg bg-white/80 backdrop-blur-sm font-onest">
         <CardHeader className="flex flex-col justify-between gap-2 pb-4">
           <div className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2 font-bold text-primary">
               <Receipt />
-              Caja - {user?.username.toUpperCase()}
+              {user?.username.toUpperCase()}
             </CardTitle>
-
-            <div className="flex items-center text-sm">
-              <MapPin className="w-4 h-4 mr-2" />
-              <span className="font-semibold">
-                {user?.sucursalId?.nombre ?? branchSelected?.nombre}
-              </span>
-            </div>
             <div className="flex items-center text-sm">
               <Phone className="w-4 h-4 mr-2" />
               <span className="font-semibold">
@@ -236,10 +233,12 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
           </div>
 
           <div className="flex items-center justify-center w-full gap-4 p-2 m-auto font-sans font-semibold text-center text-black rounded-md shadow-md bg-sky-100">
-            <span className="font-medium text-blue-900 uppercase">
+            <span className="font-medium text-blue-900 uppercase font-onest">
               Efectivo en caja
             </span>
-            <span className="font-bold">${cashInRegister.toFixed(2)}</span>
+            <span className="font-bold font-onest">
+              ${cashInRegister.toFixed(2)}
+            </span>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -261,7 +260,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                 <SelectTrigger id="customer-type">
                   <SelectValue placeholder="Seleccionar" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="font-onest">
                   <SelectItem value={ICustomerType.REGISTERED}>
                     <User className="inline w-4 h-4 mr-2" />
                     Registrado
@@ -297,9 +296,14 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                   </PopoverTrigger>
                   <PopoverContent className="p-0">
                     <Command>
-                      <CommandInput placeholder="Buscar cliente" />
+                      <CommandInput
+                        placeholder="Buscar cliente"
+                        className="font-onest"
+                      />
                       <CommandList className="product__list">
-                        <CommandEmpty>Producto no encontrado.</CommandEmpty>
+                        <CommandEmpty className="p-4 text-sm text-gray-800 font-onest">
+                          Cliente no encontrado.
+                        </CommandEmpty>
                         <CommandGroup>
                           {registeredCustomers.map((client) => (
                             <CommandItem
@@ -311,6 +315,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                                 );
                                 setOpen(false);
                               }}
+                              className="font-onest"
                             >
                               <Check
                                 className={cn(
@@ -361,7 +366,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                     className="flex items-center gap-2"
                   />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="font-onest">
                   <SelectItem
                     value={IPaymentMethod.CASH}
                     className="flex items-center gap-2"
@@ -396,7 +401,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                     value={cashReceived}
                     onChange={(e) => setCashReceived(e.target.value)}
                     placeholder="0.00"
-                    className="pl-10 font-sans text-lg font-semibold bg-white"
+                    className="pl-10 text-lg font-semibold bg-white font-onest"
                     disabled={processingSale}
                   />
                 </div>
@@ -407,7 +412,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
               <div className="w-[47.5%] flex justify-between items-center gap-4">
                 <div className="w-full space-y-2">
                   <Label>
-                    Modalidad de crédito
+                    Tipo de crédito
                     <span className="text-red-600">*</span>
                   </Label>
                   <Select
@@ -423,7 +428,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                         className="flex items-center gap-2"
                       />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="font-onest">
                       <SelectItem
                         value={ICreditMethod.PLAZO}
                         className="flex items-center gap-2"
@@ -456,7 +461,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                           value={months}
                           onChange={(e) => setMonths(e.target.value)}
                           placeholder="0"
-                          className="font-sans font-semibold text-center bg-white"
+                          className="font-semibold text-center bg-white font-onest"
                           disabled={processingSale}
                         />
                       </div>
@@ -500,7 +505,10 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
               processingSale ||
               (customerType === ICustomerType.REGISTERED && !customer) ||
               (paymentMethod === IPaymentMethod.CASH &&
-                Number(cashReceived ?? 0) < saleSummary.total)
+                Number(cashReceived ?? 0) < saleSummary.total) ||
+              (paymentMethod === IPaymentMethod.CREDIT &&
+                creditMethod === ICreditMethod.PLAZO &&
+                Number(months ?? 0) === 0)
             }
             onClick={handleProcessSale}
           >

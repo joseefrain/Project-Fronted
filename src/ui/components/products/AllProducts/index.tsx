@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useAppSelector } from '@/app/hooks';
+import { fetchAllProducts } from '@/app/slices/productsSlice';
+import { store } from '@/app/store';
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '@/components/ui/card';
-import { store } from '@/app/store';
-import Pagination from '../../../../shared/components/ui/Pagination/Pagination';
-import { useAppSelector } from '@/app/hooks';
-import ProductsTable from './Table';
-import { fetchAllProducts } from '@/app/slices/productsSlice';
-import { SearchComponent } from '@/shared/components/ui/Search';
 import { ITablaBranch } from '@/interfaces/branchInterfaces';
+import { SearchComponent } from '@/shared/components/ui/Search';
 import { Boxes } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import Pagination from '../../../../shared/components/ui/Pagination/Pagination';
+import ProductsTable from './Table';
 
 export const Allproducts = () => {
   const dataAllProducts = useAppSelector((state) => state.products.products);
@@ -54,7 +54,7 @@ export const Allproducts = () => {
 
   return (
     <div className="flex flex-col w-full">
-      <main className="flex-1 p-4 md:p-6">
+      <main className="flex-1 py-4 md:py-6">
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">

@@ -1,23 +1,23 @@
-import { useEffect, useState } from 'react';
+import { store } from '@/app/store';
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '@/components/ui/card';
 import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
-import { store } from '@/app/store';
+import { useEffect, useState } from 'react';
 import ProductsTable from './ProductTable';
 // import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import { useAppSelector } from '@/app/hooks';
-import { getAllGroupsSlice } from '@/app/slices/groups';
-import { GetBranches } from '@/shared/helpers/Branchs';
 import { searchForStockProductsAtBranch } from '@/app/slices/branchSlice';
+import { getAllGroupsSlice } from '@/app/slices/groups';
 import { InventarioSucursalWithPopulated } from '@/interfaces/transferInterfaces';
-import { Boxes } from 'lucide-react';
 import Pagination from '@/shared/components/ui/Pagination/Pagination';
+import { GetBranches } from '@/shared/helpers/Branchs';
+import { Boxes } from 'lucide-react';
 
 export function ProductFormExist() {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -107,7 +107,7 @@ export function ProductFormExist() {
 
   return (
     <div className="flex flex-col w-full">
-      <main className="flex-1 p-4 md:p-6">
+      <main className="flex-1 py-4 md:py-6">
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">

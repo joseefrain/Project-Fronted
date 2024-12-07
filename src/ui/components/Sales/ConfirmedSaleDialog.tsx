@@ -95,7 +95,7 @@ export const ConfirmedSaleDialog = ({
         open ? setIsModalOpen(open) : handleCloseModal()
       }
     >
-      <DialogContent className="sm:max-w-[475px]">
+      <DialogContent className="sm:max-w-[475px] font-onest">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-primary">
             Venta procesada con éxito
@@ -133,7 +133,7 @@ export const ConfirmedSaleDialog = ({
           {paymentMethod === IPaymentMethod.CREDIT && (
             <>
               <ReportField
-                label="Modalidad de crédito"
+                label="Tipo de crédito"
                 value={creditMethod}
                 icon={<User className="mr-3" />}
               />
@@ -146,16 +146,20 @@ export const ConfirmedSaleDialog = ({
               )}
             </>
           )}
-          <ReportField
-            label="Subtotal"
-            value={`$${saleSummary.total.toFixed(2)}`}
-            icon={<Captions className="mr-3" />}
-          />
-          <ReportField
-            label="Descuento"
-            value={`$${saleSummary.totalDiscount.toFixed(2)}`}
-            icon={<BadgeMinus className="mr-3" />}
-          />
+          {saleSummary.totalDiscount > 0 && (
+            <>
+              <ReportField
+                label="Subtotal"
+                value={`$${saleSummary.total.toFixed(2)}`}
+                icon={<Captions className="mr-3" />}
+              />
+              <ReportField
+                label="Descuento"
+                value={`$${saleSummary.totalDiscount.toFixed(2)}`}
+                icon={<BadgeMinus className="mr-3" />}
+              />
+            </>
+          )}
           <ReportField
             label="Total"
             value={`$${saleSummary.total.toFixed(2)}`}

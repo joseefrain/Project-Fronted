@@ -1,12 +1,12 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Products } from '../../../../ui/components/Table/products';
 import { useAppSelector } from '@/app/hooks';
-import { Allproducts } from '@/ui/components/products/AllProducts';
-import { ProductsTransit } from '@/ui/components/products/TransitProduct';
-import { ProductFormExist } from '@/ui/components/products/ExistingProduct';
-import { useEffect } from 'react';
-import { store } from '@/app/store';
 import { fetchBranches } from '@/app/slices/branchSlice';
+import { store } from '@/app/store';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Allproducts } from '@/ui/components/products/AllProducts';
+import { ProductFormExist } from '@/ui/components/products/ExistingProduct';
+import { ProductsTransit } from '@/ui/components/products/TransitProduct';
+import { useEffect } from 'react';
+import { Products } from '../../../../ui/components/Table/products';
 
 export const ViewProucts = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);

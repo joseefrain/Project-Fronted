@@ -1,24 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useAppSelector } from '@/app/hooks';
+import { createProduct } from '@/app/slices/branchSlice';
+import { getAllGroupsSlice } from '@/app/slices/groups';
+import { store } from '@/app/store';
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '@/components/ui/card';
+import { ITablaBranch } from '@/interfaces/branchInterfaces';
+import { GetBranches } from '@/shared/helpers/Branchs';
+import { Boxes } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast, Toaster } from 'sonner';
-import { ITablaBranch } from '@/interfaces/branchInterfaces';
-import { store } from '@/app/store';
-import SearchAndFilter from './sear';
-import ProductsTable from './ProductTable';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
-import { useAppSelector } from '@/app/hooks';
-import { getAllGroupsSlice } from '@/app/slices/groups';
-import { GetBranches } from '@/shared/helpers/Branchs';
-import { createProduct } from '@/app/slices/branchSlice';
-import { Boxes } from 'lucide-react';
+import ProductsTable from './ProductTable';
+import SearchAndFilter from './sear';
 
 export function DataTableDemo() {
   const { Id } = useParams<{ Id: string }>();
@@ -86,7 +86,7 @@ export function DataTableDemo() {
     <>
       <Toaster richColors position="bottom-right" />
       <div className="flex flex-col w-full">
-        <main className="flex-1 p-4 md:p-6">
+        <main className="flex-1 py-4 md:py-6">
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3">

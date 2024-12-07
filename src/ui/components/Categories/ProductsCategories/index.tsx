@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
 import {
   Card,
+  CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-  CardContent,
 } from '@/components/ui/card';
+import { useEffect, useState } from 'react';
 // import { store } from '@/app/store';
 // import Pagination from '../../../../shared/components/ui/Pagination/Pagination';
 // import { useAppSelector } from '@/app/hooks';
@@ -15,8 +15,8 @@ import { Boxes } from 'lucide-react';
 // import { ProductsCategoriesTable } from './Table';
 import { useParams } from 'react-router-dom';
 // import { GetProductsByGroup } from '@/shared/helpers/Branchs';
-import { IProductoGroups } from '@/interfaces/branchInterfaces';
 import { getProductsByGroup } from '@/api/services/groups';
+import { IProductoGroups } from '@/interfaces/branchInterfaces';
 
 export const ProductsCategories = () => {
   //   const dataAllProducts = useAppSelector(
@@ -59,7 +59,7 @@ export const ProductsCategories = () => {
 
   return (
     <div className="flex flex-col w-full">
-      <main className="flex-1 p-4 md:p-6">
+      <main className="flex-1 py-4 md:py-6">
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">

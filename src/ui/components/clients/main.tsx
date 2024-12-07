@@ -1,18 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useAppSelector } from '@/app/hooks';
+import { store } from '@/app/store';
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '@/components/ui/card';
-import { store } from '@/app/store';
-import Pagination from '../../../shared/components/ui/Pagination/Pagination';
-import { useAppSelector } from '@/app/hooks';
 import { SearchComponent } from '@/shared/components/ui/Search';
 import { PlusCircle, User } from 'lucide-react';
-import { TablaContacts } from './table';
+import { useEffect, useState } from 'react';
 import { getEntities } from '../../../app/slices/entities';
 import { Button } from '../../../components/ui/button';
 import {
@@ -21,8 +19,10 @@ import {
   DialogHeader,
   DialogTrigger,
 } from '../../../components/ui/dialog';
-import { AddContact } from './add';
 import { IEntities } from '../../../interfaces/entitiesInterfaces';
+import Pagination from '../../../shared/components/ui/Pagination/Pagination';
+import { AddContact } from './add';
+import { TablaContacts } from './table';
 
 interface MainContactsProps {
   filterType: string;
@@ -74,7 +74,7 @@ export const MainContacts = ({ filterType }: MainContactsProps) => {
 
   return (
     <div className="flex flex-col w-full">
-      <main className="flex-1 p-4 md:p-6">
+      <main className="flex-1 py-4 md:py-6">
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">

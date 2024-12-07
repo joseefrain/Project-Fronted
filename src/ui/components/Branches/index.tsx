@@ -1,6 +1,11 @@
 /* eslint-disable no-unused-vars */
-import { ChangeEvent, useEffect, useState } from 'react';
-import { Store } from 'lucide-react';
+import { useAppSelector } from '@/app/hooks';
+import {
+  createBranchs,
+  fetchBranches,
+  setSelectedBranch,
+} from '@/app/slices/branchSlice';
+import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -11,18 +16,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { BranchCard } from './BranchCard';
-import { store } from '@/app/store';
-import {
-  createBranchs,
-  fetchBranches,
-  setSelectedBranch,
-} from '@/app/slices/branchSlice';
-import { useAppSelector } from '@/app/hooks';
-import { Label } from '@radix-ui/react-label';
-import { toast, Toaster } from 'sonner';
 import { Branch } from '@/interfaces/branchInterfaces';
-import { Typography } from '@/shared/components/ui/Typography';
+import { Label } from '@radix-ui/react-label';
+import { Store } from 'lucide-react';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { toast, Toaster } from 'sonner';
+import { BranchCard } from './BranchCard';
 
 export default function BranchDashboard() {
   const branches = useAppSelector((state) => state.branches.data);
@@ -85,19 +84,14 @@ export default function BranchDashboard() {
     <>
       <Toaster richColors position="bottom-right" />
       <div className="container mx-auto ">
-        <div className="flex items-center w-full gap-3">
-          <Store size={40} />
-          <Typography component="h2" className="mb-4 font-medium text-black">
-            Sucursales
-          </Typography>
-        </div>
-
-        <br />
-        <nav className="flex flex-col mb-6 space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+        <h1 className="mb-8 text-4xl font-bold text-gray-800 font-onest">
+          Sucursales
+        </h1>
+        <nav className="flex flex-col mb-6 space-y-8 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
           <div className="flex items-center space-x-4">
             <Input
-              placeholder="Buscar por nombre de la sucursal"
-              className="w-full sm:w-64"
+              placeholder="Buscar sucursal..."
+              className="w-full sm:w-96 font-onest"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -106,7 +100,7 @@ export default function BranchDashboard() {
             {userRoles?.role !== 'admin' && (
               <Button
                 onClick={() => openDialog(false)}
-                className="w-full sm:w-auto"
+                className="w-full sm:w-auto font-onest"
               >
                 <Store className="w-4 h-4 mr-2" />
                 Agregar Sucursal
@@ -125,55 +119,70 @@ export default function BranchDashboard() {
         >
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>
+              <DialogTitle className="font-onest">
                 {editingSucursal ? 'Editar Sucursal' : 'Agregar Nueva Sucursal'}
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="font-onest">
                 {editingSucursal
                   ? 'Modifica los detalles de la sucursal aquí.'
                   : 'Ingresa los detalles de la nueva sucursal.'}
               </DialogDescription>
             </DialogHeader>
 
-            <Label htmlFor="nombre">Nombre</Label>
+            <Label htmlFor="nombre" className="font-onest">
+              Nombre
+            </Label>
             <Input
               id="nombre"
               name="nombre"
               value={newBranch.nombre}
               onChange={handleInputChange}
               placeholder="Nombre de la sucursal"
+              className="font-onest"
             />
-            <Label htmlFor="direccion">Dirección</Label>
+            <Label htmlFor="direccion" className="font-onest">
+              Dirección
+            </Label>
             <Input
               id="direccion"
               name="direccion"
               value={newBranch.direccion}
               onChange={handleInputChange}
               placeholder="Dirección de la sucursal"
+              className="font-onest"
             />
-            <Label htmlFor="ciudad">Ciudad</Label>
+            <Label htmlFor="ciudad" className="font-onest">
+              Ciudad
+            </Label>
             <Input
               id="ciudad"
               name="ciudad"
               value={newBranch.ciudad}
               onChange={handleInputChange}
               placeholder="Ciudad de la sucursal"
+              className="font-onest"
             />
-            <Label htmlFor="pais">País</Label>
+            <Label htmlFor="pais" className="font-onest">
+              País
+            </Label>
             <Input
               id="pais"
               name="pais"
               value={newBranch.pais}
               onChange={handleInputChange}
               placeholder="País de la sucursal"
+              className="font-onest"
             />
-            <Label htmlFor="telefono">Teléfono</Label>
+            <Label htmlFor="telefono" className="font-onest">
+              Teléfono
+            </Label>
             <Input
               id="telefono"
               name="telefono"
               value={newBranch.telefono}
               onChange={handleInputChange}
               placeholder="Teléfono de la sucursal"
+              className="font-onest"
             />
 
             <DialogFooter>
@@ -186,13 +195,14 @@ export default function BranchDashboard() {
                     handleSaveNew();
                   }
                 }}
+                className="font-onest"
               >
                 Guardar cambios
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredBranches.length > 0 &&
             filteredBranches.map((branch) => (
               <BranchCard

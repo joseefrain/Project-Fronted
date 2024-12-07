@@ -1,17 +1,6 @@
+import { useAppSelector } from '@/app/hooks';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Check, ChevronsUpDown, Plus, ShoppingBag, Truck } from 'lucide-react';
-import { ProductSale } from './ProductSale';
-import { ITablaBranch } from '@/interfaces/branchInterfaces';
-import React, { useEffect, useState } from 'react';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import {
   Command,
   CommandEmpty,
@@ -20,14 +9,25 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Switch } from '@/components/ui/switch';
+import { ITablaBranch } from '@/interfaces/branchInterfaces';
+import { IProductSale } from '@/interfaces/salesInterfaces';
 import { cn } from '@/lib/utils';
-import './style.scss';
-import { useAppSelector } from '@/app/hooks';
 import {
   applyDiscounts,
   handleProductSaleAlerts,
 } from '@/shared/helpers/salesHelper';
-import { IProductSale } from '@/interfaces/salesInterfaces';
+import { Check, ChevronsUpDown, Plus, ShoppingBag, Truck } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ProductSale } from './ProductSale';
+import './style.scss';
 
 export interface ISaleProps {
   products: ITablaBranch[];
@@ -172,7 +172,7 @@ export const Sale = ({
   }, [selectedBranch]);
 
   return (
-    <Card>
+    <Card className="font-onest">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ShoppingBag />
@@ -211,9 +211,14 @@ export const Sale = ({
               </PopoverTrigger>
               <PopoverContent className="p-0">
                 <Command>
-                  <CommandInput placeholder="Buscar producto" />
+                  <CommandInput
+                    placeholder="Buscar producto"
+                    className="font-onest"
+                  />
                   <CommandList className="product__list">
-                    <CommandEmpty>Producto no encontrado.</CommandEmpty>
+                    <CommandEmpty className="p-4 text-sm text-gray-800 font-onest">
+                      Producto no encontrado.
+                    </CommandEmpty>
                     <CommandGroup>
                       {products.map((product) => (
                         <CommandItem
@@ -227,6 +232,7 @@ export const Sale = ({
                             );
                             setOpen(false);
                           }}
+                          className="font-onest"
                         >
                           <Check
                             className={cn(

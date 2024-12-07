@@ -10,6 +10,7 @@ import {
 import { DoorClosed, Store } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchBranches } from '../../../../app/slices/branchSlice';
 import {
   Dialog,
   DialogContent,
@@ -22,7 +23,6 @@ import {
   findBranchById,
   getSelectedBranchFromLocalStorage,
 } from '../../../helpers/branchHelpers';
-import { fetchBranches } from '../../../../app/slices/branchSlice';
 
 export const ProfileUser = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -68,7 +68,7 @@ export const ProfileUser = () => {
         {user?.role !== 'admin' && (
           <Button
             onClick={() => openDialog(false)}
-            className="w-full sm:w-auto"
+            className="w-full h-full sm:w-auto font-onest"
           >
             <Store className="w-4 h-4 mr-2" />
             Sucursal
@@ -94,24 +94,30 @@ export const ProfileUser = () => {
         </Dialog>
       </div>
       <div className="flex items-center justify-center gap-2 p-2">
-        <div className="flex flex-col items-center justify-center ">
-          <h1 className="text-xl font-bold capitalize">{user?.username}</h1>
-          <p className="text-sm text-muted-foreground">
+        <div className="flex flex-col items-start justify-center ">
+          <h1 className="text-xl font-bold capitalize font-onest">
+            {user?.username}
+          </h1>
+          <p className="text-sm text-muted-foreground font-onest">
             {user?.role} -{' '}
             {selectedBranch ? selectedBranch.nombre : user?.sucursalId?.nombre}
           </p>
         </div>
         <Popover>
           <PopoverTrigger asChild>
-            <div className="flex items-center justify-center w-10 h-10 bg-black text-white rounded-full cursor-pointer">
-              <span className="text-lg font-semibold text-white">
+            <div className="flex items-center justify-center w-10 h-10 text-white bg-black rounded-full cursor-pointer">
+              <span className="text-lg font-semibold text-white font-onest">
                 {user?.username.charAt(0).toUpperCase() ?? 'A'}
               </span>
             </div>
           </PopoverTrigger>
           <PopoverContent className="w-22">
-            <Button onClick={handleLogout} variant="secondary">
-              <DoorClosed className="h-4 w-4" />
+            <Button
+              onClick={handleLogout}
+              variant="secondary"
+              className="font-onest"
+            >
+              <DoorClosed className="w-4 h-4" />
               Salir
             </Button>
           </PopoverContent>
