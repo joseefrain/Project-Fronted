@@ -17,8 +17,8 @@ export const CreditPaymentSystem = () => {
   const [paymentType, setPaymentType] = useState<'abono' | 'credito'>('abono');
 
   return (
-    <div className="container mx-auto p-4 space-y-6 ">
-      <h1 className="text-3xl font-bold text-center mb-6">
+    <div className="container mx-auto p-4 space-y-6 h-[88vh]">
+      <h1 className="text-3xl font-bold text-center mb-6 font-onest">
         Sistema de Pago de Crédito
       </h1>
       <div className="w-full max-w-xs mx-auto">
@@ -29,8 +29,12 @@ export const CreditPaymentSystem = () => {
             <SelectValue placeholder="Seleccionar tipo de pago" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="abono">Abono</SelectItem>
-            <SelectItem value="credito">Crédito de pago</SelectItem>
+            <SelectItem className="font-onest" value="abono">
+              Abono
+            </SelectItem>
+            <SelectItem className="font-onest" value="credito">
+              Crédito de pago
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>

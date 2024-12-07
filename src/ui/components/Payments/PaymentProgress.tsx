@@ -15,11 +15,11 @@ export function PaymentProgress() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Progreso del Pago</CardTitle>
+        <CardTitle className="font-onest">Progreso del Pago</CardTitle>
       </CardHeader>
       <CardContent>
         <Progress value={progress} className="w-full" />
-        <p className="text-center mt-2">
+        <p className="text-center mt-2 font-onest">
           Has pagado el {progress}% de tu deuda total
         </p>
       </CardContent>

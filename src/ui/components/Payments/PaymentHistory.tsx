@@ -25,25 +25,25 @@ export function PaymentHistory() {
   return (
     <Card className="h-[38%]">
       <CardHeader>
-        <CardTitle>Historial de Pagos</CardTitle>
+        <CardTitle className="font-onest">Historial de Pagos</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 h-[84.5%]  overflow-y-scroll">
+      <CardContent className="space-y-4 h-[73%]  overflow-y-scroll">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Fecha</TableHead>
-              <TableHead>Monto</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Estado</TableHead>
+              <TableHead className="font-onest">Fecha</TableHead>
+              <TableHead className="font-onest">Monto</TableHead>
+              <TableHead className="font-onest">Tipo</TableHead>
+              <TableHead className="font-onest">Estado</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {payments.map((payment, index) => (
               <TableRow key={index}>
-                <TableCell>{payment.date}</TableCell>
-                <TableCell>${payment.amount}</TableCell>
-                <TableCell>{payment.type}</TableCell>
-                <TableCell>{payment.status}</TableCell>
+                <TableCell className="font-onest">{payment.date}</TableCell>
+                <TableCell className="font-onest">${payment.amount}</TableCell>
+                <TableCell className="font-onest">{payment.type}</TableCell>
+                <TableCell className="font-onest">{payment.status}</TableCell>
               </TableRow>
             ))}
           </TableBody>
