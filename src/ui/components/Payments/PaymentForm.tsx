@@ -40,7 +40,7 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
       .then(() => {
         setTimeout(() => {
           setProcessingSale(false);
-          setAmount(0);
+          creditSelected?.modalidadCredito === 'PAGO' && setAmount(0);
         }, 500);
       });
 
@@ -54,26 +54,42 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
   const getValidAmount = (amount: string) => {
     const amountNumber = Number(amount);
 
-    if (!creditSelected) return amountNumber;
-
-    if (creditSelected?.modalidadCredito === 'PLAZO') {
-      return creditSelected.cuotaMensual.$numberDecimal;
+    if (!creditSelected) {
+      toast.info('Debe seleccionar un crédito');
+      return amountNumber;
     }
 
-    return amountNumber < creditSelected!.pagoMinimoMensual.$numberDecimal
-      ? creditSelected!.pagoMinimoMensual.$numberDecimal
-      : amountNumber > creditSelected!.saldoPendiente.$numberDecimal
-        ? creditSelected!.saldoPendiente.$numberDecimal
-        : amountNumber;
+    if (creditSelected?.modalidadCredito === 'PLAZO') {
+      toast.info('Crédito a plazos sólo soporta cuota fija');
+      return Number(creditSelected.cuotaMensual.$numberDecimal);
+    }
+
+    if (amountNumber < creditSelected!.pagoMinimoMensual.$numberDecimal) {
+      toast.info(
+        `El pago mínimo es de $${Number(creditSelected!.pagoMinimoMensual.$numberDecimal)}`
+      );
+      return Number(creditSelected!.pagoMinimoMensual.$numberDecimal);
+    }
+
+    if (amountNumber > creditSelected!.saldoPendiente.$numberDecimal) {
+      toast.info(
+        `El pago máximo es de $${Number(creditSelected!.saldoPendiente.$numberDecimal)}`
+      );
+      return Number(creditSelected!.saldoPendiente.$numberDecimal);
+    }
+
+    return amountNumber;
   };
 
   useEffect(() => {
     if (!creditSelected) return;
 
     setAmount(
-      creditSelected!.modalidadCredito === 'PLAZO'
-        ? creditSelected!.cuotaMensual.$numberDecimal
-        : creditSelected!.pagoMinimoMensual.$numberDecimal
+      Number(
+        creditSelected!.modalidadCredito === 'PLAZO'
+          ? creditSelected!.cuotaMensual.$numberDecimal
+          : creditSelected!.pagoMinimoMensual.$numberDecimal
+      )
     );
   }, [creditSelected]);
 
@@ -103,11 +119,7 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
                   value={amount}
                   onChange={(e) => setAmount(Number(e.target.value))}
                   onBlur={(e) => setAmount(getValidAmount(e.target.value))}
-                  disabled={
-                    processingSale ||
-                    creditoPagado ||
-                    creditSelected?.modalidadCredito === 'PLAZO'
-                  }
+                  disabled={processingSale || creditoPagado}
                   min={0}
                   max={creditSelected?.saldoPendiente.$numberDecimal}
                 />
