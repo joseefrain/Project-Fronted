@@ -4,7 +4,7 @@ import { createAxiosInstance, PATH_LIST } from '../axios';
 export interface Iauth {
   username: string;
   password: string;
-  role: 'admin' | 'user' | 'root';
+  role?: 'admin' | 'user' | 'root';
 }
 
 export const createUsers = async (

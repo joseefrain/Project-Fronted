@@ -29,10 +29,12 @@ const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const { username, password } = credentials;
+    const payload = { username, password };
+
     try {
-      await store
-        .dispatch(InicioSesion({ userCredentials: credentials }))
-        .unwrap();
+      await store.dispatch(InicioSesion({ userCredentials: payload })).unwrap();
       toast.success('Sesión iniciada exitosamente');
 
       if (credentials.username === 'root') {
