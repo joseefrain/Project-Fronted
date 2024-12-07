@@ -61,7 +61,7 @@ export default function SalesInventorySystem() {
   return (
     <div className="container mx-auto">
       <Tabs defaultValue="sale">
-        <div className="flex flex-col items-center gap-4 mb-9 sm:flex-row sm:items-center">
+        <div className="flex flex-col items-center justify-between gap-4 mb-9 sm:flex-row sm:items-center">
           <h1 className="text-4xl font-bold text-gray-800 font-onest w-[38%]">
             Ventas
           </h1>

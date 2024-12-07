@@ -1,9 +1,8 @@
+import { useAppSelector } from '@/app/hooks';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
-import React, { useState, useEffect } from 'react';
 import {
   Select,
   SelectContent,
@@ -11,7 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useAppSelector } from '@/app/hooks';
+import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
+import React, { useEffect, useState } from 'react';
 
 interface ProductFormProps {
   initialData?: ITablaBranch;
@@ -164,7 +164,11 @@ const ProductForm = ({
             </SelectTrigger>
             <SelectContent className="flex flex-col gap-2">
               {groups.map((branch) => (
-                <SelectItem key={branch._id} value={branch._id as string}>
+                <SelectItem
+                  key={branch._id}
+                  value={branch._id as string}
+                  className="font-onest"
+                >
                   {branch.nombre}
                 </SelectItem>
               ))}

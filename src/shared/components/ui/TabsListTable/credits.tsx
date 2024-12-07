@@ -1,43 +1,43 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MainContacts } from '../../../../ui/components/clients/main';
+import { MainCredits } from '../../../../ui/components/Credits/main';
 
-export const ViewEntities = () => {
+export const Credits = () => {
   return (
     <div className="container mx-auto">
-      <Tabs defaultValue="listContacts">
+      <Tabs defaultValue="plazos">
         <div className="flex flex-col items-center justify-between gap-4 mb-3 sm:flex-row sm:items-center">
           <h1 className="text-4xl font-bold text-gray-800 font-onest">
-            Contactos
+            Créditos
           </h1>
           <TabsList className="gap-4 font-bold text-white bg-black font-onest">
             <TabsTrigger
               className="text-[#ffffff] font-bold border-b-2 border-bg-gray-200 border-opacity-0 bg-black"
-              value="listContacts"
+              value="plazos"
             >
-              Contactos
+              Plazos
             </TabsTrigger>
             <TabsTrigger
               className="bg-black text-[#ffffff] font-bold"
-              value="listSuppliers"
+              value="pagos"
             >
-              Proveedores
+              Pagos
             </TabsTrigger>
             <TabsTrigger
               className="bg-black text-[#ffffff] font-bold"
-              value="listCustomers"
+              value="historial"
             >
-              Clientes
+              Historial
             </TabsTrigger>
           </TabsList>
         </div>
-        <TabsContent value="listContacts">
-          <MainContacts filterType="contact" />
+        <TabsContent value="plazos">
+          <MainCredits filterType="plazo" />
         </TabsContent>
-        <TabsContent value="listSuppliers">
-          <MainContacts filterType="supplier" />
+        <TabsContent value="pagos">
+          <MainCredits filterType="pago" />
         </TabsContent>
-        <TabsContent value="listCustomers">
-          <MainContacts filterType="customer" />
+        <TabsContent value="historial">
+          <MainCredits filterType="historial" />
         </TabsContent>
       </Tabs>
     </div>

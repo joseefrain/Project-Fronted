@@ -7,6 +7,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import './styles.scss';
 
 export function PaymentHistory() {
   const payments = [
@@ -23,11 +24,11 @@ export function PaymentHistory() {
   ];
 
   return (
-    <Card className="h-[38%]">
+    <Card className="credit__history">
       <CardHeader>
         <CardTitle className="font-onest">Historial de Pagos</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 h-[73%]  overflow-y-scroll">
+      <CardContent className="card__content">
         <Table>
           <TableHeader>
             <TableRow>

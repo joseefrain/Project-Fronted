@@ -512,7 +512,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                 Number(cashReceived ?? 0) < saleSummary.total) ||
               (paymentMethod === IPaymentMethod.CREDIT &&
                 creditMethod === ICreditMethod.PLAZO &&
-                Number(months ?? 0) === 0)
+                Number(months ?? 0) <= 0)
             }
             onClick={handleProcessSale}
           >

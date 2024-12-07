@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/app/hooks';
-import { store } from '@/app/store';
 import {
   clearTransferData,
   getAllProductTransfer,
   OrdersReceivedById,
 } from '@/app/slices/transferSlice';
+import { store } from '@/app/store';
 import {
   Card,
   CardContent,
@@ -30,18 +29,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { MapIndex } from './mapIndex';
 import { IDetalleSelected } from '@/interfaces/transferInterfaces';
-import { useParams } from 'react-router-dom';
 import { Loader } from '@/shared/components/ui/Loader';
-import { ListOrdered } from 'lucide-react';
 import Pagination from '@/shared/components/ui/Pagination/Pagination';
+import { ListOrdered } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Button } from '../../../components/ui/button';
 import {
   findBranchById,
   getFilteredBranches,
   getSelectedBranchFromLocalStorage,
 } from '../../../shared/helpers/branchHelpers';
+import { MapIndex } from './mapIndex';
 
 const orderStatusOptions = [
   { value: 'Todos', label: 'Ver Todos' },
@@ -155,7 +155,7 @@ export const ShippedOrders = () => {
   const paginatedData = Math.ceil(filteredProducts.length / itemsPerPage);
 
   return (
-    <div className="container p-4 mx-auto space-y-6">
+    <div className="container mx-auto space-y-6 font-onest">
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
@@ -170,7 +170,7 @@ export const ShippedOrders = () => {
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Estado" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="font-onest">
                   <SelectGroup>
                     <SelectLabel>Estados de Pedido</SelectLabel>
                     {orderStatusOptions.map((option) => (
@@ -200,7 +200,7 @@ export const ShippedOrders = () => {
             </div>
           </div>
           {loading ? (
-            <div className="flex justify-center items-center h-40">
+            <div className="flex items-center justify-center h-40">
               <Loader />
             </div>
           ) : selectedBranch ? (
@@ -225,7 +225,7 @@ export const ShippedOrders = () => {
               </TableBody>
             </Table>
           ) : (
-            <div className="flex justify-center items-center h-40 text-red-600">
+            <div className="flex items-center justify-center h-40 text-red-600">
               No hay productos enviados en esta sucursal
             </div>
           )}

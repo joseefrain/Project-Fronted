@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom';
-import React, { useState } from 'react';
-import './styles.scss';
 import { PanelRightOpen } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import './styles.scss';
 
 interface SidebarProps {
   links: { name: string; path: string; icon?: React.ReactNode }[];
@@ -10,6 +10,7 @@ interface SidebarProps {
 
 export const Sidebar = ({ links, className }: SidebarProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [currentPage, setCurrentPage] = useState('');
 
   const toggleSidebar = () => {
     setIsCollapsed((prev) => !prev);
@@ -35,8 +36,11 @@ export const Sidebar = ({ links, className }: SidebarProps) => {
             key={link.name}
             className="flex items-center gap-2 text-lg font-medium text-black"
             to={link.path}
+            onClick={() => setCurrentPage(link.name)}
           >
-            <li className="flex items-center w-full h-10 gap-2 p-2 transition-colors duration-200 border-b rounded-sm border-border hover:bg-gray-200 hover:text-blue-500">
+            <li
+              className={`flex items-center w-full h-10 gap-2 p-2 transition-colors duration-200 border-b rounded-sm border-border hover:bg-gray-200 hover:text-blue-500 font-onest ${currentPage === link.name ? 'bg-gray-200 text-blue-500' : ''}`}
+            >
               {link.icon && link.icon}
               {link.name}
             </li>
@@ -49,7 +53,8 @@ export const Sidebar = ({ links, className }: SidebarProps) => {
             <Link to={link.path} className="size-10">
               <li
                 key={link.name}
-                className="flex items-center justify-center w-10 h-10 text-black hover:text-blue-500"
+                className={`flex items-center justify-center w-10 h-10 text-black hover:text-blue-500 ${currentPage === link.name ? 'text-blue-500' : ''}`}
+                onClick={() => setCurrentPage(link.name)}
               >
                 {link.icon}
               </li>

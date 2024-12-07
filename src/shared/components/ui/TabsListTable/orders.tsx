@@ -1,15 +1,18 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import ToolShipment from '../../../../ui/components/ToolShipment';
-import PendingTools from '@/ui/components/PendingTools';
-import { ShippedOrders } from '@/ui/components/BranchShipments';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BranchReceived } from '@/ui/components/BranchReceived';
+import { ShippedOrders } from '@/ui/components/BranchShipments';
+import PendingTools from '@/ui/components/PendingTools';
+import ToolShipment from '../../../../ui/components/ToolShipment';
 
 export const HeaderTable = () => {
   return (
     <div className="container mx-auto">
       <Tabs defaultValue="send">
-        <div className="flex flex-col items-start justify-center gap-4 mb-7 sm:flex-row sm:items-center">
-          <TabsList className="gap-4 font-bold text-white bg-black">
+        <div className="flex flex-col items-center justify-between gap-4 mb-9 sm:flex-row sm:items-center">
+          <h1 className="text-4xl font-bold text-gray-800 font-onest">
+            Traslados
+          </h1>
+          <TabsList className="gap-4 font-bold text-white bg-black font-onest">
             <TabsTrigger
               className="text-[#ffffff] font-bold border-b-2 border-bg-gray-200 border-opacity-0 bg-black"
               value="send"

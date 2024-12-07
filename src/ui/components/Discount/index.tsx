@@ -36,6 +36,7 @@ import { SearchComponent } from '@/shared/components/ui/Search';
 import { GetBranches } from '@/shared/helpers/Branchs';
 import { getFormatedDate } from '@/shared/helpers/transferHelper';
 import { useFilteredBranches } from '@/shared/hooks/useSelectedBranch';
+import { Save } from 'lucide-react';
 import { toast, Toaster } from 'sonner';
 import { IndexModal } from './modal';
 
@@ -233,10 +234,16 @@ export default function DiscountManager() {
     <>
       <Toaster richColors position="bottom-right" />{' '}
       <div className="flex flex-col w-full">
-        <main className="flex-1 py-4 md:py-6">
+        <h1 className="text-4xl font-bold text-gray-800 mb-9 font-onest">
+          Descuentos
+        </h1>
+        <main className="flex-1 font-onest">
           <Card>
             <CardHeader>
-              <CardTitle>Descuentos</CardTitle>
+              <CardTitle className="flex items-center gap">
+                <Save className="w-4 h-4 mr-2" />
+                Descuentos
+              </CardTitle>
               <CardDescription>
                 Manage your discounts and view their sales performance.
               </CardDescription>

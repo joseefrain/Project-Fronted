@@ -19,6 +19,7 @@ import Dashboard from '@/ui/components/Dashboard';
 import { ViewEntities } from '../shared/components/ui/TabsListTable/entities';
 import { Contacts } from '../ui/components/clients';
 import { CreditPaymentSystem } from '../ui/components/Payments/CreditPaymentSystem';
+import { Credits } from '../shared/components/ui/TabsListTable/credits';
 
 export const Router = () => {
   return (
@@ -196,11 +197,24 @@ export const Router = () => {
         />
       </Route>
       <Route
-        path="/payments"
+        path="/credits"
         element={<RequireAuth rolesAllowed={['admin', 'user', 'root']} />}
       >
         <Route
-          path="/payments"
+          path="/credits"
+          element={
+            <Layout>
+              <Credits />
+            </Layout>
+          }
+        />
+      </Route>
+      <Route
+        path="/credits/:id"
+        element={<RequireAuth rolesAllowed={['admin', 'user', 'root']} />}
+      >
+        <Route
+          path="/credits/:id"
           element={
             <Layout>
               <CreditPaymentSystem />

@@ -1,9 +1,8 @@
+import { useAppSelector } from '@/app/hooks';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
-import React, { useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -11,8 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
 import { InventarioSucursal } from '@/interfaces/transferInterfaces';
-import { useAppSelector } from '@/app/hooks';
+import React, { useState } from 'react';
 
 interface ProductFormProps {
   initialData?: InventarioSucursal;
@@ -106,10 +106,10 @@ const ProductForm = ({
   };
   return (
     <>
-      <form onSubmit={handleSubmit} className="w-full">
+      <form onSubmit={handleSubmit} className="w-full font-onest">
         <div className="grid gap-4 py-4">
           {fields.map(({ id, label, type, step, min, readOnly, disabled }) => (
-            <div key={id} className="grid grid-cols-4 items-center gap-4">
+            <div key={id} className="grid items-center grid-cols-4 gap-4">
               <Label htmlFor={id} className="text-right">
                 {label}
               </Label>
@@ -128,7 +128,7 @@ const ProductForm = ({
               />
             </div>
           ))}
-          <div className="items-center gap-4 flex">
+          <div className="flex items-center gap-4">
             <Label htmlFor="branch-select" className="text-right">
               Categorias
             </Label>
@@ -138,7 +138,11 @@ const ProductForm = ({
               </SelectTrigger>
               <SelectContent className="flex flex-col gap-2">
                 {groups.map((branch) => (
-                  <SelectItem key={branch._id} value={branch._id as string}>
+                  <SelectItem
+                    key={branch._id}
+                    value={branch._id as string}
+                    className="font-onest"
+                  >
                     {branch.nombre}
                   </SelectItem>
                 ))}

@@ -73,7 +73,7 @@ export const MainContacts = ({ filterType }: MainContactsProps) => {
   };
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full font-onest">
       <main className="flex-1 py-4 md:py-6">
         <Card>
           <CardHeader>
@@ -106,7 +106,7 @@ export const MainContacts = ({ filterType }: MainContactsProps) => {
                     <span>Agregar</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="font-onest">
                   <DialogHeader>
                     <AddContact
                       initialData={editData}

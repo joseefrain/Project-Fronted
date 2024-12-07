@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { IRoles } from '@/app/slices/login';
+import { updateProduct } from '@/app/slices/productsSlice';
+import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -14,27 +16,25 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { PlusCircle } from 'lucide-react';
-import {
-  Branch,
-  IProductoGroups,
-  ITablaBranch,
-} from '@/interfaces/branchInterfaces';
-import ProductForm from './ProductForm';
-import { IRoles } from '@/app/slices/login';
-import {
-  InventarioSucursal,
-  InventarioSucursalWithPopulated,
-} from '@/interfaces/transferInterfaces';
-import { store } from '@/app/store';
-import { updateProduct } from '@/app/slices/productsSlice';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  Branch,
+  IProductoGroups,
+  ITablaBranch,
+} from '@/interfaces/branchInterfaces';
+import {
+  InventarioSucursal,
+  InventarioSucursalWithPopulated,
+} from '@/interfaces/transferInterfaces';
+import { PlusCircle } from 'lucide-react';
+import { useState } from 'react';
 import { toast, Toaster } from 'sonner';
+import ProductForm from './ProductForm';
 
 interface ProductsTableProps {
   products: InventarioSucursalWithPopulated[];
@@ -138,7 +138,7 @@ const ProductsTable = ({
         </TableBody>
       </Table>
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
-        <DialogContent>
+        <DialogContent className="font-onest">
           <DialogHeader>
             <DialogTitle>Agregar producto a sucursal</DialogTitle>
           </DialogHeader>

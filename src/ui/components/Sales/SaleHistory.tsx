@@ -38,7 +38,7 @@ export const SaleHistory = () => {
   }, []);
 
   return (
-    <Card className="mt-4 h-[36rem]">
+    <Card className="mt-4 h-[34rem] font-onest">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <History />
@@ -76,7 +76,7 @@ export const SaleHistory = () => {
                         View
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-3xl rounded-[4px] min-h-[12.5rem]">
+                    <DialogContent className="font-onest max-w-3xl rounded-[4px] min-h-[12.5rem]">
                       <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 uppercase">
                           <ShoppingBasket />

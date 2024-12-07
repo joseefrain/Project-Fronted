@@ -18,8 +18,11 @@ export const ViewProucts = () => {
   return (
     <div className="container mx-auto">
       <Tabs defaultValue="listProduct">
-        <div className="flex flex-col items-start justify-center gap-4 mb-4 sm:flex-row sm:items-center">
-          <TabsList className="gap-4 font-bold text-white bg-black">
+        <div className="flex flex-col items-start justify-between gap-4 mb-3 sm:flex-row sm:items-center">
+          <h1 className="text-4xl font-bold text-gray-800 font-onest w-[38%]">
+            Productos
+          </h1>
+          <TabsList className="gap-4 font-bold text-white bg-black font-onest">
             <TabsTrigger
               className="text-[#ffffff] font-bold border-b-2 border-bg-gray-200 border-opacity-0 bg-black"
               value="listProduct"

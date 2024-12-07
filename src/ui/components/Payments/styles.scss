@@ -1,0 +1,15 @@
+.credit__history {
+  @apply h-[37.1%];
+
+  .card__content {
+    @apply space-y-4 h-[73%] overflow-y-scroll;
+
+    &::-webkit-scrollbar {
+      @apply hidden #{!important};
+    }
+  }
+}
+
+.card__header {
+  @apply flex flex-col gap-4 mt-0 space-y-0 #{!important};
+}

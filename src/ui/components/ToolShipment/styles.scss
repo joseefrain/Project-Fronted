@@ -7,7 +7,7 @@
 }
 
 .product__list {
-  @apply overflow-y-auto;
+  @apply overflow-y-auto max-h-[35rem];
 
   &::-webkit-scrollbar {
     @apply hidden #{!important};
@@ -15,11 +15,11 @@
 }
 
 .branch__grid {
-  @apply grid gap-6 md:grid-cols-2 lg:h-[58vh] md:h-[40vh] h-[60rem];
+  @apply grid gap-6 md:grid-cols-2 lg:h-[50vh] md:h-[35vh] h-[50rem];
 }
 
 .branch__consolidate {
-  @apply flex flex-col justify-between gap-[25px];
+  @apply flex flex-col justify-between gap-[25px] max-h-[36.6rem];
 }
 
 .branch__transfer__list {

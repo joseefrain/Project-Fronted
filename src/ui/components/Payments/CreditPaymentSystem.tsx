@@ -1,48 +1,33 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { CreditSummary } from './CreditSummary';
 import { PaymentForm } from './PaymentForm';
 import { PaymentProgress } from './PaymentProgress';
 import { PaymentHistory } from './PaymentHistory';
+import { useAppSelector } from '../../../app/hooks';
+import './styles.scss';
 
 export const CreditPaymentSystem = () => {
-  const [paymentType, setPaymentType] = useState<'abono' | 'credito'>('abono');
+  const creditSelected = useAppSelector(
+    (state) => state.credits.creditSelected
+  );
 
   return (
-    <div className="container mx-auto p-4 space-y-6 h-[88vh]">
-      <h1 className="text-3xl font-bold text-center mb-6 font-onest">
-        Sistema de Pago de Crédito
-      </h1>
-      <div className="w-full max-w-xs mx-auto">
-        <Select
-          onValueChange={(value: 'abono' | 'credito') => setPaymentType(value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Seleccionar tipo de pago" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem className="font-onest" value="abono">
-              Abono
-            </SelectItem>
-            <SelectItem className="font-onest" value="credito">
-              Crédito de pago
-            </SelectItem>
-          </SelectContent>
-        </Select>
+    <div className="container h-auto mx-auto space-y-6 max-h-[75vh]">
+      <div className="flex items-center justify-between">
+        <h1 className="text-4xl font-bold text-gray-800 mb-9 font-onest">
+          Gestión de crédito
+        </h1>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <CreditSummary paymentType={paymentType} />
-        <PaymentForm paymentType={paymentType} />
+      <div className="card__header">
+        {creditSelected?.modalidadCredito === 'PAGO' && (
+          <PaymentProgress creditSelected={creditSelected} />
+        )}
+        <div className="flex w-full gap-4">
+          <CreditSummary creditSelected={creditSelected} />
+          <PaymentForm creditSelected={creditSelected} />
+        </div>
       </div>
-      <PaymentProgress />
       <PaymentHistory />
     </div>
   );

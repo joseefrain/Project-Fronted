@@ -1,3 +1,12 @@
+import { deleteGroupSlice } from '@/app/slices/groups';
+import { store } from '@/app/store';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,20 +15,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { MoreVertical, Pencil, Trash } from 'lucide-react';
 import { ICategoriesProps } from '@/interfaces/branchInterfaces';
-import { deleteGroupSlice } from '@/app/slices/groups';
-import { store } from '@/app/store';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { MoreVertical, Pencil, Trash } from 'lucide-react';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export const CategoriesCard = ({
   categoriesData,
@@ -43,7 +43,7 @@ export const CategoriesCard = ({
       <Card
         onClick={handleCardClick}
         key={categoriesData._id}
-        className="flex flex-col justify-between"
+        className="flex flex-col justify-between font-onest"
       >
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
           <div
@@ -62,19 +62,19 @@ export const CategoriesCard = ({
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <MoreVertical className="h-4 w-4" />
+              <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
+                <MoreVertical className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="font-onest">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={() => onEdit(true)}>
-                <Pencil className="mr-2 h-4 w-4" />
+                <Pencil className="w-4 h-4 mr-2" />
                 Editar
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => handleOnDelete()}>
-                <Trash className="mr-2 h-4 w-4" />
+                <Trash className="w-4 h-4 mr-2" />
                 Eliminar
               </DropdownMenuItem>
             </DropdownMenuContent>

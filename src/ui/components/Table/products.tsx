@@ -108,7 +108,7 @@ export function Products() {
     <>
       <Toaster richColors position="bottom-right" />
       <div className="flex flex-col w-full">
-        <main className="flex-1 py-4 md:py-6">
+        <main className="flex-1 py-4 md:py-6 font-onest">
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3">

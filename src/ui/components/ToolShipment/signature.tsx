@@ -1,4 +1,3 @@
-import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -13,6 +12,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Pen, SignatureIcon, Trash2 } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export interface ISignature {
   handleSignature: (signature: string | null) => void;
@@ -116,7 +116,7 @@ export default function Signature({
             </div>
             <CardTitle>{title}</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="font-onest">
             <div className="p-2 mb-2 border rounded-md">
               {savedSignature ? (
                 <img src={savedSignature} alt="firma" className="w-full" />
@@ -137,7 +137,7 @@ export default function Signature({
                 variant="outline"
                 size="sm"
                 onClick={eliminarFirma}
-                className="w-full"
+                className="w-full font-onest"
               >
                 <Trash2 className="w-4 h-4 mr-2" /> Eliminar firma
               </Button>
@@ -148,10 +148,11 @@ export default function Signature({
               variant="outline"
               size="sm"
               onClick={() => setIsOpen(false)}
+              className="font-onest"
             >
               Cancelar
             </Button>
-            <Button size="sm" onClick={guardar}>
+            <Button size="sm" onClick={guardar} className="font-onest">
               Guardar
             </Button>
           </CardFooter>

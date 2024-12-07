@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/app/hooks';
-import { store } from '@/app/store';
 import {
   clearTransferDataReceived,
   receiveTransfer,
 } from '@/app/slices/transferSlice';
+import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -24,9 +23,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { MapIndex } from './table';
 import { Loader } from '@/shared/components/ui/Loader';
 import { ListOrdered } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { MapIndex } from './table';
 
 const orderStatusOptions = [
   { value: 'Todos', label: 'Ver Todos' },
@@ -103,7 +103,7 @@ export const BranchReceived = () => {
   });
 
   return (
-    <div className="container p-4 mx-auto space-y-6">
+    <div className="container mx-auto space-y-6 font-onest">
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
@@ -118,7 +118,7 @@ export const BranchReceived = () => {
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Estado" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="font-onest">
                   <SelectGroup>
                     <SelectLabel>Estados de Pedido</SelectLabel>
                     {orderStatusOptions.map((option) => (
@@ -163,7 +163,7 @@ export const BranchReceived = () => {
           </div>
 
           {loading ? (
-            <div className="flex justify-center items-center h-40">
+            <div className="flex items-center justify-center h-40">
               <Loader />
             </div>
           ) : selectedBranch ? (
@@ -194,7 +194,7 @@ export const BranchReceived = () => {
               </TableBody>
             </Table>
           ) : (
-            <div className="flex justify-center items-center h-40 text-red-600">
+            <div className="flex items-center justify-center h-40 text-red-600">
               Seleccione una sucursal
             </div>
           )}

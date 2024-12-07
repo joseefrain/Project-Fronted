@@ -1,4 +1,3 @@
-import { PlusCircle, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -7,9 +6,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import ProductForm from './ProductForm';
 import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
 import { SearchComponent } from '@/shared/components/ui/Search';
+import { PlusCircle, Search } from 'lucide-react';
+import ProductForm from './ProductForm';
 
 interface SearchAndFilterProps {
   searchTerm: string;
@@ -53,7 +53,7 @@ const SearchAndFilter = ({
             <span>Agregar</span>
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="font-onest">
           <DialogHeader>
             <DialogTitle>Agregar Producto</DialogTitle>
           </DialogHeader>
