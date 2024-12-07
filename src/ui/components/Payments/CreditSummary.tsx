@@ -20,7 +20,7 @@ export function CreditSummary({ creditSelected }: CreditSummaryProps) {
 
   return (
     <Card
-      className={`${creditSelected?.modalidadCredito === 'PLAZO' && fechaCuotaVencida ? 'border-red-500 shadow-red-300 shadow-sm' : ''} w-2/4`}
+      className={`${creditSelected?.modalidadCredito === 'PLAZO' && fechaCuotaVencida ? 'border-red-500 shadow-red-300 shadow-sm animate-flash' : ''} w-2/4`}
     >
       <CardHeader>
         <CardTitle className="font-onest">
@@ -114,9 +114,11 @@ const DeadlineCreditSummary = ({
         <strong className="font-onest">Monto de cuota:</strong>
         <span>${creditSelected?.cuotaMensual.$numberDecimal ?? 0}</span>
       </p>
-      <p className="flex items-center gap-2">
+      <p className="flex items-center gap-2 font-onest">
         <strong className="font-onest">Estado de cuota:</strong>
-        <span className="font-onest">
+        <span
+          className={`font-onest ${fechaCuotaVencida ? 'text-red-600 font-bold' : ''}`}
+        >
           {fechaCuotaVencida ? 'Atrasado' : 'Pendiente'}
         </span>
       </p>

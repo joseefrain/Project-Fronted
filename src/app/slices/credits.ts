@@ -6,6 +6,7 @@ import {
   IPostPagoCredito,
 } from '../../interfaces/creditsInterfaces';
 import {
+  fetchCreditById,
   fetchCreditsByBranch,
   postPayCredit,
 } from '../../api/services/credits';
@@ -15,6 +16,18 @@ export const getCreditsByBranch = createAsyncThunk(
   async (id: string) => {
     try {
       const response = await fetchCreditsByBranch(id);
+      return response;
+    } catch (error) {
+      return handleThunkError(error);
+    }
+  }
+);
+
+export const getCreditById = createAsyncThunk(
+  'credits/getById',
+  async (id: string) => {
+    try {
+      const response = await fetchCreditById(id);
       return response;
     } catch (error) {
       return handleThunkError(error);
@@ -61,6 +74,11 @@ const creditsSlice = createSlice({
       })
 
       .addCase(payCredit.fulfilled, (state, { payload }) => {
+        state.status = 'succeeded';
+        state.creditSelected = payload;
+      })
+
+      .addCase(getCreditById.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
         state.creditSelected = payload;
       });

@@ -6,11 +6,24 @@ import { PaymentProgress } from './PaymentProgress';
 import { PaymentHistory } from './PaymentHistory';
 import { useAppSelector } from '../../../app/hooks';
 import './styles.scss';
+import { useEffect } from 'react';
+import { store } from '../../../app/store';
+import { getCreditById, setSelectedCredit } from '../../../app/slices/credits';
+import { useParams } from 'react-router-dom';
 
 export const CreditPaymentSystem = () => {
+  const params = useParams();
   const creditSelected = useAppSelector(
     (state) => state.credits.creditSelected
   );
+
+  useEffect(() => {
+    store.dispatch(getCreditById(params.id ?? '')).unwrap();
+
+    return () => {
+      store.dispatch(setSelectedCredit(null));
+    };
+  }, [params.id]);
 
   return (
     <div className="container h-auto mx-auto space-y-6 max-h-[75vh]">

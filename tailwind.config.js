@@ -4,6 +4,15 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      keyframes: {
+        flash: {
+          '0%, 100%': { boxShadow: '0 0 5px 2px white' },
+          '50%': { boxShadow: '0 0 5px 2px red' },
+        },
+      },
+      animation: {
+        flash: 'flash 1.5s infinite',
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',

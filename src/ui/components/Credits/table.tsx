@@ -10,8 +10,6 @@ import {
 import { Pencil, Trash } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ICredit } from '../../../interfaces/creditsInterfaces';
-import { store } from '../../../app/store';
-import { setSelectedCredit } from '../../../app/slices/credits';
 
 interface ProductsTableProps {
   currentItems: ICredit[];
@@ -21,7 +19,6 @@ export const TablaCredits = ({ currentItems }: ProductsTableProps) => {
   const navigate = useNavigate();
 
   const handleSelectEntity = (entity: ICredit) => {
-    store.dispatch(setSelectedCredit(entity));
     navigate(`/credits/${entity._id}`);
   };
 
@@ -59,6 +56,7 @@ export const TablaCredits = ({ currentItems }: ProductsTableProps) => {
           {currentItems?.map((product) => (
             <TableRow
               key={product._id ?? ''}
+              className="hover:cursor-pointer"
               onClick={() => handleSelectEntity(product)}
             >
               <TableCell className="font-medium">
