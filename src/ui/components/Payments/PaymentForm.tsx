@@ -10,13 +10,14 @@ import { PaymentProgress } from './PaymentProgress';
 import { store } from '../../../app/store';
 import { payCredit } from '../../../app/slices/credits';
 import { toast, Toaster } from 'sonner';
+import { Banknote } from 'lucide-react';
 
 interface PaymentFormProps {
   creditSelected: ICredit | null;
 }
 
 export function PaymentForm({ creditSelected }: PaymentFormProps) {
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<number>(0.0);
   const [processingSale, setProcessingSale] = useState(false);
 
   const handleSubmit = () => {
@@ -63,16 +64,13 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
           </CardHeader>
           <CardContent>
             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <div className="space-y-2">
+              <div className="relative space-y-2">
+                <Banknote className="absolute text-green-600 transform -translate-y-1/2 left-2 top-1/2" />
                 <Input
-                  className="font-onest"
+                  className="pl-10 font-onest"
                   id="amount"
                   type="number"
-                  placeholder={
-                    creditSelected?.modalidadCredito === 'PAGO'
-                      ? 'Ingrese el monto del abono'
-                      : 'Ingrese el monto de la cuota'
-                  }
+                  placeholder={'0.00'}
                   value={amount}
                   onChange={(e) => setAmount(Number(e.target.value))}
                   disabled={processingSale}
@@ -82,7 +80,7 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
                 type="submit"
                 className="w-full font-onest"
                 onClick={handleSubmit}
-                disabled={processingSale}
+                disabled={processingSale || amount <= 0}
               >
                 {creditSelected?.modalidadCredito === 'PAGO'
                   ? 'Abonar'

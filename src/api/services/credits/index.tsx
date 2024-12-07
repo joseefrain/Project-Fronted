@@ -21,3 +21,9 @@ export const postPayCredit = async (
   const response = await axiosInstance.post('/', data);
   return response.data;
 };
+
+export const fetchCreditById = async (id: string): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Credits);
+  const response = await axiosInstance.get(`/${id}`);
+  return response.data;
+};
