@@ -20,10 +20,10 @@ interface IEntitiesCommercialInfo {
 }
 
 interface IEntitiesState {
-  amountReceivable: number;
-  advancesReceipts: number;
-  advancesDelivered: number;
-  amountPayable: number;
+  amountReceivable: { $numberDecimal: number };
+  advancesReceipts: { $numberDecimal: number };
+  advancesDelivered: { $numberDecimal: number };
+  amountPayable: { $numberDecimal: number };
 }
 
 export interface IEntities {
