@@ -1,23 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useAppSelector } from '@/app/hooks';
+import { createProduct } from '@/app/slices/branchSlice';
+import { getAllGroupsSlice } from '@/app/slices/groups';
+import { store } from '@/app/store';
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from '@/components/ui/card';
 import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
-import { store } from '@/app/store';
-import SearchAndFilter from './sear';
-import ProductsTable from './ProductTable';
-import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import { GetBranches } from '@/shared/helpers/Branchs';
-import { useAppSelector } from '@/app/hooks';
-import { getAllGroupsSlice } from '@/app/slices/groups';
-import { createProduct } from '@/app/slices/branchSlice';
 import { Boxes } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'sonner';
+import Pagination from '../../../shared/components/ui/Pagination/Pagination';
+import ProductsTable from './ProductTable';
+import SearchAndFilter from './sear';
 
 export function Products() {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -108,7 +108,7 @@ export function Products() {
     <>
       <Toaster richColors position="bottom-right" />
       <div className="flex flex-col w-full">
-        <main className="flex-1 p-4 md:p-6">
+        <main className="flex-1 py-4 md:py-6">
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3">

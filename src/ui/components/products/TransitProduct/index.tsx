@@ -1,17 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useAppSelector } from '@/app/hooks';
+import { fetchBranches } from '@/app/slices/branchSlice';
+import { clearProducts, productsTransit } from '@/app/slices/productsSlice';
+import { store } from '@/app/store';
 import {
   Card,
+  CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-  CardContent,
 } from '@/components/ui/card';
-import { store } from '@/app/store';
-import Pagination from '../../../../shared/components/ui/Pagination/Pagination';
-import { useAppSelector } from '@/app/hooks';
-import ProductsTable from './Table';
-import { clearProducts, productsTransit } from '@/app/slices/productsSlice';
-import { SearchComponent } from '@/shared/components/ui/Search';
 import {
   Select,
   SelectContent,
@@ -20,9 +17,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ITablaBranch } from '@/interfaces/branchInterfaces';
+import { SearchComponent } from '@/shared/components/ui/Search';
 import { GetBranches } from '@/shared/helpers/Branchs';
-import { fetchBranches } from '@/app/slices/branchSlice';
 import { Boxes } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import Pagination from '../../../../shared/components/ui/Pagination/Pagination';
+import ProductsTable from './Table';
 
 export const ProductsTransit = () => {
   const dataAllProducts = useAppSelector(
@@ -91,7 +91,7 @@ export const ProductsTransit = () => {
 
   return (
     <div className="flex flex-col w-full">
-      <main className="flex-1 p-4 md:p-6">
+      <main className="flex-1 py-4 md:py-6">
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">

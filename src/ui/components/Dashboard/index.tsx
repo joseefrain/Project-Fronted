@@ -1,16 +1,25 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   ArrowDownIcon,
   ArrowUpIcon,
-  ShoppingBagIcon,
-  UsersIcon,
   CreditCardIcon,
   PackageIcon,
+  ShoppingBagIcon,
+  UsersIcon,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
-import { PieChart, Pie, Cell, Legend, Tooltip } from 'recharts';
 import { ReactNode } from 'react';
+import {
+  Bar,
+  BarChart,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { BranchDrawer } from '../ModalBranchs';
 
 export default function Dashboard() {
@@ -33,9 +42,11 @@ export default function Dashboard() {
   const COLORS = ['#8b5cf6', '#3b82f6', '#f59e0b'];
 
   return (
-    <div className="min-h-screen ">
-      <div className="mx-auto space-y-8 px-[7rem]">
-        <h1 className="mb-8 text-4xl font-bold text-gray-800">Dashboard</h1>
+    <div className="">
+      <div className="mx-auto space-y-8">
+        <h1 className="mb-8 text-4xl font-bold text-gray-800 font-onest">
+          Dashboard
+        </h1>
         <BranchDrawer />
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <StatCard
@@ -75,11 +86,11 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <Card className="col-span-2">
             <CardHeader>
-              <CardTitle className="text-xl font-semibold">
+              <CardTitle className="text-xl font-semibold font-onest">
                 Resumen de Ventas
               </CardTitle>
             </CardHeader>
-            <CardContent className="h-80">
+            <CardContent className="h-80 font-onest">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={salesData}>
                   <XAxis
@@ -103,9 +114,11 @@ export default function Dashboard() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle className="text-xl font-semibold">Marketing</CardTitle>
+              <CardTitle className="text-xl font-semibold font-onest">
+                Marketing
+              </CardTitle>
             </CardHeader>
-            <CardContent className="flex items-center justify-center h-80">
+            <CardContent className="flex items-center justify-center font-onest h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -131,43 +144,6 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold">
-              Pedidos Recientes
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[...Array(5)].map((_, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between p-4 transition-shadow duration-200 bg-white rounded-lg shadow-sm hover:shadow-md"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center justify-center w-16 h-16 bg-gray-200 rounded-md">
-                      <PackageIcon className="w-8 h-8 text-gray-500" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-800">iPhone 13</p>
-                      <p className="text-sm text-gray-500">$730,000.00 x 1</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">12 Sept 2022</p>
-                    <Badge
-                      variant={i % 2 === 0 ? 'secondary' : 'outline'}
-                      className="mt-1"
-                    >
-                      {i % 2 === 0 ? 'Pendiente' : 'Completado'}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
@@ -193,17 +169,19 @@ function StatCard({
   return (
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium font-onest">
+          {title}
+        </CardTitle>
         {icon}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <div className="flex items-center mt-2 text-xs text-muted-foreground">
-          <span>
+        <div className="text-2xl font-bold font-onest">{value}</div>
+        <div className="flex items-center mt-2 text-xs text-muted-foreground font-onest">
+          <span className="font-onest">
             {subValue} {subLabel}
           </span>
           <span
-            className={`ml-2 flex items-center ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}
+            className={`font-onest ml-2 flex items-center ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}
           >
             {change >= 0 ? (
               <ArrowUpIcon className="w-4 h-4 mr-1" />

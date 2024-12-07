@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 
@@ -15,16 +15,12 @@ import { useAppSelector } from '@/app/hooks';
 import { getAllGroupsSlice } from '@/app/slices/groups';
 import { store } from '@/app/store';
 
-import { useFilteredBranches } from '@/shared/hooks/useSelectedBranch';
+import { fetchAllProducts } from '@/app/slices/productsSlice';
 import {
   cleanDataSales,
   createDiscountSales,
   getDiscounts,
 } from '@/app/slices/salesSlice';
-import { fetchAllProducts } from '@/app/slices/productsSlice';
-import { toast, Toaster } from 'sonner';
-import { GetBranches } from '@/shared/helpers/Branchs';
-import { ITablaBranch } from '@/interfaces/branchInterfaces';
 import {
   Card,
   CardContent,
@@ -33,11 +29,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { ITablaBranch } from '@/interfaces/branchInterfaces';
+import { IDescuentoCreate } from '@/interfaces/salesInterfaces';
 import Pagination from '@/shared/components/ui/Pagination/Pagination';
 import { SearchComponent } from '@/shared/components/ui/Search';
+import { GetBranches } from '@/shared/helpers/Branchs';
 import { getFormatedDate } from '@/shared/helpers/transferHelper';
+import { useFilteredBranches } from '@/shared/hooks/useSelectedBranch';
+import { toast, Toaster } from 'sonner';
 import { IndexModal } from './modal';
-import { IDescuentoCreate } from '@/interfaces/salesInterfaces';
 
 export default function DiscountManager() {
   const [discounts, setDiscounts] = useState<IDescuentoCreate[]>([]);
@@ -233,7 +233,7 @@ export default function DiscountManager() {
     <>
       <Toaster richColors position="bottom-right" />{' '}
       <div className="flex flex-col w-full">
-        <main className="flex-1 p-4 md:p-6">
+        <main className="flex-1 py-4 md:py-6">
           <Card>
             <CardHeader>
               <CardTitle>Descuentos</CardTitle>

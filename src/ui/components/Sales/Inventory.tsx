@@ -1,32 +1,14 @@
 ('use client');
 
-import React, { useEffect, useMemo, useState } from 'react';
 import { store } from '@/app/store';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, ChevronsUpDown, Receipt, User, Users } from 'lucide-react';
-import { CreditCard, Banknote, MapPin, Phone, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { CardFooter } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { IProductSale, ISale } from '@/interfaces/salesInterfaces';
-import { toast, Toaster } from 'sonner';
-import { createSale } from '@/app/slices/salesSlice';
-import { ConfirmedSaleDialog } from './ConfirmedSaleDialog';
-import './style.scss';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Command,
   CommandEmpty,
@@ -35,7 +17,48 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import {
+  ICreditMethod,
+  ICustomerType,
+  IPaymentMethod,
+  IProductSale,
+  ISale,
+  ITypeTransaction,
+} from '@/interfaces/salesInterfaces';
 import { cn } from '@/lib/utils';
+import {
+  Banknote,
+  CalendarClock,
+  Check,
+  ChevronsUpDown,
+  Clock,
+  CreditCard,
+  HandCoins,
+  Phone,
+  Receipt,
+  User,
+  Users,
+} from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { toast, Toaster } from 'sonner';
+import { createSale } from '../../../app/slices/salesSlice';
+import { ConfirmedSaleDialog } from './ConfirmedSaleDialog';
+import './style.scss';
 
 export interface ISaleSummary {
   subTotal: number;
@@ -57,18 +80,29 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
 
   const [cashInRegister, setCashInRegister] = useState(0);
   const [registeredCustomers] = useState([
-    { id: '1', name: 'Arleys Gatica', credit: 1000, creditUsed: 0 },
+    {
+      id: '672edfa6285e202690507670',
+      name: 'Arleys Gatica',
+      credit: 1000,
+      creditUsed: 0,
+    },
     { id: '2', name: 'Carlos Duarte', credit: 1500, creditUsed: 500 },
     { id: '3', name: 'Junior Hurtado', credit: 500, creditUsed: 200 },
   ]);
 
-  const [customerType, setCustomerType] = useState<'registered' | 'general'>(
-    'general'
+  const [customerType, setCustomerType] = useState<ICustomerType>(
+    ICustomerType.GENERAL
   );
-  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'credit'>('cash');
+  const [paymentMethod, setPaymentMethod] = useState<IPaymentMethod>(
+    IPaymentMethod.CASH
+  );
+  const [creditMethod, setCreditMethod] = useState<ICreditMethod>(
+    ICreditMethod.PLAZO
+  );
 
   const [open, setOpen] = useState(false);
   const [cashReceived, setCashReceived] = useState<string>('');
+  const [months, setMonths] = useState<string>('');
   const [customer, setCustomer] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [transactionDate, setTransactionDate] = useState<Date | null>(null);
@@ -126,7 +160,19 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
       cambioCliente: saleSummary.change,
       monto: Number(cashReceived),
       cajaId: caja?._id ?? '',
+      paymentMethod,
+      tipoTransaccion: ITypeTransaction.VENTA,
     };
+
+    if (paymentMethod === IPaymentMethod.CREDIT) {
+      newSale.entidadId = customer ?? '';
+      newSale.credito = {
+        modalidadCredito: creditMethod,
+        plazoCredito: Number(months),
+        cuotaMensual: 0,
+        pagoMinimoMensual: 0,
+      };
+    }
 
     const request = store
       .dispatch(createSale(newSale))
@@ -165,20 +211,13 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
 
   return (
     <>
-      <Card className="shadow-lg bg-white/80 backdrop-blur-sm">
+      <Card className="shadow-lg bg-white/80 backdrop-blur-sm font-onest">
         <CardHeader className="flex flex-col justify-between gap-2 pb-4">
           <div className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2 font-bold text-primary">
               <Receipt />
-              Caja - {user?.username.toUpperCase()}
+              {user?.username.toUpperCase()}
             </CardTitle>
-
-            <div className="flex items-center text-sm">
-              <MapPin className="w-4 h-4 mr-2" />
-              <span className="font-semibold">
-                {user?.sucursalId?.nombre ?? branchSelected?.nombre}
-              </span>
-            </div>
             <div className="flex items-center text-sm">
               <Phone className="w-4 h-4 mr-2" />
               <span className="font-semibold">
@@ -194,10 +233,12 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
           </div>
 
           <div className="flex items-center justify-center w-full gap-4 p-2 m-auto font-sans font-semibold text-center text-black rounded-md shadow-md bg-sky-100">
-            <span className="font-medium text-blue-900 uppercase">
+            <span className="font-medium text-blue-900 uppercase font-onest">
               Efectivo en caja
             </span>
-            <span className="font-bold">${cashInRegister.toFixed(2)}</span>
+            <span className="font-bold font-onest">
+              ${cashInRegister.toFixed(2)}
+            </span>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -208,29 +249,30 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                 <span className="text-red-600">*</span>
               </Label>
               <Select
-                onValueChange={(value: 'registered' | 'general') => {
+                onValueChange={(value: ICustomerType) => {
                   setCustomerType(value);
                   setCustomer('');
-                  value === 'general' && setPaymentMethod('cash');
+                  value === ICustomerType.GENERAL &&
+                    setPaymentMethod(IPaymentMethod.CASH);
                 }}
                 disabled={processingSale}
               >
                 <SelectTrigger id="customer-type">
                   <SelectValue placeholder="Seleccionar" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="registered">
+                <SelectContent className="font-onest">
+                  <SelectItem value={ICustomerType.REGISTERED}>
                     <User className="inline w-4 h-4 mr-2" />
                     Registrado
                   </SelectItem>
-                  <SelectItem value="general">
+                  <SelectItem value={ICustomerType.GENERAL}>
                     <Users className="inline w-4 h-4 mr-2" />
                     General
                   </SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            {customerType === 'registered' ? (
+            {customerType === ICustomerType.REGISTERED ? (
               <div className="space-y-2">
                 <Label htmlFor="registered-customer">
                   Cliente
@@ -254,9 +296,14 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                   </PopoverTrigger>
                   <PopoverContent className="p-0">
                     <Command>
-                      <CommandInput placeholder="Buscar cliente" />
+                      <CommandInput
+                        placeholder="Buscar cliente"
+                        className="font-onest"
+                      />
                       <CommandList className="product__list">
-                        <CommandEmpty>Producto no encontrado.</CommandEmpty>
+                        <CommandEmpty className="p-4 text-sm text-gray-800 font-onest">
+                          Cliente no encontrado.
+                        </CommandEmpty>
                         <CommandGroup>
                           {registeredCustomers.map((client) => (
                             <CommandItem
@@ -268,6 +315,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                                 );
                                 setOpen(false);
                               }}
+                              className="font-onest"
                             >
                               <Check
                                 className={cn(
@@ -306,7 +354,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                 <span className="text-red-600">*</span>
               </Label>
               <Select
-                onValueChange={(value: 'cash' | 'credit') =>
+                onValueChange={(value: IPaymentMethod) =>
                   setPaymentMethod(value)
                 }
                 value={paymentMethod}
@@ -318,14 +366,17 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                     className="flex items-center gap-2"
                   />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="cash" className="flex items-center gap-2">
+                <SelectContent className="font-onest">
+                  <SelectItem
+                    value={IPaymentMethod.CASH}
+                    className="flex items-center gap-2"
+                  >
                     <Banknote className="inline w-4 h-4 mr-2" />
                     Efectivo
                   </SelectItem>
-                  {customerType === 'registered' && (
+                  {customerType === ICustomerType.REGISTERED && (
                     <SelectItem
-                      value="credit"
+                      value={IPaymentMethod.CREDIT}
                       className="flex items-center gap-2"
                     >
                       <CreditCard className="inline w-4 h-4 mr-2" />
@@ -336,7 +387,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
               </Select>
             </div>
 
-            {paymentMethod === 'cash' && (
+            {paymentMethod === IPaymentMethod.CASH && (
               <div className="space-y-2 w-[47.5%]">
                 <Label htmlFor="cash-received">
                   Efectivo recibido
@@ -350,10 +401,72 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                     value={cashReceived}
                     onChange={(e) => setCashReceived(e.target.value)}
                     placeholder="0.00"
-                    className="pl-10 font-sans text-lg font-semibold bg-white"
+                    className="pl-10 text-lg font-semibold bg-white font-onest"
                     disabled={processingSale}
                   />
                 </div>
+              </div>
+            )}
+
+            {paymentMethod === IPaymentMethod.CREDIT && (
+              <div className="w-[47.5%] flex justify-between items-center gap-4">
+                <div className="w-full space-y-2">
+                  <Label>
+                    Tipo de crédito
+                    <span className="text-red-600">*</span>
+                  </Label>
+                  <Select
+                    onValueChange={(value: ICreditMethod) =>
+                      setCreditMethod(value)
+                    }
+                    value={creditMethod}
+                    disabled={processingSale}
+                  >
+                    <SelectTrigger id="credit-type">
+                      <SelectValue
+                        placeholder="Seleccionar"
+                        className="flex items-center gap-2"
+                      />
+                    </SelectTrigger>
+                    <SelectContent className="font-onest">
+                      <SelectItem
+                        value={ICreditMethod.PLAZO}
+                        className="flex items-center gap-2"
+                      >
+                        <CalendarClock className="inline w-4 h-4 mr-2" />
+                        Plazos
+                      </SelectItem>
+                      <SelectItem
+                        value={ICreditMethod.PAGO}
+                        className="flex items-center gap-2"
+                      >
+                        <HandCoins className="inline w-4 h-4 mr-2" />
+                        Pagos
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {paymentMethod === IPaymentMethod.CREDIT &&
+                  creditMethod === ICreditMethod.PLAZO && (
+                    <div className="w-[50%] space-y-2">
+                      <Label htmlFor="cash-received">
+                        Meses
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="cash-received"
+                          type="number"
+                          value={months}
+                          onChange={(e) => setMonths(e.target.value)}
+                          placeholder="0"
+                          className="font-semibold text-center bg-white font-onest"
+                          disabled={processingSale}
+                        />
+                      </div>
+                    </div>
+                  )}
               </div>
             )}
           </div>
@@ -390,9 +503,12 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
             disabled={
               productSale.length === 0 ||
               processingSale ||
-              (customerType === 'registered' && !customer) ||
-              (paymentMethod === 'cash' &&
-                Number(cashReceived ?? 0) < saleSummary.total)
+              (customerType === ICustomerType.REGISTERED && !customer) ||
+              (paymentMethod === IPaymentMethod.CASH &&
+                Number(cashReceived ?? 0) < saleSummary.total) ||
+              (paymentMethod === IPaymentMethod.CREDIT &&
+                creditMethod === ICreditMethod.PLAZO &&
+                Number(months ?? 0) === 0)
             }
             onClick={handleProcessSale}
           >
@@ -414,6 +530,8 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
         customers={registeredCustomers}
         productSale={productSale}
         paymentMethod={paymentMethod}
+        creditMethod={creditMethod}
+        months={months}
       />
       <Toaster richColors />
     </>

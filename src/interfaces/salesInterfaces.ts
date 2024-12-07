@@ -71,6 +71,25 @@ export interface IProductSale {
   };
 }
 
+export enum ITypeTransaction {
+  VENTA = 'VENTA',
+}
+
+export enum IPaymentMethod {
+  CASH = 'cash',
+  CREDIT = 'credit',
+}
+
+export enum ICreditMethod {
+  PLAZO = 'PLAZO',
+  PAGO = 'PAGO',
+}
+
+export enum ICustomerType {
+  REGISTERED = 'registered',
+  GENERAL = 'general',
+}
+
 export interface ISale {
   userId: string;
   sucursalId: string;
@@ -81,4 +100,15 @@ export interface ISale {
   monto: number;
   cambioCliente: number;
   cajaId: string;
+  entidadId?: string;
+  paymentMethod: IPaymentMethod;
+  tipoTransaccion: ITypeTransaction;
+  credito?: ICredit;
+}
+
+export interface ICredit {
+  modalidadCredito: ICreditMethod;
+  plazoCredito: number;
+  cuotaMensual: number;
+  pagoMinimoMensual: number;
 }

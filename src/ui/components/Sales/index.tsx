@@ -1,21 +1,21 @@
 'use client';
 
-import { Sale } from './Sale';
-import { Cashier } from './Inventory';
-import { SaleHistory } from './SaleHistory';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/app/hooks';
-import { Branch, ITablaBranch } from '@/interfaces/branchInterfaces';
-import { GetBranches } from '@/shared/helpers/Branchs';
-import { store } from '@/app/store';
 import {
   fetchBranchById,
   updateSelectedBranch,
 } from '@/app/slices/branchSlice';
 import { getCasherById, getDiscountsByBranch } from '@/app/slices/salesSlice';
-import { getSelectedBranchFromLocalStorage } from '@/shared/helpers/branchHelpers';
+import { store } from '@/app/store';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Branch, ITablaBranch } from '@/interfaces/branchInterfaces';
 import { IProductSale } from '@/interfaces/salesInterfaces';
+import { getSelectedBranchFromLocalStorage } from '@/shared/helpers/branchHelpers';
+import { GetBranches } from '@/shared/helpers/Branchs';
+import { useEffect, useState } from 'react';
+import { Cashier } from './Inventory';
+import { Sale } from './Sale';
+import { SaleHistory } from './SaleHistory';
 
 export default function SalesInventorySystem() {
   const cashierId = useAppSelector((state) => state.auth.signIn.cajaId);
@@ -59,18 +59,21 @@ export default function SalesInventorySystem() {
   }, []);
 
   return (
-    <div className="container p-4 mx-auto">
+    <div className="container mx-auto">
       <Tabs defaultValue="sale">
-        <div className="flex flex-col items-start justify-center gap-4 mb-4 sm:flex-row sm:items-center">
+        <div className="flex flex-col items-center gap-4 mb-9 sm:flex-row sm:items-center">
+          <h1 className="text-4xl font-bold text-gray-800 font-onest w-[38%]">
+            Ventas
+          </h1>
           <TabsList className="gap-4 font-bold text-white bg-black">
             <TabsTrigger
-              className="text-[#ffffff] font-bold border-b-2 border-bg-gray-200 border-opacity-0 bg-black"
+              className="text-[#ffffff] font-bold border-b-2 border-bg-gray-200 border-opacity-0 bg-black font-onest"
               value="sale"
             >
               Nueva venta
             </TabsTrigger>
             <TabsTrigger
-              className="bg-black text-[#ffffff] font-bold"
+              className="bg-black text-[#ffffff] font-bold font-onest"
               value="history"
             >
               Historial de ventas
