@@ -1,5 +1,5 @@
 import { useAppSelector } from '@/app/hooks';
-import { logout } from '@/app/slices/login';
+import { logout, openDrawer } from '@/app/slices/login';
 import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,14 +11,7 @@ import { DoorClosed, Store } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchBranches } from '../../../../app/slices/branchSlice';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '../../../../components/ui/dialog';
-import { ModalBranchs } from '../../../../ui/components/ModalBranchs';
+import { BranchDrawer } from '../../../../ui/components/ModalBranchs';
 import {
   findBranchById,
   getSelectedBranchFromLocalStorage,
@@ -27,7 +20,7 @@ import {
 export const ProfileUser = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
   const [, setEditingSucursal] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  //   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
@@ -40,7 +33,7 @@ export const ProfileUser = () => {
 
   const openDialog = (isEdit: boolean) => {
     setEditingSucursal(isEdit);
-    setIsDialogOpen(true);
+    store.dispatch(openDrawer());
   };
 
   const selectedBranchFromLocalStorage = getSelectedBranchFromLocalStorage();
@@ -74,24 +67,7 @@ export const ProfileUser = () => {
             Sucursal
           </Button>
         )}
-        <Dialog
-          open={isDialogOpen}
-          onOpenChange={(open) => {
-            setIsDialogOpen(open);
-            if (!open) {
-              setEditingSucursal(false);
-            }
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Selecione una sucursal</DialogTitle>
-              <DialogDescription>
-                <ModalBranchs />
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+        <BranchDrawer />
       </div>
       <div className="flex items-center justify-center gap-2 p-2">
         <div className="flex flex-col items-start justify-center ">
