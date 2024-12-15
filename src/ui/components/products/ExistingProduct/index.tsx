@@ -81,11 +81,10 @@ export function ProductFormExist() {
       fetchDataGroup();
     }
   }, [selectedGroup]);
-
   const fetchData = async () => {
     if (!user?.sucursalId || !user.sucursalId._id) return;
-    const response = await GetBranches(user.sucursalId._id);
-    setProducts(response);
+    // const response = await GetBranches(user.sucursalId._id);
+    // setProducts(response);
   };
 
   useEffect(() => {

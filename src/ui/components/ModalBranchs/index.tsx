@@ -10,7 +10,12 @@ import {
   DrawerContent,
   DrawerHeader,
 } from '../../../components/ui/drawer';
-import { closeDrawer } from '../../../app/slices/login';
+import {
+  closeDrawer,
+  updateBranchUser,
+  updateUserCashier,
+} from '../../../app/slices/login';
+import { openCashier } from '../../../app/slices/salesSlice';
 
 export const ModalBranchs = () => {
   const branches = useAppSelector((state) => state.branches.data);
@@ -20,16 +25,33 @@ export const ModalBranchs = () => {
   }, []);
 
   const handleSelectBranch = async (branch: Branch) => {
-    store.dispatch(closeDrawer());
     store.dispatch(setSelectedBranch(branch));
-    localStorage.setItem('selectedBranch', JSON.stringify(branch._id));
+    localStorage.setItem('selectedBranch', JSON.stringify(branch));
 
     const userData = localStorage.getItem('user');
+
     if (userData) {
       try {
         const parsedUserData = JSON.parse(userData);
-        parsedUserData.user.sucursalId = branch._id;
+
+        let caja = await store
+          .dispatch(
+            openCashier({
+              sucursalId: branch._id as string,
+              userId: parsedUserData.user._id,
+            })
+          )
+          .unwrap();
+        store.dispatch(updateUserCashier(caja._id));
+        store.dispatch(updateBranchUser(branch));
+
+        console.log(caja, 'day');
+
+        parsedUserData.user.sucursalId = branch;
+        parsedUserData.cajaId = caja._id;
         localStorage.setItem('user', JSON.stringify(parsedUserData));
+
+        store.dispatch(closeDrawer());
       } catch (error) {
         console.error('Error al actualizar sucursalId en user:', error);
       }

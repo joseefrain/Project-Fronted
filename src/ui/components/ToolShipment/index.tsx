@@ -105,15 +105,15 @@ export default function ToolShipment() {
 
     setShipmentTools(updatedTools);
   };
-
+  console.log(selectedBranch, 'day');
   const handleLoadBranch = async () => {
     if (user?.sucursalId?._id) {
-      const response = await GetBranches(user.sucursalId._id);
-
+      //   const response = await GetBranches(user.sucursalId._id);
+      //   console.log(response, 'day');
       store.dispatch(
         updateSelectedBranch({
           ...user.sucursalId,
-          products: response,
+          products: [],
         })
       );
     } else {
