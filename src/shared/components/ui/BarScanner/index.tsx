@@ -18,6 +18,7 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
   }, [isScanning]);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
+    event.stopPropagation();
     if (!isScanning) return; // Si el escáner está deshabilitado, no procesamos más teclas
 
     if (event.key === 'Enter') {
