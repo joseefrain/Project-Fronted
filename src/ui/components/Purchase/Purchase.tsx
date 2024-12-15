@@ -52,6 +52,7 @@ export const Purchase = ({
   const [selectedProduct, setSelectedProduct] = useState<ITablaBranch | null>(
     null
   );
+  const [buffer, setBuffer] = useState<string>('');
 
   const handleSelectProduct = (productId: string) => {
     const product = products.find((p) => p.id === productId);
@@ -179,6 +180,35 @@ export const Purchase = ({
       toast.error('Error al crear producto:' + error);
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const { key } = event;
+      if (key === 'Enter') {
+        const product = products.find((p) => p.barCode === String(buffer));
+
+        if (product) {
+          console.log(product);
+          handleSelectProduct(product.id ?? '');
+          toast.success(
+            `Producto seleccionado: ${product.nombre.toUpperCase()}`
+          );
+        } else {
+          toast.error('Producto no encontrado, intente nuevamente');
+        }
+
+        setBuffer('');
+      } else {
+        setBuffer((prev) => prev + key);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buffer, products]);
 
   return (
     <Card className="font-onest">
