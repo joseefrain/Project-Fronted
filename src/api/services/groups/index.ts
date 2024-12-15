@@ -23,6 +23,15 @@ export const deleteGroup = async (id: string): Promise<AxiosResponse> => {
   return response;
 };
 
+export const updateGroup = async (
+  group: IProductoGroups,
+  id: string
+): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Groups);
+  const response = await axiosInstance.put(`/${id}`, group);
+  return response;
+};
+
 export const getProductsByGroup = async (
   id: string
 ): Promise<IProductoGroups[]> => {

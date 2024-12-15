@@ -76,7 +76,13 @@ const ProductForm = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]:
+        name === 'precio' || name === 'puntoReCompra' || name === 'stock'
+          ? Number(value)
+          : value,
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -178,7 +184,7 @@ const ProductForm = ({
       </div>
       <DialogFooter>
         <Button type="submit">
-          {initialData ? 'Save Changes' : 'Add Product'}
+          {initialData ? 'Guardar Cambios' : 'Crear Producto'}
         </Button>
       </DialogFooter>
     </form>

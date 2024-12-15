@@ -102,6 +102,7 @@ export function Products() {
     if (selectedGroup) {
       fetchDataGroup();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedGroup]);
 
   return (

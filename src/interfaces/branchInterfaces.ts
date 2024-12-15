@@ -36,7 +36,7 @@ export interface ICategoriesProps {
 }
 
 export interface IBranchProps {
-  onEdit: (isEdit: boolean) => void;
+  onEdit: (branch: Branch) => void;
   branch: Branch;
   handleSelectBranch: (branch: Branch) => void;
 }

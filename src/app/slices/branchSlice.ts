@@ -21,7 +21,7 @@ import {
   ITablaBranch,
 } from '@/interfaces/branchInterfaces';
 import { InventarioSucursalWithPopulated } from '@/interfaces/transferInterfaces';
-import { deleteProduct } from '@/api/services/transfer';
+import { deleteProduct, updateProduct } from '@/api/services/transfer';
 import { createTablaBranch } from '@/api/services/products';
 
 export const fetchProductsByBranchId = createAsyncThunk<ITablaBranch[], string>(
@@ -121,6 +121,18 @@ export const removeProduct = createAsyncThunk(
   }
 );
 
+export const updatedProduct = createAsyncThunk(
+  'branches/updateProduct',
+  async (product: { id: string; data: ITablaBranch }, { rejectWithValue }) => {
+    try {
+      const response = await updateProduct(product.id, product.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
 export const fetchBranchById = createAsyncThunk(
   'branches/fetchById',
   async (id: string, { rejectWithValue }) => {
@@ -164,6 +176,14 @@ const branchesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(updateBranchs.fulfilled, (state, action) => {
+        const index = state.data.findIndex(
+          (branch) => branch._id === action.payload._id
+        );
+        if (index !== -1) {
+          state.data[index] = action.payload;
+        }
+      })
       .addCase(fetchBranches.pending, (state) => {
         state.data = [];
         state.status = 'loading';

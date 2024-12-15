@@ -30,6 +30,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { updateProduct } from '../../../api/services/transfer';
+import { toast } from 'sonner';
 
 interface ProductsTableProps {
   products: ITablaBranch[] | undefined;
@@ -61,8 +63,23 @@ const ProductsTable = ({
   );
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleEditProduct = (updatedProduct: ITablaBranch) => {
-    console.log('Product updated:', updatedProduct);
+  const handleEditProduct = async (updatedProduct: ITablaBranch) => {
+    try {
+      const product: ITablaBranch = {
+        ...updatedProduct,
+      };
+      console.log('Product updated:', updatedProduct);
+      if (product.id) {
+        await updateProduct(product.id, product);
+        setIsEditing(false);
+        setEditingProduct(null);
+        toast.success(`Producto ${product.nombre} actualizado exitosamente`);
+      } else {
+        toast.error('Error al actualizar producto: ID no disponible');
+      }
+    } catch (error) {
+      toast.error('Error al actualizar producto: ' + error);
+    }
     setIsEditing(false);
     setEditingProduct(null);
   };

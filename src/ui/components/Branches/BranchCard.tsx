@@ -73,10 +73,7 @@ export const BranchCard = ({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onSelect={(event) => {
-                event.stopPropagation();
-                onEdit(true);
-              }}
+              onClick={() => onEdit(branch)}
               className="font-onest"
             >
               <Pencil className="w-4 h-4 mr-2" />
