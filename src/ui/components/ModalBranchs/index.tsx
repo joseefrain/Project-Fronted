@@ -19,10 +19,23 @@ export const ModalBranchs = () => {
     store.dispatch(fetchBranches()).unwrap();
   }, []);
 
-  const handleSelectBranch = (branch: Branch) => {
+  const handleSelectBranch = async (branch: Branch) => {
     store.dispatch(closeDrawer());
     store.dispatch(setSelectedBranch(branch));
     localStorage.setItem('selectedBranch', JSON.stringify(branch._id));
+
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        const parsedUserData = JSON.parse(userData);
+        parsedUserData.user.sucursalId = branch._id;
+        localStorage.setItem('user', JSON.stringify(parsedUserData));
+      } catch (error) {
+        console.error('Error al actualizar sucursalId en user:', error);
+      }
+    } else {
+      console.warn('No se encontró la clave "user" en localStorage');
+    }
   };
 
   return (

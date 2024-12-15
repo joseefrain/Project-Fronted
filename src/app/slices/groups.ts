@@ -5,6 +5,7 @@ import {
   deleteGroup,
   getAllGroups,
   getProductsByGroup,
+  updateGroup,
 } from '@/api/services/groups';
 import { statusProgressLogin } from './login';
 import { IProductoGroups } from '@/interfaces/branchInterfaces';
@@ -17,6 +18,22 @@ export const createGroupSlice = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
+export const updateGroupSlice = createAsyncThunk(
+  'groups/update',
+  async (
+    payload: { group: IProductoGroups; id: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { group, id } = payload;
+      const response = await updateGroup(group, id); // Función API
+      return response.data; // Devuelve los datos actualizados
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error)); // Manejo de errores
     }
   }
 );
