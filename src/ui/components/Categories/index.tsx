@@ -4,6 +4,7 @@ import {
   createGroupSlice,
   getAllGroupsSlice,
   setSelectCategory,
+  updateGroupSlice,
 } from '@/app/slices/groups';
 import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
@@ -49,19 +50,40 @@ export default function Categories() {
       const resultAction = await store.dispatch(createGroupSlice(groups));
       const result = unwrapResult(resultAction);
       store.dispatch(AddingGroups(result));
+      setIsDialogOpen(false);
       toast.success('Categoria creado exitosamente');
     } catch (error) {
       toast.error(error as string);
     }
   };
 
-  //   const handleEdit = (id: string) => {
-  //     setEditingSucursal(true);
-  //     setIsDialogOpen(true);
-  //   };
+  const handleEdit = async (id: string) => {
+    try {
+      const payload = { group: groups, id };
+      const resultAction = await store.dispatch(updateGroupSlice(payload));
+      unwrapResult(resultAction);
+      setIsDialogOpen(false);
+      setGroups({
+        nombre: '',
+        descripcion: '',
+      });
+      toast.success(`Categoría ${groups.nombre} editada exitosamente`);
+    } catch (error) {
+      toast.error(`Error al editar categoría: ${error}`);
+    }
+  };
 
-  const openDialog = (isEdit: boolean) => {
+  const openDialog = (isEdit: boolean, group?: IProductoGroups) => {
     setEditingSucursal(isEdit);
+    if (group) {
+      setGroups(group);
+    } else {
+      setGroups({
+        nombre: '',
+        descripcion: '',
+      });
+    }
+
     setIsDialogOpen(true);
   };
 
@@ -145,7 +167,7 @@ export default function Categories() {
                 type="submit"
                 onClick={() => {
                   if (editingSucursal) {
-                    //   handleEdit(newBranch?._id);
+                    handleEdit(groups._id!); // Aquí envías el ID del grupo
                   } else {
                     handleAddGroup(groups);
                   }
@@ -163,7 +185,7 @@ export default function Categories() {
                 key={branch._id}
                 categoriesData={branch}
                 handleSelectCategory={handleSelectCategory}
-                onEdit={() => openDialog(true)}
+                onEdit={() => openDialog(true, branch)}
               />
             ))}
         </div>

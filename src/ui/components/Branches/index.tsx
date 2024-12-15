@@ -1,9 +1,9 @@
-/* eslint-disable no-unused-vars */
 import { useAppSelector } from '@/app/hooks';
 import {
   createBranchs,
   fetchBranches,
   setSelectedBranch,
+  updateBranchs,
 } from '@/app/slices/branchSlice';
 import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
@@ -67,8 +67,39 @@ export default function BranchDashboard() {
     }
   };
 
-  const openDialog = (isEdit: boolean) => {
+  const handleEdit = async (id: string) => {
+    try {
+      const payload = { branch: newBranch, id }; // `newBranch` contiene los datos del formulario
+      await store.dispatch(updateBranchs(payload)).unwrap();
+      setIsDialogOpen(false);
+      setNewBranch({
+        pais: '',
+        ciudad: '',
+        nombre: '',
+        telefono: '',
+        direccion: '',
+        description: '',
+      });
+      toast.success(`Sucursal ${newBranch.nombre} editada exitosamente`);
+    } catch (error) {
+      toast.error('Error al editar sucursal: ' + error);
+    }
+  };
+
+  const openDialog = (isEdit: boolean, branch?: Branch) => {
     setEditingSucursal(isEdit);
+    if (branch) {
+      setNewBranch(branch); // Carga los datos existentes
+    } else {
+      setNewBranch({
+        pais: '',
+        ciudad: '',
+        nombre: '',
+        telefono: '',
+        direccion: '',
+        description: '',
+      });
+    }
     setIsDialogOpen(true);
   };
 
@@ -190,7 +221,7 @@ export default function BranchDashboard() {
                 type="submit"
                 onClick={() => {
                   if (editingSucursal) {
-                    //   handleEdit(newBranch?._id);
+                    handleEdit(newBranch._id!);
                   } else {
                     handleSaveNew();
                   }
@@ -209,7 +240,7 @@ export default function BranchDashboard() {
                 key={branch._id}
                 branch={branch}
                 handleSelectBranch={handleSelectBranch}
-                onEdit={() => openDialog(true)}
+                onEdit={() => openDialog(true, branch)}
               />
             ))}
         </div>

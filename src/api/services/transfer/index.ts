@@ -5,6 +5,7 @@ import {
   ITransferPost,
   ITrasladoRecepcion,
 } from '@/interfaces/transferInterfaces';
+import { ITablaBranch } from '../../../interfaces/branchInterfaces';
 
 export const createTransfer = async ({
   ...transfer
@@ -66,5 +67,15 @@ export const returnProductsShipping = async (
 export const deleteProduct = async (id: string): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Inventory);
   const response = await axiosInstance.delete(`/${id}`);
+  return response;
+};
+
+//update producto
+export const updateProduct = async (
+  id: string,
+  product: ITablaBranch
+): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Inventory);
+  const response = await axiosInstance.put(`/${id}`, product);
   return response;
 };
