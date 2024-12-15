@@ -1,15 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
+import './styles.scss';
 
 interface BarcodeScannerProps {
-  onBarcodeScanned: (barcode: string) => void; // Función que se llama cuando se escanea un código de barras
+  onBarcodeScanned: (barcode: string) => void; 
 }
 
 export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
   onBarcodeScanned,
 }) => {
   const scannerRef = useRef<HTMLDivElement>(null);
-  const [barcode, setBarcode] = useState(''); // Código escaneado actual
-  const [isScanning, setIsScanning] = useState(true); // Estado para controlar si el escáner está habilitado
+  const [barcode, setBarcode] = useState(''); 
+  const [isScanning, setIsScanning] = useState(true); 
+  const [isCodeComplete, setIsCodeComplete] = useState(false); 
 
   useEffect(() => {
     if (scannerRef.current && isScanning) {
@@ -19,15 +21,16 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     event.stopPropagation();
-    if (!isScanning) return; // Si el escáner está deshabilitado, no procesamos más teclas
-
+    if (!isScanning) return;
     if (event.key === 'Enter') {
       if (barcode.trim() !== '') {
-        onBarcodeScanned(barcode); // Llamar a la función que pasa como propiedad
-        setIsScanning(false); // Desactivar el escáner después de escanear
+        setIsCodeComplete(true); 
+        onBarcodeScanned(barcode); 
+        setIsScanning(false); 
       }
     } else {
-      setBarcode((prev) => prev + event.key); // Construir el código de barras
+      setBarcode((prev) => prev + event.key);
+      setIsCodeComplete(false); 
     }
   };
 
@@ -36,22 +39,18 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
       ref={scannerRef}
       tabIndex={0}
       onKeyDown={handleKeyDown}
+      className='barcode-scanner'
       style={{
-        border: '1px solid #ccc',
-        padding: '20px',
-        maxWidth: '400px',
-        margin: '0 auto',
-        textAlign: 'center',
-        opacity: isScanning ? 1 : 0.5, // Cambiar opacidad si está deshabilitado
+        opacity: isScanning ? 1 : 0.5,
       }}
     >
-      <h2>Escáner de Código de Barras</h2>
-      <p>Escanea un código de barras con la pistola.</p>
-      <p>
-        Código actual: <strong>{barcode}</strong>
+      <p className='barcode-scanner_title'>
+        Código de Barra:
+        <strong>
+          {isCodeComplete ? barcode : 'No se ha escaneado ningún código'}
+        </strong>
       </p>
-      {!isScanning && <p>Escaneo completado, no se puede escanear más.</p>}{' '}
-      {/* Mensaje cuando no se puede escanear más */}
+      {!isScanning && <p>Escaneo completado, no se puede escanear más.</p>}
     </div>
   );
 };
