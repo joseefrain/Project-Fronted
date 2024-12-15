@@ -16,17 +16,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Switch } from '@/components/ui/switch';
 import { ITablaBranch } from '@/interfaces/branchInterfaces';
 import { IProductSale } from '@/interfaces/salesInterfaces';
 import { cn } from '@/lib/utils';
-import {
-  applyDiscounts,
-  handleProductSaleAlerts,
-} from '@/shared/helpers/salesHelper';
-import { Check, ChevronsUpDown, Plus, ShoppingBag, Truck } from 'lucide-react';
+import { Check, ChevronsUpDown, Plus, ShoppingBag } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { ProductSale } from './ProductSale';
+import { ProductSale } from '../Sales/ProductSale';
+import { AddProduct } from '../Table/sear';
+import { store } from '../../../app/store';
+import { createProduct } from '../../../app/slices/branchSlice';
+import { toast, Toaster } from 'sonner';
+import { getAllGroupsSlice } from '../../../app/slices/groups';
 import './style.scss';
 
 export interface ISaleProps {
@@ -36,7 +36,7 @@ export interface ISaleProps {
   setProducts: React.Dispatch<React.SetStateAction<ITablaBranch[]>>;
 }
 
-export const Sale = ({
+export const Purchase = ({
   products,
   setProducts,
   productSale,
@@ -45,11 +45,10 @@ export const Sale = ({
   const selectedBranch = useAppSelector(
     (state) => state.branches.selectedBranch
   );
-  const discounts = useAppSelector((state) => state.sales.branchDiscounts);
+
   const [open, setOpen] = useState(false);
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
-  const [supplierMode, setSupplierMode] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ITablaBranch | null>(
     null
   );
@@ -60,7 +59,6 @@ export const Sale = ({
     if (!product) return setSelectedProduct(null);
 
     setSelectedProduct(product);
-    setPrice(Number(product.precio.$numberDecimal));
   };
 
   const handleQuantityChange = (productId: string, quantity: number) => {
@@ -83,7 +81,7 @@ export const Sale = ({
       price: price,
       discount: null,
       groupId: selectedProduct?.grupoId ?? '',
-      clientType: supplierMode ? 'Proveedor' : 'Regular',
+      clientType: 'Proveedor',
       inventarioSucursalId: selectedProduct?.inventarioSucursalId ?? '',
     };
 
@@ -98,75 +96,33 @@ export const Sale = ({
         newProductSale.quantity + isExistentProduct.quantity;
     }
 
-    const productWithDiscount = applyDiscounts(
-      selectedProduct?.sucursalId ?? '',
-      newProductSale,
-      discounts
-    );
-
     if (isExistentProduct) {
       const updatedProductSale = productSale.map((item) =>
-        item.productId === productWithDiscount.productId &&
-        item.price === productWithDiscount.price
-          ? productWithDiscount
+        item.productId === newProductSale.productId &&
+        item.price === newProductSale.price
+          ? newProductSale
           : item
       );
       setProductSale(updatedProductSale);
     } else {
-      setProductSale([...productSale, productWithDiscount]);
+      setProductSale([...productSale, newProductSale]);
     }
-
-    const updatedProducts = products.map((item) => {
-      const newStock = item.stock - quantity;
-
-      if (item.id === productWithDiscount.productId) {
-        handleProductSaleAlerts(
-          item.nombre,
-          newStock,
-          selectedProduct?.puntoReCompra ?? 0
-        );
-      }
-
-      return item.id === productWithDiscount.productId
-        ? { ...item, stock: newStock }
-        : item;
-    });
-
-    setSelectedProduct((prev) =>
-      prev ? { ...prev, stock: prev.stock - quantity } : null
-    );
-
-    setProducts(updatedProducts);
-    setQuantity(0);
   };
 
   const handleRemoveProductSale = (productId: string, quantity: number) => {
-    let quantityUpd = 0;
     const updatedProductSale = productSale.filter((item) => {
       if (item.productId === productId && item.quantity === quantity) {
-        quantityUpd = item.quantity;
         return false;
       }
       return true;
     });
     setProductSale(updatedProductSale);
-
-    const updatedProducts = products.map((item) =>
-      item.id === productId
-        ? { ...item, stock: item.stock + quantityUpd }
-        : item
-    );
-    setProducts(updatedProducts);
-    setSelectedProduct((prev) =>
-      prev ? { ...prev, stock: prev.stock + quantityUpd } : null
-    );
   };
 
   const cleanFieldsByBranchChange = () => {
     setProductSale([]);
     setQuantity(0);
     setPrice(0);
-    setSupplierMode(false);
     setSelectedProduct(null);
   };
 
@@ -175,26 +131,73 @@ export const Sale = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedBranch]);
 
+  useEffect(() => {
+    store.dispatch(getAllGroupsSlice()).unwrap();
+  }, []);
+
+  const GroupsAll = useAppSelector((state) => state.categories.groups);
+  const [selectedGroup, setSelectedGroup] = useState<{
+    nombre: string;
+    _id: string;
+  } | null>(null);
+
+  const handleSelectChange = (value: string) => {
+    const selectedBranchId = value;
+    const branch = GroupsAll.find((b) => b._id === selectedBranchId);
+
+    if (branch) {
+      setSelectedGroup({ nombre: branch.nombre, _id: branch._id ?? '' });
+    }
+  };
+
+  const handleAddProduct = async (newProduct: ITablaBranch) => {
+    try {
+      const request = store
+        .dispatch(createProduct(newProduct))
+        .unwrap()
+        .catch(() => {
+          return Promise.reject();
+        })
+        .then((res) => {
+          const price = res.precio as unknown as number;
+
+          setProducts((prevProducts) => [
+            ...prevProducts,
+            {
+              ...res,
+              precio: { $numberDecimal: price },
+            },
+          ]);
+        });
+
+      toast.promise(request, {
+        loading: 'Procesando...',
+        success: `Producto ${newProduct.nombre} creado exitosamente`,
+        error: 'Error al procesar la venta',
+      });
+    } catch (error) {
+      toast.error('Error al crear producto:' + error);
+    }
+  };
+
   return (
     <Card className="font-onest">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <ShoppingBag />
-          Gestionar Productos
-        </CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="flex items-center gap-2">
+            <ShoppingBag />
+            Gestionar Productos
+          </CardTitle>
+        </div>
+        <AddProduct
+          groups={GroupsAll}
+          sucursalId={selectedBranch?._id}
+          selectedGroup={selectedGroup}
+          onAddProduct={handleAddProduct}
+          handleSelectChange={handleSelectChange}
+        />
       </CardHeader>
       <CardContent className="h-[80%]">
-        <div className="flex items-center mb-4 space-x-2">
-          <Switch
-            className="p-0"
-            checked={supplierMode}
-            onCheckedChange={setSupplierMode}
-          />
-          <Label className="flex items-center">
-            <Truck className="w-4 h-4 mr-2" />
-            Modo Proveedor
-          </Label>
-        </div>
         <div className="flex gap-4 mb-4">
           <div className="flex flex-col w-full gap-1">
             <Label className="text-xs">Producto</Label>
@@ -255,15 +258,7 @@ export const Sale = ({
               </PopoverContent>
             </Popover>
           </div>
-          <div className="flex flex-col gap-1 w-[20%]">
-            <Label className="text-xs">Disponible</Label>
-            <Input
-              className="w-full text-center"
-              value={selectedProduct ? selectedProduct.stock : 0}
-              disabled
-            />
-          </div>
-          <div className="flex flex-col gap-1 w-[20%]">
+          <div className="flex flex-col gap-1 w-[30%]">
             <Label className="text-xs">Cantidad</Label>
             <Input
               type="number"
@@ -281,25 +276,20 @@ export const Sale = ({
               className="w-full"
             />
           </div>
-          {supplierMode && (
-            <div className="flex flex-col gap-1 w-[25%]">
-              <Label className="text-xs">Precio</Label>
-              <Input
-                type="number"
-                id="branch-select"
-                value={selectedProduct ? price : 0}
-                disabled={!selectedProduct}
-                onChange={(e) =>
-                  handlePriceChange(
-                    selectedProduct?.id!,
-                    Number(e.target.value)
-                  )
-                }
-                min={0}
-                className="w-full"
-              />
-            </div>
-          )}
+          <div className="flex flex-col gap-1 w-[30%]">
+            <Label className="text-xs">Precio</Label>
+            <Input
+              type="number"
+              id="branch-select"
+              value={selectedProduct ? price : 0}
+              disabled={!selectedProduct}
+              onChange={(e) =>
+                handlePriceChange(selectedProduct?.id!, Number(e.target.value))
+              }
+              min={0}
+              className="w-full"
+            />
+          </div>
           <div className="flex flex-col justify-end gap-1 w-[10%]">
             <Button
               className="w-full text-xs"
@@ -312,11 +302,13 @@ export const Sale = ({
         </div>
         <div className="product__sale__list">
           <ProductSale
+            type="COMPRA"
             products={productSale}
             handleRemoveProductSale={handleRemoveProductSale}
           />
         </div>
       </CardContent>
+      <Toaster richColors position="bottom-right" />
     </Card>
   );
 };

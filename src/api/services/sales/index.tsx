@@ -34,12 +34,28 @@ export const postSale = async ({ ...data }: ISale): Promise<AxiosResponse> => {
 
 export const getSaleByBranchId = async (id: string): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Sales);
-  const response = await axiosInstance.get(`/${id}/branch`);
+  const response = await axiosInstance.get(`/venta/${id}/branch`);
   return response;
 };
 
 export const getCashier = async (id: string): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Cashier);
   const response = await axiosInstance.get(`/${id}`);
+  return response;
+};
+
+export const postPurchase = async ({
+  ...data
+}: ISale): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Sales);
+  const response = await axiosInstance.post('/', data);
+  return response;
+};
+
+export const getPurchaseByBranchId = async (
+  id: string
+): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Sales);
+  const response = await axiosInstance.get(`/compra/${id}/branch`);
   return response;
 };

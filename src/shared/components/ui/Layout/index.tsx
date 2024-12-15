@@ -32,7 +32,7 @@ export const Layout = ({ children }: LayoutProps) => {
     ...(roleUsers === 'root' || roleUsers === 'admin'
       ? [{ name: 'SUCURSALES', path: '/branches', icon: <Store /> }]
       : []),
-    { name: 'VENTAS', path: '/sales', icon: <ShoppingBag /> },
+    { name: 'TRANSACCIÓN', path: '/sales', icon: <ShoppingBag /> },
     { name: 'CRÉDITOS', path: '/credits', icon: <CreditCard /> },
     { name: 'PRODUCTOS', path: '/products', icon: <ShoppingCart /> },
     { name: 'CATEGORÍAS', path: '/categories', icon: <Group /> },

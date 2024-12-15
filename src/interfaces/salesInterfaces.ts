@@ -73,6 +73,7 @@ export interface IProductSale {
 
 export enum ITypeTransaction {
   VENTA = 'VENTA',
+  COMPRA = 'COMPRA',
 }
 
 export enum IPaymentMethod {
