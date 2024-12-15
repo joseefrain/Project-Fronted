@@ -1,0 +1,25 @@
+.inventory__card {
+  @apply h-[36rem] max-h-[36rem] overflow-y-auto;
+
+  &::-webkit-scrollbar {
+    @apply hidden #{!important};
+  }
+}
+
+.product__list {
+  &::-webkit-scrollbar {
+    @apply hidden #{!important};
+  }
+}
+
+.product__sale__list {
+  @apply max-h-[20rem] overflow-auto;
+
+  &::-webkit-scrollbar {
+    @apply hidden #{!important};
+  }
+}
+
+.saled__btn {
+  @apply flex items-center justify-center gap-3 w-full min-w-full #{!important};
+}

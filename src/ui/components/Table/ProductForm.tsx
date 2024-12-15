@@ -42,6 +42,7 @@ const ProductForm = ({
   groups,
 }: ProductFormProps) => {
   const DEFAULT_MONEDA_ID = '671342d4664051db7c1f8792';
+  const [loading, setLoading] = useState(false);
   const branches = useAppSelector((state) => state.branches.data);
   const [selectedBranch, setSelectedBranch] = useState<string | undefined>(
     sucursalId
@@ -88,6 +89,7 @@ const ProductForm = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const productData: ITablaBranch = {
       ...initialData,
       grupoId: selectedGroup?._id || '',
@@ -205,8 +207,8 @@ const ProductForm = ({
         )}
       </div>
       <DialogFooter>
-        <Button type="submit">
-          {initialData ? 'Guardar Cambios' : 'Crear Producto'}
+        <Button type="submit" disabled={loading}>
+          {initialData ? 'Guardar Cambios' : 'Agregar Producto'}
         </Button>
       </DialogFooter>
     </form>

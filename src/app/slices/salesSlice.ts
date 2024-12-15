@@ -3,7 +3,9 @@ import {
   getAllDiscounts,
   getCashier,
   getDiscountByBranchId,
+  getPurchaseByBranchId,
   getSaleByBranchId,
+  postPurchase,
   postSale,
 } from '@/api/services/sales';
 import { Branch, IStatus } from '@/interfaces/branchInterfaces';
@@ -39,6 +41,7 @@ interface SalesState {
   discounts: IDescuentoCreate[];
   branchDiscounts: IListDescuentoResponse;
   branchSales: ISale[];
+  branchPurchases: ISale[];
   status: IStatus;
   error: string | null;
 }
@@ -48,13 +51,14 @@ const initialState: SalesState = {
   sales: [],
   discounts: [],
   branchSales: [],
+  branchPurchases: [],
   branchDiscounts: {} as IListDescuentoResponse,
   status: 'idle',
   error: null,
 };
 
 export const createDiscountSales = createAsyncThunk(
-  'sales/create',
+  'transactions/create',
   async (transfer: IDescuentoCreate, { rejectWithValue }) => {
     try {
       const response = await createDiscount(transfer);
@@ -66,7 +70,7 @@ export const createDiscountSales = createAsyncThunk(
 );
 
 //GET
-export const getDiscounts = createAsyncThunk('sales/get', async () => {
+export const getDiscounts = createAsyncThunk('transactions/get', async () => {
   try {
     const response = await getAllDiscounts();
     return response.data;
@@ -76,7 +80,7 @@ export const getDiscounts = createAsyncThunk('sales/get', async () => {
 });
 
 export const getDiscountsByBranch = createAsyncThunk(
-  'sales/getByBranchId',
+  'transactions/getByBranchId',
   async (id: string) => {
     try {
       const response = await getDiscountByBranchId(id);
@@ -88,7 +92,7 @@ export const getDiscountsByBranch = createAsyncThunk(
 );
 
 export const createSale = createAsyncThunk(
-  'sales/createSale',
+  'transactions/createSale',
   async (sale: ISale, { rejectWithValue }) => {
     try {
       const response = await postSale(sale);
@@ -99,11 +103,35 @@ export const createSale = createAsyncThunk(
   }
 );
 
+export const createPurchase = createAsyncThunk(
+  'transactions/createPurchase',
+  async (sale: ISale, { rejectWithValue }) => {
+    try {
+      const response = await postPurchase(sale);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
 export const getSalesByBranch = createAsyncThunk(
-  'sales/getSalesByBranchId',
+  'transactions/getSalesByBranchId',
   async (id: string) => {
     try {
       const response = await getSaleByBranchId(id);
+      return response.data;
+    } catch (error) {
+      return handleThunkError(error);
+    }
+  }
+);
+
+export const getPurchasesByBranch = createAsyncThunk(
+  'transactions/getPurchasesByBranchId',
+  async (id: string) => {
+    try {
+      const response = await getPurchaseByBranchId(id);
       return response.data;
     } catch (error) {
       return handleThunkError(error);
@@ -124,7 +152,7 @@ export const getCasherById = createAsyncThunk(
 );
 
 const salesSlice = createSlice({
-  name: 'sales',
+  name: 'transactions',
   initialState,
   reducers: {
     setDiscounts: (state, action: PayloadAction<IDescuentoCreate[]>) => {
@@ -168,6 +196,10 @@ const salesSlice = createSlice({
       })
       .addCase(getCasherById.fulfilled, (state, { payload }) => {
         state.caja = payload;
+      })
+      .addCase(getPurchasesByBranch.fulfilled, (state, { payload }) => {
+        state.status = 'succeeded';
+        state.branchPurchases = payload;
       });
   },
 });
