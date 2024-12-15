@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc && vite build",
     "format": "prettier --write \"src/**/*.js\" \"src/**/*.ts\" \"src/**/*.tsx\" \"src/**/*.scss\"",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . --ext .jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .jsx,.ts,.tsx --fix",
     "preview": "vite preview",
     "start": "serve -s dist -l $PORT"
   },
