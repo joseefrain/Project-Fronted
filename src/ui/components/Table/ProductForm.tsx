@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/select';
 import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
 import React, { useEffect, useState } from 'react';
+import './styles.scss';
 
 interface ProductFormProps {
   initialData?: ITablaBranch;
@@ -40,6 +41,7 @@ const ProductForm = ({
   selectedGroup,
   groups,
 }: ProductFormProps) => {
+  const DEFAULT_MONEDA_ID = '671342d4664051db7c1f8792';
   const [loading, setLoading] = useState(false);
   const branches = useAppSelector((state) => state.branches.data);
   const [selectedBranch, setSelectedBranch] = useState<string | undefined>(
@@ -54,21 +56,20 @@ const ProductForm = ({
     precio: initialData?.precio?.$numberDecimal || '',
     stock: initialData?.stock ?? '',
     grupoId: selectedGroup?._id || '',
-    monedaId: '671342d4664051db7c1f8792',
+    monedaId: DEFAULT_MONEDA_ID,
     puntoReCompra: initialData?.puntoReCompra || '',
   });
 
   useEffect(() => {
     if (initialData) {
       setFormData({
+        ...formData,
         _id: initialData.id || '',
         nombre: initialData.nombre || '',
         descripcion: initialData.descripcion || '',
         precio: initialData.precio?.$numberDecimal || '',
         stock: initialData.stock ?? '',
-        grupoId: selectedGroup?._id || '',
         sucursalId: initialData.sucursalId || '',
-        monedaId: '671342d4664051db7c1f8792',
         puntoReCompra: initialData.puntoReCompra || '',
       });
     }
@@ -111,9 +112,20 @@ const ProductForm = ({
     type: string;
     step?: string;
     min?: string;
+    readOnly?: boolean;
   }[] = [
-    { id: 'nombre', label: 'Nombre', type: 'text' },
-    { id: 'descripcion', label: 'Descripcion', type: 'text' },
+    {
+      id: 'nombre',
+      label: 'Nombre',
+      type: 'text',
+      readOnly: !!initialData,
+    },
+    {
+      id: 'descripcion',
+      label: 'Descripcion',
+      type: 'text',
+      readOnly: !!initialData,
+    },
     { id: 'precio', label: 'Precio', type: 'number' },
     { id: 'stock', label: 'Stock', type: 'number', min: '0' },
     { id: 'puntoReCompra', label: 'Punto de compra', type: 'number' },
@@ -122,7 +134,7 @@ const ProductForm = ({
   return (
     <form onSubmit={handleSubmit}>
       <div className="grid gap-4 py-4">
-        {fields.map(({ id, label, type, step, min }) => (
+        {fields.map(({ id, label, type, step, min, readOnly }) => (
           <div key={id} className="grid items-center grid-cols-4 gap-4">
             <Label htmlFor={id} className="text-right">
               {label}
@@ -135,8 +147,13 @@ const ProductForm = ({
               onChange={handleInputChange}
               step={step}
               min={min}
-              className="col-span-3"
+              className={`col-span-3 ${
+                initialData && (id === 'nombre' || id === 'descripcion')
+                  ? 'disabled'
+                  : ''
+              }`}
               required
+              readOnly={readOnly}
             />
           </div>
         ))}
@@ -162,27 +179,32 @@ const ProductForm = ({
             </Select>
           </div>
         )}
-        <div className="flex items-center justify-end gap-4">
-          <Label htmlFor="branch-select" className="text-right">
-            Categorias
-          </Label>
-          <Select disabled={!selectedBranch} onValueChange={handleSelectChange}>
-            <SelectTrigger className="w-[74.3%]">
-              <SelectValue placeholder="Selecciona" />
-            </SelectTrigger>
-            <SelectContent className="flex flex-col gap-2">
-              {groups.map((branch) => (
-                <SelectItem
-                  key={branch._id}
-                  value={branch._id as string}
-                  className="font-onest"
-                >
-                  {branch.nombre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {!initialData && (
+          <div className="flex items-center justify-end gap-4">
+            <Label htmlFor="branch-select" className="text-right">
+              Categorias
+            </Label>
+            <Select
+              disabled={!selectedBranch}
+              onValueChange={handleSelectChange}
+            >
+              <SelectTrigger className="w-[74.3%]">
+                <SelectValue placeholder="Selecciona" />
+              </SelectTrigger>
+              <SelectContent className="flex flex-col gap-2">
+                {groups.map((branch) => (
+                  <SelectItem
+                    key={branch._id}
+                    value={branch._id as string}
+                    className="font-onest"
+                  >
+                    {branch.nombre}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
       <DialogFooter>
         <Button type="submit" disabled={loading}>

@@ -68,9 +68,8 @@ const ProductsTable = ({
       const product: ITablaBranch = {
         ...updatedProduct,
       };
-      console.log('Product updated:', updatedProduct);
-      if (product.id) {
-        await updateProduct(product.id, product);
+      if (product.id && product.inventarioSucursalId) {
+        await updateProduct(product.inventarioSucursalId, product);
         setIsEditing(false);
         setEditingProduct(null);
         toast.success(`Producto ${product.nombre} actualizado exitosamente`);
