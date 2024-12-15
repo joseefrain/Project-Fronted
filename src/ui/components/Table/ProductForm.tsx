@@ -40,6 +40,7 @@ const ProductForm = ({
   selectedGroup,
   groups,
 }: ProductFormProps) => {
+  const [loading, setLoading] = useState(false);
   const branches = useAppSelector((state) => state.branches.data);
   const [selectedBranch, setSelectedBranch] = useState<string | undefined>(
     sucursalId
@@ -81,6 +82,7 @@ const ProductForm = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const productData: ITablaBranch = {
       ...initialData,
       grupoId: selectedGroup?._id || '',
@@ -177,7 +179,7 @@ const ProductForm = ({
         </div>
       </div>
       <DialogFooter>
-        <Button type="submit">
+        <Button type="submit" disabled={loading}>
           {initialData ? 'Save Changes' : 'Add Product'}
         </Button>
       </DialogFooter>

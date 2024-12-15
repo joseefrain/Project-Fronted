@@ -1,5 +1,5 @@
 import { useAppSelector } from '@/app/hooks';
-import { getSalesByBranch } from '@/app/slices/salesSlice';
+import { getPurchasesByBranch } from '@/app/slices/salesSlice';
 import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
 import {
@@ -29,14 +29,18 @@ import { Eye, History, ShoppingBasket } from 'lucide-react';
 import { useEffect } from 'react';
 import { getSelectedBranchFromLocalStorage } from '../../../shared/helpers/branchHelpers';
 
-export const SaleHistory = () => {
-  const branchStoraged = getSelectedBranchFromLocalStorage();
+export const PurchaseHistory = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
-  const salesHistory = useAppSelector((state) => state.sales.branchSales);
+  const branchStoraged = getSelectedBranchFromLocalStorage();
+  const purchasesHistory = useAppSelector(
+    (state) => state.sales.branchPurchases
+  );
 
   useEffect(() => {
     store
-      .dispatch(getSalesByBranch(user?.sucursalId?._id ?? branchStoraged ?? ''))
+      .dispatch(
+        getPurchasesByBranch(user?.sucursalId?._id ?? branchStoraged ?? '')
+      )
       .unwrap();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -59,18 +63,16 @@ export const SaleHistory = () => {
               <TableHead>Usuario</TableHead>
               <TableHead>Fecha</TableHead>
               <TableHead>Subtotal</TableHead>
-              <TableHead>Descuento</TableHead>
               <TableHead>Total</TableHead>
               <TableHead>Productos</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {salesHistory.map((sale, index) => (
+            {purchasesHistory.map((sale, index) => (
               <TableRow key={index} className="h-[50px]">
                 <TableCell>{sale.userId}</TableCell>
                 <TableCell>{getFormatedDate(new Date())}</TableCell>
                 <TableCell>${sale.subtotal.toFixed(2)}</TableCell>
-                <TableCell>${sale.discount.toFixed(2)}</TableCell>
                 <TableCell>${sale.total.toFixed(2)}</TableCell>
                 <TableCell>
                   <Dialog>
@@ -92,16 +94,13 @@ export const SaleHistory = () => {
                           <TableRow>
                             <TableHead>Producto</TableHead>
                             <TableHead className="text-center">
-                              Tipo de cliente
+                              Tipo de proveedor
                             </TableHead>
                             <TableHead className="text-center">
                               Cantidad
                             </TableHead>
                             <TableHead className="text-center">
                               Precio
-                            </TableHead>
-                            <TableHead className="text-center">
-                              Descuento
                             </TableHead>
                             <TableHead className="text-center">Total</TableHead>
                           </TableRow>
@@ -119,18 +118,6 @@ export const SaleHistory = () => {
                               </TableCell>
                               <TableCell className="text-center">
                                 ${item.price.toFixed(2)}
-                              </TableCell>
-                              <TableCell className="text-center">
-                                {item.discount && item.discount?.amount > 0 ? (
-                                  <span className="text-green-600">
-                                    $
-                                    {(
-                                      item.quantity * item.discount.amount
-                                    ).toFixed(2)}{' '}
-                                  </span>
-                                ) : (
-                                  '-'
-                                )}
                               </TableCell>
                               <TableCell className="text-center">
                                 $
