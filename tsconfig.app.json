@@ -1,6 +1,7 @@
-{  "extends": "./tsconfig.json",
+{
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "esnext",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
@@ -21,10 +22,8 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src/**/*"],
-   "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    }
+  "baseUrl": ".",
+  "paths": {
+    "@/*": ["./src/*"]
+  }
 }
