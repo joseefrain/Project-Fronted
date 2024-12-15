@@ -13,6 +13,7 @@ import {
 import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
 import React, { useEffect, useState } from 'react';
 import './styles.scss';
+import { BarcodeScanner } from '../../../shared/components/ui/BarScanner';
 
 interface ProductFormProps {
   initialData?: ITablaBranch;
@@ -58,6 +59,7 @@ const ProductForm = ({
     grupoId: selectedGroup?._id || '',
     monedaId: DEFAULT_MONEDA_ID,
     puntoReCompra: initialData?.puntoReCompra || '',
+    barCode: initialData?.barCode || '',
   });
 
   useEffect(() => {
@@ -71,6 +73,7 @@ const ProductForm = ({
         stock: initialData.stock ?? '',
         sucursalId: initialData.sucursalId || '',
         puntoReCompra: initialData.puntoReCompra || '',
+        barCode: initialData.barCode || '',
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -101,6 +104,7 @@ const ProductForm = ({
       precio: parseFloat(formData.precio?.toString() ?? '0'),
       stock: parseInt(formData.stock.toString()),
       puntoReCompra: parseInt(formData.puntoReCompra.toString()),
+      barCode: formData.barCode,
     };
 
     onSubmit(productData);
@@ -131,87 +135,100 @@ const ProductForm = ({
     { id: 'puntoReCompra', label: 'Punto de compra', type: 'number' },
   ];
 
+  const handleBarcodeScanned = (barcode: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      barCode: barcode,
+    }));
+    console.log(barcode);
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="grid gap-4 py-4">
-        {fields.map(({ id, label, type, step, min, readOnly }) => (
-          <div key={id} className="grid items-center grid-cols-4 gap-4">
-            <Label htmlFor={id} className="text-right">
-              {label}
-            </Label>
-            <Input
-              id={id}
-              name={id}
-              type={type}
-              value={formData[id]}
-              onChange={handleInputChange}
-              step={step}
-              min={min}
-              className={`col-span-3 ${
-                initialData && (id === 'nombre' || id === 'descripcion')
-                  ? 'disabled'
-                  : ''
-              }`}
-              required
-              readOnly={readOnly}
-            />
-          </div>
-        ))}
-        {!sucursalId && (
-          <div className="flex items-center justify-end gap-4">
-            <Label htmlFor="branch-select" className="text-right">
-              Sucursal
-            </Label>
-            <Select
-              value={selectedBranch}
-              onValueChange={(value) => setSelectedBranch(value)}
-            >
-              <SelectTrigger className="w-[74.3%]">
-                <SelectValue placeholder="Selecciona" />
-              </SelectTrigger>
-              <SelectContent className="flex flex-col gap-2">
-                {branches.map((branch) => (
-                  <SelectItem key={branch._id} value={branch._id as string}>
-                    {branch.nombre}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-        {!initialData && (
-          <div className="flex items-center justify-end gap-4">
-            <Label htmlFor="branch-select" className="text-right">
-              Categorias
-            </Label>
-            <Select
-              disabled={!selectedBranch}
-              onValueChange={handleSelectChange}
-            >
-              <SelectTrigger className="w-[74.3%]">
-                <SelectValue placeholder="Selecciona" />
-              </SelectTrigger>
-              <SelectContent className="flex flex-col gap-2">
-                {groups.map((branch) => (
-                  <SelectItem
-                    key={branch._id}
-                    value={branch._id as string}
-                    className="font-onest"
-                  >
-                    {branch.nombre}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-      </div>
-      <DialogFooter>
-        <Button type="submit" disabled={loading}>
-          {initialData ? 'Guardar Cambios' : 'Agregar Producto'}
-        </Button>
-      </DialogFooter>
-    </form>
+    <>
+      {!initialData && (
+        <BarcodeScanner onBarcodeScanned={handleBarcodeScanned} />
+      )}
+      <form onSubmit={handleSubmit}>
+        <div className="grid gap-4 py-4">
+          {fields.map(({ id, label, type, step, min, readOnly }) => (
+            <div key={id} className="grid items-center grid-cols-4 gap-4">
+              <Label htmlFor={id} className="text-right">
+                {label}
+              </Label>
+              <Input
+                id={id}
+                name={id}
+                type={type}
+                value={formData[id]}
+                onChange={handleInputChange}
+                step={step}
+                min={min}
+                className={`col-span-3 ${
+                  initialData && (id === 'nombre' || id === 'descripcion')
+                    ? 'disabled'
+                    : ''
+                }`}
+                required
+                readOnly={readOnly}
+              />
+            </div>
+          ))}
+          {!sucursalId && (
+            <div className="flex items-center justify-end gap-4">
+              <Label htmlFor="branch-select" className="text-right">
+                Sucursal
+              </Label>
+              <Select
+                value={selectedBranch}
+                onValueChange={(value) => setSelectedBranch(value)}
+              >
+                <SelectTrigger className="w-[74.3%]">
+                  <SelectValue placeholder="Selecciona" />
+                </SelectTrigger>
+                <SelectContent className="flex flex-col gap-2">
+                  {branches.map((branch) => (
+                    <SelectItem key={branch._id} value={branch._id as string}>
+                      {branch.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          {!initialData && (
+            <div className="flex items-center justify-end gap-4">
+              <Label htmlFor="branch-select" className="text-right">
+                Categorias
+              </Label>
+              <Select
+                disabled={!selectedBranch}
+                onValueChange={handleSelectChange}
+              >
+                <SelectTrigger className="w-[74.3%]">
+                  <SelectValue placeholder="Selecciona" />
+                </SelectTrigger>
+                <SelectContent className="flex flex-col gap-2">
+                  {groups.map((branch) => (
+                    <SelectItem
+                      key={branch._id}
+                      value={branch._id as string}
+                      className="font-onest"
+                    >
+                      {branch.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        </div>
+        <DialogFooter>
+          <Button type="submit" disabled={loading}>
+            {initialData ? 'Guardar Cambios' : 'Agregar Producto'}
+          </Button>
+        </DialogFooter>
+      </form>
+    </>
   );
 };
 
