@@ -6,10 +6,11 @@ import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
 export const GetBranches = async (id: string): Promise<ITablaBranch[]> => {
   try {
     const response = await store.dispatch(fetchProductsByBranchId(id)).unwrap();
+
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching branches:', error);
-    throw new Error('Failed to fetch branches');
+    throw new Error(`Failed to fetch branches: ${error.message || error}`);
   }
 };
 

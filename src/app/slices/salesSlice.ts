@@ -5,6 +5,7 @@ import {
   getDiscountByBranchId,
   getPurchaseByBranchId,
   getSaleByBranchId,
+  openCashierService,
   postPurchase,
   postSale,
 } from '@/api/services/sales';
@@ -144,6 +145,21 @@ export const getCasherById = createAsyncThunk(
   async (id: string) => {
     try {
       const response = await getCashier(id);
+      return response.data;
+    } catch (error) {
+      return handleThunkError(error);
+    }
+  }
+);
+
+export const openCashier = createAsyncThunk(
+  'transactions/openCashier',
+  async (payload: { sucursalId: string; userId: string }) => {
+    try {
+      const response = await openCashierService(
+        payload.sucursalId,
+        payload.userId
+      );
       return response.data;
     } catch (error) {
       return handleThunkError(error);

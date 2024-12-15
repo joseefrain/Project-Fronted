@@ -51,6 +51,19 @@ export const getCashier = async (id: string): Promise<AxiosResponse> => {
   return response;
 };
 
+export const openCashierService = async (
+  sucursalId: string,
+  userId: string
+): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Cashier);
+  const response = await axiosInstance.post(`/`, {
+    sucursalId,
+    usuarioAperturaId: userId,
+    montoInicial: 2000,
+  });
+  return response;
+};
+
 export const postPurchase = async ({
   ...data
 }: ISale): Promise<AxiosResponse> => {

@@ -59,7 +59,7 @@ export default function SalesInventorySystem() {
       handleLoadBranch(response.payload as Branch);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user?.sucursalId, cashierId]);
 
   return (
     <div className="container mx-auto">

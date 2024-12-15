@@ -109,6 +109,19 @@ export const LoginSlice = createSlice({
   name: 'login',
   initialState,
   reducers: {
+    updateUserCashier: (state, action) => {
+      state.signIn.cajaId = action.payload;
+    },
+    updateBranchUser: (state, action: PayloadAction<Branch>) => {
+      if (state.signIn.user) {
+        state.signIn.user = {
+          _id: state.signIn.user._id,
+          username: state.signIn.user.username,
+          role: state.signIn.user.role,
+          sucursalId: action.payload,
+        };
+      }
+    },
     updateSignIn: (state, action: PayloadAction<IToken>) => {
       state.signIn = {
         token: action.payload.token,
@@ -162,6 +175,13 @@ export const LoginSlice = createSlice({
   },
 });
 
-export const { updateSignIn, updateSignUp, logout, openDrawer, closeDrawer } =
-  LoginSlice.actions;
+export const {
+  updateSignIn,
+  updateSignUp,
+  logout,
+  openDrawer,
+  closeDrawer,
+  updateUserCashier,
+  updateBranchUser,
+} = LoginSlice.actions;
 export const loginReducer = LoginSlice.reducer;
