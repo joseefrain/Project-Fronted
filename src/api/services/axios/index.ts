@@ -13,6 +13,7 @@ export enum PATH_LIST {
   Credits = 'credito',
   BranchCredits = 'credito/BySucursalId',
   PagoCredito = 'pagoCredito',
+  Queue = '/createTransactionQueue',
 }
 
 export const createAxiosInstance = (
@@ -20,6 +21,24 @@ export const createAxiosInstance = (
   PATH: string
 ): AxiosInstance => {
   const baseURL = `${import.meta.env.VITE_API_URL_BACKEND?.replace(/\/?$/, '/')}${PATH}`;
+
+  const headers = {
+    Authorization: `Bearer ${JWT}`,
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+  };
+
+  return axios.create({
+    baseURL,
+    headers,
+  });
+};
+
+export const createAxiosInstanceForTransaction = (
+  JWT: string | null,
+  PATH: string
+): AxiosInstance => {
+  const baseURL = `${import.meta.env.VITE_API_URL_QUEUE?.replace(/\/?$/, '/')}${PATH}`;
 
   const headers = {
     Authorization: `Bearer ${JWT}`,
