@@ -35,11 +35,22 @@ const LoginForm = () => {
 
     try {
       await store.dispatch(InicioSesion({ userCredentials: payload })).unwrap();
-      toast.success('Sesión iniciada exitosamente');
 
-      if (credentials.username === 'root') {
-        store.dispatch(openDrawer());
+      toast.success('Sesión iniciada exitosamente');
+      const storedData = localStorage.getItem('user');
+
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
+        const role = parsedData?.user?.role;
+
+        if (role === 'root') {
+          console.log('root', role);
+          store.dispatch(openDrawer());
+        }
+      } else {
+        console.log('No hay datos en localStorage');
       }
+
       navigate('/');
     } catch (error) {
       toast.error('Error al iniciar sesión: ' + error);
