@@ -1,4 +1,3 @@
-import { useAppSelector } from '@/app/hooks';
 import { fetchAllProducts } from '@/app/slices/productsSlice';
 import { store } from '@/app/store';
 import {
@@ -17,17 +16,10 @@ import Pagination from '../../../../shared/components/ui/Pagination/Pagination';
 import ProductsTable from './Table';
 
 export const Allproducts = () => {
-  const dataAllProducts = useAppSelector((state) => state.products.products);
-  console.log(dataAllProducts, 'dataAllProducts');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [localProducts, setLocalProducts] = useState<ITablaBranch[]>([]);
-
-  //   useEffect(() => {
-  //     dataAllProducts && store.dispatch(clearProducts());
-  //     store.dispatch(fetchAllProducts());
-  //   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,7 +33,10 @@ export const Allproducts = () => {
   const filteredProducts = localProducts.filter(
     (product) =>
       product?.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product?.nombreSucursal?.toLowerCase().includes(searchTerm.toLowerCase())
+      product?.nombreSucursal
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      product?.barCode?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -59,10 +54,8 @@ export const Allproducts = () => {
           <CardHeader>
             <div className="flex items-center gap-3">
               <Boxes size={20} />
-
               <CardTitle>Products</CardTitle>
             </div>
-
             <CardDescription>Gestione sus productos</CardDescription>
           </CardHeader>
           <CardContent>
@@ -70,6 +63,7 @@ export const Allproducts = () => {
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
             />
+
             {currentItems.length === 0 ? (
               <span className="flex justify-center w-full text-sm text-center text-muted-foreground">
                 No hay productos en esta sucursal
