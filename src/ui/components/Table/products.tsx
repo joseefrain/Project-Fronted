@@ -34,8 +34,8 @@ export function Products() {
   const fetchData = async () => {
     if (user?.sucursalId) {
       try {
-        // const response = await GetBranches(user.sucursalId._id ?? '');
-        // setProducts(response);
+        const response = await GetBranches(user.sucursalId._id ?? '');
+        setProducts(response);
       } catch (error) {
         console.error('Error fetching products:', error);
       }
@@ -49,8 +49,10 @@ export function Products() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filteredProducts = products.filter((product) =>
-    product.nombre.toLowerCase().includes(searchTerm.toLowerCase()) || product?.barCode?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = products.filter(
+    (product) =>
+      product.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product?.barCode?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;

@@ -69,7 +69,7 @@ export default function BranchDashboard() {
 
   const handleEdit = async (id: string) => {
     try {
-      const payload = { branch: newBranch, id }; // `newBranch` contiene los datos del formulario
+      const payload = { branch: newBranch, id };
       await store.dispatch(updateBranchs(payload)).unwrap();
       setIsDialogOpen(false);
       setNewBranch({
