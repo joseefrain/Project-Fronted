@@ -32,7 +32,8 @@ type FormFieldKeys =
   | 'descripcion'
   | 'precio'
   | 'stock'
-  | 'puntoReCompra';
+  | 'puntoReCompra'
+  | 'costoUnitario';
 
 const ProductForm = ({
   initialData,
@@ -60,6 +61,7 @@ const ProductForm = ({
     monedaId: DEFAULT_MONEDA_ID,
     puntoReCompra: initialData?.puntoReCompra || '',
     barCode: initialData?.barCode || '',
+    costoUnitario: initialData?.costoUnitario || 0,
   });
 
   useEffect(() => {
@@ -73,7 +75,8 @@ const ProductForm = ({
         stock: initialData.stock ?? '',
         sucursalId: initialData.sucursalId || '',
         puntoReCompra: initialData.puntoReCompra || '',
-        barCode: initialData.barCode || '',
+        barCode: initialData?.barCode || '',
+        costoUnitario: initialData?.costoUnitario || 0,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,7 +107,9 @@ const ProductForm = ({
       precio: parseFloat(formData.precio?.toString() ?? '0'),
       stock: parseInt(formData.stock.toString()),
       puntoReCompra: parseInt(formData.puntoReCompra.toString()),
-      barCode: formData.barCode,
+      barCode: formData?.barCode || '',
+      //@ts-ignore
+      costoUnitario: parseFloat(formData?.costoUnitario?.toString() ?? '0'),
     };
 
     onSubmit(productData);
@@ -133,6 +138,7 @@ const ProductForm = ({
     { id: 'precio', label: 'Precio', type: 'number' },
     { id: 'stock', label: 'Stock', type: 'number', min: '0' },
     { id: 'puntoReCompra', label: 'Punto de compra', type: 'number' },
+    { id: 'costoUnitario', label: 'Costo unitario', type: 'number' },
   ];
 
   const handleBarcodeScanned = (barcode: string) => {
@@ -159,7 +165,7 @@ const ProductForm = ({
                 id={id}
                 name={id}
                 type={type}
-                value={formData[id]}
+                value={formData[id] as string | number}
                 onChange={handleInputChange}
                 step={step}
                 min={min}

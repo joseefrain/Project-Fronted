@@ -98,6 +98,7 @@ const ProductsTable = ({
             <TableHead>Description</TableHead>
             <TableHead>In Stock</TableHead>
             <TableHead>Punto de compra</TableHead>
+            <TableHead>Costo unitario</TableHead>
             {userRoles?.role !== 'admin' && (
               <TableHead>
                 <span className="">Actions</span>
@@ -123,6 +124,9 @@ const ProductsTable = ({
               </TableCell>
               <TableCell>{product?.stock || '0'}</TableCell>
               <TableCell>{product?.puntoReCompra || '0'}</TableCell>
+              <TableCell>
+                {product.costoUnitario.$numberDecimal || '0'}
+              </TableCell>
               <TableCell>
                 {userRoles?.role !== 'admin' && (
                   <div className="flex items-center gap-2">
