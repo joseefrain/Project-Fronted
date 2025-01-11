@@ -1,11 +1,14 @@
 import { Router } from './router';
 import { ToastProvider } from '@/components/ui/toast';
+import { ThemeProvider } from './shared/components/ui/themeDark/theme-provider';
 
 function App() {
   return (
-    <ToastProvider>
-      <Router />
-    </ToastProvider>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ToastProvider>
+        <Router />
+      </ToastProvider>
+    </ThemeProvider>
   );
 }
 
