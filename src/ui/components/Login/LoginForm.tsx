@@ -62,7 +62,7 @@ const LoginForm = () => {
       <Toaster richColors position="bottom-right" />
       <motion.form
         onSubmit={handleSubmit}
-        className=" bg-gray-50 shadow-md rounded-lg p-6 max-w-md  mt-10 w-full"
+        className=" bg-gray-50 shadow-md rounded-lg p-6 max-w-md mt-10 w-full dark:bg-gray-800"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -71,11 +71,12 @@ const LoginForm = () => {
         <div className="mb-4">
           <label
             htmlFor="username"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700 dark:text-white"
           >
             Nombre de Usuario:
           </label>
           <Input
+            className="dark:bg-gray-900 dark:text-white dark:border-white"
             type="text"
             id="username"
             name="username"
@@ -87,11 +88,12 @@ const LoginForm = () => {
         <div className="mb-4">
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700 dark:text-white"
           >
             Contraseña:
           </label>
           <Input
+            className="dark:bg-gray-900 dark:text-white dark:border-white"
             type="password"
             id="password"
             name="password"

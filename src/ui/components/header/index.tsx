@@ -9,8 +9,8 @@ export const Header = () => {
   };
 
   return (
-    <div className="flex items-center justify-between py-5 pl-4 pr-24 bg-white">
-      <h1 className="flex items-center gap-2 text-2xl font-bold font-onest">
+    <div className="flex items-center justify-between py-5 pl-4 pr-24 bg-white dark:bg-gray-950">
+      <h1 className="flex items-center gap-2 text-2xl font-bold font-onest dark:text-white">
         <ShieldCheck className="fill-blue-500 size-6" />
         NICHOS
       </h1>
