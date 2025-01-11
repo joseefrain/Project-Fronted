@@ -16,6 +16,7 @@ import {
   findBranchById,
   getSelectedBranchFromLocalStorage,
 } from '../../../helpers/branchHelpers';
+import { ModeToggle } from '../../../toggle.tsx';
 
 export const ProfileUser = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -61,7 +62,7 @@ export const ProfileUser = () => {
         {user?.role !== 'admin' && (
           <Button
             onClick={() => openDialog(false)}
-            className="w-full h-full sm:w-auto font-onest"
+            className="w-full h-full sm:w-auto font-onest dark:bg-[#09090b] dark:text-white dark:border-gray-700"
           >
             <Store className="w-4 h-4 mr-2" />
             Sucursal
@@ -71,11 +72,11 @@ export const ProfileUser = () => {
       </div>
       <div className="flex items-center justify-center gap-2 p-2">
         <div className="flex flex-col items-start justify-center ">
-          <h1 className="text-xl font-bold capitalize font-onest">
+          <h1 className="text-xl font-bold capitalize font-onest m-auto">
             {user?.username}
           </h1>
           <p className="text-sm text-muted-foreground font-onest">
-            {user?.role} -{' '}
+            {user?.role}{' '}
             {selectedBranch ? selectedBranch.nombre : user?.sucursalId?.nombre}
           </p>
         </div>
@@ -99,6 +100,7 @@ export const ProfileUser = () => {
           </PopoverContent>
         </Popover>
       </div>
+      <ModeToggle />
     </>
   );
 };
