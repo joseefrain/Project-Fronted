@@ -1,7 +1,7 @@
 .barcode-scanner {
-  @apply grid items-center grid-cols-1  justify-items-center gap-1 focus:outline-none focus-visible:bg-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:ring-offset-transparent 
+  @apply grid items-center grid-cols-1  justify-items-center gap-1 focus:outline-none focus-visible:bg-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:ring-offset-transparent;
 }
 
 .barcode-scanner_title {
-  @apply text-center text-[14px] text-gray-800 font-onest flex w-full justify-center gap-4
+  @apply text-center text-[14px] text-gray-800 font-onest flex w-full justify-center gap-4 dark:text-white;
 }

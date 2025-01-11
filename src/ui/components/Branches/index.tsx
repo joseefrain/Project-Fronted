@@ -115,7 +115,7 @@ export default function BranchDashboard() {
     <>
       <Toaster richColors position="bottom-right" />
       <div className="container mx-auto ">
-        <h1 className="text-4xl font-bold text-gray-800 mb-9 font-onest">
+        <h1 className="text-4xl font-bold text-gray-800 mb-9 font-onest dark:text-white">
           Sucursales
         </h1>
         <nav className="flex flex-col mb-6 space-y-8 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
@@ -131,7 +131,7 @@ export default function BranchDashboard() {
             {userRoles?.role !== 'admin' && (
               <Button
                 onClick={() => openDialog(false)}
-                className="w-full sm:w-auto font-onest"
+                className="w-full sm:w-auto font-onest dark:bg-[#09090b] dark:text-white dark:border-gray-700"
               >
                 <Store className="w-4 h-4 mr-2" />
                 Agregar Sucursal

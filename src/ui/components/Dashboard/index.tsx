@@ -44,7 +44,7 @@ export default function Dashboard() {
   return (
     <div className="">
       <div className="mx-auto space-y-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-9 font-onest">
+        <h1 className="text-4xl font-bold text-gray-800 mb-9 font-onest dark:text-white">
           Dashboard
         </h1>
         <BranchDrawer />
