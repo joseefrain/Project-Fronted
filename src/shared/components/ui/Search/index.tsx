@@ -20,7 +20,7 @@ export const SearchComponent = ({
           <Input
             type="search"
             placeholder={placeholder || 'Buscar productos...'}
-            className="pl-8 w-[200px] lg:w-[300px]"
+            className="pl-8 w-[200px] lg:w-[300px] font-onest"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

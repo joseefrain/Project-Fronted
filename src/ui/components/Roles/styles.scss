@@ -1,0 +1,23 @@
+.default__page__tree {
+  @apply space-y-3 overflow-auto;
+
+  &::-webkit-scrollbar {
+    @apply w-[5px] h-[5px] hidden;
+  }
+
+  &::-webkit-scrollbar {
+    @apply inline-block;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    @apply bg-[#CCCCCC] rounded-[10px];
+  }
+
+  &::-webkit-scrollbar-track {
+    @apply bg-[#F5F5F9] rounded-[20px];
+  }
+}
+
+.role__action__btn {
+  @apply w-[45%] max-h-[35px] h-[35px] p-0 m-0 #{!important};
+}

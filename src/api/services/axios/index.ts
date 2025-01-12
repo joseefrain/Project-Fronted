@@ -14,6 +14,7 @@ export enum PATH_LIST {
   BranchCredits = 'credito/BySucursalId',
   PagoCredito = 'pagoCredito',
   Queue = '/createTransactionQueue',
+  ROLES = 'roles',
 }
 
 export const createAxiosInstance = (

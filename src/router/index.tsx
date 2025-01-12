@@ -20,6 +20,7 @@ import { ViewEntities } from '../shared/components/ui/TabsListTable/entities';
 import { Contacts } from '../ui/components/clients';
 import { CreditPaymentSystem } from '../ui/components/Payments/CreditPaymentSystem';
 import { Credits } from '../shared/components/ui/TabsListTable/credits';
+import { Roles } from '../ui/components/Roles';
 
 export const Router = () => {
   return (
@@ -222,6 +223,21 @@ export const Router = () => {
           }
         />
       </Route>
+
+      <Route
+        path="/roles"
+        element={<RequireAuth rolesAllowed={['admin', 'user', 'root']} />}
+      >
+        <Route
+          path="/roles"
+          element={
+            <Layout>
+              <Roles />
+            </Layout>
+          }
+        />
+      </Route>
+
       <Route path="/404" element={<Page404 />} />
       <Route path="*" element={<Navigate to="/404" />} />
     </Routes>
