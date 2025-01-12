@@ -15,6 +15,7 @@ import {
   SquareUser,
   Store,
   UserPlus,
+  Waypoints,
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -42,6 +43,7 @@ export const Layout = ({ children }: LayoutProps) => {
       ? [{ name: 'USUARIOS', path: '/register', icon: <UserPlus /> }]
       : []),
     { name: 'CONTACTOS', path: '/contacts', icon: <SquareUser /> },
+    { name: 'ROLES', path: '/roles', icon: <Waypoints /> },
   ];
 
   return (
