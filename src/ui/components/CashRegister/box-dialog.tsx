@@ -71,14 +71,13 @@ export function BoxDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { montoInicial, montoFinal, closeWithoutCounting, usuarioArqueoId } =
-      formValues;
+    const { montoInicial, montoFinal, closeWithoutCounting } = formValues;
 
     if (mode === 'create' && !montoInicial) {
       toast.error('Debe ingresar un monto inicial');
       return;
     }
-    if ((mode === 'ABIERTA' && !montoInicial) || !box?._id) {
+    if (mode === 'ABIERTA' && !montoInicial) {
       toast.error('Debe ingresar todos los campos para abrir la caja');
       return;
     }
@@ -101,7 +100,7 @@ export function BoxDialog({
           : {
               cajaId: box?._id,
               montoFinalDeclarado: montoFinal,
-              usuarioArqueoId: usuarioArqueoId,
+              usuarioArqueoId: box?.usuarioAperturaId,
               closeWithoutCounting: closeWithoutCounting,
             };
 
@@ -152,15 +151,6 @@ export function BoxDialog({
                   placeholder="Ingrese el monto final"
                   type="number"
                 />
-                <InputField
-                  id="usuarioArqueoId"
-                  label="Usuario Arqueo"
-                  value={formValues.usuarioArqueoId}
-                  placeholder="Ingrese el usuario de arqueo"
-                  onChange={handleChange}
-                  type="number"
-                />
-
                 <div className="space-y-2">
                   <Label htmlFor="closeWithoutCounting">
                     Cerrar sin Arqueo
