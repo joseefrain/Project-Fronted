@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@radix-ui/react-dropdown-menu';
+import { toast } from 'sonner';
 
 interface BoxCardProps {
   box: ICajaBrach;
@@ -20,6 +21,55 @@ interface BoxCardProps {
 export function BoxCard({ box, onOpen, onClose }: BoxCardProps) {
   const isOpen = box.estado === 'ABIERTA';
   const isClosed = box.estado === 'CERRADA';
+
+  const saveBoxState = (state: string) => {
+    const boxStateKey = `box_${box._id}_state`;
+    localStorage.setItem(boxStateKey, state);
+  };
+
+  const resetLocalStorage = () => {
+    localStorage.removeItem('opened_box_id');
+    const boxStateKey = `box_${box._id}_state`;
+    localStorage.removeItem(boxStateKey);
+  };
+
+  const getOpenedBoxId = () => {
+    return localStorage.getItem('opened_box_id');
+  };
+
+  const setOpenedBoxId = (boxId: string | null) => {
+    if (boxId) {
+      localStorage.setItem('opened_box_id', boxId);
+    } else {
+      localStorage.removeItem('opened_box_id');
+    }
+  };
+
+  const handleOpen = () => {
+    const openedBoxId = getOpenedBoxId();
+
+    if (openedBoxId && openedBoxId !== box._id) {
+      toast.error(
+        `Solo se puede abrir una caja a la vez. La caja ${box.consecutivo} ya está abierta.`
+      );
+      return;
+    }
+
+    saveBoxState('ABIERTA');
+    setOpenedBoxId(box._id);
+    onOpen();
+  };
+
+  const handleClose = () => {
+    if (getOpenedBoxId() === box._id) {
+      resetLocalStorage();
+    } else {
+      saveBoxState('CERRADA');
+    }
+
+    setOpenedBoxId(null);
+    onClose();
+  };
 
   return (
     <Card
@@ -45,7 +95,7 @@ export function BoxCard({ box, onOpen, onClose }: BoxCardProps) {
             <DropdownMenuSeparator />
             {!isOpen && (
               <DropdownMenuItem
-                onClick={onOpen}
+                onClick={handleOpen}
                 className="font-onest flex items-center"
               >
                 <LockKeyholeOpen className="w-4 h-4 mr-2" />
@@ -54,7 +104,7 @@ export function BoxCard({ box, onOpen, onClose }: BoxCardProps) {
             )}
             {!isClosed && (
               <DropdownMenuItem
-                onClick={onClose}
+                onClick={handleClose}
                 className="font-onest flex items-center"
               >
                 <LockKeyhole className="w-4 h-4 mr-2" />
@@ -65,9 +115,8 @@ export function BoxCard({ box, onOpen, onClose }: BoxCardProps) {
         </DropdownMenu>
       </CardHeader>
       <CardContent>
-        <h3 className="text-lg font-semibold">{box.diferencia}</h3>
         <p className="mt-2 text-sm text-muted-foreground">
-          Estado {box.estado}
+          Estado: {box.estado}
         </p>
         <div className="mt-4 flex items-center justify-between">
           <span className="text-sm text-muted-foreground">
