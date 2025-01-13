@@ -1,4 +1,4 @@
-import { IRolePrivilege } from '../../interfaces/roleInterfaces';
+import { IRole, IRolePrivilege } from '../../interfaces/roleInterfaces';
 
 export enum LEVEL_VALUES {
   READ = 0,
@@ -132,3 +132,43 @@ export const DEFAULT_ROLE_PAGES: IRolePrivilege[] = [
     ],
   },
 ];
+
+export const isUserWithAllAccess = (roles: IRole[]): boolean => {
+  // Crear un mapa combinado de módulos y niveles a partir de los roles del usuario
+  const combinedPrivilegesMap: Record<string, Set<number>> = {};
+
+  roles.forEach((role) => {
+    role.privileges.forEach((privilege) => {
+      const { module, levels } = privilege;
+
+      // Inicializar el módulo en el mapa si no existe
+      if (!combinedPrivilegesMap[module]) {
+        combinedPrivilegesMap[module] = new Set();
+      }
+
+      // Agregar los niveles al módulo correspondiente
+      levels.forEach((level) => combinedPrivilegesMap[module].add(level));
+    });
+  });
+
+  // Validar que la combinación cumpla con DEFAULT_ROLE_PAGES
+  for (const requiredPrivilege of DEFAULT_ROLE_PAGES) {
+    const { module, levels: requiredLevels } = requiredPrivilege;
+
+    // Si el módulo no está presente en los privilegios combinados, fallo
+    if (!combinedPrivilegesMap[module]) {
+      return false;
+    }
+
+    // Validar que todos los niveles requeridos estén presentes
+    const moduleLevels = combinedPrivilegesMap[module];
+    const hasAllRequiredLevels = requiredLevels.every((level) =>
+      moduleLevels.has(level)
+    );
+    if (!hasAllRequiredLevels) {
+      return false;
+    }
+  }
+
+  return true; // Si pasa todas las validaciones, cumple con los privilegios requeridos
+};
