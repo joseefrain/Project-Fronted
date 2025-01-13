@@ -61,6 +61,7 @@ import { ConfirmedSaleDialog } from './ConfirmedSaleDialog';
 import './style.scss';
 import { useAppSelector } from '../../../app/hooks';
 import { getEntities } from '../../../app/slices/entities';
+import { getBoxById } from '../../../app/slices/cashRegisterSlice';
 
 export interface ISaleSummary {
   subTotal: number;
@@ -76,7 +77,7 @@ export interface ICashierProps {
 }
 
 export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
-  const caja = store.getState().sales.caja;
+  const caja = store.getState().boxes.boxState;
   const user = store.getState().auth.signIn.user;
   const branchSelected = store.getState().branches.selectedBranch;
   const allEntities = useAppSelector((state) => state.entities.data);
@@ -84,6 +85,13 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   const registeredCustomers = allEntities.filter(
     (entity) => entity.type === 'customer'
   );
+
+  const idbox = localStorage.getItem('opened_box_id');
+  useEffect(() => {
+    if (idbox) {
+      store.dispatch(getBoxById(idbox as string));
+    }
+  }, [idbox]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -150,6 +158,13 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    if (!caja) return;
+    setCashInRegister(
+      parseFloat(caja[0]?.montoEsperado.$numberDecimal.toString()) ?? 0
+    );
+  }, [caja]);
+
   const handleProcessSale = () => {
     setProcessingSale(true);
     setTransactionDate(new Date());
@@ -163,7 +178,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
       discount: saleSummary.totalDiscount,
       cambioCliente: saleSummary.change,
       monto: Number(cashReceived),
-      cajaId: caja?._id ?? '',
+      cajaId: caja && caja[0] ? caja[0]._id : '',
       paymentMethod,
       tipoTransaccion: ITypeTransaction.VENTA,
     };
@@ -208,11 +223,6 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
     setIsModalOpen(false);
   };
 
-  useEffect(() => {
-    if (!caja) return;
-    setCashInRegister(Number(caja.montoEsperado.$numberDecimal));
-  }, [caja]);
-
   return (
     <>
       <Card className="shadow-lg bg-white/80 backdrop-blur-sm font-onest">
@@ -240,9 +250,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
             <span className="font-medium text-blue-900 uppercase font-onest">
               Efectivo en caja
             </span>
-            <span className="font-bold font-onest">
-              ${cashInRegister.toFixed(2)}
-            </span>
+            <span className="font-bold font-onest">${cashInRegister}</span>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
