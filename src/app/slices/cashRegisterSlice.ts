@@ -146,7 +146,8 @@ export const boxSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(createBox.fulfilled, (state, action) => {
-        state.create = action.payload;
+        state.BoxesData = [...state.BoxesData!, action.payload];
+
         state.status = 'succeeded';
       })
 
@@ -177,6 +178,14 @@ export const boxSlice = createSlice({
           ...state.boxState!.filter((box) => box?._id !== openedBox._id),
           openedBox,
         ];
+
+        state.BoxesData = state.BoxesData!.map((box) => {
+          if (box._id === openedBox._id) {
+            return openedBox;
+          }
+          return box;
+        });
+
         state.status = 'succeeded';
       })
       .addCase(openBoxes.rejected, (state, action) => {
@@ -190,10 +199,12 @@ export const boxSlice = createSlice({
       .addCase(closeBoxes.fulfilled, (state, action) => {
         const closedBoxId = action.payload._id;
 
-        // Eliminar la caja cerrada de boxState
-        state.boxState = state.boxState!.filter(
-          (box) => box._id !== closedBoxId
-        );
+        state.BoxesData = state.BoxesData!.map((box) => {
+          if (box._id === closedBoxId) {
+            return action.payload;
+          }
+          return box;
+        });
         state.status = 'succeeded';
       })
 
