@@ -42,8 +42,10 @@ export const removeRole = createAsyncThunk(
   'roles/remove',
   async (id: string, { rejectWithValue }) => {
     try {
-      const response = await deleteRole(id);
-      return response.data;
+      await deleteRole(id);
+      return {
+        _id: id,
+      };
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
     }
