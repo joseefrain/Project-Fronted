@@ -21,6 +21,7 @@ import { CreditPaymentSystem } from '../ui/components/Payments/CreditPaymentSyst
 import { Credits } from '../shared/components/ui/TabsListTable/credits';
 import { Roles } from '../ui/components/Roles';
 import { Users } from '../ui/components/Login/Users';
+import { CashRegister } from '../ui/components/CashRegister/page';
 
 export const Router = () => {
   return (
@@ -191,6 +192,16 @@ export const Router = () => {
           element={
             <Layout>
               <Roles />
+            </Layout>
+          }
+        />
+      </Route>
+      <Route path="/cashRegister" element={<RequireAuth />}>
+        <Route
+          path="/cashRegister"
+          element={
+            <Layout>
+              <CashRegister />
             </Layout>
           }
         />

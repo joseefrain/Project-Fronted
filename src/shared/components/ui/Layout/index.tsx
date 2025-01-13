@@ -5,6 +5,7 @@ import { Sidebar } from '../Sidebar/index';
 import { Toaster } from '@/components/ui/toaster';
 import {
   BadgeDollarSign,
+  Box,
   CreditCard,
   Group,
   House,
@@ -38,6 +39,7 @@ export const Layout = ({ children }: LayoutProps) => {
     { name: 'USUARIOS', path: '/register', icon: <UserPlus /> },
     { name: 'CONTACTOS', path: '/contacts', icon: <SquareUser /> },
     { name: 'ROLES', path: '/roles', icon: <Waypoints /> },
+    { name: 'CAJAS', path: '/cashRegister', icon: <Box /> },
   ];
 
   return (
@@ -45,7 +47,6 @@ export const Layout = ({ children }: LayoutProps) => {
       <Header />
       <div className="flex flex-1">
         <Sidebar className="hidden capitalize md:block" links={sidebarLinks} />
-
         <div className="container-Layout">{children}</div>
         <Toaster />
       </div>

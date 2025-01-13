@@ -250,7 +250,9 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
             <span className="font-medium text-blue-900 uppercase font-onest">
               Efectivo en caja
             </span>
-            <span className="font-bold font-onest">${cashInRegister}</span>
+            <span className="font-bold font-onest">
+              ${cashInRegister.toLocaleString('en-US') || 0}
+            </span>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
