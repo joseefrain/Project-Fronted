@@ -5,6 +5,7 @@ import {
   closeCashier,
   craeteBox,
   getboxBranch,
+  getboxId,
   openCashier,
 } from '../../api/services/box';
 import { IUser } from './login';
@@ -61,8 +62,7 @@ export interface ICreataCashRegister {
 export interface IBox {
   BoxesData: ICajaBrach[] | null;
   create: ICreataCashRegister | null;
-  boxClose: ICloseCash[];
-  boxOpen: IOpenCash[];
+  boxState: ICajaBrach[] | null;
   status: IStatus;
   error: string | null;
 }
@@ -70,8 +70,7 @@ export interface IBox {
 const initialState: IBox = {
   BoxesData: null,
   create: null,
-  boxClose: [],
-  boxOpen: [],
+  boxState: [],
   status: 'idle',
   error: null,
 };
@@ -125,12 +124,22 @@ export const closeBoxes = createAsyncThunk(
   }
 );
 
+export const getBoxById = createAsyncThunk(
+  'box/getById',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await getboxId(id);
+      return response;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
 export const boxSlice = createSlice({
   name: 'Boxes',
   initialState,
-  reducers: {
-    // Your reducers here
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(createBox.pending, (state) => {
@@ -140,6 +149,7 @@ export const boxSlice = createSlice({
         state.create = action.payload;
         state.status = 'succeeded';
       })
+
       .addCase(createBox.rejected, (state, action) => {
         state.error = action.error.message as string;
         state.status = 'failed';
@@ -161,8 +171,12 @@ export const boxSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(openBoxes.fulfilled, (state, action) => {
-        console.log(action.payload);
-        state.boxOpen.push(action.payload);
+        const openedBox = action.payload;
+
+        state.boxState = [
+          ...state.boxState!.filter((box) => box?._id !== openedBox._id),
+          openedBox,
+        ];
         state.status = 'succeeded';
       })
       .addCase(openBoxes.rejected, (state, action) => {
@@ -174,9 +188,29 @@ export const boxSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(closeBoxes.fulfilled, (state, action) => {
-        console.log(action.payload);
-        state.boxClose.push(action.payload);
+        const closedBoxId = action.payload._id;
+
+        // Eliminar la caja cerrada de boxState
+        state.boxState = state.boxState!.filter(
+          (box) => box._id !== closedBoxId
+        );
         state.status = 'succeeded';
+      })
+
+      .addCase(getBoxById.pending, (state) => {
+        state.status = 'loading';
+      })
+
+      .addCase(getBoxById.fulfilled, (state, action) => {
+        state.boxState = [
+          ...state.boxState!,
+          action.payload as unknown as ICajaBrach,
+        ];
+        state.status = 'succeeded';
+      })
+      .addCase(getBoxById.rejected, (state, action) => {
+        state.error = action.error.message as string;
+        state.status = 'failed';
       });
   },
 });
