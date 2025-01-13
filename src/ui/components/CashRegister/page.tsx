@@ -9,7 +9,9 @@ import { store } from '../../../app/store';
 import {
   closeBoxes,
   createBox,
+  getBoxById,
   getboxesbyBranch,
+  ICajaBrach,
   ICreataCashRegister,
   openBoxes,
 } from '../../../app/slices/cashRegisterSlice';
@@ -29,6 +31,13 @@ export const CashRegister = () => {
       .dispatch(getboxesbyBranch(branchesID?.sucursalId?._id as string))
       .unwrap();
   }, []);
+
+  const idbox = localStorage.getItem('opened_box_id');
+  useEffect(() => {
+    if (idbox) {
+      store.dispatch(getBoxById(idbox as string));
+    }
+  }, [idbox]);
 
   const handleSaveBox = (data: any, mode: 'create' | 'ABIERTA' | 'CERRADA') => {
     if (mode === 'create') {
