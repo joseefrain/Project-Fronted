@@ -6,11 +6,7 @@ import { useSelector } from 'react-redux';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useAuthToken } from '../hooks/useJWT';
 
-interface IPrivateRouteProps {
-  rolesAllowed: Array<'admin' | 'user' | 'root'>;
-}
-
-export const RequireAuth: React.FC<IPrivateRouteProps> = ({ rolesAllowed }) => {
+export const RequireAuth = () => {
   const { token } = useAuthToken();
   const user = useSelector((state: RootState) => state.auth.signIn.user);
   const navigate = useNavigate();
@@ -18,10 +14,8 @@ export const RequireAuth: React.FC<IPrivateRouteProps> = ({ rolesAllowed }) => {
   useEffect(() => {
     if (!token) {
       navigate('/login');
-    } else if (user && !rolesAllowed.includes(user.role)) {
-      navigate('/');
     }
-  }, [token, user, rolesAllowed, navigate]);
+  }, [token, user, navigate]);
 
   return <Outlet />;
 };

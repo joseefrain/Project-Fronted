@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createUsers, Iauth, registerUsers } from '../../api/services/auth';
+import { Iauth, registerUsers } from '../../api/services/auth';
 import { handleThunkError } from '../../shared/utils/errorHandlers';
 import { Branch } from '../../interfaces/branchInterfaces';
+import { IRole } from '../../interfaces/roleInterfaces';
 
 export type IRoles = 'admin' | 'user' | 'root';
 
@@ -11,6 +12,7 @@ export interface IUser {
   role: IRoles;
   password: string;
   sucursalId?: Branch;
+  roles: IRole[];
 }
 
 export interface IToken {
@@ -31,18 +33,6 @@ const getFromLocalStorage = (key: string) => {
   const data = localStorage.getItem(key);
   return data ? JSON.parse(data) : null;
 };
-
-export const RegistroUsuario = createAsyncThunk(
-  'login/create',
-  async (data: Iauth, { rejectWithValue }) => {
-    try {
-      const response = await createUsers(data);
-      return response as unknown as IToken;
-    } catch (error) {
-      return rejectWithValue(handleThunkError(error));
-    }
-  }
-);
 
 export const InicioSesion = createAsyncThunk(
   'auth/registerUser',
@@ -74,6 +64,8 @@ export interface IAuthSlice {
     username: string;
     role: IRoles;
     sucursalId?: Branch;
+    isRootUser?: boolean;
+    roles?: IRole[];
   };
   status: statusLoguer;
   cajaId?: string;

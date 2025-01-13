@@ -1,39 +1,51 @@
 import { useAppSelector } from '@/app/hooks';
 import { fetchBranches } from '@/app/slices/branchSlice';
-import { RegistroUsuario } from '@/app/slices/login';
+import { IUser } from '@/app/slices/login';
 import { store } from '@/app/store';
 import { ITablaBranch } from '@/interfaces/branchInterfaces';
 import { GetBranches } from '@/shared/helpers/Branchs';
 import { motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import './user.scss';
 
 import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
 import { Eye, EyeOff } from 'lucide-react';
-import { toast, Toaster } from 'sonner';
+import { toast } from 'sonner';
+import { getRoles } from '../../../app/slices/roleSlice';
+import { MultiSelect } from '../../../components/ui/MultiSelect';
+import { Token } from '../../../shared/hooks/useJWT';
+import { createUser, updatingUser } from '../../../app/slices/userSlice';
+import { isUserWithAllAccess } from '../../../shared/helpers/roleHelper';
 
 interface ILoginData {
   username: string;
   password: string;
   role: 'admin' | 'user' | 'root';
-  sucursalId?: string;
+  sucursalId?: string | null;
+  roles: string[];
 }
 
-const RegisterForm = () => {
+export interface IRegisterFormProps {
+  user?: IUser;
+  onClose?: () => void;
+}
+
+const RegisterForm = ({ user, onClose }: IRegisterFormProps) => {
   const branches = useAppSelector((state) => state.branches.data);
-  const userRoles = useAppSelector((state) => state.auth.signIn.user);
+  const userLogged = useAppSelector((state) => state.auth.signIn.user);
+  const roles = useAppSelector((state) => state.roles.roles);
+
   const dataFilterID = branches.filter(
-    (branch) => branch._id === userRoles?.sucursalId?._id
+    (branch) => branch._id === userLogged?.sucursalId?._id
   );
-  const filteredBranche = userRoles?.role === 'root' ? branches : dataFilterID;
+
   const [selectedBranch, setSelectedBranch] = useState<{
     nombre: string;
     _id: string;
@@ -43,37 +55,28 @@ const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const [credentials, setCredentials] = useState<ILoginData>({
-    username: '',
+    username: user?.username ?? '',
     password: '',
     role: 'user',
-    sucursalId: '',
+    sucursalId: user?.sucursalId?._id ?? null,
+    roles: user?.roles?.map((role) => role._id) ?? [],
   });
 
   const handleSelectChangeBranch = (value: string) => {
     const branch = branches.find((b) => b._id === value);
     if (branch) {
       setSelectedBranch({ nombre: branch.nombre, _id: branch._id ?? '' });
+      setCredentials({
+        ...credentials,
+        sucursalId: branch._id,
+      });
+      return;
     }
-  };
 
-  const fetchData = async () => {
-    if (!selectedBranch) return;
-
-    const response = await GetBranches(selectedBranch._id);
-    setProducts(response);
-  };
-
-  useEffect(() => {
-    store.dispatch(fetchBranches()).unwrap();
-    if (selectedBranch) {
-      fetchData();
-    }
-  }, [selectedBranch]);
-
-  const handleSelectChange = (value: string) => {
+    setSelectedBranch(null);
     setCredentials({
       ...credentials,
-      role: value as ILoginData['role'],
+      sucursalId: null,
     });
   };
 
@@ -87,30 +90,93 @@ const RegisterForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { ...rest } = credentials;
-    const dataToSubmit =
-      credentials.role === 'root'
-        ? rest
-        : { ...rest, sucursalId: selectedBranch?._id || '' };
-
     try {
-      await store.dispatch(RegistroUsuario(dataToSubmit)).unwrap();
-      toast.success('Usuario registrado exitosamente');
+      if (user) {
+        await store
+          .dispatch(
+            updatingUser({ user: credentials, id: user._id, token: Token() })
+          )
+          .unwrap();
+      } else {
+        await store.dispatch(createUser(credentials)).unwrap();
+      }
+      onClose && onClose();
+      toast.success(
+        user
+          ? 'Usuario actualizado exitosamente'
+          : 'Usuario registrado exitosamente'
+      );
       setCredentials({
         username: '',
         password: '',
         role: 'user',
         sucursalId: '',
+        roles: [],
       });
       setSelectedBranch(null);
     } catch (error) {
-      toast.error('Error al registrar usuario: ' + error);
+      toast.error(
+        user
+          ? 'Error al actualizar usuario: ' + error
+          : 'Error al registrar usuario: ' + error
+      );
     }
   };
 
+  const fetchData = async () => {
+    if (!selectedBranch) return;
+
+    const response = await GetBranches(selectedBranch._id);
+    setProducts(response);
+  };
+
+  useEffect(() => {
+    store.dispatch(getRoles()).unwrap();
+    store.dispatch(fetchBranches()).unwrap();
+    if (selectedBranch) {
+      fetchData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedBranch]);
+
+  const formattedRoles = useMemo(() => {
+    return roles.map((role) => ({
+      label: role.name,
+      value: role._id,
+    }));
+  }, [roles]);
+
+  const isRootUser = useMemo(() => {
+    const roleModels = roles.filter((role) =>
+      credentials.roles.includes(role._id)
+    );
+
+    return isUserWithAllAccess(roleModels);
+  }, [credentials.roles, roles]);
+
+  useEffect(() => {
+    if (isRootUser) {
+      setSelectedBranch(null);
+      setCredentials({
+        ...credentials,
+        sucursalId: null,
+      });
+
+      toast.info(
+        'Usuario con todos los permisos, no se requiere seleccionar una sucursal'
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRootUser]);
+
+  const filteredBranche = useMemo(() => {
+    if (userLogged?.roles && userLogged?.roles.length === 0) return [];
+
+    return isUserWithAllAccess(userLogged?.roles!) ? branches : dataFilterID;
+  }, [branches, dataFilterID, userLogged?.roles]);
+
   return (
     <>
-      <Toaster richColors position="bottom-right" />
       <motion.form
         onSubmit={handleSubmit}
         className="w-full max-w-md p-6 mx-auto mt-10 rounded-lg shadow-md auth-form bg-gray-50 font-onest"
@@ -119,7 +185,7 @@ const RegisterForm = () => {
         transition={{ duration: 0.3 }}
       >
         <h1 className="mb-6 text-2xl font-bold text-center">
-          Registrar Usuario
+          {user ? 'Editar Usuario' : 'Registrar Usuario'}
         </h1>
         <div className="mb-4">
           <label
@@ -160,28 +226,25 @@ const RegisterForm = () => {
             {showPassword ? <EyeOff /> : <Eye />}
           </button>
         </div>
-        <div className="mb-4">
+        <div className="w-full mb-4">
           <label
             htmlFor="role"
             className="block text-sm font-medium text-gray-700"
           >
             Rol:
           </label>
-          <Select onValueChange={handleSelectChange} defaultValue="user">
-            <SelectTrigger>
-              <SelectValue placeholder="Selecciona un rol" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Roles</SelectLabel>
-                <SelectItem value="user">Usuario</SelectItem>
-                <SelectItem value="admin">Administrador</SelectItem>
-                {userRoles?.role !== 'admin' && (
-                  <SelectItem value="root">Root</SelectItem>
-                )}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+
+          <MultiSelect
+            options={formattedRoles}
+            onValueChange={(value) =>
+              setCredentials({ ...credentials, roles: value })
+            }
+            defaultValue={credentials.roles}
+            placeholder="Select roles..."
+            variant="secondary"
+            maxCount={3}
+            className="multiselect__roles"
+          />
         </div>
         <div className="mb-4">
           <label
@@ -190,11 +253,21 @@ const RegisterForm = () => {
           >
             Sucursal:
           </label>
-          <Select onValueChange={handleSelectChangeBranch}>
+          <Select
+            value={selectedBranch?._id ?? 'none'}
+            onValueChange={handleSelectChangeBranch}
+            required={!isRootUser}
+            disabled={isRootUser}
+          >
             <SelectTrigger>
               <SelectValue placeholder="--Selecciona--" />
             </SelectTrigger>
             <SelectContent>
+              {isRootUser && (
+                <SelectItem key={0} value={'none'} className="text-gray-700">
+                  Sin asignar
+                </SelectItem>
+              )}
               {filteredBranche.map((branch) => (
                 <SelectItem key={branch._id} value={branch._id as string}>
                   {branch.nombre}
@@ -206,9 +279,15 @@ const RegisterForm = () => {
 
         <button
           type="submit"
-          className="w-full text-white bg-black hover:bg-blue-700"
+          className="w-full text-white bg-green-800 hover:bg-green-600 disabled:cursor-not-allowed disabled:bg-gray-400"
+          disabled={
+            credentials.roles.length === 0 ||
+            !credentials.username ||
+            !credentials.password ||
+            (!isRootUser && !selectedBranch?._id)
+          }
         >
-          Registrar Usuario
+          {user ? 'Guardar cambios' : 'Registrar Usuario'}
         </button>
       </motion.form>
     </>
