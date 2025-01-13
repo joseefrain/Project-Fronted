@@ -65,7 +65,7 @@ export interface IAuthSlice {
     role: IRoles;
     sucursalId?: Branch;
     isRootUser?: boolean;
-    roles?: IRole[];
+    roles: IRole[];
   };
   status: statusLoguer;
   cajaId?: string;
@@ -111,6 +111,7 @@ export const LoginSlice = createSlice({
           username: state.signIn.user.username,
           role: state.signIn.user.role,
           sucursalId: action.payload,
+          roles: state.signIn.user.roles,
         };
       }
     },
@@ -145,6 +146,24 @@ export const LoginSlice = createSlice({
     closeDrawer: (state) => {
       state.isOpen = false;
     },
+
+    updateRoleAssigned: (state, action: PayloadAction<IRole>) => {
+      if (state.signIn.user) {
+        const roles = state.signIn.user.roles.map((role) => {
+          if (role._id === action.payload._id) {
+            return action.payload;
+          }
+          return role;
+        });
+
+        state.signIn.user = {
+          ...state.signIn.user,
+          roles: roles,
+        };
+
+        saveToLocalStorage('user', state.signIn);
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(InicioSesion.pending, (state) => {
@@ -175,5 +194,6 @@ export const {
   closeDrawer,
   updateUserCashier,
   updateBranchUser,
+  updateRoleAssigned,
 } = LoginSlice.actions;
 export const loginReducer = LoginSlice.reducer;
