@@ -23,6 +23,8 @@ import { DialogDescription } from '@radix-ui/react-dialog';
 import { removeRole, updatingRole } from '../../../app/slices/roleSlice';
 import { store } from '../../../app/store';
 import { toast, Toaster } from 'sonner';
+import { useAppSelector } from '../../../app/hooks';
+import { updateRoleAssigned } from '../../../app/slices/login';
 
 const RoleTable = ({ roles }: IRoleTableProps) => {
   return (
@@ -36,7 +38,7 @@ const RoleTable = ({ roles }: IRoleTableProps) => {
         </TableHeader>
         <TableBody>
           {roles.map((role) => (
-            <RoleTableRow role={role} />
+            <RoleTableRow key={role._id} role={role} />
           ))}
         </TableBody>
       </Table>
@@ -48,6 +50,11 @@ const RoleTable = ({ roles }: IRoleTableProps) => {
 export default RoleTable;
 
 export const RoleTableRow = ({ role }: { role: IRole }) => {
+  const user = useAppSelector((state) => state.auth.signIn.user);
+  const isRoleAssignedToUser = user?.roles.find(
+    (role) => role._id === role._id
+  );
+
   const [isEditing, setIsEditing] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -70,14 +77,18 @@ export const RoleTableRow = ({ role }: { role: IRole }) => {
     });
   };
 
-  const handleOnUpdateRole = (role: IRole) => {
+  const handleOnUpdateRole = (updatedRole: IRole) => {
     const request = store
-      .dispatch(updatingRole(role))
+      .dispatch(updatingRole(updatedRole))
       .unwrap()
       .catch(() => {
         return Promise.reject();
       })
       .then(() => {
+        if (isRoleAssignedToUser) {
+          store.dispatch(updateRoleAssigned(updatedRole));
+        }
+
         setIsEditing(false);
       });
 

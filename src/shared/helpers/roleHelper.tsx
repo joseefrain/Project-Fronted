@@ -1,4 +1,17 @@
 import { IRole, IRolePrivilege } from '../../interfaces/roleInterfaces';
+import {
+  BadgeDollarSign,
+  CreditCard,
+  Group,
+  House,
+  Repeat,
+  ShoppingBag,
+  ShoppingCart,
+  SquareUser,
+  Store,
+  UserPlus,
+  Waypoints,
+} from 'lucide-react';
 
 export enum LEVEL_VALUES {
   READ = 0,
@@ -144,33 +157,27 @@ export const DEFAULT_ROLE_PAGES: IRolePrivilege[] = [
 ];
 
 export const isUserWithAllAccess = (roles: IRole[]): boolean => {
-  // Crear un mapa combinado de módulos y niveles a partir de los roles del usuario
   const combinedPrivilegesMap: Record<string, Set<number>> = {};
 
   roles.forEach((role) => {
     role.privileges.forEach((privilege) => {
       const { module, levels } = privilege;
 
-      // Inicializar el módulo en el mapa si no existe
       if (!combinedPrivilegesMap[module]) {
         combinedPrivilegesMap[module] = new Set();
       }
 
-      // Agregar los niveles al módulo correspondiente
       levels.forEach((level) => combinedPrivilegesMap[module].add(level));
     });
   });
 
-  // Validar que la combinación cumpla con DEFAULT_ROLE_PAGES
   for (const requiredPrivilege of DEFAULT_ROLE_PAGES) {
     const { module, levels: requiredLevels } = requiredPrivilege;
 
-    // Si el módulo no está presente en los privilegios combinados, fallo
     if (!combinedPrivilegesMap[module]) {
       return false;
     }
 
-    // Validar que todos los niveles requeridos estén presentes
     const moduleLevels = combinedPrivilegesMap[module];
     const hasAllRequiredLevels = requiredLevels.every((level) =>
       moduleLevels.has(level)
@@ -180,5 +187,112 @@ export const isUserWithAllAccess = (roles: IRole[]): boolean => {
     }
   }
 
-  return true; // Si pasa todas las validaciones, cumple con los privilegios requeridos
+  return true;
+};
+
+export const sidebarLinks = [
+  {
+    name: 'INICIO',
+    path: '/',
+    module: PAGES_MODULES.DASHBOARD,
+    icon: <House />,
+  },
+  {
+    name: 'SUCURSALES',
+    path: '/branches',
+    icon: <Store />,
+    module: PAGES_MODULES.SUCURSALES,
+  },
+  {
+    name: 'TRANSACCIÓN',
+    path: '/sales',
+    icon: <ShoppingBag />,
+    module: PAGES_MODULES.TRANSACCIONES,
+  },
+  {
+    name: 'CRÉDITOS',
+    path: '/credits',
+    icon: <CreditCard />,
+    module: PAGES_MODULES.CREDITOS,
+  },
+  {
+    name: 'PRODUCTOS',
+    path: '/products',
+    icon: <ShoppingCart />,
+    module: PAGES_MODULES.PRODUCTOS,
+  },
+  {
+    name: 'CATEGORÍAS',
+    path: '/categories',
+    icon: <Group />,
+    module: PAGES_MODULES.CATEGORIAS,
+  },
+  {
+    name: 'DESCUENTOS',
+    path: '/DiscountManager',
+    icon: <BadgeDollarSign />,
+    module: PAGES_MODULES.DESCUENTOS,
+  },
+  {
+    name: 'TRASLADOS',
+    path: '/orders',
+    icon: <Repeat />,
+    module: PAGES_MODULES.TRASLADOS,
+  },
+  {
+    name: 'USUARIOS',
+    path: '/register',
+    icon: <UserPlus />,
+    module: PAGES_MODULES.USUARIOS,
+  },
+  {
+    name: 'CONTACTOS',
+    path: '/contacts',
+    icon: <SquareUser />,
+    module: PAGES_MODULES.CONTACTOS,
+  },
+  {
+    name: 'ROLES',
+    path: '/roles',
+    icon: <Waypoints />,
+    module: PAGES_MODULES.ROLES,
+  },
+];
+
+export const getPriveligesByRoles = (roles: IRole[]) => {
+  const privileges = roles.map((role) => role.privileges);
+  return privileges.flat();
+};
+
+const getSidebarLinks = (roles: IRole[]) => {
+  const privileges = getPriveligesByRoles(roles);
+
+  const filteredLinks = sidebarLinks.filter((link) => {
+    const hasRole = privileges.find((role) => {
+      return role.module === link.module;
+    });
+    return hasRole && hasRole.levels.includes(LEVEL_VALUES.READ);
+  });
+
+  return filteredLinks;
+};
+
+export const getSidebarLinksByRoles = (roles: IRole[]) => {
+  const filteredLinks = getSidebarLinks(roles);
+
+  return filteredLinks;
+};
+
+export const hasLevelInModuleByRoles = (
+  roles: IRole[],
+  module: string,
+  level: number
+) => {
+  const hasLevelInModule = roles.find((role) => {
+    return role.privileges.find((privilege) => {
+      return privilege.module === module && privilege.levels.includes(level);
+    });
+  });
+
+  return hasLevelInModule;
 };

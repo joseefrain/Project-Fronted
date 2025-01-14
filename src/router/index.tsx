@@ -22,12 +22,16 @@ import { Credits } from '../shared/components/ui/TabsListTable/credits';
 import { Roles } from '../ui/components/Roles';
 import { Users } from '../ui/components/Login/Users';
 import { CashRegister } from '../ui/components/CashRegister/page';
+import { PAGES_MODULES } from '../shared/helpers/roleHelper';
 
 export const Router = () => {
   return (
     <Routes>
       <Route path="/login" element={<AlreadyAuthenticated />} />
-      <Route path="/" element={<RequireAuth />}>
+      <Route
+        path="/"
+        element={<RequireAuth module={PAGES_MODULES.DASHBOARD} />}
+      >
         <Route
           path="/"
           element={
@@ -37,7 +41,10 @@ export const Router = () => {
           }
         />
       </Route>
-      <Route path="/branches" element={<RequireAuth />}>
+      <Route
+        path="/branches"
+        element={<RequireAuth module={PAGES_MODULES.SUCURSALES} />}
+      >
         <Route
           path="/branches"
           element={
@@ -47,7 +54,10 @@ export const Router = () => {
           }
         />
       </Route>
-      <Route path="/products" element={<RequireAuth />}>
+      <Route
+        path="/products"
+        element={<RequireAuth module={PAGES_MODULES.PRODUCTOS} />}
+      >
         <Route
           path="/products"
           element={
@@ -57,7 +67,10 @@ export const Router = () => {
           }
         />
       </Route>
-      <Route path="/branches/:Id/products" element={<RequireAuth />}>
+      <Route
+        path="/branches/:Id/products"
+        element={<RequireAuth module={PAGES_MODULES.SUCURSALES} />}
+      >
         <Route
           path="/branches/:Id/products"
           element={
@@ -69,7 +82,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/transfer/recibido/:Id/itemdepedido"
-        element={<RequireAuth />}
+        element={<RequireAuth module={PAGES_MODULES.TRASLADOS} />}
       >
         <Route
           path="/transfer/recibido/:Id/itemdepedido"
@@ -80,7 +93,10 @@ export const Router = () => {
           }
         />
       </Route>
-      <Route path="/orders" element={<RequireAuth />}>
+      <Route
+        path="/orders"
+        element={<RequireAuth module={PAGES_MODULES.TRANSACCIONES} />}
+      >
         <Route
           path="/orders"
           element={
@@ -90,7 +106,10 @@ export const Router = () => {
           }
         />
       </Route>
-      <Route path="/register" element={<RequireAuth />}>
+      <Route
+        path="/register"
+        element={<RequireAuth module={PAGES_MODULES.USUARIOS} />}
+      >
         <Route
           path="/register"
           element={
@@ -100,7 +119,10 @@ export const Router = () => {
           }
         />
       </Route>
-      <Route path="/contacts/:id/" element={<RequireAuth />}>
+      <Route
+        path="/contacts/:id/"
+        element={<RequireAuth module={PAGES_MODULES.CONTACTOS} />}
+      >
         <Route
           path="/contacts/:id/"
           element={
@@ -110,7 +132,10 @@ export const Router = () => {
           }
         />
       </Route>
-      <Route path="/categories" element={<RequireAuth />}>
+      <Route
+        path="/categories"
+        element={<RequireAuth module={PAGES_MODULES.CATEGORIAS} />}
+      >
         <Route
           path="/categories"
           element={
@@ -123,7 +148,7 @@ export const Router = () => {
 
       <Route
         path="/transfer/pending/:id/itemdepedido"
-        element={<RequireAuth />}
+        element={<RequireAuth module={PAGES_MODULES.TRASLADOS} />}
       >
         <Route
           path="/transfer/pending/:id/itemdepedido"
@@ -134,7 +159,10 @@ export const Router = () => {
           }
         />
       </Route>
-      <Route path="/DiscountManager" element={<RequireAuth />}>
+      <Route
+        path="/DiscountManager"
+        element={<RequireAuth module={PAGES_MODULES.DESCUENTOS} />}
+      >
         <Route
           path="/DiscountManager"
           element={
@@ -145,7 +173,10 @@ export const Router = () => {
         />
       </Route>
 
-      <Route path="/sales" element={<RequireAuth />}>
+      <Route
+        path="/sales"
+        element={<RequireAuth module={PAGES_MODULES.TRANSACCIONES} />}
+      >
         <Route
           path="/sales"
           element={
@@ -155,7 +186,10 @@ export const Router = () => {
           }
         />
       </Route>
-      <Route path="/Contacts" element={<RequireAuth />}>
+      <Route
+        path="/Contacts"
+        element={<RequireAuth module={PAGES_MODULES.CONTACTOS} />}
+      >
         <Route
           path="/Contacts"
           element={
@@ -165,7 +199,10 @@ export const Router = () => {
           }
         />
       </Route>
-      <Route path="/credits" element={<RequireAuth />}>
+      <Route
+        path="/credits"
+        element={<RequireAuth module={PAGES_MODULES.CREDITOS} />}
+      >
         <Route
           path="/credits"
           element={
@@ -175,7 +212,10 @@ export const Router = () => {
           }
         />
       </Route>
-      <Route path="/credits/:id" element={<RequireAuth />}>
+      <Route
+        path="/credits/:id"
+        element={<RequireAuth module={PAGES_MODULES.CREDITOS} />}
+      >
         <Route
           path="/credits/:id"
           element={
@@ -186,7 +226,10 @@ export const Router = () => {
         />
       </Route>
 
-      <Route path="/roles" element={<RequireAuth />}>
+      <Route
+        path="/roles"
+        element={<RequireAuth module={PAGES_MODULES.ROLES} />}
+      >
         <Route
           path="/roles"
           element={
@@ -196,7 +239,10 @@ export const Router = () => {
           }
         />
       </Route>
-      <Route path="/cashRegister" element={<RequireAuth />}>
+      <Route
+        path="/cashRegister"
+        element={<RequireAuth module={PAGES_MODULES.CASHREGISTER} />}
+      >
         <Route
           path="/cashRegister"
           element={
