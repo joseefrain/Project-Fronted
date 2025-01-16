@@ -20,6 +20,12 @@ import { MoreVertical, Pencil, Trash } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../../../components/ui/tooltip';
 
 export const CategoriesCard = ({
   categoriesData,
@@ -43,7 +49,7 @@ export const CategoriesCard = ({
       <Card
         onClick={handleCardClick}
         key={categoriesData._id}
-        className="flex flex-col justify-between font-onest"
+        className="flex flex-col justify-between font-onest w-[300px] h-[160px] space-y-2"
       >
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
           <div
@@ -84,9 +90,14 @@ export const CategoriesCard = ({
           <div className="text-sm font-medium"></div>
           <div className="mt-2">
             <h4 className="text-sm font-semibold">Datos</h4>
-            <p className="text-sm text-muted-foreground">
-              {categoriesData.descripcion}
-            </p>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger className="w-64 overflow-hidden whitespace-nowrap text-ellipsis text-start p-0 font-onest text-sm text-muted-foreground">
+                  {categoriesData.descripcion}
+                </TooltipTrigger>
+                <TooltipContent>{categoriesData.descripcion}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </CardContent>
         <CardFooter className="flex flex-wrap justify-between gap-2"></CardFooter>

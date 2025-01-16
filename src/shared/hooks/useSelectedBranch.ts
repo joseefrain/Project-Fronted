@@ -41,7 +41,7 @@ export const useFilteredBranches = () => {
       userRoles?.role === 'root'
         ? null
         : {
-            nombre: filteredBranches[0].nombre,
+            nombre: filteredBranches[0].nombre as string,
             _id: filteredBranches[0]._id as string,
           }
     );

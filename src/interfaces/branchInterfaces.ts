@@ -68,11 +68,12 @@ export interface ITablaBranch {
   stock: number;
   sucursalId: string;
   inventarioSucursalId?: string;
-  barCode: string;
+  barCode?: string;
   nombreSucursal?: string;
   grupoNombre?: string;
   ultimo_movimiento?: string;
   puntoReCompra?: number;
+  costoUnitario: { $numberDecimal: number };
 }
 
 export interface IProductosGrupos {
