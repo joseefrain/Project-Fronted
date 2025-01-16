@@ -4,7 +4,12 @@ import { Link } from 'react-router-dom';
 import './styles.scss';
 
 interface SidebarProps {
-  links: { name: string; path: string; icon?: React.ReactNode }[];
+  links: {
+    name: string;
+    path: string;
+    icon?: React.ReactNode;
+    module: string;
+  }[];
   className?: string;
 }
 

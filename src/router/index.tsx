@@ -8,7 +8,6 @@ import {
   AlreadyAuthenticated,
   RequireAuth,
 } from '../shared/helpers/login.Helper';
-import RegisterForm from '@/ui/components/Login/RegisterForm';
 import { PagesCategories } from '@/pages/Categories';
 import { OrdersReceived } from '@/ui/components/OrdersReceived';
 import PendingProductsByTransfer from '@/ui/components/PendingTools/products';
@@ -20,6 +19,10 @@ import { ViewEntities } from '../shared/components/ui/TabsListTable/entities';
 import { Contacts } from '../ui/components/clients';
 import { CreditPaymentSystem } from '../ui/components/Payments/CreditPaymentSystem';
 import { Credits } from '../shared/components/ui/TabsListTable/credits';
+import { Roles } from '../ui/components/Roles';
+import { Users } from '../ui/components/Login/Users';
+import { CashRegister } from '../ui/components/CashRegister/page';
+import { PAGES_MODULES } from '../shared/helpers/roleHelper';
 
 export const Router = () => {
   return (
@@ -27,7 +30,7 @@ export const Router = () => {
       <Route path="/login" element={<AlreadyAuthenticated />} />
       <Route
         path="/"
-        element={<RequireAuth rolesAllowed={['admin', 'user', 'root']} />}
+        element={<RequireAuth module={PAGES_MODULES.DASHBOARD} />}
       >
         <Route
           path="/"
@@ -40,7 +43,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/branches"
-        element={<RequireAuth rolesAllowed={['root', 'admin']} />}
+        element={<RequireAuth module={PAGES_MODULES.SUCURSALES} />}
       >
         <Route
           path="/branches"
@@ -53,7 +56,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/products"
-        element={<RequireAuth rolesAllowed={['root', 'user', 'admin']} />}
+        element={<RequireAuth module={PAGES_MODULES.PRODUCTOS} />}
       >
         <Route
           path="/products"
@@ -66,7 +69,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/branches/:Id/products"
-        element={<RequireAuth rolesAllowed={['root', 'user', 'admin']} />}
+        element={<RequireAuth module={PAGES_MODULES.SUCURSALES} />}
       >
         <Route
           path="/branches/:Id/products"
@@ -79,7 +82,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/transfer/recibido/:Id/itemdepedido"
-        element={<RequireAuth rolesAllowed={['root', 'admin', 'user']} />}
+        element={<RequireAuth module={PAGES_MODULES.TRASLADOS} />}
       >
         <Route
           path="/transfer/recibido/:Id/itemdepedido"
@@ -92,7 +95,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/orders"
-        element={<RequireAuth rolesAllowed={['root', 'admin', 'user']} />}
+        element={<RequireAuth module={PAGES_MODULES.TRANSACCIONES} />}
       >
         <Route
           path="/orders"
@@ -105,20 +108,20 @@ export const Router = () => {
       </Route>
       <Route
         path="/register"
-        element={<RequireAuth rolesAllowed={['root', 'admin']} />}
+        element={<RequireAuth module={PAGES_MODULES.USUARIOS} />}
       >
         <Route
           path="/register"
           element={
             <Layout>
-              <RegisterForm />
+              <Users />
             </Layout>
           }
         />
       </Route>
       <Route
         path="/contacts/:id/"
-        element={<RequireAuth rolesAllowed={['root', 'user', 'admin']} />}
+        element={<RequireAuth module={PAGES_MODULES.CONTACTOS} />}
       >
         <Route
           path="/contacts/:id/"
@@ -131,7 +134,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/categories"
-        element={<RequireAuth rolesAllowed={['root', 'user', 'admin']} />}
+        element={<RequireAuth module={PAGES_MODULES.CATEGORIAS} />}
       >
         <Route
           path="/categories"
@@ -145,7 +148,7 @@ export const Router = () => {
 
       <Route
         path="/transfer/pending/:id/itemdepedido"
-        element={<RequireAuth rolesAllowed={['root', 'user', 'admin']} />}
+        element={<RequireAuth module={PAGES_MODULES.TRASLADOS} />}
       >
         <Route
           path="/transfer/pending/:id/itemdepedido"
@@ -158,7 +161,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/DiscountManager"
-        element={<RequireAuth rolesAllowed={['root', 'user', 'admin']} />}
+        element={<RequireAuth module={PAGES_MODULES.DESCUENTOS} />}
       >
         <Route
           path="/DiscountManager"
@@ -172,7 +175,7 @@ export const Router = () => {
 
       <Route
         path="/sales"
-        element={<RequireAuth rolesAllowed={['root', 'user', 'admin']} />}
+        element={<RequireAuth module={PAGES_MODULES.TRANSACCIONES} />}
       >
         <Route
           path="/sales"
@@ -185,7 +188,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/Contacts"
-        element={<RequireAuth rolesAllowed={['admin', 'user', 'root']} />}
+        element={<RequireAuth module={PAGES_MODULES.CONTACTOS} />}
       >
         <Route
           path="/Contacts"
@@ -198,7 +201,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/credits"
-        element={<RequireAuth rolesAllowed={['admin', 'user', 'root']} />}
+        element={<RequireAuth module={PAGES_MODULES.CREDITOS} />}
       >
         <Route
           path="/credits"
@@ -211,7 +214,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/credits/:id"
-        element={<RequireAuth rolesAllowed={['admin', 'user', 'root']} />}
+        element={<RequireAuth module={PAGES_MODULES.CREDITOS} />}
       >
         <Route
           path="/credits/:id"
@@ -222,6 +225,34 @@ export const Router = () => {
           }
         />
       </Route>
+
+      <Route
+        path="/roles"
+        element={<RequireAuth module={PAGES_MODULES.ROLES} />}
+      >
+        <Route
+          path="/roles"
+          element={
+            <Layout>
+              <Roles />
+            </Layout>
+          }
+        />
+      </Route>
+      <Route
+        path="/cashRegister"
+        element={<RequireAuth module={PAGES_MODULES.CASHREGISTER} />}
+      >
+        <Route
+          path="/cashRegister"
+          element={
+            <Layout>
+              <CashRegister />
+            </Layout>
+          }
+        />
+      </Route>
+
       <Route path="/404" element={<Page404 />} />
       <Route path="*" element={<Navigate to="/404" />} />
     </Routes>

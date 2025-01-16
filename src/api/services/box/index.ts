@@ -1,13 +1,11 @@
 import { AxiosResponse } from 'axios';
 import { createAxiosInstance, PATH_LIST } from '../axios';
 import { Token } from '../../../shared/hooks/useJWT';
-
-export interface ICreataCashRegister {
-  sucursalId: string;
-  usuarioAperturaId: string;
-  montoInicial: number;
-  consecutivo?: number;
-}
+import {
+  ICloseCash,
+  ICreataCashRegister,
+  IOpenCash,
+} from '../../../app/slices/cashRegisterSlice';
 
 export const craeteBox = async ({
   ...box
@@ -27,4 +25,20 @@ export const getboxId = async (id: string): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Cashier);
   const response = await axiosInstance.get(`/${id}`);
   return response.data;
+};
+
+export const closeCashier = async ({
+  ...closeCashier
+}: ICloseCash): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Cashier);
+  const response = await axiosInstance.post('/close', closeCashier);
+  return response;
+};
+
+export const openCashier = async ({
+  ...openCashier
+}: IOpenCash): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Cashier);
+  const response = await axiosInstance.post('/', openCashier);
+  return response;
 };

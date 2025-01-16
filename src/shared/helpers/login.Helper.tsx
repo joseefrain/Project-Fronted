@@ -5,23 +5,32 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useAuthToken } from '../hooks/useJWT';
+import { hasLevelInModuleByRoles, LEVEL_VALUES } from './roleHelper';
 
-interface IPrivateRouteProps {
-  rolesAllowed: Array<'admin' | 'user' | 'root'>;
+export interface IRequireAuthProps {
+  module: string;
 }
 
-export const RequireAuth: React.FC<IPrivateRouteProps> = ({ rolesAllowed }) => {
+export const RequireAuth = ({ module }: IRequireAuthProps) => {
+  const navigate = useNavigate();
   const { token } = useAuthToken();
   const user = useSelector((state: RootState) => state.auth.signIn.user);
-  const navigate = useNavigate();
+
+  const hasReadAccess = hasLevelInModuleByRoles(
+    user?.roles ?? [],
+    module,
+    LEVEL_VALUES.READ
+  );
 
   useEffect(() => {
     if (!token) {
       navigate('/login');
-    } else if (user && !rolesAllowed.includes(user.role)) {
-      navigate('/');
     }
-  }, [token, user, rolesAllowed, navigate]);
+
+    if (!hasReadAccess) {
+      navigate('/404');
+    }
+  }, [token, user, navigate, hasReadAccess]);
 
   return <Outlet />;
 };
