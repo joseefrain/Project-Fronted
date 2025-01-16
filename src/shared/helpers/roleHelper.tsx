@@ -32,6 +32,7 @@ export enum PAGES_MODULES {
   USUARIOS = 'USUARIOS',
   CONTACTOS = 'CONTACTOS',
   ROLES = 'ROLES',
+  CASHREGISTER = 'CASHREGISTER',
 }
 
 export const getLevelValueLabel = (level: number) => {
@@ -137,6 +138,15 @@ export const DEFAULT_ROLE_PAGES: IRolePrivilege[] = [
   },
   {
     module: PAGES_MODULES.ROLES,
+    levels: [
+      LEVEL_VALUES.CREATE,
+      LEVEL_VALUES.READ,
+      LEVEL_VALUES.UPDATE,
+      LEVEL_VALUES.DELETE,
+    ],
+  },
+  {
+    module: PAGES_MODULES.CASHREGISTER,
     levels: [
       LEVEL_VALUES.CREATE,
       LEVEL_VALUES.READ,

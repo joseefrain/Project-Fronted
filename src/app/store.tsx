@@ -8,6 +8,7 @@ import { transferReducer } from './slices/transferSlice';
 import { salesReducer } from './slices/salesSlice';
 import { entitiesReducer } from './slices/entities';
 import { creditsReducer } from './slices/credits';
+import { boxReducer } from './slices/cashRegisterSlice';
 import { roleReducer } from './slices/roleSlice';
 import { userReducer } from './slices/userSlice';
 
@@ -21,6 +22,7 @@ export const store = configureStore({
     sales: salesReducer,
     entities: entitiesReducer,
     credits: creditsReducer,
+    boxes: boxReducer,
     roles: roleReducer,
     users: userReducer,
   },

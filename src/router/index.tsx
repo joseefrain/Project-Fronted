@@ -21,6 +21,7 @@ import { CreditPaymentSystem } from '../ui/components/Payments/CreditPaymentSyst
 import { Credits } from '../shared/components/ui/TabsListTable/credits';
 import { Roles } from '../ui/components/Roles';
 import { Users } from '../ui/components/Login/Users';
+import { CashRegister } from '../ui/components/CashRegister/page';
 import { PAGES_MODULES } from '../shared/helpers/roleHelper';
 
 export const Router = () => {
@@ -234,6 +235,19 @@ export const Router = () => {
           element={
             <Layout>
               <Roles />
+            </Layout>
+          }
+        />
+      </Route>
+      <Route
+        path="/cashRegister"
+        element={<RequireAuth module={PAGES_MODULES.CASHREGISTER} />}
+      >
+        <Route
+          path="/cashRegister"
+          element={
+            <Layout>
+              <CashRegister />
             </Layout>
           }
         />

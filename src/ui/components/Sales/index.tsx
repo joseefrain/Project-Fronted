@@ -5,7 +5,7 @@ import {
   fetchBranchById,
   updateSelectedBranch,
 } from '@/app/slices/branchSlice';
-import { getCasherById, getDiscountsByBranch } from '@/app/slices/salesSlice';
+import { getDiscountsByBranch } from '@/app/slices/salesSlice';
 import { store } from '@/app/store';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Branch, ITablaBranch } from '@/interfaces/branchInterfaces';
@@ -37,7 +37,6 @@ export default function SalesInventorySystem() {
       })
     );
     setProducts(response);
-    await store.dispatch(getCasherById(cashierId ?? ''));
     await store.dispatch(getDiscountsByBranch(branch._id ?? ''));
   };
 

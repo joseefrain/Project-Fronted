@@ -138,7 +138,6 @@ export const fetchBranchById = createAsyncThunk(
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await getBranchById(id);
-      console.log(response);
       return response;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
