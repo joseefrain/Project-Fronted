@@ -77,7 +77,7 @@ const ProductForm = ({
     precio: initialData?.precio?.$numberDecimal || 0,
     stock: initialData?.stock ?? 0,
     grupoId: selectedGroup?._id || '',
-    monedaId: '671342d4664051db7c1f8792',
+    monedaId: '6788969390f63a009f1bea40',
     puntoReCompra: initialData?.puntoReCompra || 0,
   });
 
@@ -87,7 +87,7 @@ const ProductForm = ({
     const productData: ITablaBranch = {
       ...formData,
       grupoId: selectedGroup?._id || '',
-      monedaId: '671342d4664051db7c1f8792',
+      monedaId: '6788969390f63a009f1bea40',
       sucursalId: user?.sucursalId?._id ?? '',
       //@ts-ignore
       precio: parseFloat(formData.precio),

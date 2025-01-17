@@ -43,7 +43,7 @@ const ProductForm = ({
   selectedGroup,
   groups,
 }: ProductFormProps) => {
-  const DEFAULT_MONEDA_ID = '671342d4664051db7c1f8792';
+  const DEFAULT_MONEDA_ID = '6788969390f63a009f1bea40';
   const [loading, setLoading] = useState(false);
   const branches = useAppSelector((state) => state.branches.data);
   const [selectedBranch, setSelectedBranch] = useState<string | undefined>(
@@ -99,7 +99,7 @@ const ProductForm = ({
     const productData: ITablaBranch = {
       ...initialData,
       grupoId: selectedGroup?._id || '',
-      monedaId: '671342d4664051db7c1f8792',
+      monedaId: DEFAULT_MONEDA_ID,
       sucursalId: selectedBranch ?? '',
       nombre: formData.nombre,
       descripcion: formData.descripcion,
