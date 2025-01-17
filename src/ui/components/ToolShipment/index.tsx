@@ -105,15 +105,14 @@ export default function ToolShipment() {
 
     setShipmentTools(updatedTools);
   };
-  console.log(selectedBranch, 'day');
+
   const handleLoadBranch = async () => {
     if (user?.sucursalId?._id) {
-      //   const response = await GetBranches(user.sucursalId._id);
-      //   console.log(response, 'day');
+      const response = await GetBranches(user.sucursalId._id);
       store.dispatch(
         updateSelectedBranch({
           ...user.sucursalId,
-          products: [],
+          products: response,
         })
       );
     } else {
@@ -162,7 +161,8 @@ export default function ToolShipment() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Herramientas</TableHead>
+                    <TableHead>Productos</TableHead>
+                    <TableHead>Costo unitario</TableHead>
                     <TableHead>Stock mínimo</TableHead>
                     <TableHead>Disponible</TableHead>
                     <TableHead>Cantidad</TableHead>
@@ -178,6 +178,9 @@ export default function ToolShipment() {
                     filteredTools.map((tool) => (
                       <TableRow key={tool.id}>
                         <TableCell>{tool.nombre}</TableCell>
+                        <TableCell className="text-center">
+                          {tool?.costoUnitario?.$numberDecimal}
+                        </TableCell>
                         <TableCell className="text-center">
                           {tool?.puntoReCompra}
                         </TableCell>

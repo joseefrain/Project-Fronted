@@ -32,6 +32,7 @@ export const ProductSale = ({
         <TableRow>
           <TableHead>Producto</TableHead>
           <TableHead className="text-center">Cantidad</TableHead>
+          <TableHead className="text-center">Costo unitario</TableHead>
           <TableHead className="text-center">Precio ud.</TableHead>
           {type === 'VENTA' && (
             <TableHead className="text-center">Descuento</TableHead>
@@ -45,6 +46,9 @@ export const ProductSale = ({
           <TableRow key={item.productId + item.price}>
             <TableCell>{item.productName}</TableCell>
             <TableCell className="text-center">{item.quantity}</TableCell>
+            <TableCell className="text-center">
+              ${item?.costoUnitario?.$numberDecimal}
+            </TableCell>
             <TableCell className="text-center">
               ${item.price.toFixed(2)}
             </TableCell>

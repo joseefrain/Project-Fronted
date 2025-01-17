@@ -45,7 +45,6 @@ export const Purchase = ({
   const selectedBranch = useAppSelector(
     (state) => state.branches.selectedBranch
   );
-
   const [open, setOpen] = useState(false);
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
@@ -84,6 +83,7 @@ export const Purchase = ({
       groupId: selectedProduct?.grupoId ?? '',
       clientType: 'Proveedor',
       inventarioSucursalId: selectedProduct?.inventarioSucursalId ?? '',
+      costoUnitario: selectedProduct?.costoUnitario ?? { $numberDecimal: 0 },
     };
 
     const isExistentProduct = productSale.find(

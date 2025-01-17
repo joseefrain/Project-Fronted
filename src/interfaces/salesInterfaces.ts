@@ -62,6 +62,7 @@ export interface IProductSale {
   quantity: number;
   price: number;
   inventarioSucursalId: string;
+  costoUnitario: { $numberDecimal: number };
   discount: null | {
     id: string;
     name: string;
