@@ -39,7 +39,7 @@ export const createAxiosInstanceForTransaction = (
   JWT: string | null,
   PATH: string
 ): AxiosInstance => {
-  const baseURL = `${import.meta.env.VITE_API_URL_QUEUE?.replace(/\/?$/, '/')}${PATH}`;
+  const baseURL = `${import.meta.env.VITE_API_URL_QUEUE?.replace(/\/?$/, '')}${PATH}`;
 
   const headers = {
     Authorization: `Bearer ${JWT}`,
