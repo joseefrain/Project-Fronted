@@ -225,7 +225,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
 
   return (
     <>
-      <Card className="shadow-lg bg-white/80 backdrop-blur-sm font-onest">
+      <Card className="shadow-lg bg-white/80 backdrop-blur-sm font-onest dark:bg-gray-800">
         <CardHeader className="flex flex-col justify-between gap-2 pb-4">
           <div className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2 font-bold text-primary">
@@ -245,13 +245,17 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
               </span>
             </div>
           </div>
-
           <div className="flex items-center justify-center w-full gap-4 p-2 m-auto font-sans font-semibold text-center text-black rounded-md shadow-md bg-sky-100">
             <span className="font-medium text-blue-900 uppercase font-onest">
               Efectivo en caja
             </span>
             <span className="font-bold font-onest">
-              ${cashInRegister.toLocaleString('en-US') || 0}
+              $
+              {!isNaN(cashInRegister)
+                ? cashInRegister.toLocaleString('en-US', {
+                    minimumFractionDigits: 0,
+                  })
+                : '0'}
             </span>
           </div>
         </CardHeader>
