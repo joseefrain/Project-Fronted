@@ -79,7 +79,7 @@ export const PurchaseCashier = ({
   productSale,
   setProductSale,
 }: ICashierProps) => {
-  const caja = store.getState().sales.caja;
+  const caja = store.getState().boxes.boxState;
   const user = store.getState().auth.signIn.user;
   const branchSelected = store.getState().branches.selectedBranch;
   const allEntities = useAppSelector((state) => state.entities.data);
@@ -154,6 +154,11 @@ export const PurchaseCashier = ({
   }, []);
 
   const handleProcessSale = () => {
+    if (!caja || caja.length === 0) {
+      toast.error('Debe abrir una caja para procesar la venta.');
+      return;
+    }
+
     setProcessingSale(true);
     setTransactionDate(new Date());
 
@@ -166,7 +171,7 @@ export const PurchaseCashier = ({
       discount: saleSummary.totalDiscount,
       cambioCliente: saleSummary.change,
       monto: Number(cashReceived),
-      cajaId: caja?._id ?? '',
+      cajaId: caja && caja[0] ? caja[0]._id : '',
       paymentMethod,
       tipoTransaccion: ITypeTransaction.COMPRA,
     };
@@ -214,12 +219,14 @@ export const PurchaseCashier = ({
 
   useEffect(() => {
     if (!caja) return;
-    setCashInRegister(Number(caja.montoEsperado.$numberDecimal));
+    setCashInRegister(
+      parseFloat(caja[0]?.montoEsperado.$numberDecimal.toString()) ?? 0
+    );
   }, [caja]);
 
   return (
     <>
-      <Card className="shadow-lg bg-white/80 backdrop-blur-sm font-onest">
+      <Card className="shadow-lg bg-white/80 backdrop-blur-sm font-onest Dark:bg-[#09090A]">
         <CardHeader className="flex flex-col justify-between gap-2 pb-4">
           <div className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2 font-bold text-primary">
@@ -245,7 +252,12 @@ export const PurchaseCashier = ({
               Efectivo en caja
             </span>
             <span className="font-bold font-onest">
-              ${cashInRegister.toFixed(2)}
+              $
+              {!isNaN(cashInRegister)
+                ? cashInRegister.toLocaleString('en-US', {
+                    minimumFractionDigits: 0,
+                  })
+                : '0'}
             </span>
           </div>
         </CardHeader>
@@ -409,7 +421,7 @@ export const PurchaseCashier = ({
                     value={cashReceived}
                     onChange={(e) => setCashReceived(e.target.value)}
                     placeholder="0.00"
-                    className="pl-10 text-lg font-semibold bg-white font-onest"
+                    className="pl-10 text-lg font-semibold bg-white font-onest dark:bg-[#09090A]"
                     disabled={processingSale}
                   />
                 </div>
@@ -502,7 +514,7 @@ export const PurchaseCashier = ({
         </CardContent>
         <CardFooter className="flex-col gap-2">
           <Button
-            className="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
+            className="w-full bg-gradient-to-r hover:from-primary-dark hover:to-primary dark:bg-gray-950 dark:text-white"
             size="lg"
             disabled={
               productSale.length === 0 ||
@@ -516,7 +528,7 @@ export const PurchaseCashier = ({
             }
             onClick={handleProcessSale}
           >
-            <CreditCard className="w-4 h-4 mr-2" /> Procesar compra
+            <CreditCard className="w-4 h-4 mr-2 " /> Procesar compra
           </Button>
         </CardFooter>
       </Card>

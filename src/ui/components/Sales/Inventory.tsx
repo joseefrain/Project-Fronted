@@ -166,6 +166,11 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   }, [caja]);
 
   const handleProcessSale = () => {
+    if (!caja || caja.length === 0) {
+      toast.error('Debe abrir una caja para procesar la venta.');
+      return;
+    }
+
     setProcessingSale(true);
     setTransactionDate(new Date());
 
@@ -178,7 +183,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
       discount: saleSummary.totalDiscount,
       cambioCliente: saleSummary.change,
       monto: Number(cashReceived),
-      cajaId: caja && caja[0] ? caja[0]._id : '',
+      cajaId: caja[0]?._id || '',
       paymentMethod,
       tipoTransaccion: ITypeTransaction.VENTA,
     };
