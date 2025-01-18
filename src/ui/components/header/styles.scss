@@ -1,0 +1,19 @@
+.container-header {
+  @apply flex items-center justify-between py-5 pl-4 pr-24 bg-white dark:bg-gray-950;
+
+  @media (max-width: 768px) {
+    @apply flex-col;
+  }
+
+  &__title {
+    @apply flex items-center gap-2 text-2xl font-bold font-onest dark:text-white;
+  }
+
+  &__profile {
+    @apply flex items-center gap-2;
+
+    @media (max-width: 768px) {
+      @apply flex-wrap;
+    }
+  }
+}

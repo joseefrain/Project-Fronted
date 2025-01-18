@@ -15,11 +15,10 @@ export const Layout = ({ children }: LayoutProps) => {
   const sidebarLinks = getSidebarLinksByRoles(roles ?? []);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-screen">
       <Header />
       <div className="flex flex-1">
         <Sidebar className="hidden capitalize md:block" links={sidebarLinks} />
-
         <div className="container-Layout">{children}</div>
         <Toaster />
       </div>
