@@ -51,6 +51,7 @@ export const Purchase = ({
   const [selectedProduct, setSelectedProduct] = useState<ITablaBranch | null>(
     null
   );
+  console.log(selectedProduct, 'selectedProduct');
   const [buffer, setBuffer] = useState<string>('');
 
   const handleSelectProduct = (productId: string) => {
@@ -80,11 +81,14 @@ export const Purchase = ({
       quantity: quantity,
       price: price,
       discount: null,
-      groupId: selectedProduct?.grupoId ?? '',
+      groupId: '675b8283b0abd32684ea6c9c',
       clientType: 'Proveedor',
       inventarioSucursalId: selectedProduct?.inventarioSucursalId ?? '',
-      costoUnitario: selectedProduct?.costoUnitario ?? { $numberDecimal: 0 },
+      //@ts-ignore
+      costoUnitario: parseFloat(selectedProduct?.costoUnitario?.$numberDecimal),
     };
+
+    console.log(newProductSale, 'newProductCompra');
 
     const isExistentProduct = productSale.find(
       (p) =>
