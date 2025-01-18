@@ -11,6 +11,7 @@ import { creditsReducer } from './slices/credits';
 import { boxReducer } from './slices/cashRegisterSlice';
 import { roleReducer } from './slices/roleSlice';
 import { userReducer } from './slices/userSlice';
+import { coinsReducer } from './slices/coinsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -25,6 +26,7 @@ export const store = configureStore({
     boxes: boxReducer,
     roles: roleReducer,
     users: userReducer,
+    coins: coinsReducer,
   },
 });
 
