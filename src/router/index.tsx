@@ -13,7 +13,7 @@ import { OrdersReceived } from '@/ui/components/OrdersReceived';
 import PendingProductsByTransfer from '@/ui/components/PendingTools/products';
 import { ViewProucts } from '@/shared/components/ui/TabsListTable/products';
 import DiscountManager from '@/ui/components/Discount';
-import SalesInventorySystem from '@/ui/components/Sales';
+import SalesInventorySystem from '@/ui/components/Sales/indexSale';
 import Dashboard from '@/ui/components/Dashboard';
 import { ViewEntities } from '../shared/components/ui/TabsListTable/entities';
 import { Contacts } from '../ui/components/clients';
@@ -23,6 +23,7 @@ import { Roles } from '../ui/components/Roles';
 import { Users } from '../ui/components/Login/Users';
 import { CashRegister } from '../ui/components/CashRegister/page';
 import { PAGES_MODULES } from '../shared/helpers/roleHelper';
+import { PurchaseSale } from '../ui/components/Sales/indexPurchaseSale';
 
 export const Router = () => {
   return (
@@ -95,7 +96,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/orders"
-        element={<RequireAuth module={PAGES_MODULES.TRANSACCIONES} />}
+        element={<RequireAuth module={PAGES_MODULES.VENTAS} />}
       >
         <Route
           path="/orders"
@@ -145,7 +146,6 @@ export const Router = () => {
           }
         />
       </Route>
-
       <Route
         path="/transfer/pending/:id/itemdepedido"
         element={<RequireAuth module={PAGES_MODULES.TRASLADOS} />}
@@ -172,16 +172,28 @@ export const Router = () => {
           }
         />
       </Route>
-
       <Route
         path="/sales"
-        element={<RequireAuth module={PAGES_MODULES.TRANSACCIONES} />}
+        element={<RequireAuth module={PAGES_MODULES.VENTAS} />}
       >
         <Route
           path="/sales"
           element={
             <Layout>
               <SalesInventorySystem />
+            </Layout>
+          }
+        />
+      </Route>
+      <Route
+        path="/Purchase"
+        element={<RequireAuth module={PAGES_MODULES.COMPRAS} />}
+      >
+        <Route
+          path="/Purchase"
+          element={
+            <Layout>
+              <PurchaseSale />
             </Layout>
           }
         />
@@ -225,7 +237,6 @@ export const Router = () => {
           }
         />
       </Route>
-
       <Route
         path="/roles"
         element={<RequireAuth module={PAGES_MODULES.ROLES} />}
@@ -252,7 +263,6 @@ export const Router = () => {
           }
         />
       </Route>
-
       <Route path="/404" element={<Page404 />} />
       <Route path="*" element={<Navigate to="/404" />} />
     </Routes>

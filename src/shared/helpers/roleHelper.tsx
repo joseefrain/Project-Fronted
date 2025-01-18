@@ -23,7 +23,8 @@ export enum LEVEL_VALUES {
 export enum PAGES_MODULES {
   DASHBOARD = 'DASHBOARD',
   SUCURSALES = 'SUCURSALES',
-  TRANSACCIONES = 'TRANSACCIONES',
+  VENTAS = 'VENTAS',
+  COMPRAS = 'COMPRAS',
   CREDITOS = 'CREDITOS',
   PRODUCTOS = 'PRODUCTOS',
   CATEGORIAS = 'CATEGORIAS',
@@ -65,7 +66,16 @@ export const DEFAULT_ROLE_PAGES: IRolePrivilege[] = [
     ],
   },
   {
-    module: PAGES_MODULES.TRANSACCIONES,
+    module: PAGES_MODULES.VENTAS,
+    levels: [
+      LEVEL_VALUES.CREATE,
+      LEVEL_VALUES.READ,
+      LEVEL_VALUES.UPDATE,
+      LEVEL_VALUES.DELETE,
+    ],
+  },
+  {
+    module: PAGES_MODULES.COMPRAS,
     levels: [
       LEVEL_VALUES.CREATE,
       LEVEL_VALUES.READ,
@@ -197,6 +207,7 @@ export const sidebarLinks = [
     module: PAGES_MODULES.DASHBOARD,
     icon: <House />,
   },
+
   {
     name: 'SUCURSALES',
     path: '/branches',
@@ -204,10 +215,16 @@ export const sidebarLinks = [
     module: PAGES_MODULES.SUCURSALES,
   },
   {
-    name: 'TRANSACCIÓN',
+    name: 'VENTAS',
     path: '/sales',
-    icon: <ShoppingBag />,
-    module: PAGES_MODULES.TRANSACCIONES,
+    icon: <Waypoints />,
+    module: PAGES_MODULES.VENTAS,
+  },
+  {
+    name: 'COMPRAS',
+    path: '/purchase',
+    icon: <ShoppingCart />,
+    module: PAGES_MODULES.COMPRAS,
   },
   {
     name: 'CRÉDITOS',
@@ -256,6 +273,13 @@ export const sidebarLinks = [
     path: '/roles',
     icon: <Waypoints />,
     module: PAGES_MODULES.ROLES,
+  },
+
+  {
+    name: 'CAJAS',
+    path: '/cashRegister',
+    icon: <CreditCard />,
+    module: PAGES_MODULES.CASHREGISTER,
   },
 ];
 
