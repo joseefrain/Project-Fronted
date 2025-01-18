@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { IProductSale } from '@/interfaces/salesInterfaces';
+import { useAppSelector } from '../../../app/hooks';
 
 export interface IProductSaleProps {
   type?: 'VENTA' | 'COMPRA';
@@ -26,6 +27,10 @@ export const ProductSale = ({
   products,
   handleRemoveProductSale,
 }: IProductSaleProps) => {
+  const selectedCoin = useAppSelector(
+    (state) => state.coins.selectedCoin?.simbolo
+  );
+
   return (
     <Table>
       <TableHeader>
@@ -47,17 +52,19 @@ export const ProductSale = ({
             <TableCell>{item.productName}</TableCell>
             <TableCell className="text-center">{item.quantity}</TableCell>
             <TableCell className="text-center">
-              ${item?.costoUnitario?.$numberDecimal}
+              {selectedCoin}
+              {item?.costoUnitario?.$numberDecimal}
             </TableCell>
             <TableCell className="text-center">
-              ${item.price.toFixed(2)}
+              {selectedCoin}
+              {item.price.toFixed(2)}
             </TableCell>
             {type === 'VENTA' && (
               <TableCell className="text-center">
                 {item.discount && item.discount?.amount > 0 ? (
                   <div className="flex items-center justify-center gap-2">
                     <span className="text-green-600">
-                      ${item.discount.amount.toFixed(2)} (
+                      {selectedCoin} {item.discount.amount.toFixed(2)} (
                       {item.discount.percentage}
                       %)
                     </span>
@@ -80,7 +87,7 @@ export const ProductSale = ({
               </TableCell>
             )}
             <TableCell className="text-center">
-              $
+              {selectedCoin}
               {(
                 item.price * item.quantity -
                 (item.discount?.amount || 0)

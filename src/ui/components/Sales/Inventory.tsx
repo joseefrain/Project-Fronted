@@ -81,6 +81,9 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   const user = store.getState().auth.signIn.user;
   const branchSelected = store.getState().branches.selectedBranch;
   const allEntities = useAppSelector((state) => state.entities.data);
+  const selectedCoin = useAppSelector(
+    (state) => state.coins.selectedCoin?.simbolo
+  );
 
   const registeredCustomers = allEntities.filter(
     (entity) => entity.type === 'customer'
@@ -255,7 +258,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
               Efectivo en caja
             </span>
             <span className="font-bold font-onest">
-              $
+              {selectedCoin}
               {!isNaN(cashInRegister)
                 ? cashInRegister.toLocaleString('en-US', {
                     minimumFractionDigits: 0,
@@ -499,16 +502,25 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
           <div className="p-4 space-y-2 rounded-lg bg-primary/5">
             <div className="flex justify-between text-sm">
               <span>Subtotal:</span>
-              <span>${saleSummary.subTotal.toFixed(2)}</span>
+              <span>
+                {selectedCoin}
+                {saleSummary.subTotal.toFixed(2)}
+              </span>
             </div>
             <div className="flex justify-between text-sm">
               <span>Descuento ({saleSummary.totalDiscountPercentage}%):</span>
-              <span>${saleSummary.totalDiscount.toFixed(2)}</span>
+              <span>
+                {selectedCoin}
+                {saleSummary.totalDiscount.toFixed(2)}
+              </span>
             </div>
             <Separator />
             <div className="flex justify-between text-lg font-bold text-primary">
               <span>Total a pagar:</span>
-              <span>${saleSummary.total.toFixed(2)}</span>
+              <span>
+                {selectedCoin}
+                {saleSummary.total.toFixed(2)}
+              </span>
             </div>
 
             <div className="flex justify-between p-2 text-sm bg-green-100 rounded shadow-md">

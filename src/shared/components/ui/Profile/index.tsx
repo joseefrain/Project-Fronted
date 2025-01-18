@@ -17,6 +17,7 @@ import {
   getSelectedBranchFromLocalStorage,
 } from '../../../helpers/branchHelpers';
 import { ModeToggle } from '../../../toggle.tsx';
+import { Coins } from '../Coins/index.tsx';
 
 export const ProfileUser = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -58,6 +59,7 @@ export const ProfileUser = () => {
 
   return (
     <>
+      <Coins />
       <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
         {user?.role !== 'admin' && (
           <Button
