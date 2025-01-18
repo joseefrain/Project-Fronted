@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,7 +9,6 @@ import {
   createBox,
   getBoxById,
   getboxesbyBranch,
-  ICajaBrach,
   ICreataCashRegister,
   openBoxes,
 } from '../../../app/slices/cashRegisterSlice';
@@ -25,6 +22,23 @@ export const CashRegister = () => {
   const [dialogMode, setDialogMode] = useState<
     'create' | 'ABIERTA' | 'CERRADA'
   >('create');
+
+  const saveBoxState = (state: string, boxId: string) => {
+    const boxStateKey = `box_${boxId}_state`;
+    localStorage.setItem(boxStateKey, state);
+  };
+
+  const resetLocalStorage = () => {
+    localStorage.removeItem('opened_box_id');
+  };
+
+  const setOpenedBoxId = (boxId: string | null) => {
+    if (boxId) {
+      localStorage.setItem('opened_box_id', boxId);
+    } else {
+      localStorage.removeItem('opened_box_id');
+    }
+  };
 
   useEffect(() => {
     store
@@ -41,33 +55,52 @@ export const CashRegister = () => {
 
   const handleSaveBox = (data: any, mode: 'create' | 'ABIERTA' | 'CERRADA') => {
     if (mode === 'create') {
-      store.dispatch(
-        createBox({
-          ...data,
-          sucursalId: branchesID?.sucursalId?._id as string,
-          usuarioAperturaId: branchesID?._id as string,
-        })
-      );
+      store
+        .dispatch(
+          createBox({
+            ...data,
+            sucursalId: branchesID?.sucursalId?._id as string,
+            usuarioAperturaId: branchesID?._id as string,
+          })
+        )
+        .unwrap()
+        .then((createdBox) => {
+          saveBoxState('ABIERTA', createdBox._id);
+          setOpenedBoxId(createdBox._id);
+          setIsDialogOpen(false);
+        });
     } else if (mode === 'ABIERTA') {
-      store.dispatch(
-        openBoxes({
-          cajaId: data.cajaId,
-          usuarioAperturaId: branchesID?._id as string,
-          montoInicial: data.montoInicial,
-        })
-      );
+      store
+        .dispatch(
+          openBoxes({
+            cajaId: data.cajaId,
+            usuarioAperturaId: branchesID?._id as string,
+            montoInicial: data.montoInicial,
+          })
+        )
+        .unwrap()
+        .then(() => {
+          saveBoxState('ABIERTA', data.cajaId);
+          setOpenedBoxId(data.cajaId);
+          setIsDialogOpen(false);
+        });
     } else if (mode === 'CERRADA') {
-      store.dispatch(
-        closeBoxes({
-          cajaId: data.cajaId,
-          usuarioArqueoId: data.usuarioArqueoId,
-          montoFinalDeclarado: data.montoFinalDeclarado,
-          closeWithoutCounting: data.closeWithoutCounting,
-        })
-      );
+      store
+        .dispatch(
+          closeBoxes({
+            cajaId: data.cajaId,
+            usuarioArqueoId: data.usuarioArqueoId,
+            montoFinalDeclarado: data.montoFinalDeclarado,
+            closeWithoutCounting: data.closeWithoutCounting,
+          })
+        )
+        .unwrap()
+        .then(() => {
+          saveBoxState('CERRADA', data.cajaId);
+          resetLocalStorage();
+          setIsDialogOpen(false);
+        });
     }
-
-    setIsDialogOpen(false);
   };
 
   return (
