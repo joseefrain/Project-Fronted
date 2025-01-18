@@ -2,7 +2,7 @@
   @apply flex items-center justify-between py-5 pl-4 pr-24 bg-white dark:bg-gray-950;
 
   @media (max-width: 768px) {
-    @apply flex-col;
+    @apply flex-col pr-4;
   }
 
   &__title {

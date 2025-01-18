@@ -1,3 +1,7 @@
 .container-modalBranchs {
   @apply gap-6  w-full justify-center flex;
+
+  @media (max-width: 768px) {
+    @apply flex-col;
+  }
 }
