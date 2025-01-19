@@ -9,20 +9,17 @@ import {
   hasTokenExpired,
   useAuthToken,
 } from '../hooks/useJWT';
-import { hasLevelInModuleByRoles, LEVEL_VALUES } from './roleHelper';
+import { PAGES_MODULES } from './roleHelper';
+import { useRoleAccess } from '../hooks/useRoleAccess';
 
 export interface IRequireAuthProps {
-  module: string;
+  module: PAGES_MODULES;
 }
 
 export const RequireAuth = ({ module }: IRequireAuthProps) => {
   const navigate = useNavigate();
+  const access = useRoleAccess(module);
   const { token } = useAuthToken();
-  const user = useSelector((state: RootState) => state.auth.signIn.user);
-
-  const hasReadAccess = token
-    ? hasLevelInModuleByRoles(user?.roles ?? [], module, LEVEL_VALUES.READ)
-    : false;
 
   useEffect(() => {
     if (!token || hasTokenExpired(token)) {
@@ -30,10 +27,10 @@ export const RequireAuth = ({ module }: IRequireAuthProps) => {
       return;
     }
 
-    if (!hasReadAccess) {
+    if (!access.read) {
       navigate('/404');
     }
-  }, [token, user, navigate, hasReadAccess]);
+  }, [token, navigate, access]);
 
   return <Outlet />;
 };
