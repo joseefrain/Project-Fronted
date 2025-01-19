@@ -14,7 +14,7 @@ export default function PageTree({
 }: IPageTreeProps) {
   return (
     <div
-      className={`default__page__tree ${readonly ? 'max-h-[365px]' : 'max-h-[666px]'}`}
+      className={`default__page__tree ${readonly ? 'max-h-[50vh]' : 'max-h-[43vh]'}`}
     >
       {DEFAULT_ROLE_PAGES.map((page) => (
         <div

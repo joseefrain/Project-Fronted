@@ -5,7 +5,6 @@ import {
   Group,
   House,
   Repeat,
-  ShoppingBag,
   ShoppingCart,
   SquareUser,
   Store,
