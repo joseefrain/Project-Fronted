@@ -70,7 +70,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/branches/:Id/products"
-        element={<RequireAuth module={PAGES_MODULES.SUCURSALES} />}
+        element={<RequireAuth module={PAGES_MODULES.PRODUCTOS} />}
       >
         <Route
           path="/branches/:Id/products"
