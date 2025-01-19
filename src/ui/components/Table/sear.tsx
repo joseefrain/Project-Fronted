@@ -35,6 +35,8 @@ const SearchAndFilter = ({
   selectedGroup,
   groups,
 }: SearchAndFilterProps) => {
+  const textSearch = 'Nombre, Código ';
+
   return (
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-2">
@@ -43,6 +45,7 @@ const SearchAndFilter = ({
           <SearchComponent
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
+            placeholder={textSearch}
           />
         </div>
       </div>

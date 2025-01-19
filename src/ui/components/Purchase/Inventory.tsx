@@ -229,7 +229,7 @@ export const PurchaseCashier = ({
 
   return (
     <>
-      <Card className="shadow-lg bg-white/80 backdrop-blur-sm font-onest Dark:bg-[#09090A]">
+      <Card className="shadow-lg bg-white/80 backdrop-blur-sm font-onest dark:bg-gray-800">
         <CardHeader className="flex flex-col justify-between gap-2 pb-4">
           <div className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2 font-bold text-primary">
@@ -417,7 +417,7 @@ export const PurchaseCashier = ({
                   <span className="text-red-600">*</span>
                 </Label>
                 <div className="relative">
-                  <Banknote className="absolute text-green-600 transform -translate-y-1/2 left-2 top-1/2" />
+                  <Banknote className="absolute text-green-600 transform -translate-y-1/2 left-2 top-1/2 " />
                   <Input
                     id="cash-received"
                     type="number"
@@ -513,7 +513,7 @@ export const PurchaseCashier = ({
               </span>
             </div>
 
-            <div className="flex justify-between p-2 text-sm bg-green-100 rounded shadow-md">
+            <div className="flex justify-between p-2 text-sm bg-green-100 rounded shadow-md dark:bg-black">
               <span>Cambio:</span>
               <span className="font-medium">
                 {selectedCoin}

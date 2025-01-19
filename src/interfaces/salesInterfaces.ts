@@ -106,6 +106,7 @@ export interface ISale {
   paymentMethod: IPaymentMethod;
   tipoTransaccion: ITypeTransaction;
   credito?: ICredit;
+  fechaRegistro?: Date;
 }
 
 export interface ICredit {
