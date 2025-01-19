@@ -4,7 +4,11 @@ import AuthForm from '@/ui/components/Login';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
-import { useAuthToken } from '../hooks/useJWT';
+import {
+  handleAuthentication,
+  hasTokenExpired,
+  useAuthToken,
+} from '../hooks/useJWT';
 import { hasLevelInModuleByRoles, LEVEL_VALUES } from './roleHelper';
 
 export interface IRequireAuthProps {
@@ -16,15 +20,14 @@ export const RequireAuth = ({ module }: IRequireAuthProps) => {
   const { token } = useAuthToken();
   const user = useSelector((state: RootState) => state.auth.signIn.user);
 
-  const hasReadAccess = hasLevelInModuleByRoles(
-    user?.roles ?? [],
-    module,
-    LEVEL_VALUES.READ
-  );
+  const hasReadAccess = token
+    ? hasLevelInModuleByRoles(user?.roles ?? [], module, LEVEL_VALUES.READ)
+    : false;
 
   useEffect(() => {
-    if (!token) {
-      navigate('/login');
+    if (!token || hasTokenExpired(token)) {
+      handleAuthentication('', false, navigate);
+      return;
     }
 
     if (!hasReadAccess) {
