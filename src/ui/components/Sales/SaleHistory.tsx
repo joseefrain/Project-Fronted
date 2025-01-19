@@ -6,6 +6,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -26,8 +27,19 @@ import {
 } from '@/components/ui/table';
 import { getFormatedDate } from '@/shared/helpers/transferHelper';
 import { Eye, History, ShoppingBasket } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getSelectedBranchFromLocalStorage } from '../../../shared/helpers/branchHelpers';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '../../../components/ui/popover';
+import { Calendar } from 'lucide-react';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { DateRange } from 'react-day-picker';
+import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 
 export const SaleHistory = () => {
   const branchStoraged = getSelectedBranchFromLocalStorage();
@@ -36,6 +48,8 @@ export const SaleHistory = () => {
   const selectCoins = useAppSelector(
     (state) => state.coins.selectedCoin?.simbolo
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     store
@@ -43,6 +57,31 @@ export const SaleHistory = () => {
       .unwrap();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const [selectedDateRange, setSelectedDateRange] = useState<
+    DateRange | undefined
+  >(undefined);
+
+  const filteredSales = selectedDateRange
+    ? salesHistory.filter((entry) => {
+        const aperturaDate = entry.fechaRegistro
+          ? new Date(entry.fechaRegistro)
+          : new Date();
+        return (
+          aperturaDate >= (selectedDateRange.from ?? new Date(0)) &&
+          aperturaDate <= (selectedDateRange.to ?? new Date())
+        );
+      })
+    : salesHistory;
+
+  const handleDateRangeSelect = (dateRange: DateRange) => {
+    setSelectedDateRange(dateRange);
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredSales.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
 
   return (
     <Card className="mt-4 h-[34rem] font-onest">
@@ -54,6 +93,40 @@ export const SaleHistory = () => {
         <CardDescription>
           Ver los detalles de las ventas realizadas
         </CardDescription>
+        <div className="flex justify-end mb-4">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline">
+                <Calendar className="mr-2 h-4 w-4" />
+                {selectedDateRange
+                  ? `${
+                      selectedDateRange.from &&
+                      !isNaN(selectedDateRange.from.getTime())
+                        ? format(selectedDateRange.from, 'P', { locale: es })
+                        : ''
+                    } - 
+                        ${
+                          selectedDateRange.to &&
+                          !isNaN(selectedDateRange.to.getTime())
+                            ? format(selectedDateRange.to, 'P', { locale: es })
+                            : ''
+                        }`
+                  : 'Seleccionar Fechas'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <CalendarComponent
+                selected={selectedDateRange}
+                onSelect={(dateRange) =>
+                  dateRange && handleDateRangeSelect(dateRange)
+                }
+                mode="range"
+                numberOfMonths={2}
+                locale={es}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
       </CardHeader>
       <CardContent>
         <Table>
@@ -68,7 +141,7 @@ export const SaleHistory = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {salesHistory.map((sale, index) => (
+            {currentItems.map((sale, index) => (
               <TableRow key={index} className="h-[50px]">
                 <TableCell>{sale.userId}</TableCell>
                 <TableCell>{getFormatedDate(new Date())}</TableCell>
@@ -121,7 +194,8 @@ export const SaleHistory = () => {
                                 {item.quantity}
                               </TableCell>
                               <TableCell className="text-center">
-                                {selectCoins} {item.price.toFixed(2)}
+                                {selectCoins}
+                                {item.price.toFixed(2)}
                               </TableCell>
                               <TableCell className="text-center">
                                 {item.discount && item.discount?.amount > 0 ? (
@@ -154,6 +228,13 @@ export const SaleHistory = () => {
           </TableBody>
         </Table>
       </CardContent>
+      <CardFooter className="flex items-center justify-between">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      </CardFooter>
     </Card>
   );
 };
