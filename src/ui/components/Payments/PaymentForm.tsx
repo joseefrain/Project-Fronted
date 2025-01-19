@@ -11,12 +11,15 @@ import { store } from '../../../app/store';
 import { payCredit } from '../../../app/slices/credits';
 import { toast, Toaster } from 'sonner';
 import { Banknote } from 'lucide-react';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 interface PaymentFormProps {
   creditSelected: ICredit | null;
 }
 
 export function PaymentForm({ creditSelected }: PaymentFormProps) {
+  const access = useRoleAccess(PAGES_MODULES.CREDITOS);
   const [amount, setAmount] = useState<number>(0.0);
   const [processingSale, setProcessingSale] = useState(false);
 
@@ -99,44 +102,46 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
         {creditSelected?.modalidadCredito === 'PLAZO' && (
           <PaymentProgress creditSelected={creditSelected} />
         )}
-        <Card className="w-full h-full">
-          <CardHeader>
-            <CardTitle className="font-onest">
-              {creditSelected?.modalidadCredito === 'PAGO'
-                ? 'Realizar Abono'
-                : 'Realizar Pago de Cuota'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <div className="relative space-y-2">
-                <Banknote className="absolute text-green-600 transform -translate-y-1/2 left-2 top-1/2" />
-                <Input
-                  className="pl-10 font-onest"
-                  id="amount"
-                  type="number"
-                  placeholder={'0.00'}
-                  value={amount}
-                  onChange={(e) => setAmount(Number(e.target.value))}
-                  onBlur={(e) => setAmount(getValidAmount(e.target.value))}
-                  disabled={processingSale || creditoPagado}
-                  min={0}
-                  max={creditSelected?.saldoPendiente.$numberDecimal}
-                />
-              </div>
-              <Button
-                type="submit"
-                className="w-full font-onest hover:disabled:cursor-not-allowed"
-                onClick={handleSubmit}
-                disabled={processingSale || amount <= 0 || creditoPagado}
-              >
+        {access.update && (
+          <Card className="w-full h-full">
+            <CardHeader>
+              <CardTitle className="font-onest">
                 {creditSelected?.modalidadCredito === 'PAGO'
-                  ? 'Abonar'
-                  : 'Pagar Cuota'}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+                  ? 'Realizar Abono'
+                  : 'Realizar Pago de Cuota'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                <div className="relative space-y-2">
+                  <Banknote className="absolute text-green-600 transform -translate-y-1/2 left-2 top-1/2" />
+                  <Input
+                    className="pl-10 font-onest"
+                    id="amount"
+                    type="number"
+                    placeholder={'0.00'}
+                    value={amount}
+                    onChange={(e) => setAmount(Number(e.target.value))}
+                    onBlur={(e) => setAmount(getValidAmount(e.target.value))}
+                    disabled={processingSale || creditoPagado}
+                    min={0}
+                    max={creditSelected?.saldoPendiente.$numberDecimal}
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full font-onest hover:disabled:cursor-not-allowed"
+                  onClick={handleSubmit}
+                  disabled={processingSale || amount <= 0 || creditoPagado}
+                >
+                  {creditSelected?.modalidadCredito === 'PAGO'
+                    ? 'Abonar'
+                    : 'Pagar Cuota'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        )}
       </div>
       <Toaster richColors />
     </>

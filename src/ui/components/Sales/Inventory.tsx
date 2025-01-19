@@ -62,6 +62,8 @@ import './style.scss';
 import { useAppSelector } from '../../../app/hooks';
 import { getEntities } from '../../../app/slices/entities';
 import { getBoxById } from '../../../app/slices/cashRegisterSlice';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 export interface ISaleSummary {
   subTotal: number;
@@ -77,6 +79,7 @@ export interface ICashierProps {
 }
 
 export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
+  const access = useRoleAccess(PAGES_MODULES.CREDITOS);
   const caja = store.getState().boxes.boxState;
   const user = store.getState().auth.signIn.user;
   const branchSelected = store.getState().branches.selectedBranch;
@@ -400,15 +403,16 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                     <Banknote className="inline w-4 h-4 mr-2" />
                     Efectivo
                   </SelectItem>
-                  {customerType === ICustomerType.REGISTERED && (
-                    <SelectItem
-                      value={IPaymentMethod.CREDIT}
-                      className="flex items-center gap-2"
-                    >
-                      <CreditCard className="inline w-4 h-4 mr-2" />
-                      Crédito
-                    </SelectItem>
-                  )}
+                  {customerType === ICustomerType.REGISTERED &&
+                    access.create && (
+                      <SelectItem
+                        value={IPaymentMethod.CREDIT}
+                        className="flex items-center gap-2"
+                      >
+                        <CreditCard className="inline w-4 h-4 mr-2" />
+                        Crédito
+                      </SelectItem>
+                    )}
                 </SelectContent>
               </Select>
             </div>
