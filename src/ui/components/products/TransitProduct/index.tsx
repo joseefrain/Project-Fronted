@@ -25,6 +25,7 @@ import Pagination from '../../../../shared/components/ui/Pagination/Pagination';
 import ProductsTable from './Table';
 
 export const ProductsTransit = () => {
+  const textSearch = 'Nombre';
   const dataAllProducts = useAppSelector(
     (state) => state.products.transitProducts
   );
@@ -104,6 +105,7 @@ export const ProductsTransit = () => {
               <SearchComponent
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
+                placeholder={textSearch}
               />
               {userRoles?.role === 'root' && (
                 <div className="mb-4">
