@@ -420,14 +420,14 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                   <span className="text-red-600">*</span>
                 </Label>
                 <div className="relative">
-                  <Banknote className="absolute text-green-600 transform -translate-y-1/2 left-2 top-1/2" />
+                  <Banknote className="absolute text-green-600 transform -translate-y-1/2 left-2 top-1/2 " />
                   <Input
                     id="cash-received"
                     type="number"
                     value={cashReceived}
                     onChange={(e) => setCashReceived(e.target.value)}
                     placeholder="0.00"
-                    className="pl-10 text-lg font-semibold bg-white font-onest"
+                    className="pl-10 text-lg font-semibold bg-white font-onest dark:bg-[#09090A]"
                     disabled={processingSale}
                   />
                 </div>
@@ -523,7 +523,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
               </span>
             </div>
 
-            <div className="flex justify-between p-2 text-sm bg-green-100 rounded shadow-md">
+            <div className="flex justify-between p-2 text-sm bg-green-100 rounded shadow-md dark:bg-black">
               <span>Cambio:</span>
               <span className="font-medium">
                 ${saleSummary.change.toFixed(2)}

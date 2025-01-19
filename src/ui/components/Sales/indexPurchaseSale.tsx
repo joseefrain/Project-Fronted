@@ -60,7 +60,7 @@ export const PurchaseSale = () => {
 
   return (
     <div className="container mx-auto">
-      <Tabs defaultValue="sale">
+      <Tabs defaultValue="purchase">
         <div className="flex flex-col items-center justify-between gap-4 mb-9 sm:flex-row sm:items-center">
           <h1 className="text-4xl font-bold text-gray-800 font-onest w-[38%] dark:text-white">
             Compras

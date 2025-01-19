@@ -39,7 +39,7 @@ export const UserTable = ({ users }: IUserTableProps) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users?.map((user) => <UserTableRow user={user} />)}
+        {users?.map((user, index) => <UserTableRow key={index} user={user} />)}
       </TableBody>
     </Table>
   );

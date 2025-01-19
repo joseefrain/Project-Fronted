@@ -179,7 +179,7 @@ const RegisterForm = ({ user, onClose }: IRegisterFormProps) => {
     <>
       <motion.form
         onSubmit={handleSubmit}
-        className="w-full max-w-md p-6 mx-auto mt-10 rounded-lg shadow-md auth-form bg-gray-50 font-onest"
+        className="w-full max-w-md p-6 mx-auto mt-10 rounded-lg shadow-md auth-form bg-gray-50 font-onest dark:bg-gray-950"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
