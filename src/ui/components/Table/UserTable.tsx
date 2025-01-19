@@ -45,7 +45,9 @@ export const UserTable = ({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users?.map((user) => <UserTableRow user={user} acccess={access} />)}
+        {users?.map((user) => (
+          <UserTableRow key={user._id} user={user} acccess={access} />
+        ))}
       </TableBody>
     </Table>
   );

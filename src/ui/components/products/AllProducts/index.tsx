@@ -16,6 +16,7 @@ import Pagination from '../../../../shared/components/ui/Pagination/Pagination';
 import ProductsTable from './Table';
 
 export const Allproducts = () => {
+  const textSearch = 'Nombre, Código o Sucursal';
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -62,6 +63,7 @@ export const Allproducts = () => {
             <SearchComponent
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
+              placeholder={textSearch}
             />
 
             {currentItems.length === 0 ? (
