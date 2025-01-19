@@ -34,3 +34,10 @@ export interface IRoleModalProps {
 export interface IRoleTableProps {
   roles: IRole[];
 }
+
+export interface IRoleAccess {
+  create: boolean;
+  read: boolean;
+  update: boolean;
+  delete: boolean;
+}

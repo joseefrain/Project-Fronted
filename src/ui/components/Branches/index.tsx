@@ -22,10 +22,13 @@ import { Store } from 'lucide-react';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { toast, Toaster } from 'sonner';
 import { BranchCard } from './BranchCard';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 export default function BranchDashboard() {
+  const access = useRoleAccess(PAGES_MODULES.SUCURSALES);
+
   const branches = useAppSelector((state) => state.branches.data);
-  const userRoles = useAppSelector((state) => state.auth.signIn.user);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingSucursal, setEditingSucursal] = useState(false);
   const [newBranch, setNewBranch] = useState<Branch>({
@@ -128,7 +131,7 @@ export default function BranchDashboard() {
             />
           </div>
           <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
-            {userRoles?.role !== 'admin' && (
+            {access.create && (
               <Button
                 onClick={() => openDialog(false)}
                 className="w-full sm:w-auto font-onest dark:bg-[#09090b] dark:text-white dark:border-gray-700"
@@ -241,6 +244,7 @@ export default function BranchDashboard() {
                 branch={branch}
                 handleSelectBranch={handleSelectBranch}
                 onEdit={() => openDialog(true, branch)}
+                access={access}
               />
             ))}
         </div>
