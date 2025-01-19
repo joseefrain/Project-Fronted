@@ -13,6 +13,7 @@ import {
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { ModalHistory } from './box-history';
+import { IRoleAccess } from '../../../interfaces/roleInterfaces';
 
 interface BoxCardProps {
   box: ICajaBrach;
@@ -20,7 +21,12 @@ interface BoxCardProps {
   onClose: () => void;
 }
 
-export function BoxCard({ box, onOpen, onClose }: BoxCardProps) {
+export function BoxCard({
+  box,
+  access,
+  onOpen,
+  onClose,
+}: BoxCardProps & { access: IRoleAccess }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const isOpen = box.estado === 'ABIERTA';
@@ -54,48 +60,50 @@ export function BoxCard({ box, onOpen, onClose }: BoxCardProps) {
     <>
       <Card
         key={box._id}
-        className="group relative overflow-hidden bg-white transition-all hover:shadow-lg dark:bg-neutral-950"
+        className="relative overflow-hidden transition-all bg-white group hover:shadow-lg dark:bg-neutral-950"
       >
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
           <div
             onClick={handleCardClick}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"
+            className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
           >
             <span className="text-xl font-bold text-primary">
               {box.consecutivo}
             </span>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
-                <MoreVertical className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="flex flex-col gap-1">
-              <DropdownMenuLabel className="font-onest">
-                Acciones
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {!isOpen && (
-                <DropdownMenuItem
-                  onClick={handleOpen}
-                  className="font-onest flex items-center"
-                >
-                  <LockKeyholeOpen className="w-4 h-4 mr-2" />
-                  Abrir
-                </DropdownMenuItem>
-              )}
-              {!isClosed && (
-                <DropdownMenuItem
-                  onClick={handleClose}
-                  className="font-onest flex items-center"
-                >
-                  <LockKeyhole className="w-4 h-4 mr-2" />
-                  Cerrar
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {access.update && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
+                  <MoreVertical className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="flex flex-col gap-1">
+                <DropdownMenuLabel className="font-onest">
+                  Acciones
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {!isOpen && (
+                  <DropdownMenuItem
+                    onClick={handleOpen}
+                    className="flex items-center font-onest"
+                  >
+                    <LockKeyholeOpen className="w-4 h-4 mr-2" />
+                    Abrir
+                  </DropdownMenuItem>
+                )}
+                {!isClosed && (
+                  <DropdownMenuItem
+                    onClick={handleClose}
+                    className="flex items-center font-onest"
+                  >
+                    <LockKeyhole className="w-4 h-4 mr-2" />
+                    Cerrar
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </CardHeader>
         <CardContent>
           <p
@@ -103,7 +111,7 @@ export function BoxCard({ box, onOpen, onClose }: BoxCardProps) {
           >
             Estado: {box.estado}
           </p>
-          <div className="mt-4 flex items-center justify-between">
+          <div className="flex items-center justify-between mt-4">
             <span className="text-sm text-muted-foreground">
               Caja #{box.consecutivo}
             </span>

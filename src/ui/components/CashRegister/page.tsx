@@ -13,8 +13,11 @@ import {
   openBoxes,
 } from '../../../app/slices/cashRegisterSlice';
 import { useAppSelector } from '../../../app/hooks';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 export const CashRegister = () => {
+  const access = useRoleAccess(PAGES_MODULES.CASHREGISTER);
   const branchesID = useAppSelector((state) => state.auth.signIn.user);
   const dataBoxes = useAppSelector((state) => state.boxes.BoxesData);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -104,18 +107,20 @@ export const CashRegister = () => {
   };
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="mb-8 flex items-center justify-between">
+    <div className="container py-10 mx-auto">
+      <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Administración de Cajas</h1>
-        <Button
-          onClick={() => {
-            setIsDialogOpen(true);
-            setEditingBox(null!);
-            setDialogMode('create');
-          }}
-        >
-          <Plus className="mr-2 h-4 w-4" /> Nueva Caja
-        </Button>
+        {access.create && (
+          <Button
+            onClick={() => {
+              setIsDialogOpen(true);
+              setEditingBox(null!);
+              setDialogMode('create');
+            }}
+          >
+            <Plus className="w-4 h-4 mr-2" /> Nueva Caja
+          </Button>
+        )}
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {dataBoxes?.map((box) => (
@@ -132,6 +137,7 @@ export const CashRegister = () => {
               setEditingBox(box as unknown as ICreataCashRegister);
               setDialogMode('CERRADA');
             }}
+            access={access}
           />
         ))}
       </div>
