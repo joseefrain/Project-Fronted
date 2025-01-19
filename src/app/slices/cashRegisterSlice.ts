@@ -27,8 +27,8 @@ export interface ICajaBrach {
   usuarioAperturaId: string | IUser | null; // ObjectId como string o IUser
   montoInicial: { $numberDecimal: number };
   montoEsperado: { $numberDecimal: number };
-  montoFinalDeclarado?: string | null; // Representación de Decimal128 como string
-  diferencia?: string | null; // Representación de Decimal128 como string
+  montoFinalDeclarado?: { $numberDecimal: number };
+  diferencia?: { $numberDecimal: number };
   fechaApertura: Date | null;
   fechaCierre?: Date | null;
   estado: StateCashRegister;

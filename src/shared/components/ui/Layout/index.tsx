@@ -19,7 +19,6 @@ export const Layout = ({ children }: LayoutProps) => {
       <Header />
       <div className="flex flex-1">
         <Sidebar className="hidden capitalize md:block" links={sidebarLinks} />
-
         <div className="container-Layout">{children}</div>
         <Toaster />
       </div>

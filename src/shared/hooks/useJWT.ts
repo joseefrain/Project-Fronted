@@ -25,12 +25,7 @@ export const useAuthToken = () => {
 
   useEffect(() => {
     const checkToken = async () => {
-      if (!token) {
-        handleAuthentication('', false, navigate);
-        return;
-      }
-
-      if (hasTokenExpired(token)) {
+      if (!token || hasTokenExpired(token)) {
         alert('TOKEN EXPIRADO');
         handleAuthentication('', false, navigate);
         setToken('');
@@ -46,7 +41,7 @@ export const useAuthToken = () => {
   return { token };
 };
 
-const hasTokenExpired = (token: string): boolean => {
+export const hasTokenExpired = (token: string): boolean => {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     const exp = payload.exp;
@@ -58,7 +53,7 @@ const hasTokenExpired = (token: string): boolean => {
   }
 };
 
-const handleAuthentication = (
+export const handleAuthentication = (
   token: string,
   isAuth: boolean,
   navigate?: NavigateFunction

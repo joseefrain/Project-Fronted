@@ -13,7 +13,7 @@ export default [
       },
     },
 
-    ignores: ['dist'],
+    ignores: ['dist', 'node_modules'],
 
     languageOptions: {
       ecmaVersion: 2020,
@@ -23,6 +23,7 @@ export default [
         ecmaFeatures: {
           jsx: true,
         },
+        sourceType: 'module',
       },
     },
 
@@ -52,7 +53,7 @@ export default [
   },
 
   {
-    files: ['**/*.ts', '**/*.tsx', '**/*.jsx'],
+    files: ['**/*.ts', '**/*.tsx', '**/*.jsx', '**/*.js'],
     rules: {
       '@typescript-eslint/no-unused-vars': [
         'warn',

@@ -7,6 +7,7 @@ import { ProductFormExist } from '@/ui/components/products/ExistingProduct';
 import { ProductsTransit } from '@/ui/components/products/TransitProduct';
 import { useEffect } from 'react';
 import { Products } from '../../../../ui/components/Table/products';
+import './styles.scss';
 
 export const ViewProucts = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -18,11 +19,9 @@ export const ViewProucts = () => {
   return (
     <div className="container mx-auto">
       <Tabs defaultValue="listProduct">
-        <div className="flex flex-col items-start justify-between gap-4 mb-3 sm:flex-row sm:items-center">
-          <h1 className="text-4xl font-bold text-gray-800 font-onest w-[38%]">
-            Productos
-          </h1>
-          <TabsList className="gap-4 font-bold text-white bg-black font-onest">
+        <div className="container-TabsListTable ">
+          <h1 className=" container-TabsListTable__title ">Productos</h1>
+          <TabsList className="container-TabsListTable__tabs">
             <TabsTrigger
               className="text-[#ffffff] font-bold border-b-2 border-bg-gray-200 border-opacity-0 bg-black"
               value="listProduct"

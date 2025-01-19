@@ -50,7 +50,7 @@ export const PurchaseHistory = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <History />
-          Historial de ventas
+          Historial de Compras
         </CardTitle>
         <CardDescription>
           Ver los detalles de las ventas realizadas

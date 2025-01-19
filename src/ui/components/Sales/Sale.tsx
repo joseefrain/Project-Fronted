@@ -84,9 +84,10 @@ export const Sale = ({
       quantity: quantity,
       price: price,
       discount: null,
-      groupId: selectedProduct?.grupoId ?? '',
+      groupId: '675b8283b0abd32684ea6c9c',
       clientType: supplierMode ? 'Proveedor' : 'Regular',
       inventarioSucursalId: selectedProduct?.inventarioSucursalId ?? '',
+      costoUnitario: selectedProduct?.costoUnitario ?? { $numberDecimal: 0 },
     };
 
     const isExistentProduct = productSale.find(

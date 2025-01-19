@@ -33,6 +33,9 @@ export const SaleHistory = () => {
   const branchStoraged = getSelectedBranchFromLocalStorage();
   const user = useAppSelector((state) => state.auth.signIn.user);
   const salesHistory = useAppSelector((state) => state.sales.branchSales);
+  const selectCoins = useAppSelector(
+    (state) => state.coins.selectedCoin?.simbolo
+  );
 
   useEffect(() => {
     store
@@ -118,12 +121,12 @@ export const SaleHistory = () => {
                                 {item.quantity}
                               </TableCell>
                               <TableCell className="text-center">
-                                ${item.price.toFixed(2)}
+                                {selectCoins} {item.price.toFixed(2)}
                               </TableCell>
                               <TableCell className="text-center">
                                 {item.discount && item.discount?.amount > 0 ? (
                                   <span className="text-green-600">
-                                    $
+                                    {selectCoins}
                                     {(
                                       item.quantity * item.discount.amount
                                     ).toFixed(2)}{' '}
@@ -133,7 +136,7 @@ export const SaleHistory = () => {
                                 )}
                               </TableCell>
                               <TableCell className="text-center">
-                                $
+                                {selectCoins}
                                 {(
                                   item.price * item.quantity -
                                   (item.discount?.amount || 0) * item.quantity

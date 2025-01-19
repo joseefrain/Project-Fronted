@@ -17,11 +17,11 @@ import {
   getSelectedBranchFromLocalStorage,
 } from '../../../helpers/branchHelpers';
 import { ModeToggle } from '../../../toggle.tsx';
+import { Coins } from '../Coins/index.tsx';
 
 export const ProfileUser = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
   const [, setEditingSucursal] = useState(false);
-  //   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
@@ -58,18 +58,22 @@ export const ProfileUser = () => {
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
-        {user?.role !== 'admin' && (
-          <Button
-            onClick={() => openDialog(false)}
-            className="w-full h-full sm:w-auto font-onest dark:bg-[#09090b] dark:text-white dark:border-gray-700"
-          >
-            <Store className="w-4 h-4 mr-2" />
-            Sucursal
-          </Button>
-        )}
-        <BranchDrawer />
+      <div className="container-coins">
+        <Coins />
+        <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
+          {user?.role !== 'admin' && (
+            <Button
+              onClick={() => openDialog(false)}
+              className="w-full h-full sm:w-auto font-onest dark:bg-[#09090b] dark:text-white dark:border-gray-700"
+            >
+              <Store className="w-4 h-4 mr-2" />
+              Sucursal
+            </Button>
+          )}
+          <BranchDrawer />
+        </div>
       </div>
+
       <div className="flex items-center justify-center gap-2 p-2">
         <div className="flex flex-col items-start justify-center ">
           <h1 className="text-xl font-bold capitalize font-onest m-auto">
@@ -80,27 +84,29 @@ export const ProfileUser = () => {
             {selectedBranch ? selectedBranch.nombre : user?.sucursalId?.nombre}
           </p>
         </div>
-        <Popover>
-          <PopoverTrigger asChild>
-            <div className="flex items-center justify-center w-10 h-10 text-white bg-black rounded-full cursor-pointer">
-              <span className="text-lg font-semibold text-white font-onest">
-                {user?.username.charAt(0).toUpperCase() ?? 'A'}
-              </span>
-            </div>
-          </PopoverTrigger>
-          <PopoverContent className="w-22">
-            <Button
-              onClick={handleLogout}
-              variant="secondary"
-              className="font-onest"
-            >
-              <DoorClosed className="w-4 h-4" />
-              Salir
-            </Button>
-          </PopoverContent>
-        </Popover>
+        <div className="container-profile__actions">
+          <Popover>
+            <PopoverTrigger asChild>
+              <div className="flex items-center justify-center w-10 h-10 text-white bg-black rounded-full cursor-pointer">
+                <span className="text-lg font-semibold text-white font-onest">
+                  {user?.username.charAt(0).toUpperCase() ?? 'A'}
+                </span>
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-22">
+              <Button
+                onClick={handleLogout}
+                variant="secondary"
+                className="font-onest"
+              >
+                <DoorClosed className="w-4 h-4" />
+                Salir
+              </Button>
+            </PopoverContent>
+          </Popover>
+          <ModeToggle />
+        </div>
       </div>
-      <ModeToggle />
     </>
   );
 };

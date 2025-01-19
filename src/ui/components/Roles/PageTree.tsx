@@ -14,12 +14,12 @@ export default function PageTree({
 }: IPageTreeProps) {
   return (
     <div
-      className={`default__page__tree ${readonly ? 'max-h-[365px]' : 'max-h-[280px]'}`}
+      className={`default__page__tree ${readonly ? 'max-h-[365px]' : 'max-h-[666px]'}`}
     >
       {DEFAULT_ROLE_PAGES.map((page) => (
         <div
           key={page.module}
-          className="p-3 border rounded-md bg-gray-50 w-[99%]"
+          className="p-3 border rounded-md bg-gray-50 w-[99%] dark:bg-gray-950 dark:border-gray-800"
         >
           <div className="flex items-center mb-3 space-x-2">
             <Checkbox
