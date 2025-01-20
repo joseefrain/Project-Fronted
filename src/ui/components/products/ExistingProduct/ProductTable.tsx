@@ -35,6 +35,8 @@ import { PlusCircle } from 'lucide-react';
 import { useState } from 'react';
 import { toast, Toaster } from 'sonner';
 import ProductForm from './ProductForm';
+import { useRoleAccess } from '../../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../../shared/helpers/roleHelper';
 
 interface ProductsTableProps {
   products: InventarioSucursalWithPopulated[];
@@ -59,8 +61,9 @@ const ProductsTable = ({
   handleSelectChange,
   selectedGroup,
   groups,
-  userRoles,
 }: ProductsTableProps) => {
+  const access = useRoleAccess(PAGES_MODULES.PRODUCTOS);
+
   const [editingProduct, setEditingProduct] =
     useState<InventarioSucursal | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -91,8 +94,8 @@ const ProductsTable = ({
             <TableHead>Price</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>In Stock</TableHead>
-            {userRoles?.role !== 'admin' && (
-              <TableHead>
+            {(access.update || access.delete) && (
+              <TableHead className="text-center">
                 <span className="">Actions</span>
               </TableHead>
             )}
@@ -119,20 +122,22 @@ const ProductsTable = ({
                 </TooltipProvider>
               </TableCell>
               <TableCell>{product?.stock || '0'}</TableCell>
-              <TableCell>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() =>
-                    handleAddToBranchOnly(
-                      product as unknown as InventarioSucursal
-                    )
-                  }
-                >
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  Agregar
-                </Button>
-              </TableCell>
+              {access.create && (
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() =>
+                      handleAddToBranchOnly(
+                        product as unknown as InventarioSucursal
+                      )
+                    }
+                  >
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    Agregar
+                  </Button>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

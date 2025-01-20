@@ -24,6 +24,7 @@ interface SearchAndFilterProps {
     _id: string;
   } | null;
   groups: IProductoGroups[];
+  showAddProductBtn?: boolean;
 }
 
 const SearchAndFilter = ({
@@ -34,6 +35,7 @@ const SearchAndFilter = ({
   handleSelectChange,
   selectedGroup,
   groups,
+  showAddProductBtn,
 }: SearchAndFilterProps) => {
   const textSearch = 'Nombre, Código ';
 
@@ -50,13 +52,15 @@ const SearchAndFilter = ({
         </div>
       </div>
 
-      <AddProduct
-        groups={groups}
-        handleSelectChange={handleSelectChange}
-        onAddProduct={onAddProduct}
-        selectedGroup={selectedGroup}
-        sucursalId={sucursalId}
-      />
+      {showAddProductBtn && (
+        <AddProduct
+          groups={groups}
+          handleSelectChange={handleSelectChange}
+          onAddProduct={onAddProduct}
+          selectedGroup={selectedGroup}
+          sucursalId={sucursalId}
+        />
+      )}
     </div>
   );
 };
