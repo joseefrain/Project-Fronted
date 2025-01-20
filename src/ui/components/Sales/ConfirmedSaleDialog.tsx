@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import React from 'react';
 import { ISaleSummary } from './Inventory';
+import { POSTicketGenerator } from '@/shared/helpers/postTicketGenerator';
 
 export interface IReportField {
   label: string;
@@ -181,10 +182,13 @@ export const ConfirmedSaleDialog = ({
           )}
         </div>
         <DialogFooter className="saled__btn">
-          <Button onClick={onPrintInvoice}>
-            <Printer className="w-4 h-4 mr-2" />
-            Imprimir factura
-          </Button>
+          <POSTicketGenerator
+            cashierName={username.toUpperCase() ?? ''}
+            transactionId="1234"
+            date={getFormatedDate(transactionDate!, true).toUpperCase()}
+            total={`$${saleSummary.total.toFixed(2)}`}
+            products={productSale}
+          />
           <Button onClick={onPrintInvoice} variant="outline">
             <FileDown className="w-4 h-4 mr-2" />
             Descargar PDF
