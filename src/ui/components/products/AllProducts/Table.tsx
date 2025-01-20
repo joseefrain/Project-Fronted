@@ -15,6 +15,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useRoleAccess } from '../../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../../shared/helpers/roleHelper';
+import { Button } from '../../../../components/ui/button';
 
 interface IUserRole {
   _id: string;
@@ -28,7 +31,9 @@ interface ProductsTableProps {
   userRoles?: IUserRole | undefined;
 }
 
-const ProductsTable = ({ products, userRoles }: ProductsTableProps) => {
+const ProductsTable = ({ products }: ProductsTableProps) => {
+  const access = useRoleAccess(PAGES_MODULES.PRODUCTOS);
+
   return (
     <>
       <Table>
@@ -39,8 +44,8 @@ const ProductsTable = ({ products, userRoles }: ProductsTableProps) => {
             <TableHead>Sucursal</TableHead>
             <TableHead>Stock</TableHead>
             <TableHead>Price</TableHead>
-            {userRoles?.role !== 'admin' && (
-              <TableHead>
+            {(access.update || access.delete) && (
+              <TableHead className="text-center">
                 <span className="">Actions</span>
               </TableHead>
             )}
@@ -61,18 +66,22 @@ const ProductsTable = ({ products, userRoles }: ProductsTableProps) => {
               <TableCell>{product.nombreSucursal}</TableCell>
               <TableCell>{product.stock}</TableCell>
               <TableCell>{`$${product.precio.$numberDecimal}`}</TableCell>
-              <TableCell>
-                {userRoles?.role !== 'admin' && product.nombreSucursal && (
-                  <div className="flex items-center gap-3">
-                    <div className="">
-                      <Pencil className="mr-2 h-4 w-4 cursor-pointer" />
-                    </div>
-                    <div>
-                      <Trash className="mr-2 h-4 w-4 cursor-pointer" />
-                    </div>
+              {(access.update || access.delete) && (
+                <TableCell>
+                  <div className="flex items-center justify-center gap-3">
+                    {access.update && (
+                      <Button variant="ghost" size="sm">
+                        <Pencil className="w-4 h-4 cursor-pointer" />
+                      </Button>
+                    )}
+                    {access.delete && (
+                      <Button variant="ghost" size="sm">
+                        <Trash className="w-4 h-4 cursor-pointer" />
+                      </Button>
+                    )}
                   </div>
-                )}
-              </TableCell>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

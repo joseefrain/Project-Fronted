@@ -28,6 +28,8 @@ import { createProduct } from '../../../app/slices/branchSlice';
 import { toast, Toaster } from 'sonner';
 import { getAllGroupsSlice } from '../../../app/slices/groups';
 import './style.scss';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 export interface ISaleProps {
   products: ITablaBranch[];
@@ -42,6 +44,7 @@ export const Purchase = ({
   productSale,
   setProductSale,
 }: ISaleProps) => {
+  const access = useRoleAccess(PAGES_MODULES.PRODUCTOS);
   const selectedBranch = useAppSelector(
     (state) => state.branches.selectedBranch
   );
@@ -223,13 +226,15 @@ export const Purchase = ({
             Gestionar Productos
           </CardTitle>
         </div>
-        <AddProduct
-          groups={GroupsAll}
-          sucursalId={selectedBranch?._id}
-          selectedGroup={selectedGroup}
-          onAddProduct={handleAddProduct}
-          handleSelectChange={handleSelectChange}
-        />
+        {access.create && (
+          <AddProduct
+            groups={GroupsAll}
+            sucursalId={selectedBranch?._id}
+            selectedGroup={selectedGroup}
+            onAddProduct={handleAddProduct}
+            handleSelectChange={handleSelectChange}
+          />
+        )}
       </CardHeader>
       <CardContent className="h-[80%]">
         <div className="flex gap-4 mb-4">

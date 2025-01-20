@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/tooltip';
 import { updateProduct } from '../../../api/services/transfer';
 import { toast } from 'sonner';
+import { IRoleAccess } from '../../../interfaces/roleInterfaces';
 
 interface ProductsTableProps {
   products: ITablaBranch[] | undefined;
@@ -57,7 +58,8 @@ const ProductsTable = ({
   selectedGroup,
   groups,
   userRoles,
-}: ProductsTableProps) => {
+  access,
+}: ProductsTableProps & { access: IRoleAccess }) => {
   const [editingProduct, setEditingProduct] = useState<ITablaBranch | null>(
     null
   );
@@ -99,8 +101,8 @@ const ProductsTable = ({
             <TableHead>In Stock</TableHead>
             <TableHead>Punto de compra</TableHead>
             <TableHead>Costo unitario</TableHead>
-            {userRoles?.role !== 'admin' && (
-              <TableHead>
+            {(access.update || access.delete) && (
+              <TableHead className="text-center">
                 <span className="">Actions</span>
               </TableHead>
             )}
@@ -127,32 +129,38 @@ const ProductsTable = ({
               <TableCell>
                 {product.costoUnitario.$numberDecimal || '0'}
               </TableCell>
-              <TableCell>
-                {userRoles?.role !== 'admin' && (
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setEditingProduct(product);
-                        setIsEditing(true);
-                      }}
-                    >
-                      <Pencil className="h-4 w-4" />
-                      <span className="sr-only">Edit</span>
-                    </Button>
+              {(access.update || access.delete) && (
+                <TableCell>
+                  {userRoles?.role !== 'admin' && (
+                    <div className="flex items-center justify-center gap-2">
+                      {access.update && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setEditingProduct(product);
+                            setIsEditing(true);
+                          }}
+                        >
+                          <Pencil className="w-4 h-4" />
+                          <span className="sr-only">Edit</span>
+                        </Button>
+                      )}
 
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleOnDelete(product?.id!)}
-                    >
-                      <Trash className="h-4 w-4" />
-                      <span className="sr-only">Delete</span>
-                    </Button>
-                  </div>
-                )}
-              </TableCell>
+                      {access.delete && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleOnDelete(product?.id!)}
+                        >
+                          <Trash className="w-4 h-4" />
+                          <span className="sr-only">Delete</span>
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

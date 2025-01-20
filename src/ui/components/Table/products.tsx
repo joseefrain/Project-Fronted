@@ -18,8 +18,11 @@ import { toast, Toaster } from 'sonner';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import ProductsTable from './ProductTable';
 import SearchAndFilter from './sear';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 
 export function Products() {
+  const access = useRoleAccess(PAGES_MODULES.PRODUCTOS);
   const user = useAppSelector((state) => state.auth.signIn.user);
   const [products, setProducts] = useState<ITablaBranch[]>([]);
   const userRoles = useAppSelector((state) => state.auth.signIn.user);
@@ -137,6 +140,7 @@ export function Products() {
                 handleSelectChange={handleSelectChange}
                 selectedGroup={selectedGroup}
                 groups={GroupsAll}
+                showAddProductBtn={access.create}
               />
               {filteredProducts.length === 0 ? (
                 <span className="flex justify-center w-full text-sm text-center text-muted-foreground">
@@ -149,6 +153,7 @@ export function Products() {
                   groups={GroupsAll}
                   userRoles={userRoles}
                   handleSelectChange={handleSelectChange}
+                  access={access}
                 />
               )}
             </CardContent>

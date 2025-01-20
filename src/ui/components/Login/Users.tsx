@@ -22,8 +22,11 @@ import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import RegisterForm from './RegisterForm';
 import { getUsers } from '../../../app/slices/userSlice';
 import { UserTable } from '../Table/UserTable';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 export const Users = () => {
+  const access = useRoleAccess(PAGES_MODULES.USUARIOS);
   const users = useAppSelector((state) => state.users.users);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -72,19 +75,21 @@ export const Users = () => {
                   setSearchTerm={setSearchTerm}
                   placeholder="Buscar usuarios..."
                 />
-                <Dialog open={isAdding} onOpenChange={setIsAdding}>
-                  <DialogTrigger asChild>
-                    <Button size="sm" className="h-8 gap-1">
-                      <PlusCircle className="h-3.5 w-3.5" />
-                      <span>Agregar</span>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="font-onest">
-                    <DialogHeader>
-                      <RegisterForm onClose={() => setIsAdding(false)} />
-                    </DialogHeader>
-                  </DialogContent>
-                </Dialog>
+                {access.create && (
+                  <Dialog open={isAdding} onOpenChange={setIsAdding}>
+                    <DialogTrigger asChild>
+                      <Button size="sm" className="h-8 gap-1">
+                        <PlusCircle className="h-3.5 w-3.5" />
+                        <span>Agregar</span>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="font-onest">
+                      <DialogHeader>
+                        <RegisterForm onClose={() => setIsAdding(false)} />
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                )}
               </div>
 
               {filteredUsers.length === 0 ? (
@@ -92,7 +97,7 @@ export const Users = () => {
                   No hay usuarios en esta sucursal
                 </span>
               ) : (
-                <UserTable users={filteredUsers} />
+                <UserTable users={filteredUsers} access={access} />
               )}
             </CardContent>
             <CardFooter className="flex items-center justify-between">
