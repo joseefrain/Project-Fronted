@@ -39,6 +39,7 @@ import { useFilteredBranches } from '@/shared/hooks/useSelectedBranch';
 import { Save } from 'lucide-react';
 import { toast, Toaster } from 'sonner';
 import { IndexModal } from './modal';
+import { ROLE } from '../../../interfaces/roleInterfaces';
 
 export default function DiscountManager() {
   const [discounts, setDiscounts] = useState<IDescuentoCreate[]>([]);
@@ -52,7 +53,8 @@ export default function DiscountManager() {
   const dataFilterID = branches.filter(
     (branch) => branch._id === userRoles?.sucursalId?._id
   );
-  const filteredBranche = userRoles?.role === 'root' ? branches : dataFilterID;
+  const filteredBranche =
+    userRoles?.role === ROLE.ROOT ? branches : dataFilterID;
   const dataProduct = useAppSelector(
     (state) => state.branches.selectedBranch?.products
   );
@@ -102,7 +104,7 @@ export default function DiscountManager() {
     }));
 
   const dataFilterBranchProducts =
-    userRoles?.role === 'root'
+    userRoles?.role === ROLE.ROOT
       ? dataAllProducts
       : (dataProduct ?? ([] as ITablaBranch[]));
 

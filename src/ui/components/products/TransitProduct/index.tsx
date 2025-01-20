@@ -23,6 +23,7 @@ import { Boxes } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Pagination from '../../../../shared/components/ui/Pagination/Pagination';
 import ProductsTable from './Table';
+import { ROLE } from '../../../../interfaces/roleInterfaces';
 
 export const ProductsTransit = () => {
   const textSearch = 'Nombre';
@@ -34,7 +35,8 @@ export const ProductsTransit = () => {
   const dataFilterID = branches.filter(
     (branch) => branch._id === userRoles?.sucursalId?._id
   );
-  const filteredBranche = userRoles?.role === 'root' ? branches : dataFilterID;
+  const filteredBranche =
+    userRoles?.role === ROLE.ROOT ? branches : dataFilterID;
   const [selectedBranch, setSelectedBranch] = useState<{
     nombre: string;
     _id: string;
@@ -107,7 +109,7 @@ export const ProductsTransit = () => {
                 setSearchTerm={setSearchTerm}
                 placeholder={textSearch}
               />
-              {userRoles?.role === 'root' && (
+              {userRoles?.role === ROLE.ROOT && (
                 <div className="mb-4">
                   <Select onValueChange={handleSelectChangeBranch}>
                     <SelectTrigger>

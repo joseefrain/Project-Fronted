@@ -20,7 +20,7 @@ import {
 } from '../../../components/ui/dialog';
 import { Button } from '../../../components/ui/button';
 import RoleModal from './RoleModal';
-import { IRole } from '../../../interfaces/roleInterfaces';
+import { IRole, ROLE } from '../../../interfaces/roleInterfaces';
 import { Toaster, toast } from 'sonner';
 import { useAppSelector } from '../../../app/hooks';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
@@ -34,8 +34,10 @@ export const Roles = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const filteredRoles = roles.filter((role) =>
-    role.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredRoles = roles.filter(
+    (role) =>
+      role.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      role.name.toUpperCase() !== ROLE.ROOT
   );
 
   const handleOnCreateRole = (role: IRole) => {

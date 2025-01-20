@@ -1,4 +1,5 @@
 import { Branch } from '../../interfaces/branchInterfaces';
+import { ROLE } from '../../interfaces/roleInterfaces';
 
 export const getSelectedBranchFromLocalStorage = (): string | null => {
   let selectedBranch = localStorage.getItem('selectedBranch');
@@ -18,7 +19,7 @@ export const getFilteredBranches = (
   userRole: string,
   selectedBranchId: string | null
 ): Branch[] => {
-  if (userRole === 'root') {
+  if (userRole === ROLE.ROOT) {
     return branches;
   }
   return branches.filter((branch) => branch._id === selectedBranchId);

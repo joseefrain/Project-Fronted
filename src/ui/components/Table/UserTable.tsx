@@ -32,7 +32,8 @@ export const UserTable = ({ users }: IUserTableProps) => {
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead className="w-fit">Sucursal</TableHead>
-          <TableHead>Roles</TableHead>
+          <TableHead>Rol</TableHead>
+          <TableHead>Privilegio</TableHead>
           <TableHead className="flex items-center justify-center">
             <span className="">Actions</span>
           </TableHead>
@@ -71,6 +72,7 @@ export const UserTableRow = ({ user }: { user: IUser }) => {
     <TableRow key={user._id}>
       <TableCell className="font-medium">{user.username}</TableCell>
       <TableCell>{user.sucursalId?.nombre ?? '-'}</TableCell>
+      <TableCell className="truncate max-w-[20px]">{user.role}</TableCell>
       <TableCell className="truncate max-w-[20px]">
         {user.roles.map((role) => role.name).join(', ')}{' '}
       </TableCell>

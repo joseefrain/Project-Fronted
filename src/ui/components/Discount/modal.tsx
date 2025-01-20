@@ -1,4 +1,3 @@
-import { IRoles } from '@/app/slices/login';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -28,6 +27,7 @@ import { cn } from '@/lib/utils';
 import { SelectSearch } from '@/shared/components/ui/SelectSearch';
 import { format } from 'date-fns';
 import React from 'react';
+import { ROLE } from '../../../interfaces/roleInterfaces';
 
 interface IndexModalProps {
   isModalOpen: boolean;
@@ -58,7 +58,7 @@ interface IndexModalProps {
   userRoles?: {
     _id: string;
     username: string;
-    role: IRoles;
+    role: ROLE;
     sucursalId?: Branch;
   };
   handleProducts: (value: string) => void;
@@ -142,7 +142,7 @@ export const IndexModal = ({
                     }
                   />
                 </div>
-                {userRoles?.role === 'root' && (
+                {userRoles?.role === ROLE.ROOT && (
                   <div>
                     <Label htmlFor="tipoDescuento">Sucursal</Label>
                     <SelectSearch
