@@ -36,12 +36,15 @@ import { SearchComponent } from '@/shared/components/ui/Search';
 import { GetBranches } from '@/shared/helpers/Branchs';
 import { getFormatedDate } from '@/shared/helpers/transferHelper';
 import { useFilteredBranches } from '@/shared/hooks/useSelectedBranch';
-import { Save } from 'lucide-react';
+import { Pencil, Save, Trash2 } from 'lucide-react';
 import { toast, Toaster } from 'sonner';
 import { IndexModal } from './modal';
 import { ROLE } from '../../../interfaces/roleInterfaces';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 export default function DiscountManager() {
+  const access = useRoleAccess(PAGES_MODULES.DESCUENTOS);
   const [discounts, setDiscounts] = useState<IDescuentoCreate[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -257,7 +260,9 @@ export default function DiscountManager() {
                   searchTerm={searchTerm}
                   setSearchTerm={setSearchTerm}
                 />
-                <Button onClick={openAddModal}>Agregar Descuento</Button>
+                {access.create && (
+                  <Button onClick={openAddModal}>Agregar Descuento</Button>
+                )}
               </div>
               <Table className="min-w-full divide-y divide-gray-200">
                 <TableHeader>
@@ -267,7 +272,9 @@ export default function DiscountManager() {
                     <TableHead>Valor Descuento</TableHead>
                     <TableHead>Fecha Inicio</TableHead>
                     <TableHead>Fecha Fin</TableHead>
-                    <TableHead>Acciones</TableHead>
+                    {(access.update || access.delete) && (
+                      <TableHead className="text-center">Acciones</TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -288,13 +295,24 @@ export default function DiscountManager() {
                       <TableCell className="px-4 py-2">
                         {getFormatedDate(discount.fechaFin)}
                       </TableCell>
-                      <TableCell className="px-4 py-2">
-                        <Button
-                          onClick={() => openEditModal(discount.productId)}
-                        >
-                          Edit
-                        </Button>
-                      </TableCell>
+                      {(access.update || access.delete) && (
+                        <TableCell className="flex items-center justify-center gap-2 px-4 py-2">
+                          {access.update && (
+                            <Button
+                              className="w-8 h-8"
+                              variant="outline"
+                              onClick={() => openEditModal(discount.productId)}
+                            >
+                              <Pencil className="w-4 h-4 text-blue-600" />
+                            </Button>
+                          )}
+                          {access.delete && (
+                            <Button className="w-8 h-8" variant="outline">
+                              <Trash2 className="w-4 h-4 text-red-600" />
+                            </Button>
+                          )}
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>

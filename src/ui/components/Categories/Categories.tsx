@@ -26,12 +26,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../../../components/ui/tooltip';
+import { IRoleAccess } from '../../../interfaces/roleInterfaces';
 
 export const CategoriesCard = ({
   categoriesData,
+  access,
   onEdit,
   handleSelectCategory,
-}: ICategoriesProps) => {
+}: ICategoriesProps & { access: IRoleAccess }) => {
   const navigate = useNavigate();
   const handleOnDelete = () => {
     store.dispatch(deleteGroupSlice(categoriesData._id as string));
@@ -66,25 +68,31 @@ export const CategoriesCard = ({
               <h3 className="font-semibold">{categoriesData.nombre}</h3>
             </div>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
-                <MoreVertical className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="font-onest">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={() => onEdit(true)}>
-                <Pencil className="w-4 h-4 mr-2" />
-                Editar
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => handleOnDelete()}>
-                <Trash className="w-4 h-4 mr-2" />
-                Eliminar
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {(access.update || access.delete) && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
+                  <MoreVertical className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="font-onest">
+                <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {access.update && (
+                  <DropdownMenuItem onSelect={() => onEdit(true)}>
+                    <Pencil className="w-4 h-4 mr-2" />
+                    Editar
+                  </DropdownMenuItem>
+                )}
+                {access.delete && (
+                  <DropdownMenuItem onSelect={() => handleOnDelete()}>
+                    <Trash className="w-4 h-4 mr-2" />
+                    Eliminar
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </CardHeader>
         <CardContent>
           <div className="text-sm font-medium"></div>
@@ -92,7 +100,7 @@ export const CategoriesCard = ({
             <h4 className="text-sm font-semibold">Datos</h4>
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger className="w-64 overflow-hidden whitespace-nowrap text-ellipsis text-start p-0 font-onest text-sm text-muted-foreground">
+                <TooltipTrigger className="w-64 p-0 overflow-hidden text-sm whitespace-nowrap text-ellipsis text-start font-onest text-muted-foreground">
                   {categoriesData.descripcion}
                 </TooltipTrigger>
                 <TooltipContent>{categoriesData.descripcion}</TooltipContent>

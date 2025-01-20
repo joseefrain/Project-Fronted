@@ -40,3 +40,10 @@ export enum ROLE {
   ROOT = 'ROOT',
   EMPLEADO = 'EMPLEADO',
 }
+
+export interface IRoleAccess {
+  create: boolean;
+  read: boolean;
+  update: boolean;
+  delete: boolean;
+}

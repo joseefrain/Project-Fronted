@@ -13,6 +13,7 @@ import { IEntities } from '../../../interfaces/entitiesInterfaces';
 import { useNavigate } from 'react-router-dom';
 import { setSelectedEntity } from '../../../app/slices/entities';
 import { store } from '../../../app/store';
+import { IRoleAccess } from '../../../interfaces/roleInterfaces';
 
 interface IUserRole {
   _id: string;
@@ -29,9 +30,9 @@ interface ProductsTableProps {
 
 export const TablaContacts = ({
   currentItems,
-  userRoles,
+  access,
   handleEditContact,
-}: ProductsTableProps) => {
+}: ProductsTableProps & { access: IRoleAccess }) => {
   const navigate = useNavigate();
 
   const handleSelectEntity = (entity: IEntities) => {
@@ -48,8 +49,8 @@ export const TablaContacts = ({
             <TableHead className="w-fit">Identificacion</TableHead>
             <TableHead>Telefono</TableHead>
             <TableHead>Tipo</TableHead>
-            {userRoles?.role !== 'admin' && (
-              <TableHead>
+            {(access.update || access.delete) && (
+              <TableHead className="text-center">
                 <span className="">Actions</span>
               </TableHead>
             )}
@@ -71,21 +72,25 @@ export const TablaContacts = ({
               <TableCell>
                 {product.type === 'customer' ? 'Cliente' : 'Proveedor'}
               </TableCell>
-              <TableCell>
-                {userRoles?.role !== 'admin' && (
-                  <div className="flex items-center gap-3">
-                    <div
-                      onClick={() => handleEditContact(product)}
-                      className=""
-                    >
-                      <Pencil className="mr-2 h-4 w-4 cursor-pointer" />
-                    </div>
-                    <div>
-                      <Trash className="mr-2 h-4 w-4 cursor-pointer" />
-                    </div>
+              {(access.update || access.delete) && (
+                <TableCell>
+                  <div className="flex items-center justify-center gap-3">
+                    {access.update && (
+                      <div
+                        onClick={() => handleEditContact(product)}
+                        className=""
+                      >
+                        <Pencil className="w-4 h-4 mr-2 cursor-pointer" />
+                      </div>
+                    )}
+                    {access.delete && (
+                      <div>
+                        <Trash className="w-4 h-4 mr-2 cursor-pointer" />
+                      </div>
+                    )}
                   </div>
-                )}
-              </TableCell>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

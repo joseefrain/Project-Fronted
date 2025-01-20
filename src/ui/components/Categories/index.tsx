@@ -24,8 +24,11 @@ import { ChartColumnStacked } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast, Toaster } from 'sonner';
 import { CategoriesCard } from './Categories';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 export default function Categories() {
+  const access = useRoleAccess(PAGES_MODULES.CATEGORIAS);
   const categories = useAppSelector((state) => state.categories.groups);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingSucursal, setEditingSucursal] = useState(false);
@@ -111,15 +114,17 @@ export default function Categories() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
-            <Button
-              onClick={() => openDialog(false)}
-              className="w-full sm:w-auto font-onest"
-            >
-              <ChartColumnStacked className="w-4 h-4 mr-2" />
-              Agregar
-            </Button>
-          </div>
+          {access.create && (
+            <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
+              <Button
+                onClick={() => openDialog(false)}
+                className="w-full sm:w-auto font-onest"
+              >
+                <ChartColumnStacked className="w-4 h-4 mr-2" />
+                Agregar
+              </Button>
+            </div>
+          )}
         </nav>
         <Dialog
           open={isDialogOpen}
@@ -186,6 +191,7 @@ export default function Categories() {
                 categoriesData={branch}
                 handleSelectCategory={handleSelectCategory}
                 onEdit={() => openDialog(true, branch)}
+                access={access}
               />
             ))}
         </div>

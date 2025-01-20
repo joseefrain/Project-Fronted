@@ -24,8 +24,12 @@ import { toast, Toaster } from 'sonner';
 import { store } from '../../../app/store';
 import { IUser } from '../../../app/slices/login';
 import RegisterForm from '../Login/RegisterForm';
+import { IRoleAccess } from '../../../interfaces/roleInterfaces';
 
-export const UserTable = ({ users }: IUserTableProps) => {
+export const UserTable = ({
+  users,
+  access,
+}: IUserTableProps & { access: IRoleAccess }) => {
   return (
     <Table>
       <TableHeader>
@@ -34,19 +38,29 @@ export const UserTable = ({ users }: IUserTableProps) => {
           <TableHead className="w-fit">Sucursal</TableHead>
           <TableHead>Rol</TableHead>
           <TableHead>Privilegio</TableHead>
-          <TableHead className="flex items-center justify-center">
-            <span className="">Actions</span>
-          </TableHead>
+          {(access.update || access.delete) && (
+            <TableHead className="flex items-center justify-center">
+              <span className="">Actions</span>
+            </TableHead>
+          )}
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users?.map((user, index) => <UserTableRow key={index} user={user} />)}
+        {users?.map((user) => (
+          <UserTableRow key={user._id} user={user} acccess={access} />
+        ))}
       </TableBody>
     </Table>
   );
 };
 
-export const UserTableRow = ({ user }: { user: IUser }) => {
+export const UserTableRow = ({
+  user,
+  acccess,
+}: {
+  user: IUser;
+  acccess: IRoleAccess;
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -76,50 +90,56 @@ export const UserTableRow = ({ user }: { user: IUser }) => {
       <TableCell className="truncate max-w-[20px]">
         {user.roles.map((role) => role.name).join(', ')}{' '}
       </TableCell>
-      <TableCell className="flex items-center justify-center gap-3">
-        <Dialog open={isEditing} onOpenChange={setIsEditing}>
-          <DialogTrigger asChild>
-            <Button className="w-8 h-8" variant="outline">
-              <Pencil className="w-4 h-4 text-blue-600" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="font-onest">
-            <RegisterForm user={user} onClose={() => setIsEditing(false)} />
-          </DialogContent>
-        </Dialog>
+      {(acccess.update || acccess.delete) && (
+        <TableCell className="flex items-center justify-center gap-3">
+          {acccess.update && (
+            <Dialog open={isEditing} onOpenChange={setIsEditing}>
+              <DialogTrigger asChild>
+                <Button className="w-8 h-8" variant="outline">
+                  <Pencil className="w-4 h-4 text-blue-600" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="font-onest">
+                <RegisterForm user={user} onClose={() => setIsEditing(false)} />
+              </DialogContent>
+            </Dialog>
+          )}
 
-        <Dialog open={isDeleting} onOpenChange={setIsDeleting}>
-          <DialogTrigger asChild>
-            <Button className="w-8 h-8" variant="outline">
-              <Trash2 className="w-4 h-4 text-red-600" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="flex flex-col font-onest">
-            <DialogHeader className="">
-              <DialogTitle className="font-semibold uppercase">
-                {`Eliminar ${user.username}`}
-              </DialogTitle>
-            </DialogHeader>
-            <DialogDescription>
-              ¿Está seguro de que desea eliminar este usuario?
-            </DialogDescription>
-            <DialogFooter>
-              <Button
-                className="w-full text-white bg-gray-400 hover:bg-gray-600"
-                onClick={() => setIsDeleting(false)}
-              >
-                Cancelar
-              </Button>
-              <Button
-                className="w-full text-white bg-red-600 hover:bg-red-700"
-                onClick={() => handleDeleteUser(user._id)}
-              >
-                Eliminar
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </TableCell>
+          {acccess.delete && (
+            <Dialog open={isDeleting} onOpenChange={setIsDeleting}>
+              <DialogTrigger asChild>
+                <Button className="w-8 h-8" variant="outline">
+                  <Trash2 className="w-4 h-4 text-red-600" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="flex flex-col font-onest">
+                <DialogHeader className="">
+                  <DialogTitle className="font-semibold uppercase">
+                    {`Eliminar ${user.username}`}
+                  </DialogTitle>
+                </DialogHeader>
+                <DialogDescription>
+                  ¿Está seguro de que desea eliminar este usuario?
+                </DialogDescription>
+                <DialogFooter>
+                  <Button
+                    className="w-full text-white bg-gray-400 hover:bg-gray-600"
+                    onClick={() => setIsDeleting(false)}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    className="w-full text-white bg-red-600 hover:bg-red-700"
+                    onClick={() => handleDeleteUser(user._id)}
+                  >
+                    Eliminar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )}
+        </TableCell>
+      )}
       <Toaster richColors position="bottom-right" />
     </TableRow>
   );
