@@ -31,6 +31,7 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
       creditoIdStr: creditSelected?._id ?? '',
       montoPago: amount,
       modalidadCredito: creditSelected?.modalidadCredito ?? 'PLAZO',
+      cajaId: "678dc99686f66b97352366d7"
     };
 
     const request = store

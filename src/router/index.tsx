@@ -96,7 +96,7 @@ export const Router = () => {
       </Route>
       <Route
         path="/orders"
-        element={<RequireAuth module={PAGES_MODULES.VENTAS} />}
+        element={<RequireAuth module={PAGES_MODULES.TRASLADOS} />}
       >
         <Route
           path="/orders"
