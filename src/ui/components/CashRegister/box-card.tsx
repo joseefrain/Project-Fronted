@@ -33,14 +33,19 @@ export function BoxCard({
   const isClosed = box.estado === 'CERRADA';
 
   const handleOpen = () => {
-    const openedBoxId = localStorage.getItem('opened_box_id');
+    const storedBoxes = localStorage.getItem('boxState');
 
-    if (openedBoxId && openedBoxId !== box._id) {
-      toast.error(
-        `Solo se puede abrir una caja a la vez. La caja ${box.consecutivo} ya está abierta.`
-      );
-      return;
+    if (storedBoxes) {
+      const boxes = JSON.parse(storedBoxes);
+
+      const openedBox = boxes.find((box: any) => box.estado === 'ABIERTA');
+
+      if (openedBox && openedBox.id !== box._id) {
+        toast.error(`Solo se puede abrir una caja a la vez, por usuario`);
+        return;
+      }
     }
+
     onOpen();
   };
 

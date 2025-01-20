@@ -27,6 +27,7 @@ import { Loader } from '@/shared/components/ui/Loader';
 import { ListOrdered } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { MapIndex } from './table';
+import { ROLE } from '../../../interfaces/roleInterfaces';
 
 const orderStatusOptions = [
   { value: 'Todos', label: 'Ver Todos' },
@@ -43,7 +44,8 @@ export const BranchReceived = () => {
   const dataFilterID = branches.filter(
     (branch) => branch._id === userRoles?.sucursalId?._id
   );
-  const filteredBranche = userRoles?.role === 'root' ? branches : dataFilterID;
+  const filteredBranche =
+    userRoles?.role === ROLE.ROOT ? branches : dataFilterID;
   const [selectedBranch, setSelectedBranch] = useState<{
     nombre: string;
     _id: string;
@@ -140,7 +142,7 @@ export const BranchReceived = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              {userRoles?.role === 'root' && (
+              {userRoles?.role === ROLE.ROOT && (
                 <div className="mb-4">
                   <Select onValueChange={handleSelectChangeBranch}>
                     <SelectTrigger>

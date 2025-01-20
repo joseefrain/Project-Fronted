@@ -18,6 +18,7 @@ import {
 } from '../../../helpers/branchHelpers';
 import { ModeToggle } from '../../../toggle.tsx';
 import { Coins } from '../Coins/index.tsx';
+import { ROLE } from '../../../../interfaces/roleInterfaces.ts';
 
 export const ProfileUser = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -61,7 +62,7 @@ export const ProfileUser = () => {
       <div className="container-coins">
         <Coins />
         <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
-          {user?.role !== 'admin' && (
+          {user?.role === ROLE.ROOT && (
             <Button
               onClick={() => openDialog(false)}
               className="w-full h-full sm:w-auto font-onest dark:bg-[#09090b] dark:text-white dark:border-gray-700"
@@ -76,7 +77,7 @@ export const ProfileUser = () => {
 
       <div className="flex items-center justify-center gap-2 p-2">
         <div className="flex flex-col items-start justify-center ">
-          <h1 className="text-xl font-bold capitalize font-onest m-auto">
+          <h1 className="m-auto text-xl font-bold capitalize font-onest">
             {user?.username}
           </h1>
           <p className="text-sm text-muted-foreground font-onest">

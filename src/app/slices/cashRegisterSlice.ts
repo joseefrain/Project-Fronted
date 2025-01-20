@@ -192,22 +192,17 @@ export const boxSlice = createSlice({
         state.error = action.error.message as string;
         state.status = 'failed';
       })
-
-      .addCase(closeBoxes.pending, (state) => {
-        state.status = 'loading';
-      })
       .addCase(closeBoxes.fulfilled, (state, action) => {
-        const closedBoxId = action.payload._id;
-
-        state.BoxesData = state.BoxesData!.map((box) => {
-          if (box._id === closedBoxId) {
-            return action.payload;
+        if (state.BoxesData) {
+          const boxIndex = state.BoxesData.findIndex(
+            (box) => box._id === action.payload.cajaId
+          );
+          if (boxIndex !== -1) {
+            state.BoxesData[boxIndex].estado = 'CERRADA';
           }
-          return box;
-        });
+        }
         state.status = 'succeeded';
       })
-
       .addCase(getBoxById.pending, (state) => {
         state.status = 'loading';
       })

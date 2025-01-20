@@ -8,6 +8,7 @@ import { ProductsTransit } from '@/ui/components/products/TransitProduct';
 import { useEffect } from 'react';
 import { Products } from '../../../../ui/components/Table/products';
 import './styles.scss';
+import { ROLE } from '../../../../interfaces/roleInterfaces';
 
 export const ViewProucts = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -20,7 +21,7 @@ export const ViewProucts = () => {
     <div className="container mx-auto">
       <Tabs defaultValue="listProduct">
         <div className="container-TabsListTable ">
-          <h1 className=" container-TabsListTable__title ">Productos</h1>
+          <h1 className=" container-TabsListTable__title">Productos</h1>
           <TabsList className="container-TabsListTable__tabs">
             <TabsTrigger
               className="text-[#ffffff] font-bold border-b-2 border-bg-gray-200 border-opacity-0 bg-black"
@@ -40,7 +41,7 @@ export const ViewProucts = () => {
             >
               Productos en tránsito
             </TabsTrigger>
-            {user?.role === 'root' && (
+            {user?.role === ROLE.ROOT && (
               <TabsTrigger
                 className="bg-black text-[#ffffff] font-bold"
                 value="allProduct"
