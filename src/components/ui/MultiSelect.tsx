@@ -28,6 +28,7 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command';
+import { useEffect } from 'react';
 
 /**
  * Variants for the multi-select component to handle different styles.
@@ -133,7 +134,6 @@ export const MultiSelect = React.forwardRef<
       animation = 0,
       maxCount = 3,
       modalPopover = false,
-      asChild = false,
       className,
       ...props
     },
@@ -189,6 +189,10 @@ export const MultiSelect = React.forwardRef<
         onValueChange(allValues);
       }
     };
+
+    useEffect(() => {
+      setSelectedValues(defaultValue);
+    }, [defaultValue]);
 
     return (
       <Popover

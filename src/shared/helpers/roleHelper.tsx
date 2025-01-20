@@ -1,4 +1,4 @@
-import { IRole, IRolePrivilege } from '../../interfaces/roleInterfaces';
+import { IRole, IRolePrivilege, ROLE } from '../../interfaces/roleInterfaces';
 import {
   BadgeDollarSign,
   CreditCard,
@@ -319,3 +319,18 @@ export const hasLevelInModuleByRoles = (
 
   return hasLevelInModule;
 };
+
+export const UNIQUE_ROLES = [
+  {
+    label: 'Root',
+    value: ROLE.ROOT,
+  },
+  {
+    label: 'Administrador',
+    value: ROLE.ADMIN,
+  },
+  {
+    label: 'Empleado',
+    value: ROLE.EMPLEADO,
+  },
+];

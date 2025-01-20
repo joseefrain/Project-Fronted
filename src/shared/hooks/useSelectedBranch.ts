@@ -4,6 +4,7 @@ import { GetBranches } from '../helpers/Branchs';
 import { fetchBranches } from '@/app/slices/branchSlice';
 import { store } from '@/app/store';
 import { ITablaBranch } from '@/interfaces/branchInterfaces';
+import { ROLE } from '../../interfaces/roleInterfaces';
 
 export const useFilteredBranches = () => {
   const branches = useAppSelector((state) => state.branches.data);
@@ -15,7 +16,7 @@ export const useFilteredBranches = () => {
   } | null>(null);
 
   const filteredBranches =
-    userRoles?.role === 'root'
+    userRoles?.role === ROLE.ROOT
       ? branches
       : branches.filter((branch) => branch._id === userRoles?.sucursalId?._id);
 
@@ -38,7 +39,7 @@ export const useFilteredBranches = () => {
   useEffect(() => {
     if (branches.length === 0) return;
     setSelectedBranch(
-      userRoles?.role === 'root'
+      userRoles?.role === ROLE.ROOT
         ? null
         : {
             nombre: filteredBranches[0].nombre as string,

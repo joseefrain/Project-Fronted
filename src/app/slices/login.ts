@@ -2,14 +2,14 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Iauth, registerUsers } from '../../api/services/auth';
 import { handleThunkError } from '../../shared/utils/errorHandlers';
 import { Branch } from '../../interfaces/branchInterfaces';
-import { IRole } from '../../interfaces/roleInterfaces';
+import { IRole, ROLE } from '../../interfaces/roleInterfaces';
 
 export type IRoles = 'admin' | 'user' | 'root';
 
 export interface IUser {
   _id: string;
   username: string;
-  role: IRoles;
+  role: ROLE;
   password: string;
   sucursalId?: Branch;
   roles: IRole[];
@@ -21,7 +21,7 @@ export interface IToken {
   cajaId?: string;
 }
 
-const saveToLocalStorage = (key: string, value: any) => {
+export const saveToLocalStorage = (key: string, value: any) => {
   localStorage.setItem(key, JSON.stringify(value));
 };
 
@@ -62,7 +62,7 @@ export interface IAuthSlice {
   user?: {
     _id: string;
     username: string;
-    role: IRoles;
+    role: ROLE;
     sucursalId?: Branch;
     isRootUser?: boolean;
     roles: IRole[];
@@ -90,7 +90,7 @@ const initialState: ILoginSlice = {
   signUp: {
     username: '',
     password: '',
-    role: 'user',
+    role: ROLE.EMPLEADO,
   },
   status: 'idle',
   error: '',
@@ -118,7 +118,13 @@ export const LoginSlice = createSlice({
     updateSignIn: (state, action: PayloadAction<IToken>) => {
       state.signIn = {
         token: action.payload.token,
-        user: action.payload.user,
+        user: {
+          _id: action.payload.user!._id,
+          username: action.payload.user!.username,
+          role: action.payload.user!.role,
+          sucursalId: action.payload.user!.sucursalId,
+          roles: action.payload.user!.roles,
+        },
         cajaId: action.payload.cajaId,
         status: 'authenticated',
       };

@@ -36,7 +36,8 @@ export const UserTable = ({
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead className="w-fit">Sucursal</TableHead>
-          <TableHead>Roles</TableHead>
+          <TableHead>Rol</TableHead>
+          <TableHead>Privilegio</TableHead>
           {(access.update || access.delete) && (
             <TableHead className="flex items-center justify-center">
               <span className="">Actions</span>
@@ -85,6 +86,7 @@ export const UserTableRow = ({
     <TableRow key={user._id}>
       <TableCell className="font-medium">{user.username}</TableCell>
       <TableCell>{user.sucursalId?.nombre ?? '-'}</TableCell>
+      <TableCell className="truncate max-w-[20px]">{user.role}</TableCell>
       <TableCell className="truncate max-w-[20px]">
         {user.roles.map((role) => role.name).join(', ')}{' '}
       </TableCell>

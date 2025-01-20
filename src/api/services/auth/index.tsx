@@ -1,10 +1,11 @@
 import axios, { AxiosResponse } from 'axios';
 import { createAxiosInstance, PATH_LIST } from '../axios';
+import { ROLE } from '../../../interfaces/roleInterfaces';
 
 export interface Iauth {
   username: string;
   password: string;
-  role?: 'admin' | 'user' | 'root';
+  role?: ROLE;
   sucursalId?: string | null;
   roles?: string[];
 }

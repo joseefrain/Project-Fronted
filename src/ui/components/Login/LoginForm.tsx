@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { toast, Toaster } from 'sonner';
+import { ROLE } from '../../../interfaces/roleInterfaces';
 
 interface ILoginData {
   username: string;
@@ -43,8 +44,7 @@ const LoginForm = () => {
         const parsedData = JSON.parse(storedData);
         const role = parsedData?.user?.role;
 
-        if (role === 'root') {
-          console.log('root', role);
+        if (role === ROLE.ROOT) {
           store.dispatch(openDrawer());
         }
       } else {
@@ -62,12 +62,12 @@ const LoginForm = () => {
       <Toaster richColors position="bottom-right" />
       <motion.form
         onSubmit={handleSubmit}
-        className=" bg-gray-50 shadow-md rounded-lg p-6 max-w-md mt-10 w-full dark:bg-gray-800"
+        className="w-full max-w-md p-6 mt-10 rounded-lg shadow-md  bg-gray-50 dark:bg-gray-800"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <h1 className="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h1>
+        <h1 className="mb-6 text-2xl font-bold text-center">Iniciar Sesión</h1>
         <div className="mb-4">
           <label
             htmlFor="username"
@@ -104,7 +104,7 @@ const LoginForm = () => {
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white hover:bg-blue-700 rounded py-2"
+          className="w-full py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
         >
           Iniciar Sesión
         </button>

@@ -45,7 +45,10 @@ export const updatingUser = createAsyncThunk(
   ) => {
     try {
       const response = await updateUser(id, user, token);
-      return response.data;
+      return {
+        data: response.data,
+        token: token,
+      };
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
     }
@@ -99,11 +102,9 @@ const userSlice = createSlice({
       })
       .addCase(updatingUser.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        console.log(action.payload);
-
         state.users = state.users.map((user) => {
-          if (user._id === action.payload._id) {
-            return action.payload;
+          if (user._id === action.payload.data._id) {
+            return action.payload.data;
           }
           return user;
         });
