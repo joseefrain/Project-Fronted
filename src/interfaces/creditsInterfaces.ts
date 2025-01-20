@@ -74,4 +74,5 @@ export interface IPostPagoCredito {
   creditoIdStr: string;
   montoPago: number;
   modalidadCredito: ModalidadCredito;
+  cajaId: string;
 }

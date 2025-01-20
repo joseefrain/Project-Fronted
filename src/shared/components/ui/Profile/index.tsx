@@ -1,5 +1,5 @@
 import { useAppSelector } from '@/app/hooks';
-import { logout, openDrawer } from '@/app/slices/login';
+import { logout, openDrawer, removeFromLocalStorage } from '@/app/slices/login';
 import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,6 +28,7 @@ export const ProfileUser = () => {
     try {
       store.dispatch(logout());
       navigate('/login');
+      removeFromLocalStorage('boxState');
     } catch (error) {
       console.error('Error trying to logout: ', error);
     }
