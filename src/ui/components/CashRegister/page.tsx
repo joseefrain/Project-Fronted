@@ -53,13 +53,12 @@ export const CashRegister = () => {
   };
 
   const resetLocalStorage = () => {
-    localStorage.removeItem('boxState');
+    removeFromLocalStorage('boxState');
   };
 
   useEffect(() => {
-    if (!selectBranch) {
-      localStorage.removeItem('boxState');
-      console.log('Datos de la sucursal eliminados del localStorage');
+    if (selectBranch) {
+      removeFromLocalStorage('boxState');
     }
   }, [selectBranch]);
 
