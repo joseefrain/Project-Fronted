@@ -26,12 +26,14 @@ interface ProductsTableProps {
   currentItems: IEntities[];
   userRoles?: IUserRole | undefined;
   handleEditContact: (contactData: IEntities) => void;
+  handleDeleteContact: (id: string) => void;
 }
 
 export const TablaContacts = ({
   currentItems,
   access,
   handleEditContact,
+  handleDeleteContact,
 }: ProductsTableProps & { access: IRoleAccess }) => {
   const navigate = useNavigate();
 
@@ -84,7 +86,7 @@ export const TablaContacts = ({
                       </div>
                     )}
                     {access.delete && (
-                      <div>
+                      <div onClick={() => handleDeleteContact(product._id!)}>
                         <Trash className="w-4 h-4 mr-2 cursor-pointer" />
                       </div>
                     )}

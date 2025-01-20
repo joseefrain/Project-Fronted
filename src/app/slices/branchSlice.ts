@@ -245,17 +245,11 @@ const branchesSlice = createSlice({
         state.status = 'loading';
         state.error = null;
       })
-      .addCase(removeProduct.fulfilled, (state, { payload }) => {
+      .addCase(removeProduct.fulfilled, (state, action) => {
         state.status = 'succeeded';
-
-        if (state.selectedBranch) {
-          state.selectedBranch = {
-            ...state.selectedBranch,
-            products: state.selectedBranch.products.filter(
-              (product) => product?.id !== payload._id
-            ),
-          };
-        }
+        state.data = state.data.filter(
+          (branch) => branch._id !== action.meta.arg
+        );
       })
       .addCase(createProduct.pending, (state) => {
         state.status = 'loading';
