@@ -15,15 +15,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Pencil, Trash } from 'lucide-react';
-import {
-  Branch,
-  IProductoGroups,
-  ITablaBranch,
-} from '@/interfaces/branchInterfaces';
+import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
 import ProductForm from './ProductForm';
-import { IRoles } from '@/app/slices/login';
 import { store } from '@/app/store';
-import { removeProduct } from '@/app/slices/branchSlice';
 import {
   Tooltip,
   TooltipContent,
@@ -33,6 +27,7 @@ import {
 import { updateProduct } from '../../../api/services/transfer';
 import { toast } from 'sonner';
 import { IRoleAccess } from '../../../interfaces/roleInterfaces';
+import { removeProduct } from '../../../app/slices/productsSlice';
 
 interface ProductsTableProps {
   products: ITablaBranch[] | undefined;

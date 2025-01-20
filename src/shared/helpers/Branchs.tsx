@@ -1,7 +1,7 @@
 import { productsCatetories } from '@/app/slices/groups';
-import { fetchProductsByBranchId } from '../../app/slices/branchSlice';
 import { store } from '../../app/store';
 import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
+import { fetchProductsByBranchId } from '../../app/slices/productsSlice';
 
 export const GetBranches = async (id: string): Promise<ITablaBranch[]> => {
   try {

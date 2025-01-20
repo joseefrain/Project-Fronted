@@ -9,6 +9,8 @@ import {
 } from '@/api/services/products';
 import { IStatus, ITablaBranch } from '@/interfaces/branchInterfaces';
 import { IProductInTransit } from '@/interfaces/transferInterfaces';
+import { getProductsByBranchId } from '../../api/services/branch';
+import { deleteProduct } from '../../api/services/transfer';
 
 export const fetchTablaBranches = createAsyncThunk(
   'tablaBranches/getAll',
@@ -58,6 +60,18 @@ export const findProductoGrupoByProductIdAC = createAsyncThunk(
   }
 );
 
+export const fetchProductsByBranchId = createAsyncThunk<ITablaBranch[], string>(
+  'branches/fetchProductsById',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response: ITablaBranch[] = await getProductsByBranchId(id);
+      return response;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
 export const fetchAllProducts = createAsyncThunk<
   ITablaBranch[],
   void,
@@ -71,9 +85,20 @@ export const fetchAllProducts = createAsyncThunk<
   }
 });
 
+export const removeProduct = createAsyncThunk(
+  'branches/deleteProduct',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await deleteProduct(id);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
 interface ProductState {
   products: ITablaBranch[];
-
   error: string | null;
   transitProducts: IProductInTransit[];
   status: IStatus;
@@ -129,6 +154,29 @@ const productsSlice = createSlice({
       })
       .addCase(updateProduct.pending, (state) => {
         state.status = 'loading';
+      })
+      .addCase(fetchProductsByBranchId.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchProductsByBranchId.fulfilled, (state, { payload }) => {
+        state.status = 'succeeded';
+        state.products = payload;
+      })
+
+      .addCase(removeProduct.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.products = state.products.filter(
+          (branch) => branch.id !== action.meta.arg
+        );
+      })
+
+      .addCase(removeProduct.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Error desconocido';
+      })
+      .addCase(removeProduct.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
       });
   },
 });
