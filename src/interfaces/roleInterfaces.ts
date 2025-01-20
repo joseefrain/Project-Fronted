@@ -34,3 +34,16 @@ export interface IRoleModalProps {
 export interface IRoleTableProps {
   roles: IRole[];
 }
+
+export enum ROLE {
+  ADMIN = 'ADMIN',
+  ROOT = 'ROOT',
+  EMPLEADO = 'EMPLEADO',
+}
+
+export interface IRoleAccess {
+  create: boolean;
+  read: boolean;
+  update: boolean;
+  delete: boolean;
+}

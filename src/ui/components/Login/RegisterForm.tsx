@@ -1,9 +1,7 @@
 import { useAppSelector } from '@/app/hooks';
 import { fetchBranches } from '@/app/slices/branchSlice';
-import { IUser } from '@/app/slices/login';
+import { IUser, updateSignIn } from '@/app/slices/login';
 import { store } from '@/app/store';
-import { ITablaBranch } from '@/interfaces/branchInterfaces';
-import { GetBranches } from '@/shared/helpers/Branchs';
 import { motion } from 'framer-motion';
 import React, { useEffect, useMemo, useState } from 'react';
 import './user.scss';
@@ -22,12 +20,13 @@ import { getRoles } from '../../../app/slices/roleSlice';
 import { MultiSelect } from '../../../components/ui/MultiSelect';
 import { Token } from '../../../shared/hooks/useJWT';
 import { createUser, updatingUser } from '../../../app/slices/userSlice';
-import { isUserWithAllAccess } from '../../../shared/helpers/roleHelper';
+import { UNIQUE_ROLES } from '../../../shared/helpers/roleHelper';
+import { ROLE } from '../../../interfaces/roleInterfaces';
 
 interface ILoginData {
   username: string;
   password: string;
-  role: 'admin' | 'user' | 'root';
+  role: ROLE;
   sucursalId?: string | null;
   roles: string[];
 }
@@ -39,44 +38,34 @@ export interface IRegisterFormProps {
 
 const RegisterForm = ({ user, onClose }: IRegisterFormProps) => {
   const branches = useAppSelector((state) => state.branches.data);
-  const userLogged = useAppSelector((state) => state.auth.signIn.user);
+  const { user: userLogged, cajaId } = useAppSelector(
+    (state) => state.auth.signIn
+  );
   const roles = useAppSelector((state) => state.roles.roles);
 
-  const dataFilterID = branches.filter(
-    (branch) => branch._id === userLogged?.sucursalId?._id
-  );
+  const branchesAllowed = useMemo(() => {
+    const branchAssigned = branches.filter(
+      (branch) => branch._id === userLogged?.sucursalId?._id
+    );
 
-  const [selectedBranch, setSelectedBranch] = useState<{
-    nombre: string;
-    _id: string;
-  } | null>(null);
+    return userLogged?.role?.toUpperCase() === ROLE.ROOT
+      ? branches
+      : branchAssigned;
+  }, [branches, userLogged]);
 
-  const [, setProducts] = useState<ITablaBranch[]>([]);
   const [showPassword, setShowPassword] = useState(false);
-
   const [credentials, setCredentials] = useState<ILoginData>({
     username: user?.username ?? '',
     password: '',
-    role: 'user',
+    role: user?.role ?? ROLE.EMPLEADO,
     sucursalId: user?.sucursalId?._id ?? null,
     roles: user?.roles?.map((role) => role._id) ?? [],
   });
 
   const handleSelectChangeBranch = (value: string) => {
-    const branch = branches.find((b) => b._id === value);
-    if (branch) {
-      setSelectedBranch({ nombre: branch.nombre, _id: branch._id ?? '' });
-      setCredentials({
-        ...credentials,
-        sucursalId: branch._id,
-      });
-      return;
-    }
-
-    setSelectedBranch(null);
     setCredentials({
       ...credentials,
-      sucursalId: null,
+      sucursalId: value,
     });
   };
 
@@ -87,6 +76,33 @@ const RegisterForm = ({ user, onClose }: IRegisterFormProps) => {
     });
   };
 
+  const handleChangeUniqueRole = (value: string) => {
+    console.log(value);
+
+    if (value === ROLE.ROOT) {
+      const rootPrivilege = roles.find(
+        (role) => role.name.toUpperCase() === ROLE.ROOT
+      );
+      setCredentials({
+        ...credentials,
+        sucursalId: '',
+        role: value as ROLE,
+        roles: [rootPrivilege?._id!],
+      });
+
+      toast.info(
+        'Usuario con todos los permisos, no se requiere seleccionar una sucursal'
+      );
+
+      return;
+    }
+
+    setCredentials({
+      ...credentials,
+      role: value as ROLE,
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -94,11 +110,38 @@ const RegisterForm = ({ user, onClose }: IRegisterFormProps) => {
       if (user) {
         await store
           .dispatch(
-            updatingUser({ user: credentials, id: user._id, token: Token() })
+            updatingUser({
+              user: {
+                ...credentials,
+                sucursalId:
+                  credentials.sucursalId === '' ? null : credentials.sucursalId,
+              },
+              id: user._id,
+              token: Token(),
+            })
+          )
+          .unwrap()
+          .then((res) => {
+            if (userLogged?._id === res.data._id) {
+              store.dispatch(
+                updateSignIn({
+                  token: res.token,
+                  user: res.data,
+                  cajaId: cajaId,
+                })
+              );
+            }
+          });
+      } else {
+        await store
+          .dispatch(
+            createUser({
+              ...credentials,
+              sucursalId:
+                credentials.sucursalId === '' ? null : credentials.sucursalId,
+            })
           )
           .unwrap();
-      } else {
-        await store.dispatch(createUser(credentials)).unwrap();
       }
       onClose && onClose();
       toast.success(
@@ -109,11 +152,10 @@ const RegisterForm = ({ user, onClose }: IRegisterFormProps) => {
       setCredentials({
         username: '',
         password: '',
-        role: 'user',
+        role: ROLE.EMPLEADO,
         sucursalId: '',
         roles: [],
       });
-      setSelectedBranch(null);
     } catch (error) {
       toast.error(
         user
@@ -123,22 +165,6 @@ const RegisterForm = ({ user, onClose }: IRegisterFormProps) => {
     }
   };
 
-  const fetchData = async () => {
-    if (!selectedBranch) return;
-
-    const response = await GetBranches(selectedBranch._id);
-    setProducts(response);
-  };
-
-  useEffect(() => {
-    store.dispatch(getRoles()).unwrap();
-    store.dispatch(fetchBranches()).unwrap();
-    if (selectedBranch) {
-      fetchData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedBranch]);
-
   const formattedRoles = useMemo(() => {
     return roles.map((role) => ({
       label: role.name,
@@ -146,34 +172,10 @@ const RegisterForm = ({ user, onClose }: IRegisterFormProps) => {
     }));
   }, [roles]);
 
-  const isRootUser = useMemo(() => {
-    const roleModels = roles.filter((role) =>
-      credentials.roles.includes(role._id)
-    );
-
-    return isUserWithAllAccess(roleModels);
-  }, [credentials.roles, roles]);
-
   useEffect(() => {
-    if (isRootUser) {
-      setSelectedBranch(null);
-      setCredentials({
-        ...credentials,
-        sucursalId: null,
-      });
-
-      toast.info(
-        'Usuario con todos los permisos, no se requiere seleccionar una sucursal'
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRootUser]);
-
-  const filteredBranche = useMemo(() => {
-    if (userLogged?.roles && userLogged?.roles.length === 0) return [];
-
-    return isUserWithAllAccess(userLogged?.roles!) ? branches : dataFilterID;
-  }, [branches, dataFilterID, userLogged?.roles]);
+    store.dispatch(getRoles()).unwrap();
+    store.dispatch(fetchBranches()).unwrap();
+  }, []);
 
   return (
     <>
@@ -226,12 +228,38 @@ const RegisterForm = ({ user, onClose }: IRegisterFormProps) => {
             {showPassword ? <EyeOff /> : <Eye />}
           </button>
         </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="branch-select"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Rol:
+          </label>
+          <Select
+            value={credentials.role}
+            onValueChange={(value) => handleChangeUniqueRole(value as string)}
+            required={credentials.role !== ROLE.ROOT}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="--Selecciona--" />
+            </SelectTrigger>
+            <SelectContent>
+              {UNIQUE_ROLES.map((role) => (
+                <SelectItem key={role.value} value={role.value?.toString()}>
+                  {role.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="w-full mb-4">
           <label
             htmlFor="role"
             className="block text-sm font-medium text-gray-700"
           >
-            Rol:
+            Privilegios:
           </label>
 
           <MultiSelect
@@ -239,10 +267,12 @@ const RegisterForm = ({ user, onClose }: IRegisterFormProps) => {
             onValueChange={(value) =>
               setCredentials({ ...credentials, roles: value })
             }
-            defaultValue={credentials.roles}
-            placeholder="Select roles..."
+            placeholder="Selecciona los privilegios..."
             variant="secondary"
             maxCount={3}
+            defaultValue={credentials.roles}
+            value={credentials.roles}
+            disabled={credentials.role === ROLE.ROOT}
             className="multiselect__roles"
           />
         </div>
@@ -254,21 +284,16 @@ const RegisterForm = ({ user, onClose }: IRegisterFormProps) => {
             Sucursal:
           </label>
           <Select
-            value={selectedBranch?._id ?? 'none'}
+            value={credentials.sucursalId ?? 'none'}
             onValueChange={handleSelectChangeBranch}
-            required={!isRootUser}
-            disabled={isRootUser}
+            required={credentials.role !== ROLE.ROOT}
+            disabled={credentials.role === ROLE.ROOT}
           >
             <SelectTrigger>
               <SelectValue placeholder="--Selecciona--" />
             </SelectTrigger>
             <SelectContent>
-              {isRootUser && (
-                <SelectItem key={0} value={'none'} className="text-gray-700">
-                  Sin asignar
-                </SelectItem>
-              )}
-              {filteredBranche.map((branch) => (
+              {branchesAllowed.map((branch) => (
                 <SelectItem key={branch._id} value={branch._id as string}>
                   {branch.nombre}
                 </SelectItem>
@@ -284,7 +309,7 @@ const RegisterForm = ({ user, onClose }: IRegisterFormProps) => {
             credentials.roles.length === 0 ||
             !credentials.username ||
             !credentials.password ||
-            (!isRootUser && !selectedBranch?._id)
+            (credentials.role !== ROLE.ROOT && !credentials.sucursalId)
           }
         >
           {user ? 'Guardar cambios' : 'Registrar Usuario'}

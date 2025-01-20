@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Table,
   TableBody,
@@ -7,9 +6,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Pencil, Trash } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ICredit } from '../../../interfaces/creditsInterfaces';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 interface ProductsTableProps {
   currentItems: ICredit[];
@@ -17,25 +18,10 @@ interface ProductsTableProps {
 
 export const TablaCredits = ({ currentItems }: ProductsTableProps) => {
   const navigate = useNavigate();
+  const access = useRoleAccess(PAGES_MODULES.CREDITOS);
 
   const handleSelectEntity = (entity: ICredit) => {
     navigate(`/credits/${entity._id}`);
-  };
-
-  const handleEditCredit = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    contactData: ICredit
-  ) => {
-    e.stopPropagation();
-    console.log(contactData);
-  };
-
-  const handleDeleteCredit = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    contactData: ICredit
-  ) => {
-    e.stopPropagation();
-    console.log(contactData);
   };
 
   return (
@@ -47,16 +33,17 @@ export const TablaCredits = ({ currentItems }: ProductsTableProps) => {
             <TableHead className="w-fit">Asignado a </TableHead>
             <TableHead>Tipo</TableHead>
             <TableHead>Estado</TableHead>
-            <TableHead>
-              <span className="">Actions</span>
-            </TableHead>
+            {access.update && (
+              <TableHead className="text-center">
+                <span className="">Actions</span>
+              </TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
           {currentItems?.map((product) => (
             <TableRow
               key={product._id ?? ''}
-              className="hover:cursor-pointer"
               onClick={() => handleSelectEntity(product)}
             >
               <TableCell className="font-medium">
@@ -71,19 +58,16 @@ export const TablaCredits = ({ currentItems }: ProductsTableProps) => {
               >
                 {product.estadoCredito}
               </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-3">
+              {access.update && (
+                <TableCell>
                   <div
-                    onClick={(e) => handleEditCredit(e, product)}
-                    className=""
+                    onClick={() => handleSelectEntity(product)}
+                    className="flex items-center justify-center"
                   >
                     <Pencil className="w-4 h-4 mr-2 cursor-pointer" />
                   </div>
-                  <div onClick={(e) => handleDeleteCredit(e, product)}>
-                    <Trash className="w-4 h-4 mr-2 cursor-pointer" />
-                  </div>
-                </div>
-              </TableCell>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

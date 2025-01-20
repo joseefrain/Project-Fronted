@@ -23,12 +23,15 @@ import { IEntities } from '../../../interfaces/entitiesInterfaces';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import { AddContact } from './add';
 import { TablaContacts } from './table';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 interface MainContactsProps {
   filterType: string;
 }
 
 export const MainContacts = ({ filterType }: MainContactsProps) => {
+  const access = useRoleAccess(PAGES_MODULES.CONTACTOS);
   const allEntities = useAppSelector((state) => state.entities.data);
 
   useEffect(() => {
@@ -99,22 +102,24 @@ export const MainContacts = ({ filterType }: MainContactsProps) => {
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
               />
-              <Dialog open={showForm} onOpenChange={setShowForm}>
-                <DialogTrigger asChild>
-                  <Button size="sm" className="h-8 gap-1">
-                    <PlusCircle className="h-3.5 w-3.5" />
-                    <span>Agregar</span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="font-onest">
-                  <DialogHeader>
-                    <AddContact
-                      initialData={editData}
-                      onClose={handleCloseForm}
-                    />
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
+              {access.create && (
+                <Dialog open={showForm} onOpenChange={setShowForm}>
+                  <DialogTrigger asChild>
+                    <Button size="sm" className="h-8 gap-1">
+                      <PlusCircle className="h-3.5 w-3.5" />
+                      <span>Agregar</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="font-onest">
+                    <DialogHeader>
+                      <AddContact
+                        initialData={editData}
+                        onClose={handleCloseForm}
+                      />
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              )}
             </div>
 
             {currentItems.length === 0 ? (
@@ -123,6 +128,7 @@ export const MainContacts = ({ filterType }: MainContactsProps) => {
               </span>
             ) : (
               <TablaContacts
+                access={access}
                 currentItems={currentItems}
                 handleEditContact={handleEditContact}
               />

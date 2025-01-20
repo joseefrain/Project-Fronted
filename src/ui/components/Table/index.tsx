@@ -19,8 +19,11 @@ import { toast, Toaster } from 'sonner';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import ProductsTable from './ProductTable';
 import SearchAndFilter from './sear';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 export function DataTableDemo() {
+  const access = useRoleAccess(PAGES_MODULES.PRODUCTOS);
   const { Id } = useParams<{ Id: string }>();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<string[]>([
@@ -106,6 +109,7 @@ export function DataTableDemo() {
                 handleSelectChange={handleSelectChange}
                 selectedGroup={selectedGroup}
                 groups={GroupsAll}
+                showAddProductBtn={access.create}
               />
               {filteredProducts?.length === 0 ? (
                 <span className="flex justify-center w-full text-sm text-center text-muted-foreground">
@@ -118,6 +122,7 @@ export function DataTableDemo() {
                   groups={GroupsAll}
                   products={currentItems}
                   userRoles={userRoles}
+                  access={access}
                 />
               )}
             </CardContent>

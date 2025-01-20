@@ -20,13 +20,16 @@ import {
 } from '../../../components/ui/dialog';
 import { Button } from '../../../components/ui/button';
 import RoleModal from './RoleModal';
-import { IRole } from '../../../interfaces/roleInterfaces';
+import { IRole, ROLE } from '../../../interfaces/roleInterfaces';
 import { Toaster, toast } from 'sonner';
 import { useAppSelector } from '../../../app/hooks';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import './styles.scss';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 export const Roles = () => {
+  const access = useRoleAccess(PAGES_MODULES.ROLES);
   const params = useParams();
   const roles = useAppSelector((state) => state.roles.roles);
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,8 +37,10 @@ export const Roles = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const filteredRoles = roles.filter((role) =>
-    role.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredRoles = roles.filter(
+    (role) =>
+      role.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      role.name.toUpperCase() !== ROLE.ROOT
   );
 
   const handleOnCreateRole = (role: IRole) => {
@@ -99,21 +104,23 @@ export const Roles = () => {
               />
             </div>
 
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" className="h-8 gap-1">
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  <span className="font-onest">Agregar</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="font-onest">
-                <RoleModal
-                  onClose={() => setIsModalOpen(false)}
-                  onSave={handleOnCreateRole}
-                  role={null}
-                />
-              </DialogContent>
-            </Dialog>
+            {access.create && (
+              <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="h-8 gap-1">
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    <span className="font-onest">Agregar</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="font-onest">
+                  <RoleModal
+                    onClose={() => setIsModalOpen(false)}
+                    onSave={handleOnCreateRole}
+                    role={null}
+                  />
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
 
           {filteredRoles.length === 0 ? (
@@ -121,7 +128,7 @@ export const Roles = () => {
               No hay roles creados
             </span>
           ) : (
-            <RoleTable roles={filteredRoles} />
+            <RoleTable roles={filteredRoles} access={access} />
           )}
         </CardContent>
         <CardFooter className="flex items-center justify-between">

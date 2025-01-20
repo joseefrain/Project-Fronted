@@ -42,6 +42,7 @@ import {
   getSelectedBranchFromLocalStorage,
 } from '../../../shared/helpers/branchHelpers';
 import { MapIndex } from './mapIndex';
+import { ROLE } from '../../../interfaces/roleInterfaces';
 
 const orderStatusOptions = [
   { value: 'Todos', label: 'Ver Todos' },
@@ -82,7 +83,7 @@ export const ShippedOrders = () => {
 
   useEffect(() => {
     if (
-      userRoles?.role !== 'root' &&
+      userRoles?.role !== ROLE.ROOT &&
       filteredBranche.length === 1 &&
       !selectedBranch
     ) {
@@ -190,7 +191,7 @@ export const ShippedOrders = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              {userRoles?.role === 'root' && (
+              {userRoles?.role === ROLE.ROOT && (
                 <div className="mb-4">
                   <Button>
                     {selectedBranch ? `Sucursal: ${selectedBranch.nombre}` : ''}

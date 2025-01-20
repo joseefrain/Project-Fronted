@@ -19,12 +19,14 @@ import { IBranchProps } from '@/interfaces/branchInterfaces';
 import { MoreVertical, Pencil, Trash } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IRoleAccess } from '../../../interfaces/roleInterfaces';
 
 export const BranchCard = ({
   branch,
   onEdit,
+  access,
   handleSelectBranch,
-}: IBranchProps) => {
+}: IBranchProps & { access: IRoleAccess }) => {
   const navigate = useNavigate();
 
   const handleOnDelete = (id: string) => {
@@ -61,36 +63,42 @@ export const BranchCard = ({
             </p>
           </div>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
-              <MoreVertical className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel className="font-onest">
-              Acciones
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => onEdit(branch)}
-              className="font-onest"
-            >
-              <Pencil className="w-4 h-4 mr-2" />
-              Editar
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={(event) => {
-                event.stopPropagation();
-                handleOnDelete(branch._id!);
-              }}
-              className="font-onest"
-            >
-              <Trash className="w-4 h-4 mr-2" />
-              Eliminar
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {(access.update || access.delete) && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
+                <MoreVertical className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel className="font-onest">
+                Acciones
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {access.update && (
+                <DropdownMenuItem
+                  onClick={() => onEdit(branch)}
+                  className="font-onest"
+                >
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Editar
+                </DropdownMenuItem>
+              )}
+              {access.delete && (
+                <DropdownMenuItem
+                  onSelect={(event) => {
+                    event.stopPropagation();
+                    handleOnDelete(branch._id!);
+                  }}
+                  className="font-onest"
+                >
+                  <Trash className="w-4 h-4 mr-2" />
+                  Eliminar
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </CardHeader>
       <CardContent>
         <div className="mt-2">
