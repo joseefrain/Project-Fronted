@@ -25,7 +25,7 @@ const saveToLocalStorage = (key: string, value: any) => {
   localStorage.setItem(key, JSON.stringify(value));
 };
 
-const removeFromLocalStorage = (key: string) => {
+export const removeFromLocalStorage = (key: string) => {
   localStorage.removeItem(key);
 };
 

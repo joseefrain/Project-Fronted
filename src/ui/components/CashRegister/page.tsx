@@ -13,40 +13,83 @@ import {
   openBoxes,
 } from '../../../app/slices/cashRegisterSlice';
 import { useAppSelector } from '../../../app/hooks';
+import { removeFromLocalStorage } from '../../../app/slices/login';
 
 export const CashRegister = () => {
   const branchesID = useAppSelector((state) => state.auth.signIn.user);
   const dataBoxes = useAppSelector((state) => state.boxes.BoxesData);
+  const statusCashRegister = useAppSelector((state) =>
+    state.boxes.BoxesData?.flatMap((box) => ({
+      id: box._id,
+      estado: box.estado,
+    }))
+  );
+  const idbox = localStorage.getItem('opened_box_id');
+  const selectBranch = localStorage.getItem('selectedBranch');
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingBox, setEditingBox] = useState<ICreataCashRegister>();
   const [dialogMode, setDialogMode] = useState<
     'create' | 'ABIERTA' | 'CERRADA'
   >('create');
 
-  const saveBoxState = (state: string, boxId: string) => {
-    const boxStateKey = `box_${boxId}_state`;
-    localStorage.setItem(boxStateKey, state);
+  const saveBoxStateToLocalStorage = (
+    boxes: { id: string; estado: string }[]
+  ) => {
+    const currentBoxes = JSON.parse(localStorage.getItem('boxState') || '[]');
+    const updatedBoxes = boxes.reduce(
+      (acc: any[], updatedBox) => {
+        const index = acc.findIndex((box) => box.id === updatedBox.id);
+        if (index !== -1) {
+          acc[index] = updatedBox;
+        } else {
+          acc.push(updatedBox);
+        }
+        return acc;
+      },
+      [...currentBoxes]
+    );
+    localStorage.setItem('boxState', JSON.stringify(updatedBoxes));
   };
 
   const resetLocalStorage = () => {
-    localStorage.removeItem('opened_box_id');
+    localStorage.removeItem('boxState');
   };
 
-  const setOpenedBoxId = (boxId: string | null) => {
-    if (boxId) {
-      localStorage.setItem('opened_box_id', boxId);
-    } else {
-      localStorage.removeItem('opened_box_id');
+  useEffect(() => {
+    if (!selectBranch) {
+      localStorage.removeItem('boxState');
+      console.log('Datos de la sucursal eliminados del localStorage');
     }
-  };
+  }, [selectBranch]);
 
   useEffect(() => {
     store
       .dispatch(getboxesbyBranch(branchesID?.sucursalId?._id as string))
-      .unwrap();
+      .unwrap()
+      .then(() => {
+        if (statusCashRegister) {
+          saveBoxStateToLocalStorage(statusCashRegister);
+        }
+      });
   }, []);
 
-  const idbox = localStorage.getItem('opened_box_id');
+  useEffect(() => {
+    if (dataBoxes) {
+      const processedStates = dataBoxes.map((box) => ({
+        id: box._id,
+        estado: box.estado,
+      }));
+      saveBoxStateToLocalStorage(processedStates);
+    }
+  }, [dataBoxes]);
+
+  useEffect(() => {
+    if (statusCashRegister) {
+      saveBoxStateToLocalStorage(statusCashRegister);
+    }
+  }, [statusCashRegister]);
+
   useEffect(() => {
     if (idbox) {
       store.dispatch(getBoxById(idbox as string));
@@ -65,8 +108,9 @@ export const CashRegister = () => {
         )
         .unwrap()
         .then((createdBox) => {
-          saveBoxState('ABIERTA', createdBox._id);
-          setOpenedBoxId(createdBox._id);
+          saveBoxStateToLocalStorage([
+            { id: createdBox._id, estado: 'ABIERTA' },
+          ]);
           setIsDialogOpen(false);
         });
     } else if (mode === 'ABIERTA') {
@@ -80,8 +124,7 @@ export const CashRegister = () => {
         )
         .unwrap()
         .then(() => {
-          saveBoxState('ABIERTA', data.cajaId);
-          setOpenedBoxId(data.cajaId);
+          saveBoxStateToLocalStorage([{ id: data.cajaId, estado: 'ABIERTA' }]);
           setIsDialogOpen(false);
         });
     } else if (mode === 'CERRADA') {
@@ -95,8 +138,9 @@ export const CashRegister = () => {
           })
         )
         .unwrap()
+
         .then(() => {
-          saveBoxState('CERRADA', data.cajaId);
+          saveBoxStateToLocalStorage([{ id: data.cajaId, estado: 'CERRADA' }]);
           resetLocalStorage();
           setIsDialogOpen(false);
         });
@@ -117,6 +161,15 @@ export const CashRegister = () => {
           <Plus className="mr-2 h-4 w-4" /> Nueva Caja
         </Button>
       </div>
+      {(dataBoxes?.length === 0 || !dataBoxes) && (
+        <div className="p-4 text-center">
+          <h1 className="text-white">
+            Debe de crear una caja en esta sucursal o seleccione una sucursal
+            antes.
+          </h1>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {dataBoxes?.map((box) => (
           <BoxCard
@@ -135,6 +188,7 @@ export const CashRegister = () => {
           />
         ))}
       </div>
+
       <BoxDialog
         iduser={branchesID?._id as string}
         key={editingBox?._id}

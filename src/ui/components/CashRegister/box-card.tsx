@@ -30,9 +30,7 @@ export function BoxCard({ box, onOpen, onClose }: BoxCardProps) {
     const openedBoxId = localStorage.getItem('opened_box_id');
 
     if (openedBoxId && openedBoxId !== box._id) {
-      toast.error(
-        `Solo se puede abrir una caja a la vez. La caja ${box.consecutivo} ya está abierta.`
-      );
+      toast.error(`Solo se puede abrir una caja a la vez, por usuario`);
       return;
     }
     onOpen();
