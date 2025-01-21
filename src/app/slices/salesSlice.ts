@@ -9,6 +9,7 @@ import {
   openCashierService,
   postPurchase,
   postSale,
+  updateDiscount,
 } from '@/api/services/sales';
 import { Branch, IStatus } from '@/interfaces/branchInterfaces';
 import {
@@ -76,6 +77,18 @@ export const deleteDiscountSales = createAsyncThunk(
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await deleteDiscount(id);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
+export const updateDiscountSales = createAsyncThunk(
+  'transactions/update',
+  async (transfer: IDescuentoCreate, { rejectWithValue }) => {
+    try {
+      const response = await updateDiscount(transfer);
       return response.data;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
@@ -213,6 +226,17 @@ const salesSlice = createSlice({
           (discount) => discount?._id !== payload?._id
         );
       })
+
+      .addCase(updateDiscountSales.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateDiscountSales.fulfilled, (state, { payload }) => {
+        state.status = 'succeeded';
+        state.discounts = state.discounts.map((discount) =>
+          discount._id === payload._id ? payload : discount
+        );
+      })
+
       .addCase(getDiscounts.pending, (state) => {
         state.status = 'loading';
       })

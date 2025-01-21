@@ -22,6 +22,14 @@ export const deleteDiscount = async (id: string): Promise<AxiosResponse> => {
   return response;
 };
 
+export const updateDiscount = async (
+  data: IDescuentoCreate
+): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.SalesDiscounts);
+  const response = await axiosInstance.put(`/${data._id}`, data);
+  return response;
+};
+
 export const getAllDiscounts = async (): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.SalesDiscounts);
   const response = await axiosInstance.get('/');

@@ -41,7 +41,7 @@ export interface IDescuentoCreate {
   valorDescuento: number;
   fechaInicio: Date;
   fechaFin: Date;
-  minimoCompra: number;
+  minimoCompra: { $numberDecimal: number };
   minimoCantidad: number;
   activo: boolean;
   moneda_id: string;
