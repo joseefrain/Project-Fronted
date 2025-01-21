@@ -61,7 +61,7 @@ import { ConfirmedSaleDialog } from './ConfirmedSaleDialog';
 import './style.scss';
 import { useAppSelector } from '../../../app/hooks';
 import { getEntities } from '../../../app/slices/entities';
-import { getBoxById } from '../../../app/slices/cashRegisterSlice';
+import { getBoxById, ICajaBrach } from '../../../app/slices/cashRegisterSlice';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
@@ -80,7 +80,7 @@ export interface ICashierProps {
 
 export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   const access = useRoleAccess(PAGES_MODULES.CREDITOS);
-  const caja = store.getState().boxes.boxState;
+  const caja = store.getState().auth.signIn.cajaId as ICajaBrach
   const user = store.getState().auth.signIn.user;
   const branchSelected = store.getState().branches.selectedBranch;
   const allEntities = useAppSelector((state) => state.entities.data);
@@ -167,12 +167,12 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   useEffect(() => {
     if (!caja) return;
     setCashInRegister(
-      parseFloat(caja[0]?.montoEsperado.$numberDecimal.toString()) ?? 0
+      parseFloat(caja?.montoEsperado.$numberDecimal.toString()) ?? 0
     );
   }, [caja]);
 
   const handleProcessSale = () => {
-    if (!caja || caja.length === 0) {
+    if (!caja) {
       toast.error('Debe abrir una caja para procesar la venta.');
       return;
     }
@@ -189,7 +189,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
       discount: saleSummary.totalDiscount,
       cambioCliente: saleSummary.change,
       monto: Number(cashReceived),
-      cajaId: caja[0]?._id || '',
+      cajaId: caja._id,
       paymentMethod,
       tipoTransaccion: ITypeTransaction.VENTA,
     };

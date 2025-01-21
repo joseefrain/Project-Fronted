@@ -193,9 +193,12 @@ export const boxSlice = createSlice({
         state.status = 'failed';
       })
       .addCase(closeBoxes.fulfilled, (state, action) => {
+
+        let cajaId = action.payload.cajaId || action.payload._id;
+        
         if (state.BoxesData) {
           const boxIndex = state.BoxesData.findIndex(
-            (box) => box._id === action.payload.cajaId
+            (box) => box._id === cajaId
           );
           if (boxIndex !== -1) {
             state.BoxesData[boxIndex].estado = 'CERRADA';
