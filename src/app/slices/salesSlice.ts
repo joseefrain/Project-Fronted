@@ -1,5 +1,6 @@
 import {
   createDiscount,
+  deleteDiscount,
   getAllDiscounts,
   getCashier,
   getDiscountByBranchId,
@@ -63,6 +64,18 @@ export const createDiscountSales = createAsyncThunk(
   async (transfer: IDescuentoCreate, { rejectWithValue }) => {
     try {
       const response = await createDiscount(transfer);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
+export const deleteDiscountSales = createAsyncThunk(
+  'transactions/delete',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await deleteDiscount(id);
       return response.data;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
@@ -190,6 +203,15 @@ const salesSlice = createSlice({
       .addCase(createDiscountSales.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
         state.discounts = [...state.discounts, payload as IDescuentoCreate];
+      })
+      .addCase(deleteDiscountSales.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(deleteDiscountSales.fulfilled, (state, { payload }) => {
+        state.status = 'succeeded';
+        state.discounts = state.discounts.filter(
+          (discount) => discount?._id !== payload?._id
+        );
       })
       .addCase(getDiscounts.pending, (state) => {
         state.status = 'loading';

@@ -88,7 +88,7 @@ export const IndexModal = ({
         <DialogContent className="font-onest">
           <DialogHeader>
             <DialogTitle>
-              {editingId ? 'Edit Discount' : 'Add Discount'}
+              {editingId ? 'Editar Descuento' : 'Crear Descuento'}
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit}>
@@ -154,38 +154,40 @@ export const IndexModal = ({
                   </div>
                 )}
               </div>
+              <div className="flex w-full gap-4">
+                <div className="w-full">
+                  <Label htmlFor="tipoDescuento">Tipo Descuento</Label>
+                  <Select
+                    value={formState.tipoDescuento}
+                    onValueChange={(value) =>
+                      updateFormState(
+                        'tipoDescuento',
+                        value as 'porcentaje' | 'valor'
+                      )
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="porcentaje">Porcentaje</SelectItem>
+                      <SelectItem value="valor">Valor</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="w-full">
+                  <Label htmlFor="valorDescuento">Valor Descuento</Label>
+                  <Input
+                    id="valorDescuento"
+                    type="number"
+                    value={formState.valorDescuento}
+                    onChange={(e) =>
+                      updateFormState('valorDescuento', e.target.value)
+                    }
+                  />
+                </div>
+              </div>
 
-              <div>
-                <Label htmlFor="tipoDescuento">Tipo Descuento</Label>
-                <Select
-                  value={formState.tipoDescuento}
-                  onValueChange={(value) =>
-                    updateFormState(
-                      'tipoDescuento',
-                      value as 'porcentaje' | 'valor'
-                    )
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="porcentaje">Porcentaje</SelectItem>
-                    <SelectItem value="valor">Valor</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="valorDescuento">Valor Descuento</Label>
-                <Input
-                  id="valorDescuento"
-                  type="number"
-                  value={formState.valorDescuento}
-                  onChange={(e) =>
-                    updateFormState('valorDescuento', e.target.value)
-                  }
-                />
-              </div>
               <div className="flex w-full gap-4">
                 <div>
                   <Label>Fecha Inicio</Label>
@@ -293,7 +295,7 @@ export const IndexModal = ({
                 }
                 type="submit"
               >
-                {editingId ? 'Update' : 'Create'}
+                {editingId ? 'Editar' : 'Crear'}
               </Button>
             </div>
           </form>

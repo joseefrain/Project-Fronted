@@ -35,6 +35,7 @@ export interface IDescuento {
 }
 
 export interface IDescuentoCreate {
+  _id?: string;
   nombre: string;
   tipoDescuento: 'porcentaje' | 'valor';
   valorDescuento: number;

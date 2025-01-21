@@ -19,6 +19,7 @@ import { fetchAllProducts } from '@/app/slices/productsSlice';
 import {
   cleanDataSales,
   createDiscountSales,
+  deleteDiscountSales,
   getDiscounts,
 } from '@/app/slices/salesSlice';
 import {
@@ -235,11 +236,15 @@ export default function DiscountManager() {
   );
   const paginatedData = Math.ceil(filteredDiscounts.length / itemsPerPage);
 
+  const removeDiscount = (id: string) => {
+    store.dispatch(deleteDiscountSales(id)).unwrap();
+  };
+
   return (
     <>
       <Toaster richColors position="bottom-right" />{' '}
       <div className="flex flex-col w-full">
-        <h1 className="text-4xl font-bold text-gray-800 mb-9 font-onest">
+        <h1 className="text-4xl font-bold text-gray-800 mb-9 font-onest dark:text-white">
           Descuentos
         </h1>
         <main className="flex-1 font-onest">
@@ -279,7 +284,7 @@ export default function DiscountManager() {
                 </TableHeader>
                 <TableBody>
                   {currentItems.map((discount) => (
-                    <TableRow>
+                    <TableRow key={discount._id}>
                       <TableCell className="px-4 py-2">
                         {discount.nombre}
                       </TableCell>
@@ -301,13 +306,17 @@ export default function DiscountManager() {
                             <Button
                               className="w-8 h-8"
                               variant="outline"
-                              onClick={() => openEditModal(discount.productId)}
+                              onClick={() => openEditModal(discount._id!)}
                             >
                               <Pencil className="w-4 h-4 text-blue-600" />
                             </Button>
                           )}
                           {access.delete && (
-                            <Button className="w-8 h-8" variant="outline">
+                            <Button
+                              onClick={() => removeDiscount(discount._id!)}
+                              className="w-8 h-8"
+                              variant="outline"
+                            >
                               <Trash2 className="w-4 h-4 text-red-600" />
                             </Button>
                           )}
