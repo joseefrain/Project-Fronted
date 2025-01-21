@@ -35,12 +35,13 @@ export interface IDescuento {
 }
 
 export interface IDescuentoCreate {
+  _id?: string;
   nombre: string;
   tipoDescuento: 'porcentaje' | 'valor';
   valorDescuento: number;
   fechaInicio: Date;
   fechaFin: Date;
-  minimoCompra: number;
+  minimoCompra: { $numberDecimal: number };
   minimoCantidad: number;
   activo: boolean;
   moneda_id: string;

@@ -25,7 +25,6 @@ import {
   Clock,
   Coins,
   FileDown,
-  Printer,
   Receipt,
   Store,
   User,

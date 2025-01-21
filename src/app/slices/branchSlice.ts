@@ -5,7 +5,6 @@ import {
   createBranch,
   deleteBranchById,
   getAll,
-  getProductsByBranchId,
   getForStockProductsAtBranch,
   updateBranch,
   getBranchById,
@@ -21,20 +20,8 @@ import {
   ITablaBranch,
 } from '@/interfaces/branchInterfaces';
 import { InventarioSucursalWithPopulated } from '@/interfaces/transferInterfaces';
-import { deleteProduct, updateProduct } from '@/api/services/transfer';
+import { updateProduct } from '@/api/services/transfer';
 import { createTablaBranch } from '@/api/services/products';
-
-export const fetchProductsByBranchId = createAsyncThunk<ITablaBranch[], string>(
-  'branches/fetchProductsById',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      const response: ITablaBranch[] = await getProductsByBranchId(id);
-      return response;
-    } catch (error) {
-      return rejectWithValue(handleThunkError(error));
-    }
-  }
-);
 
 export const searchForStockProductsAtBranch = createAsyncThunk<
   InventarioSucursalWithPopulated[],
@@ -103,18 +90,6 @@ export const createProduct = createAsyncThunk(
     try {
       const response = await createTablaBranch(product);
       return response.data as ITablaBranch;
-    } catch (error) {
-      return rejectWithValue(handleThunkError(error));
-    }
-  }
-);
-
-export const removeProduct = createAsyncThunk(
-  'branches/deleteProduct',
-  async (id: string, { rejectWithValue }) => {
-    try {
-      const response = await deleteProduct(id);
-      return response.data;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
     }
@@ -214,19 +189,6 @@ const branchesSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message || 'unknown error';
       })
-      .addCase(fetchProductsByBranchId.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(
-        fetchProductsByBranchId.fulfilled,
-        (state, { payload }: PayloadAction<ITablaBranch[]>) => {
-          state.selectedBranch = {
-            ...state.selectedBranch!,
-            products: payload,
-          };
-          state.status = 'succeeded';
-        }
-      )
       .addCase(deleteBranch.pending, (state) => {
         state.status = 'loading';
         state.error = null;
@@ -240,22 +202,6 @@ const branchesSlice = createSlice({
       .addCase(deleteBranch.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || 'Error desconocido';
-      })
-      .addCase(removeProduct.pending, (state) => {
-        state.status = 'loading';
-        state.error = null;
-      })
-      .addCase(removeProduct.fulfilled, (state, { payload }) => {
-        state.status = 'succeeded';
-
-        if (state.selectedBranch) {
-          state.selectedBranch = {
-            ...state.selectedBranch,
-            products: state.selectedBranch.products.filter(
-              (product) => product?.id !== payload._id
-            ),
-          };
-        }
       })
       .addCase(createProduct.pending, (state) => {
         state.status = 'loading';

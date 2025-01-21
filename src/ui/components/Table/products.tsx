@@ -24,8 +24,7 @@ import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 export function Products() {
   const access = useRoleAccess(PAGES_MODULES.PRODUCTOS);
   const user = useAppSelector((state) => state.auth.signIn.user);
-  const [products, setProducts] = useState<ITablaBranch[]>([]);
-  const userRoles = useAppSelector((state) => state.auth.signIn.user);
+  const dataProducts = useAppSelector((state) => state.products.products);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<string[]>([
     'active',
@@ -34,25 +33,24 @@ export function Products() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
-  const fetchData = async () => {
-    if (user?.sucursalId) {
-      try {
-        const response = await GetBranches(user.sucursalId._id ?? '');
-        setProducts(response);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    } else {
-      console.log('Admin user debe obtener productos generales');
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      if (user?.sucursalId) {
+        try {
+          await GetBranches(user.sucursalId._id ?? '');
+        } catch (error) {
+          console.error('Error fetching products:', error);
+        }
+      } else {
+        console.log('Admin user debe obtener productos generales');
+      }
+    };
+
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filteredProducts = products.filter(
+  const filteredProducts = dataProducts.filter(
     (product) =>
       product.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product?.barCode?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -72,7 +70,7 @@ export function Products() {
         ...newProduct,
       };
       await store.dispatch(createProduct(product)).unwrap();
-      setProducts((prevProducts) => [...prevProducts, product]);
+      //   setProducts((prevProducts) => [...prevProducts, product]);
       toast.success(`Producto ${product.nombre} creado exitosamente`);
     } catch (error) {
       toast.error('Error al crear producto:' + error);
@@ -151,7 +149,6 @@ export function Products() {
                   products={currentItems}
                   selectedGroup={selectedGroup}
                   groups={GroupsAll}
-                  userRoles={userRoles}
                   handleSelectChange={handleSelectChange}
                   access={access}
                 />
