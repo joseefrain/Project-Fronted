@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { ModalHistory } from './box-history';
 import { IRoleAccess } from '../../../interfaces/roleInterfaces';
+import { IUser } from '@/app/slices/login';
 
 interface BoxCardProps {
   box: ICajaBrach;
@@ -33,18 +34,18 @@ export function BoxCard({
   const isClosed = box.estado === 'CERRADA';
 
   const handleOpen = () => {
-    const storedBoxes = localStorage.getItem('boxState');
+    // const storedBoxes = localStorage.getItem('boxState');
 
-    if (storedBoxes) {
-      const boxes = JSON.parse(storedBoxes);
+    // if (storedBoxes) {
+    //   const boxes = JSON.parse(storedBoxes);
 
-      const openedBox = boxes.find((box: any) => box.estado === 'ABIERTA');
+    //   const openedBox = boxes.find((box: any) => box.estado === 'ABIERTA');
 
-      if (openedBox && openedBox.id !== box._id) {
-        toast.error(`Solo se puede abrir una caja a la vez, por usuario`);
-        return;
-      }
-    }
+    //   if (openedBox && openedBox.id !== box._id) {
+    //     toast.error(`Solo se puede abrir una caja a la vez, por usuario`);
+    //     return;
+    //   }
+    // }
 
     onOpen();
   };
@@ -60,6 +61,7 @@ export function BoxCard({
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
 
   return (
     <>
@@ -116,6 +118,23 @@ export function BoxCard({
           >
             Estado: {box.estado}
           </p>
+          {
+            box.estado === 'ABIERTA' && (
+              <>
+              <p
+            className={`mt-2 text-sm ${box.estado === 'ABIERTA' ? 'text-green-500' : 'text-red-500'}`}
+          >
+            Usuario: {(box.usuarioAperturaId as IUser).username}
+          </p>
+          <p
+            className={`mt-2 text-sm ${box.estado === 'ABIERTA' ? 'text-green-500' : 'text-red-500'}`}
+          >
+            Saldo: {box.montoEsperado.$numberDecimal}
+          </p>
+              </>
+            )
+          }
+          
           <div className="flex items-center justify-between mt-4">
             <span className="text-sm text-muted-foreground">
               Caja #{box.consecutivo}
