@@ -260,7 +260,7 @@ export const IndexModal = ({
                 <Input
                   id="minimoCompra"
                   type="number"
-                  value={formState.minimoCompra}
+                  value={formState.minimoCompra.$numberDecimal}
                   onChange={(e) =>
                     updateFormState('minimoCompra', e.target.value)
                   }
@@ -290,7 +290,7 @@ export const IndexModal = ({
               <Button
                 disabled={
                   formState.minimoCantidad === 0 ||
-                  formState.minimoCompra === 0 ||
+                  formState.minimoCompra.$numberDecimal === 0 ||
                   formState.valorDescuento <= 0
                 }
                 type="submit"

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
 import { Button } from '@/components/ui/button';
-
 import {
   Table,
   TableBody,
@@ -10,17 +8,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
 import { useAppSelector } from '@/app/hooks';
 import { getAllGroupsSlice } from '@/app/slices/groups';
 import { store } from '@/app/store';
-
 import { fetchAllProducts } from '@/app/slices/productsSlice';
 import {
   cleanDataSales,
   createDiscountSales,
   deleteDiscountSales,
   getDiscounts,
+  updateDiscountSales,
 } from '@/app/slices/salesSlice';
 import {
   Card,
@@ -46,7 +43,6 @@ import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 export default function DiscountManager() {
   const access = useRoleAccess(PAGES_MODULES.DESCUENTOS);
-  const [discounts, setDiscounts] = useState<IDescuentoCreate[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const data = useAppSelector((state) => state.sales.discounts);
@@ -62,7 +58,6 @@ export default function DiscountManager() {
   const dataProduct = useAppSelector(
     (state) => state.branches.selectedBranch?.products
   );
-
   let idBranch = userRoles?.sucursalId?._id;
 
   const [formState, setFormState] = useState<IDescuentoCreate>({
@@ -71,7 +66,7 @@ export default function DiscountManager() {
     valorDescuento: 0,
     fechaInicio: new Date(),
     fechaFin: new Date(),
-    minimoCompra: 0,
+    minimoCompra: { $numberDecimal: 0 },
     minimoCantidad: 0,
     activo: true,
     moneda_id: '64b7f1b4b4f1b5f1c7e7f2a9',
@@ -182,42 +177,52 @@ export default function DiscountManager() {
     }));
   };
 
-  const openAddModal = () => {
-    cleanDataSales();
-    setEditingId(null);
-    setIsModalOpen(true);
-  };
-
-  const openEditModal = (id: string) => {
-    const discount = discounts.find(
-      (d) => d.productId === id || d.groupId === id
-    );
-    if (discount) {
-      setEditingId(id);
-      setFormState(discount);
-      setIsModalOpen(true);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     try {
       e.preventDefault();
       if (editingId) {
-        setDiscounts((prev) =>
-          prev.map((d) =>
-            d.productId === editingId || d.groupId === editingId ? formState : d
-          )
-        );
+        await store.dispatch(updateDiscountSales(formState)).unwrap();
+        toast.success('Descuento actualizado exitosamente');
       } else {
-        setDiscounts((prev) => [...prev, formState]);
         await store.dispatch(createDiscountSales(formState)).unwrap();
+        toast.success('Descuento creado exitosamente');
       }
       setIsModalOpen(false);
       cleanDataSales();
-      toast.success('Descuento creado exitosamente');
     } catch (error) {
       toast.error('' + error);
     }
+  };
+
+  const openEditModal = (id: string) => {
+    const discount = data.find((d) => d._id === id);
+    if (discount) {
+      setFormState(discount);
+      setEditingId(id);
+      setIsModalOpen(true);
+    }
+  };
+
+  const openAddModal = () => {
+    setFormState({
+      nombre: '',
+      tipoDescuento: 'porcentaje',
+      valorDescuento: 0,
+      fechaInicio: new Date(),
+      fechaFin: new Date(),
+      minimoCompra: { $numberDecimal: 0 },
+      minimoCantidad: 0,
+      activo: true,
+      moneda_id: '64b7f1b4b4f1b5f1c7e7f2a9',
+      codigoDescunto: '',
+      deleted_at: null,
+      tipoDescuentoEntidad: 'Product',
+      productId: '',
+      groupId: '',
+      sucursalId: '',
+    });
+    setEditingId(null);
+    setIsModalOpen(true);
   };
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -304,11 +309,12 @@ export default function DiscountManager() {
                         <TableCell className="flex items-center justify-center gap-2 px-4 py-2">
                           {access.update && (
                             <Button
-                              className="w-8 h-8"
-                              variant="outline"
                               onClick={() => openEditModal(discount._id!)}
+                              variant="outline"
+                              size="sm"
+                              className="text-blue-600"
                             >
-                              <Pencil className="w-4 h-4 text-blue-600" />
+                              <Pencil className="w-4 h-4" />
                             </Button>
                           )}
                           {access.delete && (
@@ -326,7 +332,6 @@ export default function DiscountManager() {
                   ))}
                 </TableBody>
               </Table>
-
               <IndexModal
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
