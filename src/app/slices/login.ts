@@ -3,6 +3,7 @@ import { Iauth, registerUsers } from '../../api/services/auth';
 import { handleThunkError } from '../../shared/utils/errorHandlers';
 import { Branch } from '../../interfaces/branchInterfaces';
 import { IRole, ROLE } from '../../interfaces/roleInterfaces';
+import { ICajaBrach } from './cashRegisterSlice';
 
 export type IRoles = 'admin' | 'user' | 'root';
 
@@ -68,7 +69,7 @@ export interface IAuthSlice {
     roles: IRole[];
   };
   status: statusLoguer;
-  cajaId?: string;
+  cajaId?: string | ICajaBrach;
 }
 
 const initialStateLogin: IAuthSlice = getFromLocalStorage('user') || {

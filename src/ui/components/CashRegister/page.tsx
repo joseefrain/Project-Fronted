@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BoxDialog } from './box-dialog';
-import { BoxCard } from './box-card';
 import { store } from '../../../app/store';
 import {
   closeBoxes,
@@ -16,6 +15,7 @@ import { useAppSelector } from '../../../app/hooks';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 import { removeFromLocalStorage } from '../../../app/slices/login';
+import { CashRegisterCard } from './CashRegisterItem/CashRegisterCard';
 
 export const CashRegister = () => {
   const access = useRoleAccess(PAGES_MODULES.CASHREGISTER);
@@ -39,20 +39,20 @@ export const CashRegister = () => {
   const saveBoxStateToLocalStorage = (
     boxes: { id: string; estado: string }[]
   ) => {
-    const currentBoxes = JSON.parse(localStorage.getItem('boxState') || '[]');
-    const updatedBoxes = boxes.reduce(
-      (acc: any[], updatedBox) => {
-        const index = acc.findIndex((box) => box.id === updatedBox.id);
-        if (index !== -1) {
-          acc[index] = updatedBox;
-        } else {
-          acc.push(updatedBox);
-        }
-        return acc;
-      },
-      [...currentBoxes]
-    );
-    localStorage.setItem('boxState', JSON.stringify(updatedBoxes));
+    // const currentBoxes = JSON.parse(localStorage.getItem('boxState') || '[]');
+    // const updatedBoxes = boxes.reduce(
+    //   (acc: any[], updatedBox) => {
+    //     const index = acc.findIndex((box) => box.id === updatedBox.id);
+    //     if (index !== -1) {
+    //       acc[index] = updatedBox;
+    //     } else {
+    //       acc.push(updatedBox);
+    //     }
+    //     return acc;
+    //   },
+    //   [...currentBoxes]
+    // );
+    // localStorage.setItem('boxState', JSON.stringify(updatedBoxes));
   };
 
   const resetLocalStorage = () => {
@@ -149,6 +149,7 @@ export const CashRegister = () => {
     }
   };
 
+
   return (
     <div className="container py-10 mx-auto">
       <div className="flex items-center justify-between mb-8">
@@ -176,19 +177,9 @@ export const CashRegister = () => {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {dataBoxes?.map((box) => (
-          <BoxCard
+          <CashRegisterCard
             key={box._id}
-            box={box}
-            onOpen={() => {
-              setIsDialogOpen(true);
-              setEditingBox(box as unknown as ICreataCashRegister);
-              setDialogMode('ABIERTA');
-            }}
-            onClose={() => {
-              setIsDialogOpen(true);
-              setEditingBox(box as unknown as ICreataCashRegister);
-              setDialogMode('CERRADA');
-            }}
+            cashRegister={box}
             access={access}
           />
         ))}
