@@ -20,6 +20,9 @@ export const ProductsCategories = () => {
   const dataAllProducts = useAppSelector(
     (state) => state.categories.productsbyGroup?.products
   );
+  const idBranch = useAppSelector(
+    (state) => state.auth.signIn.user?.sucursalId?._id
+  ) as string;
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -29,13 +32,14 @@ export const ProductsCategories = () => {
     const fetchData = async () => {
       if (!id) return;
       try {
-        store.dispatch(productsCatetories(id));
+        store.dispatch(productsCatetories({ id, idBranch }));
+        console.log(id, idBranch, 'idbranch');
       } catch (error) {
         console.error('Failed to fetch products by group:', error);
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, idBranch]);
 
   const filteredProducts = Array.isArray(dataAllProducts)
     ? dataAllProducts.filter((product: IProducto) =>
