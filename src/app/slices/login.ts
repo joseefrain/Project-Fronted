@@ -120,7 +120,7 @@ export const LoginSlice = createSlice({
       state.signIn = {
         token: action.payload.token,
         user: {
-          _id: action.payload.user!._id,
+          _id: action.payload.user?._id ?? '',
           username: action.payload.user!.username,
           role: action.payload.user!.role,
           sucursalId: action.payload.user!.sucursalId,

@@ -34,7 +34,7 @@ export const updateGroup = async (
 
 export const getProductsByGroup = async (
   id: string
-): Promise<IProductoGroups[]> => {
+): Promise<AxiosResponse[]> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Groups);
   const response = await axiosInstance.get(`/${id}/products`);
   return response.data;

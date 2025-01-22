@@ -19,6 +19,7 @@ import {
 import { ModeToggle } from '../../../toggle.tsx';
 import { Coins } from '../Coins/index.tsx';
 import { ROLE } from '../../../../interfaces/roleInterfaces.ts';
+import './styles.scss';
 
 export const ProfileUser = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
