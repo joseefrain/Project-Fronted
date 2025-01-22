@@ -80,7 +80,7 @@ export interface ICashierProps {
 
 export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   const access = useRoleAccess(PAGES_MODULES.CREDITOS);
-  const caja = store.getState().auth.signIn.cajaId as ICajaBrach
+  const caja = store.getState().auth.signIn.cajaId as ICajaBrach;
   const user = store.getState().auth.signIn.user;
   const branchSelected = store.getState().branches.selectedBranch;
   const allEntities = useAppSelector((state) => state.entities.data);
@@ -236,7 +236,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
 
   return (
     <>
-      <Card className="shadow-lg bg-white/80 backdrop-blur-sm font-onest dark:bg-gray-800">
+      <Card className="shadow-lg bg-white/80 font-onest dark:bg-gray-800">
         <CardHeader className="flex flex-col justify-between gap-2 pb-4">
           <div className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2 font-bold text-primary">
