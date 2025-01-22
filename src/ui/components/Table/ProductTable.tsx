@@ -15,15 +15,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Pencil, Trash } from 'lucide-react';
-import {
-  Branch,
-  IProductoGroups,
-  ITablaBranch,
-} from '@/interfaces/branchInterfaces';
+import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
 import ProductForm from './ProductForm';
-import { IRoles } from '@/app/slices/login';
 import { store } from '@/app/store';
-import { removeProduct } from '@/app/slices/branchSlice';
 import {
   Tooltip,
   TooltipContent,
@@ -33,6 +27,7 @@ import {
 import { updateProduct } from '../../../api/services/transfer';
 import { toast } from 'sonner';
 import { IRoleAccess } from '../../../interfaces/roleInterfaces';
+import { removeProduct } from '../../../app/slices/productsSlice';
 
 interface ProductsTableProps {
   products: ITablaBranch[] | undefined;
@@ -42,14 +37,6 @@ interface ProductsTableProps {
     _id: string;
   } | null;
   groups: IProductoGroups[];
-  userRoles:
-    | {
-        _id: string;
-        username: string;
-        role: IRoles;
-        sucursalId?: Branch;
-      }
-    | undefined;
 }
 
 const ProductsTable = ({
@@ -57,7 +44,6 @@ const ProductsTable = ({
   handleSelectChange,
   selectedGroup,
   groups,
-  userRoles,
   access,
 }: ProductsTableProps & { access: IRoleAccess }) => {
   const [editingProduct, setEditingProduct] = useState<ITablaBranch | null>(
@@ -131,34 +117,32 @@ const ProductsTable = ({
               </TableCell>
               {(access.update || access.delete) && (
                 <TableCell>
-                  {userRoles?.role !== 'admin' && (
-                    <div className="flex items-center justify-center gap-2">
-                      {access.update && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setEditingProduct(product);
-                            setIsEditing(true);
-                          }}
-                        >
-                          <Pencil className="w-4 h-4" />
-                          <span className="sr-only">Edit</span>
-                        </Button>
-                      )}
+                  <div className="flex items-center justify-center gap-2">
+                    {access.update && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setEditingProduct(product);
+                          setIsEditing(true);
+                        }}
+                      >
+                        <Pencil className="w-4 h-4" />
+                        <span className="sr-only">Edit</span>
+                      </Button>
+                    )}
 
-                      {access.delete && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleOnDelete(product?.id!)}
-                        >
-                          <Trash className="w-4 h-4" />
-                          <span className="sr-only">Delete</span>
-                        </Button>
-                      )}
-                    </div>
-                  )}
+                    {access.delete && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleOnDelete(product?.id!)}
+                      >
+                        <Trash className="w-4 h-4" />
+                        <span className="sr-only">Delete</span>
+                      </Button>
+                    )}
+                  </div>
                 </TableCell>
               )}
             </TableRow>

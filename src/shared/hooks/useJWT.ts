@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getUserDataFromLocalStorage } from '../helpers/login.Helper';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
-import { updateSignIn } from '../../app/slices/login';
+import { logout, updateSignIn } from '../../app/slices/login';
 import { store } from '../../app/store';
 
 export interface IToken {
@@ -29,6 +29,9 @@ export const useAuthToken = () => {
         alert('TOKEN EXPIRADO');
         handleAuthentication('', false, navigate);
         setToken('');
+        console.log('Antes de logout');
+        store.dispatch(logout());
+        console.log('Después de logout');
       }
     };
 
@@ -36,6 +39,10 @@ export const useAuthToken = () => {
       checkToken();
       hasCheckedToken.current = true;
     }
+
+    return () => {
+      hasCheckedToken.current = false;
+    };
   }, [token, navigate]);
 
   return { token };
@@ -68,8 +75,11 @@ export const handleAuthentication = (
 
   store.dispatch(updateSignIn(authState));
 
-  if (!isAuth && navigate) {
-    navigate('/login');
+  if (!isAuth) {
+    localStorage.removeItem('user');
+    if (navigate) {
+      navigate('/login', { replace: true });
+    }
   }
 };
 

@@ -6,56 +6,49 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
-// import { store } from '@/app/store';
-// import Pagination from '../../../../shared/components/ui/Pagination/Pagination';
-// import { useAppSelector } from '@/app/hooks';
+import { store } from '@/app/store';
 import { SearchComponent } from '@/shared/components/ui/Search';
-
 import { Boxes } from 'lucide-react';
-// import { ProductsCategoriesTable } from './Table';
 import { useParams } from 'react-router-dom';
-// import { GetProductsByGroup } from '@/shared/helpers/Branchs';
-import { getProductsByGroup } from '@/api/services/groups';
-import { IProductoGroups } from '@/interfaces/branchInterfaces';
+import { productsCatetories } from '../../../../app/slices/groups';
+import { useAppSelector } from '../../../../app/hooks';
+import { IProducto } from '../../../../interfaces/transferInterfaces';
+import Pagination from '../../../../shared/components/ui/Pagination/Pagination';
+import { ProductsCategoriesTable } from './Table';
 
 export const ProductsCategories = () => {
-  //   const dataAllProducts = useAppSelector(
-  //     (state) => state.categories.selectedGroup
-  //   );
-
+  const dataAllProducts = useAppSelector(
+    (state) => state.categories.productsbyGroup?.products
+  );
   const [searchTerm, setSearchTerm] = useState('');
-  //   const [currentPage, setCurrentPage] = useState(1);
-  //   const itemsPerPage = 10;
-
-  const [, setSelectedProductCategory] = useState<IProductoGroups[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const { id } = useParams<{ id: string }>();
 
-  const fetchData = async () => {
-    if (!id) return;
-    try {
-      const result = await getProductsByGroup(id);
-      console.log(result, 'Fetched product categories');
-      setSelectedProductCategory(result);
-    } catch (error) {
-      console.error('Failed to fetch products by group:', error);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      if (!id) return;
+      try {
+        store.dispatch(productsCatetories(id));
+      } catch (error) {
+        console.error('Failed to fetch products by group:', error);
+      }
+    };
     fetchData();
   }, [id]);
 
-  //   const filteredProducts = dataAllProducts?.filter((product: IProductoGroups) =>
-  //     product.nombre?.toLowerCase()?.includes(searchTerm.toLowerCase())
-  //   );
-
-  //   const indexOfLastItem = currentPage * itemsPerPage;
-  //   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  //   const currentItems = filteredProducts?.slice(
-  //     indexOfFirstItem,
-  //     indexOfLastItem
-  //   );
-  //   const totalPages = Math.ceil(filteredProducts?.length / itemsPerPage);
+  const filteredProducts = Array.isArray(dataAllProducts)
+    ? dataAllProducts.filter((product: IProducto) =>
+        product.nombre?.toLowerCase()?.includes(searchTerm.toLowerCase())
+      )
+    : [];
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredProducts?.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+  const totalPages = Math.ceil(filteredProducts?.length / itemsPerPage);
 
   return (
     <div className="flex flex-col w-full">
@@ -74,20 +67,20 @@ export const ProductsCategories = () => {
                 setSearchTerm={setSearchTerm}
               />
             </div>
-            {/* {currentItems?.length === 0 ? (
+            {currentItems?.length === 0 ? (
               <span className="flex justify-center w-full text-sm text-center text-muted-foreground">
                 No hay productos en esta sucursal
               </span>
             ) : (
               <ProductsCategoriesTable products={currentItems} />
-            )} */}
+            )}
           </CardContent>
           <CardFooter className="flex items-center justify-between">
-            {/* <Pagination
+            <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={setCurrentPage}
-            /> */}
+            />
           </CardFooter>
         </Card>
       </main>

@@ -148,9 +148,7 @@ export interface IProducto {
   nombre: string;
   descripcion: string;
   monedaId: string;
-  deleted_at: string | null;
-  createdAt: string;
-  updatedAt: string;
+  barCode?: string;
 }
 
 interface Precio {

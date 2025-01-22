@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createEntity, getAllEntities } from '../../api/services/entities';
+import {
+  createEntity,
+  deleteEntity,
+  getAllEntities,
+} from '../../api/services/entities';
 import { handleThunkError } from '../../shared/utils/errorHandlers';
 import { entitiesState, IEntities } from '../../interfaces/entitiesInterfaces';
 
@@ -24,6 +28,18 @@ export const getEntities = createAsyncThunk('entities/getAll', async () => {
   }
 });
 
+export const deleteEntityById = createAsyncThunk(
+  'entities/delete',
+  async (id: string) => {
+    try {
+      const response = await deleteEntity(id);
+      return response as unknown as IEntities;
+    } catch (error) {
+      return handleThunkError(error);
+    }
+  }
+);
+
 const initialState: entitiesState = {
   data: [] as IEntities[],
   selectedEntity: null,
@@ -46,15 +62,31 @@ const entitiesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(
+        addEntity.fulfilled,
+        (state, action: PayloadAction<IEntities>) => {
+          state.status = 'succeeded';
+          state.data.push(action.payload);
+        }
+      )
       .addCase(getEntities.pending, (state) => {
         state.status = 'loading';
       })
-
       .addCase(getEntities.fulfilled, (state, { payload }) => {
         if (Array.isArray(payload)) {
           state.data = payload;
           state.status = 'succeeded';
         }
+      })
+      .addCase(deleteEntityById.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(deleteEntityById.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        console.log(state.data, 'state.data');
+        state.data = state.data.filter(
+          (branch) => branch._id !== action.meta.arg
+        );
       });
   },
 });
