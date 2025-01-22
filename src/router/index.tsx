@@ -148,11 +148,11 @@ export const Router = () => {
         />
       </Route>
       <Route
-        path="/groups/:id/products"
+        path="/groups/:id/products/:idbranch"
         element={<RequireAuth module={PAGES_MODULES.CATEGORIAS} />}
       >
         <Route
-          path="/groups/:id/products"
+          path="/groups/:id/products/:idbranch"
           element={
             <Layout>
               <ProductsCategories />

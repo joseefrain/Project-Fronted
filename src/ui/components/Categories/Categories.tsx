@@ -27,6 +27,7 @@ import {
   TooltipTrigger,
 } from '../../../components/ui/tooltip';
 import { IRoleAccess } from '../../../interfaces/roleInterfaces';
+import { useAppSelector } from '../../../app/hooks';
 
 export const CategoriesCard = ({
   categoriesData,
@@ -34,6 +35,9 @@ export const CategoriesCard = ({
   onEdit,
   handleSelectCategory,
 }: ICategoriesProps & { access: IRoleAccess }) => {
+  const idBranch = useAppSelector(
+    (state) => state.auth.signIn.user?.sucursalId?._id
+  );
   const navigate = useNavigate();
   const handleOnDelete = () => {
     store.dispatch(deleteGroupSlice(categoriesData._id as string));
@@ -42,7 +46,7 @@ export const CategoriesCard = ({
 
   const handleCardClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
-      navigate(`/groups/${categoriesData._id}/products`);
+      navigate(`/groups/${categoriesData._id}/products/${idBranch}`);
     }
   };
 
@@ -56,8 +60,10 @@ export const CategoriesCard = ({
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
           <div
             onClick={() => {
-              navigate(`/groups/${categoriesData._id}/products`);
+              navigate(`/groups/${categoriesData._id}/products/${idBranch}`);
               handleSelectCategory(categoriesData);
+
+              console.log(`/groups/${categoriesData._id}/products/${idBranch}`);
             }}
             className="flex items-center space-x-2"
           >

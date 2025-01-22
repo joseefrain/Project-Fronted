@@ -58,11 +58,17 @@ export const deleteGroupSlice = createAsyncThunk(
   }
 );
 
-export const productsCatetories = createAsyncThunk<IProductoGroups, string>(
+interface IAPIGroups {
+  id: string;
+  idBranch: string;
+}
+
+export const productsCatetories = createAsyncThunk(
   'groups/products',
-  async (id: string, { rejectWithValue }) => {
+  async (transfer: IAPIGroups, { rejectWithValue }) => {
+    const { id, idBranch } = transfer;
     try {
-      const response = await getProductsByGroup(id);
+      const response = await getProductsByGroup(id, idBranch);
       console.log(response, 'ResponseSlicwe');
       return response as unknown as IProductoGroups;
     } catch (error) {
