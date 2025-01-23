@@ -46,14 +46,6 @@ interface ProductsTableProps {
     _id: string;
   } | null;
   groups: IProductoGroups[];
-  userRoles:
-    | {
-        _id: string;
-        username: string;
-        role: IRoles;
-        sucursalId?: Branch;
-      }
-    | undefined;
 }
 
 const ProductsTable = ({
