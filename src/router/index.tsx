@@ -24,6 +24,7 @@ import { Users } from '../ui/components/Login/Users';
 import { CashRegister } from '../ui/components/CashRegister/page';
 import { PAGES_MODULES } from '../shared/helpers/roleHelper';
 import { PurchaseSale } from '../ui/components/Sales/indexPurchaseSale';
+import { ProductsCategories } from '../ui/components/Categories/ProductsCategories';
 
 export const Router = () => {
   return (
@@ -142,6 +143,19 @@ export const Router = () => {
           element={
             <Layout>
               <PagesCategories />
+            </Layout>
+          }
+        />
+      </Route>
+      <Route
+        path="/groups/:id/products/:idbranch"
+        element={<RequireAuth module={PAGES_MODULES.CATEGORIAS} />}
+      >
+        <Route
+          path="/groups/:id/products/:idbranch"
+          element={
+            <Layout>
+              <ProductsCategories />
             </Layout>
           }
         />

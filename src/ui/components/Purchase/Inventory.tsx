@@ -232,7 +232,7 @@ export const PurchaseCashier = ({
 
   return (
     <>
-      <Card className="shadow-lg bg-white/80 backdrop-blur-sm font-onest dark:bg-gray-800">
+      <Card className="shadow-lg bg-white/80 font-onest dark:bg-gray-800">
         <CardHeader className="flex flex-col justify-between gap-2 pb-4">
           <div className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2 font-bold text-primary">

@@ -1,5 +1,6 @@
 import {
   createDiscount,
+  deleteDiscount,
   getAllDiscounts,
   getCashier,
   getDiscountByBranchId,
@@ -8,6 +9,7 @@ import {
   openCashierService,
   postPurchase,
   postSale,
+  updateDiscount,
 } from '@/api/services/sales';
 import { Branch, IStatus } from '@/interfaces/branchInterfaces';
 import {
@@ -63,6 +65,30 @@ export const createDiscountSales = createAsyncThunk(
   async (transfer: IDescuentoCreate, { rejectWithValue }) => {
     try {
       const response = await createDiscount(transfer);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
+export const deleteDiscountSales = createAsyncThunk(
+  'transactions/delete',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await deleteDiscount(id);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
+export const updateDiscountSales = createAsyncThunk(
+  'transactions/update',
+  async (transfer: IDescuentoCreate, { rejectWithValue }) => {
+    try {
+      const response = await updateDiscount(transfer);
       return response.data;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
@@ -191,6 +217,26 @@ const salesSlice = createSlice({
         state.status = 'succeeded';
         state.discounts = [...state.discounts, payload as IDescuentoCreate];
       })
+      .addCase(deleteDiscountSales.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(deleteDiscountSales.fulfilled, (state, { payload }) => {
+        state.status = 'succeeded';
+        state.discounts = state.discounts.filter(
+          (discount) => discount?._id !== payload?._id
+        );
+      })
+
+      .addCase(updateDiscountSales.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateDiscountSales.fulfilled, (state, { payload }) => {
+        state.status = 'succeeded';
+        state.discounts = state.discounts.map((discount) =>
+          discount._id === payload._id ? payload : discount
+        );
+      })
+
       .addCase(getDiscounts.pending, (state) => {
         state.status = 'loading';
       })

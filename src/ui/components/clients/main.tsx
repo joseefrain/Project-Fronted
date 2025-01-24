@@ -11,7 +11,7 @@ import {
 import { SearchComponent } from '@/shared/components/ui/Search';
 import { PlusCircle, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { getEntities } from '../../../app/slices/entities';
+import { deleteEntityById, getEntities } from '../../../app/slices/entities';
 import { Button } from '../../../components/ui/button';
 import {
   Dialog,
@@ -69,6 +69,10 @@ export const MainContacts = ({ filterType }: MainContactsProps) => {
   const handleEditContact = (contactData: IEntities) => {
     setEditData(contactData);
     setShowForm(true);
+  };
+
+  const handleDeleteContact = (id: string) => {
+    store.dispatch(deleteEntityById(id));
   };
 
   const handleCloseForm = () => {
@@ -129,6 +133,7 @@ export const MainContacts = ({ filterType }: MainContactsProps) => {
             ) : (
               <TablaContacts
                 access={access}
+                handleDeleteContact={handleDeleteContact}
                 currentItems={currentItems}
                 handleEditContact={handleEditContact}
               />

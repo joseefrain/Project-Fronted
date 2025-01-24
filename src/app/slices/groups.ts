@@ -58,12 +58,19 @@ export const deleteGroupSlice = createAsyncThunk(
   }
 );
 
-export const productsCatetories = createAsyncThunk<IProductoGroups[], string>(
+interface IAPIGroups {
+  id: string;
+  idBranch: string;
+}
+
+export const productsCatetories = createAsyncThunk(
   'groups/products',
-  async (id: string, { rejectWithValue }) => {
+  async (transfer: IAPIGroups, { rejectWithValue }) => {
+    const { id, idBranch } = transfer;
     try {
-      const response = await getProductsByGroup(id);
-      return response;
+      const response = await getProductsByGroup(id, idBranch);
+      console.log(response, 'ResponseSlicwe');
+      return response as unknown as IProductoGroups;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
     }
@@ -73,6 +80,7 @@ export const productsCatetories = createAsyncThunk<IProductoGroups[], string>(
 interface GroupState {
   groups: IProductoGroups[];
   selectedGroup: IProductoGroups | null;
+  productsbyGroup: IProductoGroups | null;
   error: string | null;
   status: statusProgressLogin;
 }
@@ -80,6 +88,7 @@ interface GroupState {
 const initialState: GroupState = {
   groups: [] as IProductoGroups[],
   selectedGroup: null,
+  productsbyGroup: null,
   error: null,
   status: 'idle',
 };
@@ -128,6 +137,14 @@ const groupsSlice = createSlice({
       .addCase(deleteGroupSlice.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || 'unknown error';
+      })
+      .addCase(productsCatetories.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(productsCatetories.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.productsbyGroup = action.payload as IProductoGroups;
       });
   },
 });

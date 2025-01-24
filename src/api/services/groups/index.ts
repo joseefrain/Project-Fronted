@@ -33,9 +33,10 @@ export const updateGroup = async (
 };
 
 export const getProductsByGroup = async (
-  id: string
-): Promise<IProductoGroups[]> => {
+  id: string,
+  idBranch: string
+): Promise<AxiosResponse[]> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Groups);
-  const response = await axiosInstance.get(`/${id}/products`);
+  const response = await axiosInstance.get(`/${id}/products/${idBranch}`);
   return response.data;
 };
