@@ -5,6 +5,15 @@ export interface IListDescuentoResponse {
   descuentosPorGruposEnSucursal: IDescuentoGrupo[];
 }
 
+export interface IDescuentoMapeado {
+  descuentoId: IDescuento;
+  productId?: string;
+  sucursalId?: string;
+  deleted_at: Date | null;
+  grupoId?: string;
+  tipoEntidad: 'Product' | 'Group';
+}
+
 export interface IDescuentosProductos {
   descuentoId: IDescuento;
   productId: string;
