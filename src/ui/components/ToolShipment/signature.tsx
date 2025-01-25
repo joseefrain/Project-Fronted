@@ -117,7 +117,7 @@ export default function Signature({
             <CardTitle>{title}</CardTitle>
           </CardHeader>
           <CardContent className="font-onest">
-            <div className="p-2 mb-2 border rounded-md">
+            <div className="p-2 mb-2 border rounded-md dark:bg-white">
               {savedSignature ? (
                 <img src={savedSignature} alt="firma" className="w-full" />
               ) : (
