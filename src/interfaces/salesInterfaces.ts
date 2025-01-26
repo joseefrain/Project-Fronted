@@ -127,6 +127,6 @@ export interface ICredit {
 }
 
 export const dataCoins = {
-  currentS: 'c$',
+  currentS: 'C$',
   idGlobal: '6788969390f63a009f1bea40',
 };

@@ -87,7 +87,7 @@ export const PurchaseHistory = () => {
   const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
 
   return (
-    <Card className="mt-4 h-[34rem] font-onest">
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <History />
