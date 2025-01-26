@@ -15,6 +15,7 @@ import {
 import { store } from '@/app/store';
 import { Toaster, toast } from 'sonner';
 import { isValidTransfer } from '@/shared/helpers/transferHelper';
+import { uploadFile, uploadFiles } from '@/shared/helpers/firebase';
 
 export const ToolTransfer = ({
   destinationBranchId,
@@ -60,18 +61,29 @@ export const ToolTransfer = ({
     setSending(true);
     const validTransfer = isValidTransfer(toolTransfer, shipmentTools.length);
     if (!validTransfer) return setSending(false);
+    
+    let archivosAdjuntos: string[] = await uploadFiles(toolTransfer.archivosAdjuntos) as string[];
+    let firmaEnvio: string = await uploadFile(toolTransfer.firmaEnvio as string) as string;
 
-    const formattedTools = shipmentTools.map((tool) => ({
-      inventarioSucursalId: tool.inventarioSucursalId,
-      cantidad: tool.quantityToSend,
-      comentarioEnvio: tool.comment,
-      archivosAdjuntos: tool.gallery,
-    }));
+    const formattedTools = await Promise.all(
+      shipmentTools.map(async (tool) => {
+          const archivosAdjuntos = await uploadFiles(tool.gallery) as string[];
+
+          return {
+              inventarioSucursalId: tool.inventarioSucursalId,
+              cantidad: tool.quantityToSend,
+              comentarioEnvio: tool.comment,
+              archivosAdjuntos,
+          };
+      })
+    );
 
     const request = store
       .dispatch(
         createProductTransfer({
           ...toolTransfer,
+          archivosAdjuntos,
+          firmaEnvio,
           listDetalleTraslado: formattedTools,
         })
       )
