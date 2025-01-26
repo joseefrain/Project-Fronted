@@ -3,10 +3,22 @@
     max-width: unset;
 
     @media (max-width: 768px) {
-        @apply px-[1.5rem];
+        @apply px-[1.5rem] h-[125vh];
     }
 
     @media (min-width: 1440px) {
         @apply px-[3.8rem];
+    }
+}
+
+.containerInputs {
+    @apply flex flex-wrap gap-4 mb-4;
+
+    @media (max-width: 768px) {
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 435px) {
+        flex-wrap: wrap;
     }
 }

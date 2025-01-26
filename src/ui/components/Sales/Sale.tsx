@@ -227,7 +227,7 @@ export const Sale = ({
             Modo Proveedor
           </Label>
         </div>
-        <div className="flex gap-4 mb-4">
+        <div className="containerInputs">
           <div className="flex flex-col w-full gap-1">
             <Label className="text-xs">Producto</Label>
             <Popover open={open} onOpenChange={setOpen}>
