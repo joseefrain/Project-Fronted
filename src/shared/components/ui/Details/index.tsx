@@ -170,7 +170,7 @@ function ListaProductos({ images }: { images: string[] }) {
         {images.map((producto, idx) => (
           <div
             key={idx}
-            className="flex flex-col items-center p-2 transition duration-200 border rounded-lg shadow-sm hover:shadow-md max-h-fit"
+            className="flex flex-col items-center p-2 transition duration-200 border rounded-lg shadow-sm hover:shadow-md max-h-fit dark:bg-white"
           >
             <img
               src={producto}

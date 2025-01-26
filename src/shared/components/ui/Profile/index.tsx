@@ -17,7 +17,6 @@ import {
   getSelectedBranchFromLocalStorage,
 } from '../../../helpers/branchHelpers';
 import { ModeToggle } from '../../../toggle.tsx';
-import { Coins } from '../Coins/index.tsx';
 import { ROLE } from '../../../../interfaces/roleInterfaces.ts';
 import './styles.scss';
 
@@ -67,8 +66,8 @@ export const ProfileUser = () => {
             onClick={() => openDialog(false)}
             className="w-full h-full sm:w-auto font-onest dark:bg-[#09090b] dark:text-white dark:border-gray-700"
           >
-            <Store className="w-4 h-4 mr-2" />
-            Sucursal
+            <Store className="w-4 h-4 mr-0 sm:mr-2 " />
+            <span className="hidden sm:block">Sucursal</span>
           </Button>
         )}
         <BranchDrawer />

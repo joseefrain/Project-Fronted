@@ -96,7 +96,7 @@ export default function Images({
             <div className="grid grid-cols-2 gap-1">
               {fotos.length > 0 ? (
                 fotos.map((foto, index) => (
-                  <div key={index} className="col-span-1">
+                  <div key={index} className="col-span-1 dark:bg-black">
                     <img
                       src={foto}
                       alt={`Foto ${index}`}
@@ -119,7 +119,7 @@ export default function Images({
                     <Label htmlFor="picture" className="sr-only">
                       Agregar más
                     </Label>
-                    <div className="relative">
+                    <div className="relative dark:bg-white">
                       <Input
                         id="picture"
                         type="file"

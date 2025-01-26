@@ -118,7 +118,7 @@ export const BranchReceived = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-between mb-4">
+          <div className="flex justify-between mb-4 max-sm:flex-col max-sm:gap-3">
             <div className="flex space-x-2">
               <Select onValueChange={handleStatusChange}>
                 <SelectTrigger className="w-[180px]">
