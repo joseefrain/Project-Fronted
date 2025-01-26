@@ -84,7 +84,7 @@ export const Sale = ({
       quantity: quantity,
       price: price,
       discount: null,
-      groupId: '675b8283b0abd32684ea6c9c',
+      groupId: '',
       clientType: supplierMode ? 'Proveedor' : 'Regular',
       inventarioSucursalId: selectedProduct?.inventarioSucursalId ?? '',
       costoUnitario: selectedProduct?.costoUnitario ?? { $numberDecimal: 0 },

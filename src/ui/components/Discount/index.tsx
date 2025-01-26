@@ -16,7 +16,9 @@ import {
   cleanDataSales,
   createDiscountSales,
   deleteDiscountSales,
-  getDiscounts,
+  //   getDiscounts,
+  getDiscountsByBranch,
+  getDiscountsByBranchAll,
   updateDiscountSales,
 } from '@/app/slices/salesSlice';
 import {
@@ -28,7 +30,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { ITablaBranch } from '@/interfaces/branchInterfaces';
-import { IDescuentoCreate } from '@/interfaces/salesInterfaces';
+import {
+  IDescuentoCreate,
+  IDescuentoGrupo,
+  IDescuentoMapeado,
+  IDescuentosProductos,
+} from '@/interfaces/salesInterfaces';
 import Pagination from '@/shared/components/ui/Pagination/Pagination';
 import { SearchComponent } from '@/shared/components/ui/Search';
 import { GetBranches } from '@/shared/helpers/Branchs';
@@ -45,7 +52,7 @@ export default function DiscountManager() {
   const access = useRoleAccess(PAGES_MODULES.DESCUENTOS);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const data = useAppSelector((state) => state.sales.discounts);
+
   const { branches, selectedBranch, setSelectedBranch } = useFilteredBranches();
   const dataAllProducts = useAppSelector((state) => state.products.products);
   const userRoles = useAppSelector((state) => state.auth.signIn.user);
@@ -166,7 +173,7 @@ export default function DiscountManager() {
   useEffect(() => {
     fetchData();
     store.dispatch(getAllGroupsSlice()).unwrap();
-    store.dispatch(getDiscounts()).unwrap();
+    store.dispatch(getDiscountsByBranchAll(idBranch as string)).unwrap();
     store.dispatch(fetchAllProducts()).unwrap();
   }, []);
 
@@ -195,12 +202,12 @@ export default function DiscountManager() {
   };
 
   const openEditModal = (id: string) => {
-    const discount = data.find((d) => d._id === id);
-    if (discount) {
-      setFormState(discount);
-      setEditingId(id);
-      setIsModalOpen(true);
-    }
+    // const discount = data.find((d) => d._id === id);
+    // if (discount) {
+    //   setFormState(discount);
+    //   setEditingId(id);
+    //   setIsModalOpen(true);
+    // }
   };
 
   const openAddModal = () => {
@@ -229,21 +236,81 @@ export default function DiscountManager() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const filteredDiscounts = data.filter((discount) =>
-    discount.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  //   const filteredDiscounts = Array.isArray(data)
+  //     ? data.filter((discount) =>
+  //         discount.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+  //       )
+  //     : [];
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredDiscounts.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-  const paginatedData = Math.ceil(filteredDiscounts.length / itemsPerPage);
+  //   const indexOfLastItem = currentPage * itemsPerPage;
+  //   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  //   const currentItems = filteredDiscounts.slice(
+  //     indexOfFirstItem,
+  //     indexOfLastItem
+  //   );
+  //   const paginatedData = Math.ceil(filteredDiscounts.length / itemsPerPage);
 
   const removeDiscount = (id: string) => {
     store.dispatch(deleteDiscountSales(id)).unwrap();
   };
+
+  const data = useAppSelector((state) => state.sales.discounts);
+  const [selectedOption, setSelectedOption] = useState<string>(
+    'descuentosPorGruposEnSucursal'
+  );
+
+  const descuentosPorGruposEnSucursal = (
+    data?.descuentosPorGruposEnSucursal || []
+  ).map((descuento) => ({
+    ...descuento,
+    tipoEntidad: 'Group',
+    tipoDescuento: 'Descuento por categiorías en Sucursal',
+  }));
+
+  const descuentosPorProductosEnSucursal = (
+    data?.descuentosPorProductosEnSucursal || []
+  ).map((descuento) => ({
+    ...descuento,
+    tipoEntidad: 'Product',
+    tipoDescuento: 'Descuento por Productos en Sucursal',
+  }));
+
+  const descuentosPorGruposGenerales = (
+    data?.descuentosPorGruposGenerales || []
+  ).map((descuento) => ({
+    ...descuento,
+    tipoEntidad: 'Group',
+    tipoDescuento: 'Descuento por categiorías Generales',
+  }));
+
+  const descuentosPorProductosGenerales = (
+    data?.descuentosPorProductosGenerales || []
+  ).map((descuento) => ({
+    ...descuento,
+    tipoEntidad: 'Product',
+    tipoDescuento: 'Descuento por Productos Generales',
+  }));
+
+  const getSelectedData = () => {
+    switch (selectedOption) {
+      case 'descuentosPorGruposEnSucursal':
+        return descuentosPorGruposEnSucursal;
+      case 'descuentosPorProductosEnSucursal':
+        return descuentosPorProductosEnSucursal;
+      case 'descuentosPorGruposGenerales':
+        return descuentosPorGruposGenerales;
+      case 'descuentosPorProductosGenerales':
+        return descuentosPorProductosGenerales;
+      default:
+        return [];
+    }
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedOption(event.target.value);
+  };
+
+  const selectedData = getSelectedData();
 
   return (
     <>
@@ -270,6 +337,21 @@ export default function DiscountManager() {
                   searchTerm={searchTerm}
                   setSearchTerm={setSearchTerm}
                 />
+                <h1>Seleccione una categoría de descuentos</h1>
+                <select value={selectedOption} onChange={handleChange}>
+                  <option value="descuentosPorGruposEnSucursal">
+                    Descuentos por Grupos en Sucursal
+                  </option>
+                  <option value="descuentosPorProductosEnSucursal">
+                    Descuentos por Productos en Sucursal
+                  </option>
+                  <option value="descuentosPorGruposGenerales">
+                    Descuentos por Grupos Generales
+                  </option>
+                  <option value="descuentosPorProductosGenerales">
+                    Descuentos por Productos Generales
+                  </option>
+                </select>
                 {access.create && (
                   <Button onClick={openAddModal}>Agregar Descuento</Button>
                 )}
@@ -278,6 +360,7 @@ export default function DiscountManager() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Nombre</TableHead>
+                    <TableHead>Tipo de Descuento</TableHead>
                     <TableHead>Tipo Descuento</TableHead>
                     <TableHead>Valor Descuento</TableHead>
                     <TableHead>Fecha Inicio</TableHead>
@@ -288,28 +371,33 @@ export default function DiscountManager() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {currentItems.map((discount) => (
-                    <TableRow key={discount._id}>
+                  {selectedData.map((discount) => (
+                    <TableRow key={discount.descuentoId._id}>
                       <TableCell className="px-4 py-2">
-                        {discount.nombre}
+                        {discount.descuentoId.nombre}
                       </TableCell>
                       <TableCell className="px-4 py-2">
                         {discount.tipoDescuento}
                       </TableCell>
                       <TableCell className="px-4 py-2">
-                        {discount.valorDescuento}
+                        {discount.descuentoId.tipoDescuento}
                       </TableCell>
                       <TableCell className="px-4 py-2">
-                        {getFormatedDate(discount.fechaInicio)}
+                        {discount.descuentoId.valorDescuento}
                       </TableCell>
                       <TableCell className="px-4 py-2">
-                        {getFormatedDate(discount.fechaFin)}
+                        {getFormatedDate(discount.descuentoId.fechaInicio)}
+                      </TableCell>
+                      <TableCell className="px-4 py-2">
+                        {getFormatedDate(discount.descuentoId.fechaFin)}
                       </TableCell>
                       {(access.update || access.delete) && (
                         <TableCell className="flex items-center justify-center gap-2 px-4 py-2">
                           {access.update && (
                             <Button
-                              onClick={() => openEditModal(discount._id!)}
+                              onClick={() =>
+                                openEditModal(discount.descuentoId._id)
+                              }
                               variant="outline"
                               size="sm"
                               className="text-blue-600"
@@ -319,7 +407,9 @@ export default function DiscountManager() {
                           )}
                           {access.delete && (
                             <Button
-                              onClick={() => removeDiscount(discount._id!)}
+                              onClick={() =>
+                                removeDiscount(discount.descuentoId._id)
+                              }
                               className="w-8 h-8"
                               variant="outline"
                             >
@@ -351,11 +441,11 @@ export default function DiscountManager() {
               />
             </CardContent>
             <CardFooter className="flex items-center justify-between">
-              <Pagination
+              {/* <Pagination
                 currentPage={currentPage}
                 totalPages={paginatedData}
                 onPageChange={setCurrentPage}
-              />
+              /> */}
             </CardFooter>
           </Card>
         </main>

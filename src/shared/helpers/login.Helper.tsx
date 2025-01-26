@@ -23,11 +23,13 @@ export const RequireAuth = ({ module }: IRequireAuthProps) => {
 
   useEffect(() => {
     if (!token || hasTokenExpired(token)) {
+      console.log('TOKEN EXPIRADO en RequireAuth');
       handleAuthentication('', false, navigate);
       return;
     }
 
     if (!access.read) {
+      console.log('Acceso denegado al módulo. Redirigiendo al 404.');
       navigate('/404');
     }
   }, [token, navigate, access]);
@@ -42,18 +44,4 @@ export const AlreadyAuthenticated: React.FC = () => {
     return <Navigate to="/" />;
   }
   return <AuthForm />;
-};
-
-export interface IToken {
-  token: string;
-  role?: string;
-}
-export const getUserDataFromLocalStorage = (): IToken | null => {
-  const userDataString = localStorage.getItem('user');
-
-  if (userDataString) {
-    return JSON.parse(userDataString);
-  } else {
-    return null;
-  }
 };

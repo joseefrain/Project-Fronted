@@ -123,8 +123,10 @@ export const ImageGridCard = ({
           <p className="text-sm text-muted-foreground">{subtitle}</p>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {description && <p className="text-sm">{description}</p>}
+      <CardContent className="space-y-4 overflow-scroll max-h-[550px]">
+        {description && (
+          <p className="text-sm"> Comentario de envío: {description}</p>
+        )}
         {imageCount > 0 ? (
           <div className={`grid ${getGridClass()} gap-1`}>
             {images.slice(0, 6).map((src, index) => (
@@ -134,7 +136,7 @@ export const ImageGridCard = ({
                   ${imageCount === 3 && index === 2 ? 'col-span-2' : ''}
                   ${imageCount >= 5 && index >= 3 ? 'col-span-1' : ''}
                   ${imageCount === 1 ? 'col-span-1' : ''}
-                  relative aspect-square overflow-hidden rounded-lg
+                  relative aspect-square overflow-hidden rounded-lg dark:bg-white
                   ${index === 0 ? 'border border-gray-300' : ''}
                 `}
               >

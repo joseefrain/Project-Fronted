@@ -166,7 +166,7 @@ export const PendingProductsActions = ({
           className="uppercase"
         >
           <ArrowDown />
-          Recibir
+          <span className=" hidden lg:block">Recibir</span>
         </Button>
       </div>
       <Toaster richColors position="bottom-right" />

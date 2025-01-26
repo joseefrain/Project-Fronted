@@ -167,7 +167,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   useEffect(() => {
     if (!caja) return;
     setCashInRegister(
-      parseFloat(caja?.montoEsperado.$numberDecimal.toString()) ?? 0
+      parseFloat(caja?.montoEsperado?.$numberDecimal.toString()) ?? 0
     );
   }, [caja]);
 

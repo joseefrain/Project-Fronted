@@ -24,12 +24,12 @@ import React, { useEffect, useState } from 'react';
 import { ProductSale } from '../Sales/ProductSale';
 import { AddProduct } from '../Table/sear';
 import { store } from '../../../app/store';
-import { createProduct } from '../../../app/slices/branchSlice';
 import { toast, Toaster } from 'sonner';
 import { getAllGroupsSlice } from '../../../app/slices/groups';
 import './style.scss';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import { createProduct } from '../../../app/slices/branchSlice';
 
 export interface ISaleProps {
   products: ITablaBranch[];
@@ -84,7 +84,7 @@ export const Purchase = ({
       quantity: quantity,
       price: price,
       discount: null,
-      groupId: '675b8283b0abd32684ea6c9c',
+      groupId: '',
       clientType: 'Proveedor',
       inventarioSucursalId: selectedProduct?.inventarioSucursalId ?? '',
       //@ts-ignore

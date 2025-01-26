@@ -102,7 +102,7 @@ export default function Categories() {
     <>
       <Toaster richColors position="bottom-right" />
       <div className="container mx-auto ">
-        <h1 className="text-4xl font-bold text-gray-800 font-onest w-[38%]">
+        <h1 className="text-4xl font-bold text-gray-800 font-onest w-[38%] dark:text-white">
           Categorías
         </h1>
         <nav className="flex flex-col gap-5 mb-6 space-y-4 mt-9 sm:flex-row sm:items-center sm:space-y-0">
