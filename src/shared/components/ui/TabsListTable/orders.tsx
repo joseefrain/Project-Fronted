@@ -12,15 +12,15 @@ export const HeaderTable = () => {
   return (
     <div className="container mx-auto">
       <Tabs defaultValue={access.create ? 'send' : 'branchOrders'}>
-        <div className="flex flex-col items-center justify-between gap-4 mb-9 sm:flex-row sm:items-center">
-          <h1 className="text-4xl font-bold text-gray-800 font-onest">
+        <div className="flex flex-col items-center justify-between gap-4 mb-9 sm:flex-row sm:items-center md:flex-col">
+          <h1 className="text-4xl font-bold text-gray-800 font-onest dark:text-white">
             Traslados
           </h1>
-          <TabsList className="gap-4 font-bold text-white bg-black font-onest">
+          <TabsList className="gap-4 font-bold text-white bg-black font-onest max-md:h-auto max-md:flex-wrap ">
             {access.create && (
               <>
                 <TabsTrigger
-                  className="text-[#ffffff] font-bold border-b-2 border-bg-gray-200 border-opacity-0 bg-black"
+                  className="text-[#ffffff] font-bold border-b-2 border-bg-gray-200 border-opacity-0 bg-black "
                   value="send"
                 >
                   Enviar Productos

@@ -60,15 +60,15 @@ export const ConsolidatedShipment = ({
   };
 
   return (
-    <Card className="h-[25%]">
+    <Card className="h-[25%] max-lg:h-fit">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <SendToBack />
           Consolidado de envío
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="flex items-center justify-between mb-4">
+      <CardContent className="max-md:h-fit">
+        <div className="flex items-center justify-between mb-4 max-lg:flex-col max-lg:gap-2 max-lg:mb-0 ">
           <Button
             type="button"
             className="w-[200px] px-4 py-2 bg-gray-200 text-gray-800 rounded"

@@ -152,7 +152,7 @@ export const ToolTransfer = ({
           className="uppercase"
         >
           <Send className="w-4 h-4" />
-          Enviar
+          <div className="hidden lg:block">Enviar</div>
         </Button>
       </div>
       <Toaster richColors position="bottom-right" />

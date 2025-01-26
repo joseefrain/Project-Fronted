@@ -76,7 +76,7 @@ export const Roles = () => {
   return (
     <div className="container h-auto mx-auto space-y-6 max-h-[75vh]">
       <div className="flex items-center justify-between">
-        <h1 className="mb-2.5 text-4xl font-bold text-gray-800 font-onest">
+        <h1 className="mb-2.5 text-4xl font-bold text-gray-800 font-onest dark:text-white">
           Roles
         </h1>
       </div>
@@ -86,10 +86,10 @@ export const Roles = () => {
           <div className="flex items-center gap-3">
             <Waypoints size={20} />
 
-            <CardTitle className="font-onest">Roles</CardTitle>
+            <CardTitle className="font-onest dark:text-white">Roles</CardTitle>
           </div>
 
-          <CardDescription className="font-onest">
+          <CardDescription className="font-onest dark:text-white">
             Gestione sus roles
           </CardDescription>
         </CardHeader>

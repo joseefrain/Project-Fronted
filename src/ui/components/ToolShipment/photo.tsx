@@ -73,7 +73,9 @@ export default function Images({
             <Camera className="w-4 h-4" />
           )}
           {showTitle && (
-            <span className="text-sm font-semibold uppercase">imágenes</span>
+            <span className="text-sm font-semibold uppercase hidden lg:block">
+              imágenes
+            </span>
           )}
           {savedImages.length > 0 && (
             <Badge variant="secondary" className="ml-1">
