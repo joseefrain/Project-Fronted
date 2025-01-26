@@ -44,6 +44,7 @@ import { MapIndex } from './mapIndex';
 import { Branch } from '../../../interfaces/branchInterfaces';
 import { updateSelectedBranch } from '../../../app/slices/branchSlice';
 import { GetBranches } from '../../../shared/helpers/Branchs';
+import { ROLE } from '../../../interfaces/roleInterfaces';
 
 const orderStatusOptions = [
   { value: 'Todos', label: 'Ver Todos' },
@@ -61,6 +62,9 @@ export const ShippedOrders = () => {
   const { Id } = useParams<{ Id: string }>();
   const [selectedStatus, setSelectedStatus] = useState<string>('Todos');
   const [searchTerm, setSearchTerm] = useState('');
+  const userRoles = useAppSelector((state) => state.auth.signIn.user);
+  const [sourceBranch, setSourceBranch] = useState<Branch | null>(null);
+  const branchIdFromLocalStorage = getSelectedBranchFromLocalStorage();
 
   useEffect(() => {
     if (selectedBranch) {
@@ -120,10 +124,6 @@ export const ShippedOrders = () => {
   );
   const paginatedData = Math.ceil(filteredProducts.length / itemsPerPage);
 
-  const user = useAppSelector((state) => state.auth.signIn.user);
-  const [sourceBranch, setSourceBranch] = useState<Branch | null>(null);
-  const branchIdFromLocalStorage = getSelectedBranchFromLocalStorage();
-
   useEffect(() => {
     if (branchIdFromLocalStorage) {
       const branch = findBranchById(branches, branchIdFromLocalStorage);
@@ -182,15 +182,17 @@ export const ShippedOrders = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <Button
-                type="button"
-                className="w-[200px] px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-none hover:shadow-none"
-                disabled={!sourceBranch}
-              >
-                {sourceBranch
-                  ? sourceBranch.nombre
-                  : user?.sucursalId?.nombre || 'Seleccionar Sucursal'}
-              </Button>
+              {userRoles?.role === ROLE.ROOT && (
+                <Button
+                  type="button"
+                  className="w-[200px] px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-none hover:shadow-none"
+                  disabled={!sourceBranch}
+                >
+                  {sourceBranch
+                    ? sourceBranch.nombre
+                    : userRoles?.sucursalId?.nombre || 'Seleccionar Sucursal'}
+                </Button>
+              )}
             </div>
           </div>
           {loading ? (

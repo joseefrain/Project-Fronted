@@ -4,7 +4,6 @@ import {
   receiveTransfer,
 } from '@/app/slices/transferSlice';
 import { store } from '@/app/store';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
@@ -28,6 +27,14 @@ import { ListOrdered } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { MapIndex } from './table';
 import { ROLE } from '../../../interfaces/roleInterfaces';
+import {
+  findBranchById,
+  getSelectedBranchFromLocalStorage,
+} from '../../../shared/helpers/branchHelpers';
+import { updateSelectedBranch } from '../../../app/slices/branchSlice';
+import { GetBranches } from '../../../shared/helpers/Branchs';
+import { Button } from '../../../components/ui/button';
+import { Branch } from '../../../interfaces/branchInterfaces';
 
 const orderStatusOptions = [
   { value: 'Todos', label: 'Ver Todos' },
@@ -40,45 +47,20 @@ const orderStatusOptions = [
 export const BranchReceived = () => {
   const DataAlls = useAppSelector((state) => state.transfer.dataBranchReceived);
   const branches = useAppSelector((state) => state.branches.data);
+  const { selectedBranch, loading } = useAppSelector((state) => state.branches);
   const userRoles = useAppSelector((state) => state.auth.signIn.user);
-  const dataFilterID = branches.filter(
-    (branch) => branch._id === userRoles?.sucursalId?._id
-  );
-  const filteredBranche =
-    userRoles?.role === ROLE.ROOT ? branches : dataFilterID;
-  const [selectedBranch, setSelectedBranch] = useState<{
-    nombre: string;
-    _id: string;
-  } | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [sourceBranch, setSourceBranch] = useState<Branch | null>(null);
+  const branchIdFromLocalStorage = getSelectedBranchFromLocalStorage();
   const [selectedStatus, setSelectedStatus] = useState<string>('Todos');
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    if (filteredBranche.length === 1 && !selectedBranch) {
-      const branch = filteredBranche[0];
-      setSelectedBranch({ nombre: branch.nombre, _id: branch._id ?? '' });
-    }
-  }, [filteredBranche, selectedBranch]);
-
-  useEffect(() => {
     if (selectedBranch) {
-      setLoading(true);
       store.dispatch(clearTransferDataReceived());
 
-      store
-        .dispatch(receiveTransfer(selectedBranch._id))
-        .unwrap()
-        .finally(() => setLoading(false));
+      store.dispatch(receiveTransfer(selectedBranch._id ?? '')).unwrap();
     }
   }, [selectedBranch]);
-
-  const handleSelectChangeBranch = (value: string) => {
-    const branch = branches.find((b) => b._id === value);
-    if (branch) {
-      setSelectedBranch({ nombre: branch.nombre, _id: branch._id ?? '' });
-    }
-  };
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);
@@ -103,6 +85,28 @@ export const BranchReceived = () => {
       matchesStatus
     );
   });
+
+  useEffect(() => {
+    if (branchIdFromLocalStorage) {
+      const branch = findBranchById(branches, branchIdFromLocalStorage);
+      if (branch) {
+        setSourceBranch(branch);
+        handleLoadBranch(branch);
+      }
+    }
+  }, [branches, branchIdFromLocalStorage]);
+
+  const handleLoadBranch = async (branch: Branch | null) => {
+    if (!branch) return store.dispatch(updateSelectedBranch(null));
+
+    const response = await GetBranches(branch._id ?? '');
+    store.dispatch(
+      updateSelectedBranch({
+        ...branch,
+        products: response,
+      })
+    );
+  };
 
   return (
     <div className="container mx-auto space-y-6 font-onest">
@@ -131,8 +135,6 @@ export const BranchReceived = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-
-              <Button variant="outline">Order History</Button>
             </div>
             <div className="flex space-x-2">
               <Input
@@ -143,23 +145,15 @@ export const BranchReceived = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               {userRoles?.role === ROLE.ROOT && (
-                <div className="mb-4">
-                  <Select onValueChange={handleSelectChangeBranch}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seleccione Sucursal" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {filteredBranche.map((branch) => (
-                        <SelectItem
-                          key={branch._id}
-                          value={branch._id as string}
-                        >
-                          {branch.nombre}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Button
+                  type="button"
+                  className="w-[200px] px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-none hover:shadow-none"
+                  disabled={!sourceBranch}
+                >
+                  {sourceBranch
+                    ? sourceBranch.nombre
+                    : userRoles?.sucursalId?.nombre || 'Seleccionar Sucursal'}
+                </Button>
               )}
             </div>
           </div>
