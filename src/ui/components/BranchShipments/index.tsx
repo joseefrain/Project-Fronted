@@ -38,11 +38,12 @@ import { useParams } from 'react-router-dom';
 import { Button } from '../../../components/ui/button';
 import {
   findBranchById,
-  getFilteredBranches,
   getSelectedBranchFromLocalStorage,
 } from '../../../shared/helpers/branchHelpers';
 import { MapIndex } from './mapIndex';
-import { ROLE } from '../../../interfaces/roleInterfaces';
+import { Branch } from '../../../interfaces/branchInterfaces';
+import { updateSelectedBranch } from '../../../app/slices/branchSlice';
+import { GetBranches } from '../../../shared/helpers/Branchs';
 
 const orderStatusOptions = [
   { value: 'Todos', label: 'Ver Todos' },
@@ -53,66 +54,30 @@ const orderStatusOptions = [
 ];
 
 export const ShippedOrders = () => {
-  const selectedBranchFromLocalStorage = getSelectedBranchFromLocalStorage();
   const DataAlls = useAppSelector((state) => state.transfer.data);
   const branches = useAppSelector((state) => state.branches.data);
-  const userRoles = useAppSelector((state) => state.auth.signIn.user);
-  const filteredBranche = getFilteredBranches(
-    branches,
-    userRoles?.role || '',
-    selectedBranchFromLocalStorage
-  );
-
-  const [selectedBranch, setSelectedBranch] = useState<{
-    nombre: string;
-    _id: string;
-  } | null>(null);
+  const { selectedBranch, loading } = useAppSelector((state) => state.branches);
   const [items, setItems] = useState<IDetalleSelected | null>(null);
-  const [loading, setLoading] = useState(false);
   const { Id } = useParams<{ Id: string }>();
   const [selectedStatus, setSelectedStatus] = useState<string>('Todos');
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    const branch = findBranchById(branches, selectedBranchFromLocalStorage);
-    if (branch) {
-      setSelectedBranch({ nombre: branch.nombre, _id: branch._id ?? '' });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [branches]);
-
-  useEffect(() => {
-    if (
-      userRoles?.role !== ROLE.ROOT &&
-      filteredBranche.length === 1 &&
-      !selectedBranch
-    ) {
-      const branch = filteredBranche[0];
-      setSelectedBranch({ nombre: branch.nombre, _id: branch._id ?? '' });
-    }
-  }, [filteredBranche, selectedBranch, userRoles]);
-
-  useEffect(() => {
     if (selectedBranch) {
-      setLoading(true);
       store.dispatch(clearTransferData());
-      store
-        .dispatch(getAllProductTransfer(selectedBranch._id))
-        .unwrap()
-        .finally(() => setLoading(false));
+      store.dispatch(getAllProductTransfer(selectedBranch._id ?? '')).unwrap();
     }
   }, [selectedBranch]);
 
   const fetchData = async () => {
     if (!Id) return;
-    setLoading(true);
     const response = await store.dispatch(OrdersReceivedById(Id));
     setItems(response.payload as IDetalleSelected);
-    setLoading(false);
   };
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Id]);
 
   const handleStatusChange = (value: string) => {
@@ -155,6 +120,32 @@ export const ShippedOrders = () => {
   );
   const paginatedData = Math.ceil(filteredProducts.length / itemsPerPage);
 
+  const user = useAppSelector((state) => state.auth.signIn.user);
+  const [sourceBranch, setSourceBranch] = useState<Branch | null>(null);
+  const branchIdFromLocalStorage = getSelectedBranchFromLocalStorage();
+
+  useEffect(() => {
+    if (branchIdFromLocalStorage) {
+      const branch = findBranchById(branches, branchIdFromLocalStorage);
+      if (branch) {
+        setSourceBranch(branch);
+        handleLoadBranch(branch);
+      }
+    }
+  }, [branches, branchIdFromLocalStorage]);
+
+  const handleLoadBranch = async (branch: Branch | null) => {
+    if (!branch) return store.dispatch(updateSelectedBranch(null));
+
+    const response = await GetBranches(branch._id ?? '');
+    store.dispatch(
+      updateSelectedBranch({
+        ...branch,
+        products: response,
+      })
+    );
+  };
+
   return (
     <div className="container mx-auto space-y-6 font-onest">
       <Card>
@@ -165,8 +156,8 @@ export const ShippedOrders = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-between mb-4">
-            <div className="flex space-x-2">
+          <div className="flex justify-between mb-4 max-sm:flex-col max-sm:gap-3">
+            <div className="flex space-x-2 ">
               <Select onValueChange={handleStatusChange}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Estado" />
@@ -191,13 +182,15 @@ export const ShippedOrders = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              {userRoles?.role === ROLE.ROOT && (
-                <div className="mb-4">
-                  <Button>
-                    {selectedBranch ? `Sucursal: ${selectedBranch.nombre}` : ''}
-                  </Button>
-                </div>
-              )}
+              <Button
+                type="button"
+                className="w-[200px] px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-none hover:shadow-none"
+                disabled={!sourceBranch}
+              >
+                {sourceBranch
+                  ? sourceBranch.nombre
+                  : user?.sucursalId?.nombre || 'Seleccionar Sucursal'}
+              </Button>
             </div>
           </div>
           {loading ? (
@@ -215,6 +208,7 @@ export const ShippedOrders = () => {
                   <TableCell>Sucursal Destino</TableCell>
                   <TableCell>Estado</TableCell>
                   <TableCell>Enviado por</TableCell>
+                  <TableCell>Acciones</TableCell>
                 </TableRow>
               </TableHeader>
               <TableBody>
