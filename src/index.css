@@ -146,3 +146,8 @@ button:focus-visible {
     @apply bg-background text-foreground;
   }
 }
+
+html body[data-scroll-locked] {
+    margin-right: 0 !important;
+    overflow: auto !important;
+}

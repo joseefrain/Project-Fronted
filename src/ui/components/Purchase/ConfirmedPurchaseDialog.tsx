@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +13,6 @@ import {
   IPaymentMethod,
   IProductSale,
 } from '@/interfaces/salesInterfaces';
-import { handlePrintInvoice } from '@/shared/helpers/salesHelper';
 import { getFormatedDate } from '@/shared/helpers/transferHelper';
 import {
   BadgeDollarSign,
@@ -24,14 +22,13 @@ import {
   Captions,
   Clock,
   Coins,
-  FileDown,
-  Printer,
   Receipt,
   Store,
   User,
 } from 'lucide-react';
 import React from 'react';
 import { ISaleSummary } from './Inventory';
+import { POSTicketGenerator } from '@/shared/helpers/postTicketGenerator';
 
 export interface IReportField {
   label: string;
@@ -67,27 +64,11 @@ export const ConfirmedPurchaseDialog = ({
   cashReceived,
   saleSummary,
   username,
-  customerType,
-  customers,
   productSale,
   paymentMethod,
   creditMethod,
   months,
 }: IConfirmedSaleDialog) => {
-  const onPrintInvoice = () => {
-    handlePrintInvoice({
-      branchSelected: branchName,
-      transactionDate: transactionDate!,
-      customer,
-      customerType,
-      customers,
-      paymentMethod,
-      cashReceived,
-      saleSummary,
-      productSale,
-    });
-  };
-
   return (
     <Dialog
       open={isModalOpen}
@@ -181,14 +162,24 @@ export const ConfirmedPurchaseDialog = ({
           )}
         </div>
         <DialogFooter className="saled__btn">
-          <Button onClick={onPrintInvoice}>
-            <Printer className="w-4 h-4 mr-2" />
-            Imprimir factura
-          </Button>
-          <Button onClick={onPrintInvoice} variant="outline">
-            <FileDown className="w-4 h-4 mr-2" />
-            Descargar PDF
-          </Button>
+          <POSTicketGenerator
+            cashierName={username.toUpperCase() ?? ''}
+            transactionId="1234"
+            date={getFormatedDate(transactionDate!, true).toUpperCase()}
+            total={`$${saleSummary.total.toFixed(2)}`}
+            products={productSale}
+            Branchs={branchName.toUpperCase()}
+            Cliente={customer.toUpperCase()}
+            Cajero={username.toUpperCase()}
+            fechaHora={getFormatedDate(transactionDate!, true).toUpperCase()}
+            metodoPago={
+              paymentMethod === IPaymentMethod.CASH ? 'EFECTIVO' : 'CRÉDITO'
+            }
+            efectivoRecibido={
+              paymentMethod === IPaymentMethod.CASH ? `$${cashReceived}` : ''
+            }
+            tipoCredit={creditMethod}
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>
