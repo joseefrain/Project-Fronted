@@ -40,16 +40,15 @@ import { es } from 'date-fns/locale';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
+import { dataCoins } from '../../../interfaces/salesInterfaces';
 
 export const SaleHistory = () => {
   const branchStoraged = getSelectedBranchFromLocalStorage();
   const user = useAppSelector((state) => state.auth.signIn.user);
   const salesHistory = useAppSelector((state) => state.sales.branchSales);
-  const selectCoins = useAppSelector(
-    (state) => state.coins.selectedCoin?.simbolo
-  );
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const coin = dataCoins.currentS;
 
   useEffect(() => {
     store
@@ -84,7 +83,7 @@ export const SaleHistory = () => {
   const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
 
   return (
-    <Card className="mt-4 h-[34rem] font-onest">
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <History />
@@ -105,12 +104,12 @@ export const SaleHistory = () => {
                         ? format(selectedDateRange.from, 'P', { locale: es })
                         : ''
                     } - 
-                        ${
-                          selectedDateRange.to &&
-                          !isNaN(selectedDateRange.to.getTime())
-                            ? format(selectedDateRange.to, 'P', { locale: es })
-                            : ''
-                        }`
+                  ${
+                    selectedDateRange.to &&
+                    !isNaN(selectedDateRange.to.getTime())
+                      ? format(selectedDateRange.to, 'P', { locale: es })
+                      : ''
+                  }`
                   : 'Seleccionar Fechas'}
               </Button>
             </PopoverTrigger>
@@ -129,104 +128,120 @@ export const SaleHistory = () => {
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Usuario</TableHead>
-              <TableHead>Fecha</TableHead>
-              <TableHead>Subtotal</TableHead>
-              <TableHead>Descuento</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Productos</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentItems.map((sale, index) => (
-              <TableRow key={index} className="h-[50px]">
-                <TableCell>{sale.userId}</TableCell>
-                <TableCell>{getFormatedDate(new Date())}</TableCell>
-                <TableCell>${sale.subtotal.toFixed(2)}</TableCell>
-                <TableCell>${sale.discount.toFixed(2)}</TableCell>
-                <TableCell>${sale.total.toFixed(2)}</TableCell>
-                <TableCell>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        <Eye className="w-4 h-4" />
-                        View
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="font-onest max-w-3xl rounded-[4px] min-h-[12.5rem]">
-                      <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2 uppercase">
-                          <ShoppingBasket />
-                          Productos
-                        </DialogTitle>
-                      </DialogHeader>
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Producto</TableHead>
-                            <TableHead className="text-center">
-                              Tipo de cliente
-                            </TableHead>
-                            <TableHead className="text-center">
-                              Cantidad
-                            </TableHead>
-                            <TableHead className="text-center">
-                              Precio
-                            </TableHead>
-                            <TableHead className="text-center">
-                              Descuento
-                            </TableHead>
-                            <TableHead className="text-center">Total</TableHead>
-                          </TableRow>
-                        </TableHeader>
-
-                        <TableBody>
-                          {sale.products.map((item) => (
-                            <TableRow key={item.productId}>
-                              <TableCell>{item.productName}</TableCell>
-                              <TableCell className="text-center">
-                                {item.clientType}
-                              </TableCell>
-                              <TableCell className="text-center">
-                                {item.quantity}
-                              </TableCell>
-                              <TableCell className="text-center">
-                                {selectCoins}
-                                {item.price.toFixed(2)}
-                              </TableCell>
-                              <TableCell className="text-center">
-                                {item.discount && item.discount?.amount > 0 ? (
-                                  <span className="text-green-600">
-                                    {selectCoins}
-                                    {(
-                                      item.quantity * item.discount.amount
-                                    ).toFixed(2)}{' '}
-                                  </span>
-                                ) : (
-                                  '-'
-                                )}
-                              </TableCell>
-                              <TableCell className="text-center">
-                                {selectCoins}
-                                {(
-                                  item.price * item.quantity -
-                                  (item.discount?.amount || 0) * item.quantity
-                                ).toFixed(2)}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </DialogContent>
-                  </Dialog>
-                </TableCell>
+        <div className="overflow-x-auto">
+          <Table className="min-w-[768px]">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Usuario</TableHead>
+                <TableHead>Fecha</TableHead>
+                <TableHead>Subtotal</TableHead>
+                <TableHead>Descuento</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Productos</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {currentItems.map((sale, index) => (
+                <TableRow key={index} className="h-[50px]">
+                  <TableCell>{sale.userId}</TableCell>
+                  <TableCell>{getFormatedDate(new Date())}</TableCell>
+                  <TableCell>
+                    {coin}
+                    {sale.subtotal.toFixed(2)}
+                  </TableCell>
+                  <TableCell>
+                    {coin}
+                    {sale.discount.toFixed(2)}
+                  </TableCell>
+                  <TableCell>
+                    {coin}
+                    {sale.total.toFixed(2)}
+                  </TableCell>
+                  <TableCell>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          <Eye className="w-4 h-4" />
+                          View
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="font-onest max-w-3xl rounded-[4px] min-h-[12.5rem]">
+                        <DialogHeader>
+                          <DialogTitle className="flex items-center gap-2 uppercase">
+                            <ShoppingBasket />
+                            Productos
+                          </DialogTitle>
+                        </DialogHeader>
+                        <div className="overflow-x-auto">
+                          <Table className="min-w-[768px]">
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Producto</TableHead>
+                                <TableHead className="text-center">
+                                  Tipo de cliente
+                                </TableHead>
+                                <TableHead className="text-center">
+                                  Cantidad
+                                </TableHead>
+                                <TableHead className="text-center">
+                                  Precio
+                                </TableHead>
+                                <TableHead className="text-center">
+                                  Descuento
+                                </TableHead>
+                                <TableHead className="text-center">
+                                  Total
+                                </TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {sale.products.map((item) => (
+                                <TableRow key={item.productId}>
+                                  <TableCell>{item.productName}</TableCell>
+                                  <TableCell className="text-center">
+                                    {item.clientType}
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    {item.quantity}
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    {coin}
+                                    {item.price.toFixed(2)}
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    {item.discount &&
+                                    item.discount?.amount > 0 ? (
+                                      <span className="text-green-600">
+                                        {coin}
+                                        {(
+                                          item.quantity * item.discount.amount
+                                        ).toFixed(2)}{' '}
+                                      </span>
+                                    ) : (
+                                      '-'
+                                    )}
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    {coin}
+                                    {(
+                                      item.price * item.quantity -
+                                      (item.discount?.amount || 0) *
+                                        item.quantity
+                                    ).toFixed(2)}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
       <CardFooter className="flex items-center justify-between">
         <Pagination

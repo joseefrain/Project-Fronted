@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import {
+  dataCoins,
   ICreditMethod,
   ICustomerType,
   IPaymentMethod,
@@ -84,9 +85,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   const user = store.getState().auth.signIn.user;
   const branchSelected = store.getState().branches.selectedBranch;
   const allEntities = useAppSelector((state) => state.entities.data);
-  const selectedCoin = useAppSelector(
-    (state) => state.coins.selectedCoin?.simbolo
-  );
+  const coin = dataCoins.currentS;
 
   const registeredCustomers = allEntities.filter(
     (entity) => entity.type === 'customer'
@@ -238,8 +237,8 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
     <>
       <Card className="shadow-lg bg-white/80 font-onest dark:bg-gray-800">
         <CardHeader className="flex flex-col justify-between gap-2 pb-4">
-          <div className="flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2 font-bold text-primary">
+          <div className="container-inventory">
+            <CardTitle className="container-inventory__text">
               <Receipt />
               {user?.username.toUpperCase()}
             </CardTitle>
@@ -252,7 +251,12 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
             <div className="flex items-center text-sm">
               <Clock className="w-4 h-4 mr-2" />
               <span className="font-semibold">
-                {currentTime.toLocaleTimeString().toUpperCase()}
+                {currentTime
+                  .toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                  .toUpperCase()}
               </span>
             </div>
           </div>
@@ -261,7 +265,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
               Efectivo en caja
             </span>
             <span className="font-bold font-onest">
-              {selectedCoin}
+              {coin}
               {!isNaN(cashInRegister)
                 ? cashInRegister.toLocaleString('en-US', {
                     minimumFractionDigits: 0,
@@ -491,7 +495,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                           value={months}
                           onChange={(e) => setMonths(e.target.value)}
                           placeholder="0"
-                          className="font-semibold text-center bg-white font-onest"
+                          className="font-semibold text-center bg-white font-onest dark:bg-black"
                           disabled={processingSale}
                         />
                       </div>
@@ -507,14 +511,14 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
             <div className="flex justify-between text-sm">
               <span>Subtotal:</span>
               <span>
-                {selectedCoin}
+                {coin}
                 {saleSummary.subTotal.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span>Descuento ({saleSummary.totalDiscountPercentage}%):</span>
               <span>
-                {selectedCoin}
+                {coin}
                 {saleSummary.totalDiscount.toFixed(2)}
               </span>
             </div>
@@ -522,7 +526,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
             <div className="flex justify-between text-lg font-bold text-primary">
               <span>Total a pagar:</span>
               <span>
-                {selectedCoin}
+                {coin}
                 {saleSummary.total.toFixed(2)}
               </span>
             </div>
@@ -530,7 +534,8 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
             <div className="flex justify-between p-2 text-sm bg-green-100 rounded shadow-md dark:bg-black">
               <span>Cambio:</span>
               <span className="font-medium">
-                ${saleSummary.change.toFixed(2)}
+                {coin}
+                {saleSummary.change.toFixed(2)}
               </span>
             </div>
           </div>

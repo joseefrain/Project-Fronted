@@ -54,7 +54,6 @@ export const Purchase = ({
   const [selectedProduct, setSelectedProduct] = useState<ITablaBranch | null>(
     null
   );
-  console.log(selectedProduct, 'selectedProduct');
   const [buffer, setBuffer] = useState<string>('');
 
   const handleSelectProduct = (productId: string) => {
@@ -90,8 +89,6 @@ export const Purchase = ({
       //@ts-ignore
       costoUnitario: parseFloat(selectedProduct?.costoUnitario?.$numberDecimal),
     };
-
-    console.log(newProductSale, 'newProductCompra');
 
     const isExistentProduct = productSale.find(
       (p) =>
@@ -237,7 +234,7 @@ export const Purchase = ({
         )}
       </CardHeader>
       <CardContent className="h-[80%]">
-        <div className="flex gap-4 mb-4">
+        <div className="containerInputs">
           <div className="flex flex-col w-full gap-1">
             <Label className="text-xs">Producto</Label>
             <Popover open={open} onOpenChange={setOpen}>

@@ -13,8 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { IProductSale } from '@/interfaces/salesInterfaces';
-import { useAppSelector } from '../../../app/hooks';
+import { dataCoins, IProductSale } from '@/interfaces/salesInterfaces';
 
 export interface IProductSaleProps {
   type?: 'VENTA' | 'COMPRA';
@@ -27,12 +26,10 @@ export const ProductSale = ({
   products,
   handleRemoveProductSale,
 }: IProductSaleProps) => {
-  const selectedCoin = useAppSelector(
-    (state) => state.coins.selectedCoin?.simbolo
-  );
+  const coin = dataCoins.currentS;
 
   return (
-    <Table>
+    <Table className="">
       <TableHeader>
         <TableRow>
           <TableHead>Producto</TableHead>
@@ -48,15 +45,18 @@ export const ProductSale = ({
       </TableHeader>
       <TableBody>
         {products.map((item) => (
-          <TableRow key={item.productId + item.price}>
+          <TableRow key={item.productId + item.price} className="h-[50px]">
             <TableCell>{item.productName}</TableCell>
             <TableCell className="text-center">{item.quantity}</TableCell>
             <TableCell className="text-center">
-              {selectedCoin}
-              {item?.costoUnitario?.$numberDecimal}
+              {coin}
+              {typeof item?.costoUnitario === 'object' &&
+              item?.costoUnitario?.$numberDecimal
+                ? parseFloat(item.costoUnitario.$numberDecimal.toString())
+                : Number(item?.costoUnitario)}
             </TableCell>
             <TableCell className="text-center">
-              {selectedCoin}
+              {coin}
               {item.price.toFixed(2)}
             </TableCell>
             {type === 'VENTA' && (
@@ -64,7 +64,7 @@ export const ProductSale = ({
                 {item.discount && item.discount?.amount > 0 ? (
                   <div className="flex items-center justify-center gap-2">
                     <span className="text-green-600">
-                      {selectedCoin} {item.discount.amount.toFixed(2)} (
+                      ${item.discount.amount.toFixed(2)} (
                       {item.discount.percentage}
                       %)
                     </span>
@@ -87,7 +87,7 @@ export const ProductSale = ({
               </TableCell>
             )}
             <TableCell className="text-center">
-              {selectedCoin}
+              {coin}
               {(
                 item.price * item.quantity -
                 (item.discount?.amount || 0)

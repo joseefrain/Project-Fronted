@@ -149,11 +149,12 @@ export const CashRegister = () => {
     }
   };
 
-
   return (
     <div className="container py-10 mx-auto">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">Administración de Cajas</h1>
+        <h1 className="text-3xl font-bold font-onest max-sm:text-[20px]">
+          Administración de Cajas
+        </h1>
         {access.create && (
           <Button
             onClick={() => {
@@ -162,7 +163,8 @@ export const CashRegister = () => {
               setDialogMode('create');
             }}
           >
-            <Plus className="w-4 h-4 mr-2" /> Nueva Caja
+            <Plus className="w-4 h-4 mr-2 max-sm:mr-0" />
+            <p className="max-sm:hidden">Nueva Caja</p>
           </Button>
         )}
       </div>
@@ -177,11 +179,7 @@ export const CashRegister = () => {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {dataBoxes?.map((box) => (
-          <CashRegisterCard
-            key={box._id}
-            cashRegister={box}
-            access={access}
-          />
+          <CashRegisterCard key={box._id} cashRegister={box} access={access} />
         ))}
       </div>
 

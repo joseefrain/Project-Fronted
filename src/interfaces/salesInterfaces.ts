@@ -125,3 +125,8 @@ export interface ICredit {
   cuotaMensual: number;
   pagoMinimoMensual: number;
 }
+
+export const dataCoins = {
+  currentS: 'C$',
+  idGlobal: '6788969390f63a009f1bea40',
+};
