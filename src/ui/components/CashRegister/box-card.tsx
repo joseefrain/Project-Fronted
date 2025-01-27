@@ -10,7 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@radix-ui/react-dropdown-menu';
-import { toast } from 'sonner';
 import { useState } from 'react';
 import { ModalHistory } from './box-history';
 import { IRoleAccess } from '../../../interfaces/roleInterfaces';
@@ -33,27 +32,6 @@ export function BoxCard({
   const isOpen = box.estado === 'ABIERTA';
   const isClosed = box.estado === 'CERRADA';
 
-  const handleOpen = () => {
-    // const storedBoxes = localStorage.getItem('boxState');
-
-    // if (storedBoxes) {
-    //   const boxes = JSON.parse(storedBoxes);
-
-    //   const openedBox = boxes.find((box: any) => box.estado === 'ABIERTA');
-
-    //   if (openedBox && openedBox.id !== box._id) {
-    //     toast.error(`Solo se puede abrir una caja a la vez, por usuario`);
-    //     return;
-    //   }
-    // }
-
-    onOpen();
-  };
-
-  const handleClose = () => {
-    onClose();
-  };
-
   const handleCardClick = () => {
     setIsModalOpen(true);
   };
@@ -61,7 +39,6 @@ export function BoxCard({
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
 
   return (
     <>
@@ -92,7 +69,7 @@ export function BoxCard({
                 <DropdownMenuSeparator />
                 {!isOpen && (
                   <DropdownMenuItem
-                    onClick={handleOpen}
+                    onClick={onOpen}
                     className="flex items-center font-onest"
                   >
                     <LockKeyholeOpen className="w-4 h-4 mr-2" />
@@ -101,7 +78,7 @@ export function BoxCard({
                 )}
                 {!isClosed && (
                   <DropdownMenuItem
-                    onClick={handleClose}
+                    onClick={onClose}
                     className="flex items-center font-onest"
                   >
                     <LockKeyhole className="w-4 h-4 mr-2" />
@@ -118,23 +95,21 @@ export function BoxCard({
           >
             Estado: {box.estado}
           </p>
-          {
-            box.estado === 'ABIERTA' && (
-              <>
+          {box.estado === 'ABIERTA' && (
+            <>
               <p
-            className={`mt-2 text-sm ${box.estado === 'ABIERTA' ? 'text-green-500' : 'text-red-500'}`}
-          >
-            Usuario: {(box.usuarioAperturaId as IUser).username}
-          </p>
-          <p
-            className={`mt-2 text-sm ${box.estado === 'ABIERTA' ? 'text-green-500' : 'text-red-500'}`}
-          >
-            Saldo: {box.montoEsperado.$numberDecimal}
-          </p>
-              </>
-            )
-          }
-          
+                className={`mt-2 text-sm ${box.estado === 'ABIERTA' ? 'text-green-500' : 'text-red-500'}`}
+              >
+                Usuario: {(box.usuarioAperturaId as IUser).username}
+              </p>
+              <p
+                className={`mt-2 text-sm ${box.estado === 'ABIERTA' ? 'text-green-500' : 'text-red-500'}`}
+              >
+                Saldo: {box.montoEsperado.$numberDecimal}
+              </p>
+            </>
+          )}
+
           <div className="flex items-center justify-between mt-4">
             <span className="text-sm text-muted-foreground">
               Caja #{box.consecutivo}

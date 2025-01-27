@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -106,7 +106,7 @@ export function CashRegisterOpen({ box }: CashRegisterOpenProps) {
               placeholder="Ingrese el monto inicial"
               type="number"
             />
-            <div className="flex justify-end space-x-2 pt-4">
+            <div className="flex justify-end pt-4 space-x-2">
               <Button type="button" variant="outline" onClick={closeModal}>
                 Cancelar
               </Button>
