@@ -44,59 +44,61 @@ export const TablaContacts = ({
 
   return (
     <>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead className="w-fit">Identificacion</TableHead>
-            <TableHead>Telefono</TableHead>
-            <TableHead>Tipo</TableHead>
-            {(access.update || access.delete) && (
-              <TableHead className="text-center">
-                <span className="">Actions</span>
-              </TableHead>
-            )}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {currentItems?.map((product) => (
-            <TableRow key={product._id}>
-              <TableCell
-                className="font-medium"
-                onClick={() => handleSelectEntity(product)}
-              >
-                {product?.generalInformation.name}
-              </TableCell>
-              <TableCell>
-                {product.generalInformation.identificationNumber}
-              </TableCell>
-              <TableCell>{product.contactInformation.telephone}</TableCell>
-              <TableCell>
-                {product.type === 'customer' ? 'Cliente' : 'Proveedor'}
-              </TableCell>
+      <div className="overflow-x-auto">
+        <Table className="min-w-[768px]">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead className="w-fit">Identificacion</TableHead>
+              <TableHead>Telefono</TableHead>
+              <TableHead>Tipo</TableHead>
               {(access.update || access.delete) && (
-                <TableCell>
-                  <div className="flex items-center justify-center gap-3">
-                    {access.update && (
-                      <div
-                        onClick={() => handleEditContact(product)}
-                        className=""
-                      >
-                        <Pencil className="w-4 h-4 mr-2 cursor-pointer" />
-                      </div>
-                    )}
-                    {access.delete && (
-                      <div onClick={() => handleDeleteContact(product._id!)}>
-                        <Trash className="w-4 h-4 mr-2 cursor-pointer" />
-                      </div>
-                    )}
-                  </div>
-                </TableCell>
+                <TableHead className="text-center">
+                  <span className="">Actions</span>
+                </TableHead>
               )}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {currentItems?.map((product) => (
+              <TableRow key={product._id}>
+                <TableCell
+                  className="font-medium"
+                  onClick={() => handleSelectEntity(product)}
+                >
+                  {product?.generalInformation.name}
+                </TableCell>
+                <TableCell>
+                  {product.generalInformation.identificationNumber}
+                </TableCell>
+                <TableCell>{product.contactInformation.telephone}</TableCell>
+                <TableCell>
+                  {product.type === 'customer' ? 'Cliente' : 'Proveedor'}
+                </TableCell>
+                {(access.update || access.delete) && (
+                  <TableCell>
+                    <div className="flex items-center justify-center gap-3">
+                      {access.update && (
+                        <div
+                          onClick={() => handleEditContact(product)}
+                          className=""
+                        >
+                          <Pencil className="w-4 h-4 mr-2 cursor-pointer" />
+                        </div>
+                      )}
+                      {access.delete && (
+                        <div onClick={() => handleDeleteContact(product._id!)}>
+                          <Trash className="w-4 h-4 mr-2 cursor-pointer" />
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </>
   );
 };

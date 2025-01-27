@@ -6,7 +6,7 @@ export const ViewEntities = () => {
     <div className="container mx-auto">
       <Tabs defaultValue="listContacts">
         <div className="flex flex-col items-center justify-between gap-4 mb-3 sm:flex-row sm:items-center">
-          <h1 className="text-4xl font-bold text-gray-800 font-onest">
+          <h1 className="text-4xl font-bold text-gray-800 font-onest dark:text-white">
             Contactos
           </h1>
           <TabsList className="gap-4 font-bold text-white bg-black font-onest">

@@ -94,7 +94,7 @@ export const Roles = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-between w-full">
+          <div className="flex justify-between w-full gp-2 ">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <SearchComponent
@@ -107,9 +107,9 @@ export const Roles = () => {
             {access.create && (
               <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogTrigger asChild>
-                  <Button size="sm" className="h-8 gap-1">
+                  <Button size="sm" className="h-9 gap-1">
                     <PlusCircle className="h-3.5 w-3.5" />
-                    <span className="font-onest">Agregar</span>
+                    <span className="font-onest max-md:hidden">Agregar</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="font-onest">
