@@ -187,6 +187,18 @@ export const ConfirmedSaleDialog = ({
             date={getFormatedDate(transactionDate!, true).toUpperCase()}
             total={`$${saleSummary.total.toFixed(2)}`}
             products={productSale}
+            Branchs={branchName.toUpperCase()}
+            Cliente={customer.toUpperCase()}
+            Cajero={username.toUpperCase()}
+            fechaHora={getFormatedDate(transactionDate!, true).toUpperCase()}
+            metodoPago={
+              paymentMethod === IPaymentMethod.CASH ? 'EFECTIVO' : 'CRÉDITO'
+            }
+            efectivoRecibido={
+              paymentMethod === IPaymentMethod.CASH ? `$${cashReceived}` : ''
+            }
+            tipoCredit={creditMethod}
+            meses={months}
           />
           <Button onClick={onPrintInvoice} variant="outline">
             <FileDown className="w-4 h-4 mr-2" />
