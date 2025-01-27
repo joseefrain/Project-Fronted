@@ -69,6 +69,7 @@ export const handleAuthentication = (
     status: isAuth ? 'authenticated' : 'unauthenticated',
   };
 
+  console.log('Actualizando estado de autenticación en el store', authState);
   store.dispatch(updateSignIn(authState));
 
   if (!isAuth) {

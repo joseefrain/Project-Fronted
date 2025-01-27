@@ -1,5 +1,4 @@
-// components/PrivateRoute.tsx
-import { RootState } from '@/app/store';
+import { RootState, store } from '@/app/store';
 import AuthForm from '@/ui/components/Login';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -11,6 +10,7 @@ import {
 } from '../hooks/useJWT';
 import { PAGES_MODULES } from './roleHelper';
 import { useRoleAccess } from '../hooks/useRoleAccess';
+import { logout } from '../../app/slices/login';
 
 export interface IRequireAuthProps {
   module: PAGES_MODULES;
@@ -23,7 +23,10 @@ export const RequireAuth = ({ module }: IRequireAuthProps) => {
 
   useEffect(() => {
     if (!token || hasTokenExpired(token)) {
+      window.location.reload();
       console.log('TOKEN EXPIRADO en RequireAuth');
+      localStorage.removeItem('user');
+      store.dispatch(logout());
       handleAuthentication('', false, navigate);
       return;
     }
