@@ -27,8 +27,27 @@ import { motion } from 'framer-motion';
 import './styles.scss';
 
 export const ProfileUser = () => {
+  const selectedBranchFromLocalStorage = getSelectedBranchFromLocalStorage();
+  const branches = useAppSelector((state) => state.branches.data);
+  const [selectedBranch, setSelectedBranch] = useState<{
+    nombre: string;
+    _id: string;
+  } | null>(null);
   const caja = store.getState().boxes.BoxesData;
   const user = useAppSelector((state) => state.auth.signIn.user);
+  const id = user?.sucursalId?._id;
+  const [, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      store
+        .dispatch(getboxesbyBranch(id))
+        .unwrap()
+        .then(() => setIsLoading(false))
+        .catch(() => setIsLoading(false));
+    }
+  }, [id]);
+
   const userFilteredData = caja
     ?.filter(
       (c: ICajaBrach) =>
@@ -36,6 +55,7 @@ export const ProfileUser = () => {
         c.usuarioAperturaId?._id === user?._id
     )
     .map((c: ICajaBrach) => ({
+      montoEsperado: c.montoEsperado,
       consecutivo: c.consecutivo,
       estado: c.estado,
     }));
@@ -56,13 +76,6 @@ export const ProfileUser = () => {
     store.dispatch(openDrawer());
   };
 
-  const selectedBranchFromLocalStorage = getSelectedBranchFromLocalStorage();
-  const branches = useAppSelector((state) => state.branches.data);
-  const [selectedBranch, setSelectedBranch] = useState<{
-    nombre: string;
-    _id: string;
-  } | null>(null);
-
   useEffect(() => {
     const branch = findBranchById(branches, selectedBranchFromLocalStorage);
     if (branch) {
@@ -74,13 +87,6 @@ export const ProfileUser = () => {
   useEffect(() => {
     store.dispatch(fetchBranches()).unwrap();
   }, []);
-
-  const id = user?.sucursalId?._id;
-  useEffect(() => {
-    if (id) {
-      store.dispatch(getboxesbyBranch(id as string));
-    }
-  }, [id]);
 
   return (
     <>
