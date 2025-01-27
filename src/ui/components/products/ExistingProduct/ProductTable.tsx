@@ -1,4 +1,3 @@
-import { IRoles } from '@/app/slices/login';
 import { updateProduct } from '@/app/slices/productsSlice';
 import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
@@ -22,11 +21,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import {
-  Branch,
-  IProductoGroups,
-  ITablaBranch,
-} from '@/interfaces/branchInterfaces';
+import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
 import {
   InventarioSucursal,
   InventarioSucursalWithPopulated,

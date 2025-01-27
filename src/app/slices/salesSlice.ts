@@ -1,7 +1,6 @@
 import {
   createDiscount,
   deleteDiscount,
-  getAllDiscounts,
   getCashier,
   getDiscountByBranchId,
   getPurchaseByBranchId,
