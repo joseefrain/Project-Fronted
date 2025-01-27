@@ -1,13 +1,8 @@
 import { RootState, store } from '@/app/store';
-import AuthForm from '@/ui/components/Login';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
-import {
-  handleAuthentication,
-  hasTokenExpired,
-  useAuthToken,
-} from '../hooks/useJWT';
+import { hasTokenExpired, useAuthToken } from '../hooks/useJWT';
 import { PAGES_MODULES } from './roleHelper';
 import { useRoleAccess } from '../hooks/useRoleAccess';
 import { logout } from '../../app/slices/login';
@@ -27,7 +22,7 @@ export const RequireAuth = ({ module }: IRequireAuthProps) => {
       console.log('TOKEN EXPIRADO en RequireAuth');
       localStorage.removeItem('user');
       store.dispatch(logout());
-      handleAuthentication('', false, navigate);
+      //   handleAuthentication('', false, navigate);
       return;
     }
 
@@ -40,11 +35,17 @@ export const RequireAuth = ({ module }: IRequireAuthProps) => {
   return <Outlet />;
 };
 
-export const AlreadyAuthenticated: React.FC = () => {
-  const { token } = useSelector((state: RootState) => state.auth.signIn);
+interface Access {
+  children: React.ReactNode;
+}
 
-  if (token) {
-    return <Navigate to="/" />;
-  }
-  return <AuthForm />;
+export const AlreadyAuthenticated = ({ children }: Access) => {
+  const { token, status } = useSelector(
+    (state: RootState) => state.auth.signIn
+  );
+  return status === 'authenticated' && token ? (
+    <Navigate to="/" />
+  ) : (
+    <>{children}</>
+  );
 };

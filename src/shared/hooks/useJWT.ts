@@ -26,7 +26,7 @@ export const useAuthToken = () => {
   useEffect(() => {
     const checkToken = async () => {
       if (!token || hasTokenExpired(token)) {
-        alert('TOKEN EXPIRADO');
+        // alert('TOKEN EXPIRADO');
         setToken('');
         localStorage.removeItem('user');
         store.dispatch(logout());
@@ -69,16 +69,8 @@ export const handleAuthentication = (
     status: isAuth ? 'authenticated' : 'unauthenticated',
   };
 
-  console.log('Actualizando estado de autenticación en el store', authState);
   store.dispatch(updateSignIn(authState));
-
-  if (!isAuth) {
-    console.log('Eliminando usuario del localStorage y redirigiendo al login');
-    localStorage.removeItem('user');
-    if (navigate) {
-      navigate('/login', { replace: true });
-    }
-  }
+  if (navigate) return navigate('/login');
 };
 
 export const getUserDataFromLocalStorage = (): IToken | null => {
