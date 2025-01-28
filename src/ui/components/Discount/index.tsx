@@ -30,11 +30,11 @@ import {
 import { ITablaBranch } from '@/interfaces/branchInterfaces';
 import {
   IDescuentoCreate,
-  //   IDescuentoGrupo,
-  //   IDescuentoMapeado,
-  //   IDescuentosProductos,
+  IDescuentoGrupo,
+  IDescuentoMapeado,
+  IDescuentosProductos,
 } from '@/interfaces/salesInterfaces';
-// import Pagination from '@/shared/components/ui/Pagination/Pagination';
+import Pagination from '@/shared/components/ui/Pagination/Pagination';
 import { SearchComponent } from '@/shared/components/ui/Search';
 import { GetBranches } from '@/shared/helpers/Branchs';
 import { getFormatedDate } from '@/shared/helpers/transferHelper';
@@ -45,12 +45,20 @@ import { IndexModal } from './modal';
 import { ROLE } from '../../../interfaces/roleInterfaces';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../../components/ui/select';
 
 export default function DiscountManager() {
   const access = useRoleAccess(PAGES_MODULES.DESCUENTOS);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-
+  const data = useAppSelector((state) => state.sales.discounts);
+  const [selectedOption, setSelectedOption] = useState<string>('all');
   const { branches, selectedBranch, setSelectedBranch } = useFilteredBranches();
   const dataAllProducts = useAppSelector((state) => state.products.products);
   const userRoles = useAppSelector((state) => state.auth.signIn.user);
@@ -232,39 +240,16 @@ export default function DiscountManager() {
     setIsModalOpen(true);
   };
 
-  const [searchTerm, setSearchTerm] = useState('');
-  //   const [currentPage, setCurrentPage] = useState(1);
-  //   const itemsPerPage = 10;
-
-  //   const filteredDiscounts = Array.isArray(data)
-  //     ? data.filter((discount) =>
-  //         discount.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-  //       )
-  //     : [];
-
-  //   const indexOfLastItem = currentPage * itemsPerPage;
-  //   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  //   const currentItems = filteredDiscounts.slice(
-  //     indexOfFirstItem,
-  //     indexOfLastItem
-  //   );
-  //   const paginatedData = Math.ceil(filteredDiscounts.length / itemsPerPage);
-
   const removeDiscount = (id: string) => {
     store.dispatch(deleteDiscountSales(id)).unwrap();
   };
-
-  const data = useAppSelector((state) => state.sales.discounts);
-  const [selectedOption, setSelectedOption] = useState<string>(
-    'descuentosPorGruposEnSucursal'
-  );
 
   const descuentosPorGruposEnSucursal = (
     data?.descuentosPorGruposEnSucursal || []
   ).map((descuento) => ({
     ...descuento,
     tipoEntidad: 'Group',
-    tipoDescuento: 'Descuento por categiorías en Sucursal',
+    tipoDescuento: 'Descuento por categorías en Sucursal',
   }));
 
   const descuentosPorProductosEnSucursal = (
@@ -280,7 +265,7 @@ export default function DiscountManager() {
   ).map((descuento) => ({
     ...descuento,
     tipoEntidad: 'Group',
-    tipoDescuento: 'Descuento por categiorías Generales',
+    tipoDescuento: 'Descuento por categorías Generales',
   }));
 
   const descuentosPorProductosGenerales = (
@@ -291,26 +276,55 @@ export default function DiscountManager() {
     tipoDescuento: 'Descuento por Productos Generales',
   }));
 
-  const getSelectedData = () => {
-    switch (selectedOption) {
-      case 'descuentosPorGruposEnSucursal':
-        return descuentosPorGruposEnSucursal;
-      case 'descuentosPorProductosEnSucursal':
-        return descuentosPorProductosEnSucursal;
-      case 'descuentosPorGruposGenerales':
-        return descuentosPorGruposGenerales;
-      case 'descuentosPorProductosGenerales':
-        return descuentosPorProductosGenerales;
-      default:
-        return [];
-    }
-  };
+  const allDescuentos = [
+    ...descuentosPorGruposEnSucursal.map((descuento) => ({
+      ...descuento,
+      tipo: 'descuentosPorGruposEnSucursal',
+    })),
+    ...descuentosPorProductosEnSucursal.map((descuento) => ({
+      ...descuento,
+      tipo: 'descuentosPorProductosEnSucursal',
+    })),
+    ...descuentosPorGruposGenerales.map((descuento) => ({
+      ...descuento,
+      tipo: 'descuentosPorGruposGenerales',
+    })),
+    ...descuentosPorProductosGenerales.map((descuento) => ({
+      ...descuento,
+      tipo: 'descuentosPorProductosGenerales',
+    })),
+  ];
 
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedOption(event.target.value);
+  const getSelectedData = () => {
+    if (selectedOption === 'all') {
+      return allDescuentos;
+    }
+    return allDescuentos.filter(
+      (descuento) => descuento.tipo === selectedOption
+    );
   };
 
   const selectedData = getSelectedData();
+
+  const handleChange = (value: string) => {
+    setSelectedOption(value);
+  };
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const filteredDiscounts = selectedData.filter((discount) =>
+    discount.descuentoId.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredDiscounts.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+  const paginatedData = Math.ceil(filteredDiscounts.length / itemsPerPage);
 
   return (
     <>
@@ -326,32 +340,45 @@ export default function DiscountManager() {
                 <Save className="w-4 h-4 mr-2" />
                 Descuentos
               </CardTitle>
-              <CardDescription>
-                Manage your discounts and view their sales performance.
-              </CardDescription>
+              <CardDescription>Gestiona tus descuentos.</CardDescription>
             </CardHeader>
 
             <CardContent>
               <div className="flex justify-between mb-4">
-                <SearchComponent
-                  searchTerm={searchTerm}
-                  setSearchTerm={setSearchTerm}
-                />
-                <h1>Seleccione una categoría de descuentos</h1>
-                <select value={selectedOption} onChange={handleChange}>
-                  <option value="descuentosPorGruposEnSucursal">
-                    Descuentos por Grupos en Sucursal
-                  </option>
-                  <option value="descuentosPorProductosEnSucursal">
-                    Descuentos por Productos en Sucursal
-                  </option>
-                  <option value="descuentosPorGruposGenerales">
-                    Descuentos por Grupos Generales
-                  </option>
-                  <option value="descuentosPorProductosGenerales">
-                    Descuentos por Productos Generales
-                  </option>
-                </select>
+                <div className="flex items-center gap-3 place-items-baseline">
+                  <SearchComponent
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
+                  />
+                  <div className=" flex h-full w-full">
+                    <Select
+                      value={selectedOption}
+                      onValueChange={(value) => handleChange(value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">
+                          Todos los descuentos
+                        </SelectItem>
+                        <SelectItem value="descuentosPorGruposEnSucursal">
+                          Descuentos por Grupos en Sucursal
+                        </SelectItem>
+                        <SelectItem value="descuentosPorProductosEnSucursal">
+                          Descuentos por Productos en Sucursal
+                        </SelectItem>
+                        <SelectItem value="descuentosPorGruposGenerales">
+                          Descuentos por Grupos Generales
+                        </SelectItem>
+                        <SelectItem value="descuentosPorProductosGenerales">
+                          Descuentos por Productos Generales
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
                 {access.create && (
                   <Button onClick={openAddModal}>Agregar Descuento</Button>
                 )}
@@ -371,7 +398,7 @@ export default function DiscountManager() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {selectedData.map((discount) => (
+                  {currentItems.map((discount) => (
                     <TableRow key={discount.descuentoId._id}>
                       <TableCell className="px-4 py-2">
                         {discount.descuentoId.nombre}
@@ -441,11 +468,11 @@ export default function DiscountManager() {
               />
             </CardContent>
             <CardFooter className="flex items-center justify-between">
-              {/* <Pagination
+              <Pagination
                 currentPage={currentPage}
                 totalPages={paginatedData}
                 onPageChange={setCurrentPage}
-              /> */}
+              />
             </CardFooter>
           </Card>
         </main>
