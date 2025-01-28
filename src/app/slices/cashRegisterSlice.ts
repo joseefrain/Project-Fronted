@@ -193,9 +193,8 @@ export const boxSlice = createSlice({
         state.status = 'failed';
       })
       .addCase(closeBoxes.fulfilled, (state, action) => {
-
         let cajaId = action.payload.cajaId || action.payload._id;
-        
+
         if (state.BoxesData) {
           const boxIndex = state.BoxesData.findIndex(
             (box) => box._id === cajaId
@@ -224,5 +223,6 @@ export const boxSlice = createSlice({
   },
 });
 
+// eslint-disable-next-line no-empty-pattern
 export const {} = boxSlice.actions;
 export const boxReducer = boxSlice.reducer;

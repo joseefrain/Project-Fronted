@@ -6,6 +6,8 @@ import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { toast, Toaster } from 'sonner';
 import { ROLE } from '../../../interfaces/roleInterfaces';
+import logofondo from '../../../assets/logofondo.jpg';
+import { SvgComponent } from '@/assets';
 
 interface ILoginData {
   username: string;
@@ -65,40 +67,30 @@ const LoginForm = () => {
           <motion.div
             className="absolute inset-0 opacity-40"
             animate={{
-              backgroundPosition: ['0% 0%', '50% 50%'], // Animación de posición
+              backgroundPosition: ['0% 0%', '100% 100%'], // Mover de arriba a la derecha
             }}
             transition={{
-              duration: 10, // Duración de la animación en segundos
+              duration: 20, // Duración de la animación en segundos
               repeat: Infinity, // Repetir indefinidamente
-              ease: 'linear', // Movimiento suave
+              ease: 'linear', // Movimiento constante y fluido
             }}
             style={{
-              backgroundImage:
-                "url('https://www.civitatis.com/f/pseo/espana/madrid/gran-via-noche-madrid-1200.jpg')",
-              backgroundSize: 'cover', // Ajusta la imagen al contenedor
-              backgroundPosition: '0% 0%', // Posición inicial de la imagen
-              backgroundRepeat: 'no-repeat', // Evita repeticiones
+              backgroundImage: `url(${logofondo})`,
+              backgroundSize: 'auto', // Asegura que la imagen mantenga sus dimensiones originales
+              backgroundRepeat: 'repeat', // Repetir la imagen
+              backgroundPosition: '0% 0%', // Posición inicial
             }}
           />
         </div>
-
-        {/* Right section with login form */}
-        <div className="w-full md:w-1/2 bg-white dark:bg-gray-800 p-6 md:p-12 flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center justify-center w-full p-6 bg-white md:w-1/2 dark:bg-gray-800 md:p-12">
           <div className="w-full max-w-md space-y-4 md:space-y-6">
-            <div className="text-center md:text-left flex justify-between items-center">
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1 md:mb-2">
-                  Hello Again!
-                </h2>
-                <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
-                  Welcome Back
-                </p>
-              </div>
+            <div className="flex items-center">
+              <SvgComponent className="h-[300px]" />
             </div>
 
             <motion.form
               onSubmit={handleSubmit}
-              className="w-full max-w-md p-6 mt-10 rounded-lg shadow-md  bg-gray-50 dark:bg-gray-800"
+              className="w-full max-w-md p-6 mt-10 rounded-lg shadow-md bg-gray-50 dark:bg-gray-800"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -111,7 +103,7 @@ const LoginForm = () => {
                   Nombre de Usuario:
                 </label>
                 <Input
-                  className="w-full h-12 px-4 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full h-12 px-4 text-gray-900 bg-white rounded-lg dark:bg-gray-700 dark:text-white"
                   type="text"
                   id="username"
                   name="username"
@@ -128,7 +120,7 @@ const LoginForm = () => {
                   Contraseña:
                 </label>
                 <Input
-                  className="w-full h-12 px-4 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full h-12 px-4 text-gray-900 bg-white rounded-lg dark:bg-gray-700 dark:text-white"
                   type="password"
                   id="password"
                   name="password"
@@ -139,7 +131,7 @@ const LoginForm = () => {
               </div>
               <button
                 type="submit"
-                className="w-full h-12 bg-gray-900 dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 text-white dark:text-gray-900 transition-colors"
+                className="w-full h-12 text-white transition-colors bg-gray-900 dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 dark:text-gray-900"
               >
                 Iniciar Sesión
               </button>

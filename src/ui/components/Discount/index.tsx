@@ -16,8 +16,6 @@ import {
   cleanDataSales,
   createDiscountSales,
   deleteDiscountSales,
-  //   getDiscounts,
-  getDiscountsByBranch,
   getDiscountsByBranchAll,
   updateDiscountSales,
 } from '@/app/slices/salesSlice';
@@ -32,11 +30,11 @@ import {
 import { ITablaBranch } from '@/interfaces/branchInterfaces';
 import {
   IDescuentoCreate,
-  IDescuentoGrupo,
-  IDescuentoMapeado,
-  IDescuentosProductos,
+  //   IDescuentoGrupo,
+  //   IDescuentoMapeado,
+  //   IDescuentosProductos,
 } from '@/interfaces/salesInterfaces';
-import Pagination from '@/shared/components/ui/Pagination/Pagination';
+// import Pagination from '@/shared/components/ui/Pagination/Pagination';
 import { SearchComponent } from '@/shared/components/ui/Search';
 import { GetBranches } from '@/shared/helpers/Branchs';
 import { getFormatedDate } from '@/shared/helpers/transferHelper';
@@ -202,12 +200,14 @@ export default function DiscountManager() {
   };
 
   const openEditModal = (id: string) => {
-    // const discount = data.find((d) => d._id === id);
-    // if (discount) {
-    //   setFormState(discount);
-    //   setEditingId(id);
-    //   setIsModalOpen(true);
-    // }
+    const discount = Array.isArray(data)
+      ? data.find((d) => d._id === id)
+      : undefined;
+    if (discount) {
+      setFormState(discount);
+      setEditingId(id);
+      setIsModalOpen(true);
+    }
   };
 
   const openAddModal = () => {
@@ -233,8 +233,8 @@ export default function DiscountManager() {
   };
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  //   const [currentPage, setCurrentPage] = useState(1);
+  //   const itemsPerPage = 10;
 
   //   const filteredDiscounts = Array.isArray(data)
   //     ? data.filter((discount) =>

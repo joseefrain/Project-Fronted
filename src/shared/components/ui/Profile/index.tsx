@@ -92,10 +92,10 @@ export const ProfileUser = () => {
     <>
       <div>
         <div className="flex flex-col items-start justify-center ">
-          <h1 className="m-auto text-xl font-bold font-onest uppercase">
+          <h1 className="m-auto text-xl font-bold uppercase font-onest">
             {user?.username}
           </h1>
-          <p className="text-sm text-muted-foreground font-onest w-full justify-center ">
+          <p className="justify-center w-full text-sm text-muted-foreground font-onest ">
             <span className="font-semibold text-[14px] font-onest text-black dark:text-white">
               {user?.role}-
             </span>
@@ -105,11 +105,11 @@ export const ProfileUser = () => {
       </div>
 
       <div className="flex items-center justify-center gap-3 p-2">
-        <div className="container-header__profile__SC">
+        <div className="container-header_profile_SC">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className=" flex flex-wrap items-center gap-2 sm:flex-nowrap"
+            className="flex flex-wrap items-center gap-2  sm:flex-nowrap"
           >
             {userFilteredData?.map(
               (
@@ -128,9 +128,9 @@ export const ProfileUser = () => {
                       className="relative"
                     >
                       <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
-                      <div className="absolute inset-0 animate-ping rounded-full bg-green-500/40" />
+                      <div className="absolute inset-0 rounded-full animate-ping bg-green-500/40" />
                     </motion.div>
-                    <div className="flex gap-3 items-center">
+                    <div className="flex items-center gap-3">
                       <span className="font-semibold text-[14px] font-onest dark:text-white">
                         caja #{caja.consecutivo}
                       </span>

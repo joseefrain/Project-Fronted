@@ -25,11 +25,19 @@ import { CashRegister } from '../ui/components/CashRegister/page';
 import { PAGES_MODULES } from '../shared/helpers/roleHelper';
 import { PurchaseSale } from '../ui/components/Sales/indexPurchaseSale';
 import { ProductsCategories } from '../ui/components/Categories/ProductsCategories';
+import LoginForm from '@/ui/components/Login/LoginForm';
 
 export const Router = () => {
   return (
     <Routes>
-      <Route path="/login" element={<AlreadyAuthenticated />} />
+      <Route
+        path="/login"
+        element={
+          <AlreadyAuthenticated>
+            <LoginForm />
+          </AlreadyAuthenticated>
+        }
+      />
       <Route
         path="/"
         element={<RequireAuth module={PAGES_MODULES.DASHBOARD} />}

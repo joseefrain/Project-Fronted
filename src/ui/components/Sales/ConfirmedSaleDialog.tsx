@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +13,6 @@ import {
   IPaymentMethod,
   IProductSale,
 } from '@/interfaces/salesInterfaces';
-import { handlePrintInvoice } from '@/shared/helpers/salesHelper';
 import { getFormatedDate } from '@/shared/helpers/transferHelper';
 import {
   BadgeDollarSign,
@@ -24,7 +22,6 @@ import {
   Captions,
   Clock,
   Coins,
-  FileDown,
   Receipt,
   Store,
   User,
@@ -67,27 +64,11 @@ export const ConfirmedSaleDialog = ({
   cashReceived,
   saleSummary,
   username,
-  customerType,
-  customers,
   productSale,
   paymentMethod,
   creditMethod,
   months,
 }: IConfirmedSaleDialog) => {
-  const onPrintInvoice = () => {
-    handlePrintInvoice({
-      branchSelected: branchName,
-      transactionDate: transactionDate!,
-      customer,
-      customerType,
-      customers,
-      paymentMethod,
-      cashReceived,
-      saleSummary,
-      productSale,
-    });
-  };
-
   return (
     <Dialog
       open={isModalOpen}
@@ -198,12 +179,7 @@ export const ConfirmedSaleDialog = ({
               paymentMethod === IPaymentMethod.CASH ? `$${cashReceived}` : ''
             }
             tipoCredit={creditMethod}
-            meses={months}
           />
-          <Button onClick={onPrintInvoice} variant="outline">
-            <FileDown className="w-4 h-4 mr-2" />
-            Descargar PDF
-          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

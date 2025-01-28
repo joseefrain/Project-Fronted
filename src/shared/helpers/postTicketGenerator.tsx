@@ -9,7 +9,6 @@ interface IPOSTicketGenerator {
   date: string;
   transactionId: string;
   cashierName: string;
-  //
   Branchs: string;
   Cliente: string;
   Cajero: string;
@@ -17,73 +16,68 @@ interface IPOSTicketGenerator {
   metodoPago: string;
   efectivoRecibido: string;
   tipoCredit: string;
-  meses: string;
 }
 
 export const POSTicketGenerator = ({
   products,
   total,
-  date,
   transactionId,
   cashierName,
-
   Branchs,
   Cliente,
-  Cajero,
   fechaHora,
   metodoPago,
   efectivoRecibido,
   tipoCredit,
-  meses,
 }: IPOSTicketGenerator) => {
   const printFrame = useRef<HTMLIFrameElement>(null);
+
   const generateTicketText = (): string => {
-    let ticketText = `Purchase Ticket***
----------------------------------------------
-Fecha: ${date}
-Transacción: ${transactionId}
+    const lineBreak = '---------------------------------------------';
+    const space = ' '.repeat(40);
+    const center = (text: string, width = 40) =>
+      text.padStart((width - text.length) / 2 + text.length).padEnd(width);
+
+    let ticketText = `
+${center('Nichos.CORPS', 45)}
+${center('Frente a la Materno Infantil', 45)}
+${center('(505) 86349918', 45)}
+${lineBreak}
+  Transaccion: ${transactionId}
+ 
+${lineBreak}
 
 Cajero: ${cashierName}
-
 Sucursal: ${Branchs}
 
 Cliente: ${Cliente}
-
-Cajero: ${Cajero}
-
-Fecha y Hora: ${fechaHora}
+Fecha: ${fechaHora}
 
 Metodo de Pago: ${metodoPago}
+Efectivo Recibido: ${efectivoRecibido ? efectivoRecibido : '-'} 
+${tipoCredit ? `Tipo de Credito: ${tipoCredit}\n` : ''}
+${lineBreak}
 
-Efectivo Recibido: ${efectivoRecibido}
+${'Producto'.padEnd(20)}${'Cant.'.padStart(6)}${'Precio'.padStart(15)}
+${lineBreak}
 
-Tipo de Crédito: ${tipoCredit}
-
-Meses: ${meses}
-
-
-Products:
 ${products
   .map(
     (product) =>
-      `${product.productName.slice(0, 20).padEnd(20)}       x${product.quantity.toString().padStart(2)}       $${product.price.toFixed(2).padStart(6)}\n---------------------------------------------`
+      `${product.productName.slice(0, 20).padEnd(20)} x${product.quantity}${product.price
+        .toFixed(2)
+        .padStart(20)}`
   )
   .join('\n')}
 
-Total: ${total}
 
-*                                          *
-*                                          *
-*                                          *
-
---------------------------------------------
-******************* FIRMA ******************
-*                                          *
-*                                          *
-Gracias por su compra!
-***
+${lineBreak}
+TOTAL: ${total.padStart(37)}
+${lineBreak}
+${space}
+${space}
+${center('Gracias por su Compra !', 50)}
 `;
-
     return ticketText;
   };
 
@@ -91,30 +85,35 @@ Gracias por su compra!
     const ticketText = generateTicketText();
     const doc = new jsPDF();
 
-    // Agrega el texto al PDF
+    doc.setFont('courier', 'normal');
+    doc.setFontSize(10);
     doc.text(ticketText, 10, 10);
 
-    // Descarga el PDF
     doc.save('ticket.pdf');
   };
 
-  //   const printTicket = () => {
-  //     const ticketText = generateTicketText();
-  //     if (printFrame.current) {
-  //       const frameDoc = printFrame.current.contentDocument;
-  //       if (frameDoc) {
-  //         frameDoc.body.innerHTML = `<pre>${ticketText}</pre>`;
-  //         frameDoc.close();
-  //         printFrame.current.contentWindow?.print();
-  //       }
-  //     }
-  //   };
+  const printTicket = () => {
+    const ticketText = generateTicketText();
+
+    if (printFrame.current) {
+      const frameDoc = printFrame.current.contentDocument;
+      if (frameDoc) {
+        frameDoc.body.innerHTML = `<pre>${ticketText}</pre>`;
+        frameDoc.close();
+        printFrame.current.contentWindow?.print();
+      }
+    }
+  };
 
   return (
-    <>
-      <div className="mt-4 space-x-4">
-        <Button onClick={generatePDF}>Download Ticket as PDF</Button>
-      </div>
-    </>
+    <div className="flex mt-4 space-x-4">
+      <Button onClick={printTicket}>Imprimir Ticket</Button>
+      <Button onClick={generatePDF}>Descargar PDF</Button>
+      <iframe
+        ref={printFrame}
+        style={{ display: 'none' }}
+        title="print-frame"
+      />
+    </div>
   );
 };
