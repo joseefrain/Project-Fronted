@@ -22,7 +22,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Branch } from '@/interfaces/branchInterfaces';
-import { IDescuentoCreate } from '@/interfaces/salesInterfaces';
+import {
+  IDescountTypePV,
+  IDescuentoCreate,
+} from '@/interfaces/salesInterfaces';
 import { cn } from '@/lib/utils';
 import { SelectSearch } from '@/shared/components/ui/SelectSearch';
 import { format } from 'date-fns';
@@ -120,7 +123,7 @@ export const IndexModal = ({
                 </Select>
               </div>
               <div className="flex w-full gap-4">
-                <div className={'w-full'}>
+                <div className="w-full">
                   <Label htmlFor="tipoDescuento">Seleccion</Label>
                   <SelectSearch
                     key={formState.tipoDescuentoEntidad}
@@ -187,7 +190,6 @@ export const IndexModal = ({
                   />
                 </div>
               </div>
-
               <div className="flex w-full gap-4">
                 <div>
                   <Label>Fecha Inicio</Label>
@@ -254,29 +256,54 @@ export const IndexModal = ({
                   </Popover>
                 </div>
               </div>
+              <div className="flex w-full gap-4">
+                <div className="flex w-full  flex-col gap-2">
+                  <Label htmlFor="tipoDescuento"> Tipo del Minimo</Label>
+                  <Select
+                    value={formState.minimoType}
+                    onValueChange={(value) =>
+                      updateFormState('minimoType', value as IDescountTypePV)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="compra">Compra</SelectItem>
+                      <SelectItem value="cantidad">Cantidad</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div>
-                <Label htmlFor="minimoCompra">Mínimo Compra</Label>
-                <Input
-                  id="minimoCompra"
-                  type="number"
-                  value={formState.minimoCompra.$numberDecimal}
-                  onChange={(e) =>
-                    updateFormState('minimoCompra', e.target.value)
-                  }
-                />
+                {formState.minimoType === 'compra' && (
+                  <div className="flex w-full  flex-col gap-2">
+                    <Label htmlFor="minimoCompra">Mínimo Compra</Label>
+                    <Input
+                      id="minimoCompra"
+                      type="number"
+                      value={formState.minimoCompra.$numberDecimal}
+                      onChange={(e) =>
+                        updateFormState('minimoCompra', e.target.value)
+                      }
+                    />
+                  </div>
+                )}
+
+                {formState.minimoType === 'cantidad' && (
+                  <div className="flex w-full  flex-col gap-2">
+                    <Label htmlFor="minimoCantidad">Mínimo Cantidad</Label>
+                    <Input
+                      id="minimoCantidad"
+                      type="number"
+                      value={formState.minimoCantidad}
+                      onChange={(e) =>
+                        updateFormState('minimoCantidad', e.target.value)
+                      }
+                    />
+                  </div>
+                )}
               </div>
-              <div>
-                <Label htmlFor="minimoCantidad">Mínimo Cantidad</Label>
-                <Input
-                  id="minimoCantidad"
-                  type="number"
-                  value={formState.minimoCantidad}
-                  onChange={(e) =>
-                    updateFormState('minimoCantidad', e.target.value)
-                  }
-                />
-              </div>
+
               <div>
                 <Label htmlFor="codigoDescunto">Código Descuento</Label>
                 <Input
@@ -290,7 +317,8 @@ export const IndexModal = ({
               <Button
                 disabled={
                   formState.minimoCantidad === 0 ||
-                  formState.minimoCompra.$numberDecimal === 0 ||
+                  (formState.minimoCompra &&
+                    formState.minimoCompra.$numberDecimal) === 0 ||
                   formState.valorDescuento <= 0
                 }
                 type="submit"
