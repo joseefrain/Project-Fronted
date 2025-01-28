@@ -1,6 +1,5 @@
 import { OrdersReceivedById } from '@/app/slices/transferSlice';
 import { store } from '@/app/store';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
@@ -32,6 +31,7 @@ export const OrdersReceived = () => {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Id]);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -51,9 +51,6 @@ export const OrdersReceived = () => {
           </CardHeader>
           <CardContent>
             <div className="flex justify-between mb-4">
-              <div className="flex space-x-2">
-                <Button variant="outline">Order History</Button>
-              </div>
               <div className="flex  space-x-2">
                 <Input
                   type="text"

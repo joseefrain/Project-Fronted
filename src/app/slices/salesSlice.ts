@@ -1,7 +1,6 @@
 import {
   createDiscount,
   deleteDiscount,
-  getAllDiscounts,
   getCashier,
   getDiscountByBranchId,
   getPurchaseByBranchId,
@@ -42,7 +41,7 @@ export interface ICaja {
 interface SalesState {
   caja: ICaja | null;
   sales: ISale[];
-  discounts: IDescuentoCreate[];
+  discounts: IListDescuentoResponse | null;
   branchDiscounts: IListDescuentoResponse;
   branchSales: ISale[];
   branchPurchases: ISale[];
@@ -53,7 +52,7 @@ interface SalesState {
 const initialState: SalesState = {
   caja: null,
   sales: [],
-  discounts: [],
+  discounts: null,
   branchSales: [],
   branchPurchases: [],
   branchDiscounts: {} as IListDescuentoResponse,
@@ -97,17 +96,19 @@ export const updateDiscountSales = createAsyncThunk(
   }
 );
 
-//GET
-export const getDiscounts = createAsyncThunk('transactions/get', async () => {
-  try {
-    const response = await getAllDiscounts();
-    return response.data;
-  } catch (error) {
-    return handleThunkError(error);
-  }
-});
-
 export const getDiscountsByBranch = createAsyncThunk(
+  'transactions/getByBranchId',
+  async (id: string) => {
+    try {
+      const response = await getDiscountByBranchId(id);
+      return response.data;
+    } catch (error) {
+      return handleThunkError(error);
+    }
+  }
+);
+
+export const getDiscountsByBranchAll = createAsyncThunk(
   'transactions/getByBranchId',
   async (id: string) => {
     try {
@@ -198,7 +199,7 @@ const salesSlice = createSlice({
   name: 'transactions',
   initialState,
   reducers: {
-    setDiscounts: (state, action: PayloadAction<IDescuentoCreate[]>) => {
+    setDiscounts: (state, action: PayloadAction<IListDescuentoResponse>) => {
       state.discounts = action.payload;
     },
     updateStatus: (state, action: PayloadAction<IStatus>) => {
@@ -206,7 +207,7 @@ const salesSlice = createSlice({
     },
 
     cleanDataSales: (state) => {
-      state.discounts = [];
+      state.discounts = {} as IListDescuentoResponse;
     },
   },
   extraReducers: (builder) => {
@@ -214,41 +215,31 @@ const salesSlice = createSlice({
       .addCase(createDiscountSales.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(createDiscountSales.fulfilled, (state, { payload }) => {
-        state.status = 'succeeded';
-        state.discounts = [...state.discounts, payload as IDescuentoCreate];
-      })
       .addCase(deleteDiscountSales.pending, (state) => {
         state.status = 'loading';
-      })
-      .addCase(deleteDiscountSales.fulfilled, (state, { payload }) => {
-        state.status = 'succeeded';
-        state.discounts = state.discounts.filter(
-          (discount) => discount?._id !== payload?._id
-        );
       })
 
       .addCase(updateDiscountSales.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(updateDiscountSales.fulfilled, (state, { payload }) => {
-        state.status = 'succeeded';
-        state.discounts = state.discounts.map((discount) =>
-          discount._id === payload._id ? payload : discount
-        );
-      })
+      //   .addCase(updateDiscountSales.fulfilled, (state, { payload }) => {
+      //     state.status = 'succeeded';
+      //     state.discounts = state.discounts.map((discount) =>
+      //       discount._id === payload._id ? payload : discount
+      //     );
+      //   })
 
-      .addCase(getDiscounts.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(getDiscounts.fulfilled, (state, { payload }) => {
-        state.status = 'succeeded';
-        state.discounts = payload as IDescuentoCreate[];
-      })
-      .addCase(getDiscountsByBranch.fulfilled, (state, { payload }) => {
-        state.status = 'succeeded';
-        state.branchDiscounts = payload;
-      })
+      //   .addCase(getDiscounts.pending, (state) => {
+      //     state.status = 'loading';
+      //   })
+      //   .addCase(getDiscounts.fulfilled, (state, { payload }) => {
+      //     state.status = 'succeeded';
+      //     state.discounts = payload as IDescuentoCreate[];
+      //   })
+      //   .addCase(getDiscountsByBranch.fulfilled, (state, { payload }) => {
+      //     state.status = 'succeeded';
+      //     state.branchDiscounts = payload;
+      //   })
       .addCase(createSale.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
         state.sales = [...state.sales, payload];
@@ -263,6 +254,13 @@ const salesSlice = createSlice({
       .addCase(getPurchasesByBranch.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
         state.branchPurchases = payload;
+      })
+      .addCase(getDiscountsByBranch.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getDiscountsByBranchAll.fulfilled, (state, { payload }) => {
+        state.status = 'succeeded';
+        state.discounts = payload;
       });
   },
 });

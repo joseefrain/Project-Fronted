@@ -18,8 +18,6 @@ import {
   IShippedOrder,
 } from '@/interfaces/transferInterfaces';
 import { useNavigate } from 'react-router-dom';
-// import { store } from '@/app/store';
-// import { setSelectItemDetail } from '@/app/slices/transferSlice';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 interface IImageGridCardProps {
@@ -28,6 +26,7 @@ interface IImageGridCardProps {
   subtitle: string;
   description?: string;
 }
+
 interface IOrder {
   order: IShippedOrder;
   items: IDetalleSelected | null;
@@ -39,11 +38,6 @@ export const MapIndex = ({ order }: IOrder) => {
   ];
 
   const navigate = useNavigate();
-
-  //   const handleSelectItem = (items: IDetalleSelected) => {
-  //     console.log(items, 'items');
-  //     store.dispatch(setSelectItemDetail(items));
-  //   };
 
   return (
     <TableRow key={order._id} className="cursor-pointer">
@@ -81,7 +75,7 @@ export const MapIndex = ({ order }: IOrder) => {
                 : 'Solicitado'}
         </Badge>
       </TableCell>
-      <TableCell>{order.usuarioIdEnvia.username}</TableCell>
+      <TableCell>{order?.usuarioIdEnvia?.username}</TableCell>
       <TableCell>
         <div className="flex items-center justify-center gap-2">
           <Dialog>
@@ -94,7 +88,7 @@ export const MapIndex = ({ order }: IOrder) => {
             <DialogContent className="p-3">
               <ImageGridCard
                 images={imageSources ?? ''}
-                title={order.usuarioIdEnvia.username}
+                title={order?.usuarioIdEnvia?.username}
                 subtitle={getTimeElapsed(new Date(order.fechaEnvio))}
                 description={order.comentarioEnvio}
               />
@@ -137,7 +131,7 @@ export const ImageGridCard = ({
       <CardContent className="space-y-4">
         {description && <p className="text-sm">{description}</p>}
         {imageCount > 0 ? (
-          <div className={`grid ${getGridClass()} gap-1`}>
+          <div className={`grid ${getGridClass()} gap-1 dark:bg-white`}>
             {images.slice(0, 6).map((src, index) => (
               <div
                 key={index}

@@ -150,16 +150,18 @@ export const AddContact = ({ initialData, onClose }: AddContactProps) => {
   return (
     <div className="">
       <div className="flex items-center justify-between p-4 border-b">
-        <h2 className="text-xl font-semibold text-gray-800">Nuevo contacto</h2>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+          Nuevo contacto
+        </h2>
       </div>
 
-      <form className="p-6 space-y-6">
+      <form className="p-6 space-y-6 max-h-[550px] max-sm:overflow-scroll">
         <div className="flex overflow-hidden border rounded-md">
           <Button
             className={`flex-1 rounded-none ${
               entityType === 'customer'
                 ? 'bg-primary text-primary-foreground'
-                : 'bg-background text-black hover:text-white'
+                : 'bg-background text-black hover:text-white dark:text-white'
             }`}
             onClick={() => setEntityType('customer')}
             type="button"
@@ -170,7 +172,7 @@ export const AddContact = ({ initialData, onClose }: AddContactProps) => {
             className={`flex-1 rounded-none ${
               entityType === 'supplier'
                 ? 'bg-primary text-primary-foreground hover:bg-primary'
-                : 'bg-background text-black hover:text-white'
+                : 'bg-background text-black hover:text-white dark:text-white '
             }`}
             onClick={() => setEntityType('supplier')}
             type="button"

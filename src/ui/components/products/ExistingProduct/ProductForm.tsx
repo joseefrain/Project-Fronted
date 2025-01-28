@@ -58,7 +58,7 @@ const fields: {
   },
   { id: 'precio', label: 'Precio', type: 'number' },
   { id: 'stock', label: 'Stock', type: 'number', min: '0' },
-  { id: 'puntoReCompra', label: 'Punto de ReCompra', type: 'number', min: '0' },
+  { id: 'puntoReCompra', label: 'MinimoStock', type: 'number', min: '0' },
 ];
 
 const ProductForm = ({

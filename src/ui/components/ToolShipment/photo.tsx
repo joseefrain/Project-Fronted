@@ -73,7 +73,9 @@ export default function Images({
             <Camera className="w-4 h-4" />
           )}
           {showTitle && (
-            <span className="text-sm font-semibold uppercase">imágenes</span>
+            <span className="text-sm font-semibold uppercase hidden lg:block">
+              imágenes
+            </span>
           )}
           {savedImages.length > 0 && (
             <Badge variant="secondary" className="ml-1">
@@ -94,7 +96,7 @@ export default function Images({
             <div className="grid grid-cols-2 gap-1">
               {fotos.length > 0 ? (
                 fotos.map((foto, index) => (
-                  <div key={index} className="col-span-1">
+                  <div key={index} className="col-span-1 dark:bg-black">
                     <img
                       src={foto}
                       alt={`Foto ${index}`}
@@ -117,7 +119,7 @@ export default function Images({
                     <Label htmlFor="picture" className="sr-only">
                       Agregar más
                     </Label>
-                    <div className="relative">
+                    <div className="relative dark:bg-white">
                       <Input
                         id="picture"
                         type="file"

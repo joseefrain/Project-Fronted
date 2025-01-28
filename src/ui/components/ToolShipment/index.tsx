@@ -150,7 +150,7 @@ export default function ToolShipment() {
             </CardHeader>
             <CardContent>
               <div className="relative mb-4">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground " />
                 <Input
                   placeholder="Nombre herramientas..."
                   className="pl-8"
@@ -192,7 +192,11 @@ export default function ToolShipment() {
                         <TableCell>
                           <Input
                             type="number"
-                            value={tool.quantityToSend}
+                            value={
+                              tool.quantityToSend >= 0
+                                ? Math.min(tool.quantityToSend, tool.stock)
+                                : tool.quantityToSend
+                            }
                             onChange={(e) =>
                               handleQuantityChange(
                                 tool.id!,

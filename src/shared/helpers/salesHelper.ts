@@ -20,7 +20,7 @@ export const applyDiscounts = (
   let porcentajeAplicado = 0;
 
   const descuentosProducto = descuentos.descuentosPorProductosGenerales
-    .concat(descuentos.descuentosPorProductosEnSucursal)
+    ?.concat(descuentos.descuentosPorProductosEnSucursal)
     .filter(
       (d) =>
         d.productId?.toString() === productId &&
@@ -31,7 +31,7 @@ export const applyDiscounts = (
     );
 
   const descuentosGrupo = descuentos.descuentosPorGruposGenerales
-    .concat(descuentos.descuentosPorGruposEnSucursal)
+    ?.concat(descuentos.descuentosPorGruposEnSucursal)
     .filter(
       (d) =>
         d.grupoId === groupId &&
@@ -42,16 +42,16 @@ export const applyDiscounts = (
     );
 
   const descuentoAplicable =
-    descuentosProducto.length > 0
-      ? descuentosProducto[0].descuentoId
-      : descuentosGrupo.length > 0
-        ? descuentosGrupo[0].descuentoId
+    descuentosProducto?.length > 0
+      ? descuentosProducto[0]?.descuentoId
+      : descuentosGrupo?.length > 0
+        ? descuentosGrupo[0]?.descuentoId
         : null;
 
   const discountType =
-    descuentosProducto.length > 0
+    descuentosProducto?.length > 0
       ? 'producto'
-      : descuentosGrupo.length > 0
+      : descuentosGrupo?.length > 0
         ? 'grupo'
         : null;
 

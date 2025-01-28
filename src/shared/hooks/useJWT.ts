@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import { getUserDataFromLocalStorage } from '../helpers/login.Helper';
+import { useEffect, useState } from 'react';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { logout, updateSignIn } from '../../app/slices/login';
 import { store } from '../../app/store';
+import { useAppSelector } from '../../app/hooks';
 
 export interface IToken {
   token: string;
@@ -18,32 +18,28 @@ export interface AuthState {
 }
 
 export const useAuthToken = () => {
-  const initialToken = useRef(getUserDataFromLocalStorage()?.token || '');
-  const [token, setToken] = useState<string>(initialToken.current);
+  const initialToken = useAppSelector((state) => state.auth.signIn.token);
+  const [token, setToken] = useState(initialToken);
   const navigate = useNavigate();
-  const hasCheckedToken = useRef(false);
+  const [isTokenChecked, setIsTokenChecked] = useState(false);
 
   useEffect(() => {
     const checkToken = async () => {
       if (!token || hasTokenExpired(token)) {
-        alert('TOKEN EXPIRADO');
-        handleAuthentication('', false, navigate);
+        // alert('TOKEN EXPIRADO');
         setToken('');
-        console.log('Antes de logout');
+        localStorage.removeItem('user');
         store.dispatch(logout());
-        console.log('Después de logout');
+        navigate('/login', { replace: true });
+        return;
       }
+      setIsTokenChecked(true);
     };
 
-    if (!hasCheckedToken.current) {
+    if (!isTokenChecked) {
       checkToken();
-      hasCheckedToken.current = true;
     }
-
-    return () => {
-      hasCheckedToken.current = false;
-    };
-  }, [token, navigate]);
+  }, [token, navigate, isTokenChecked]);
 
   return { token };
 };
@@ -74,12 +70,15 @@ export const handleAuthentication = (
   };
 
   store.dispatch(updateSignIn(authState));
+  if (navigate) return navigate('/login');
+};
 
-  if (!isAuth) {
-    localStorage.removeItem('user');
-    if (navigate) {
-      navigate('/login', { replace: true });
-    }
+export const getUserDataFromLocalStorage = (): IToken | null => {
+  const userDataString = localStorage.getItem('user');
+  if (userDataString) {
+    return JSON.parse(userDataString);
+  } else {
+    return null;
   }
 };
 

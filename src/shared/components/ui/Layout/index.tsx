@@ -18,7 +18,7 @@ export const Layout = ({ children }: LayoutProps) => {
     <div className="flex flex-col h-screen">
       <Header />
       <div className="flex flex-1">
-        <Sidebar className="hidden capitalize md:block" links={sidebarLinks} />
+        <Sidebar className=" capitalize" links={sidebarLinks} />
         <div className="container-Layout">{children}</div>
         <Toaster />
       </div>

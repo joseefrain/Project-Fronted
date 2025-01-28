@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import {
+  dataCoins,
   ICreditMethod,
   ICustomerType,
   INewSale,
@@ -63,6 +64,7 @@ import { ConfirmedPurchaseDialog } from './ConfirmedPurchaseDialog';
 import './style.scss';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import { ICajaBrach } from '../../../app/slices/cashRegisterSlice';
 
 export interface ISaleSummary {
   subTotal: number;
@@ -82,13 +84,11 @@ export const PurchaseCashier = ({
   setProductSale,
 }: ICashierProps) => {
   const access = useRoleAccess(PAGES_MODULES.CREDITOS);
-  const caja = store.getState().boxes.boxState;
+  const caja = store.getState().auth.signIn.cajaId as ICajaBrach;
   const user = store.getState().auth.signIn.user;
   const branchSelected = store.getState().branches.selectedBranch;
   const allEntities = useAppSelector((state) => state.entities.data);
-  const selectedCoin = useAppSelector(
-    (state) => state.coins.selectedCoin?.simbolo
-  );
+  const coin = dataCoins.currentS;
 
   const registeredCustomers = allEntities.filter(
     (entity) => entity.type === 'supplier'
@@ -159,9 +159,16 @@ export const PurchaseCashier = ({
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    if (!caja) return;
+    setCashInRegister(
+      parseFloat(caja?.montoEsperado?.$numberDecimal.toString()) ?? 0
+    );
+  }, [caja]);
+
   const handleProcessSale = () => {
-    if (!caja || caja.length === 0) {
-      toast.error('Debe abrir una caja para procesar la venta.');
+    if (!caja) {
+      toast.error('Debe abrir una caja para procesar la compra.');
       return;
     }
 
@@ -177,7 +184,7 @@ export const PurchaseCashier = ({
       discount: saleSummary.totalDiscount,
       cambioCliente: saleSummary.change,
       monto: Number(cashReceived),
-      cajaId: caja && caja[0] ? caja[0]._id : '',
+      cajaId: caja._id,
       paymentMethod,
       tipoTransaccion: ITypeTransaction.COMPRA,
     };
@@ -223,19 +230,12 @@ export const PurchaseCashier = ({
     setIsModalOpen(false);
   };
 
-  useEffect(() => {
-    if (!caja) return;
-    setCashInRegister(
-      parseFloat(caja[0]?.montoEsperado.$numberDecimal.toString()) ?? 0
-    );
-  }, [caja]);
-
   return (
     <>
       <Card className="shadow-lg bg-white/80 font-onest dark:bg-gray-800">
         <CardHeader className="flex flex-col justify-between gap-2 pb-4">
-          <div className="flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2 font-bold text-primary">
+          <div className="container-inventory">
+            <CardTitle className="container-inventory__text">
               <Receipt />
               {user?.username.toUpperCase()}
             </CardTitle>
@@ -248,7 +248,12 @@ export const PurchaseCashier = ({
             <div className="flex items-center text-sm">
               <Clock className="w-4 h-4 mr-2" />
               <span className="font-semibold">
-                {currentTime.toLocaleTimeString().toUpperCase()}
+                {currentTime
+                  .toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                  .toUpperCase()}
               </span>
             </div>
           </div>
@@ -258,7 +263,7 @@ export const PurchaseCashier = ({
               Efectivo en caja
             </span>
             <span className="font-bold font-onest">
-              $
+              {coin}
               {!isNaN(cashInRegister)
                 ? cashInRegister.toLocaleString('en-US', {
                     minimumFractionDigits: 0,
@@ -488,7 +493,7 @@ export const PurchaseCashier = ({
                           value={months}
                           onChange={(e) => setMonths(e.target.value)}
                           placeholder="0"
-                          className="font-semibold text-center bg-white font-onest"
+                          className="font-semibold text-center bg-white font-onest dark:bg-black"
                           disabled={processingSale}
                         />
                       </div>
@@ -504,7 +509,7 @@ export const PurchaseCashier = ({
             <div className="flex justify-between text-sm">
               <span>Subtotal:</span>
               <span>
-                {selectedCoin}
+                {coin}
                 {saleSummary.subTotal.toFixed(2)}
               </span>
             </div>
@@ -512,7 +517,7 @@ export const PurchaseCashier = ({
             <div className="flex justify-between text-lg font-bold text-primary">
               <span>Total a pagar:</span>
               <span>
-                {selectedCoin}
+                {coin}
                 {saleSummary.total.toFixed(2)}
               </span>
             </div>
@@ -520,7 +525,7 @@ export const PurchaseCashier = ({
             <div className="flex justify-between p-2 text-sm bg-green-100 rounded shadow-md dark:bg-black">
               <span>Cambio:</span>
               <span className="font-medium">
-                {selectedCoin}
+                {coin}
                 {saleSummary.change.toFixed(2)}
               </span>
             </div>

@@ -5,6 +5,15 @@ export interface IListDescuentoResponse {
   descuentosPorGruposEnSucursal: IDescuentoGrupo[];
 }
 
+export interface IDescuentoMapeado {
+  descuentoId: IDescuento;
+  productId?: string;
+  sucursalId?: string;
+  deleted_at: Date | null;
+  grupoId?: string;
+  tipoEntidad: 'Product' | 'Group';
+}
+
 export interface IDescuentosProductos {
   descuentoId: IDescuento;
   productId: string;
@@ -134,3 +143,7 @@ export interface ITransactionReturn {
   montoExterno?: number | null;
   products: IProductReturn[];
 }
+export const dataCoins = {
+  currentS: 'C$',
+  idGlobal: '6788969390f63a009f1bea40',
+};

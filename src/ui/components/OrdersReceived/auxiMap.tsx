@@ -62,7 +62,12 @@ export const AuxiliarMap = ({ dataTable, dataAuxiliar }: IOrder) => {
       </TableCell>
       <TableCell>{dataTable.cantidad}</TableCell>
       <TableCell>
-        <Badge variant={getBadgeVariant()}>{getStatusLabel()}</Badge>
+        <Badge
+          className="text-white dark:bg-black h-8"
+          variant={getBadgeVariant()}
+        >
+          {getStatusLabel()}
+        </Badge>
       </TableCell>
       {
         <TableCell>
@@ -72,7 +77,7 @@ export const AuxiliarMap = ({ dataTable, dataAuxiliar }: IOrder) => {
                 {!dataTable.recibido && (
                   <Button
                     size="sm"
-                    className="text-white"
+                    className="text-white dark:bg-black"
                     onClick={() => handleReturnProducts(dataTable._id)}
                   >
                     Regresar Producto
@@ -104,7 +109,7 @@ export const AuxiliarMap = ({ dataTable, dataAuxiliar }: IOrder) => {
               fechaRecepcion={dataAuxiliar?.fechaRecepcion ?? new Date()}
               productos={dataTable.archivosAdjuntos ?? []}
               firmaRecepcion={dataAuxiliar?.firmaEnvio ?? ''}
-              comentarioEnvio={dataAuxiliar?.comentarioEnvio ?? ''}
+              comentarioEnvio={dataTable?.comentarioEnvio ?? ''}
             />
           </DialogContent>
         </Dialog>

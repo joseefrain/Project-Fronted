@@ -24,12 +24,12 @@ import React, { useEffect, useState } from 'react';
 import { ProductSale } from '../Sales/ProductSale';
 import { AddProduct } from '../Table/sear';
 import { store } from '../../../app/store';
-import { createProduct } from '../../../app/slices/branchSlice';
 import { toast, Toaster } from 'sonner';
 import { getAllGroupsSlice } from '../../../app/slices/groups';
 import './style.scss';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import { createProduct } from '../../../app/slices/branchSlice';
 
 export interface ISaleProps {
   products: ITablaBranch[];
@@ -54,7 +54,6 @@ export const Purchase = ({
   const [selectedProduct, setSelectedProduct] = useState<ITablaBranch | null>(
     null
   );
-  console.log(selectedProduct, 'selectedProduct');
   const [buffer, setBuffer] = useState<string>('');
 
   const handleSelectProduct = (productId: string) => {
@@ -84,14 +83,12 @@ export const Purchase = ({
       quantity: quantity,
       price: price,
       discount: null,
-      groupId: '675b8283b0abd32684ea6c9c',
+      groupId: '',
       clientType: 'Proveedor',
       inventarioSucursalId: selectedProduct?.inventarioSucursalId ?? '',
       //@ts-ignore
       costoUnitario: parseFloat(selectedProduct?.costoUnitario?.$numberDecimal),
     };
-
-    console.log(newProductSale, 'newProductCompra');
 
     const isExistentProduct = productSale.find(
       (p) =>
@@ -237,7 +234,7 @@ export const Purchase = ({
         )}
       </CardHeader>
       <CardContent className="h-[80%]">
-        <div className="flex gap-4 mb-4">
+        <div className="containerInputs">
           <div className="flex flex-col w-full gap-1">
             <Label className="text-xs">Producto</Label>
             <Popover open={open} onOpenChange={setOpen}>

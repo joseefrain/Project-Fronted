@@ -1,16 +1,11 @@
-// components/PrivateRoute.tsx
-import { RootState } from '@/app/store';
-import AuthForm from '@/ui/components/Login';
+import { RootState, store } from '@/app/store';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
-import {
-  handleAuthentication,
-  hasTokenExpired,
-  useAuthToken,
-} from '../hooks/useJWT';
+import { hasTokenExpired, useAuthToken } from '../hooks/useJWT';
 import { PAGES_MODULES } from './roleHelper';
 import { useRoleAccess } from '../hooks/useRoleAccess';
+import { logout } from '../../app/slices/login';
 
 export interface IRequireAuthProps {
   module: PAGES_MODULES;
@@ -23,11 +18,16 @@ export const RequireAuth = ({ module }: IRequireAuthProps) => {
 
   useEffect(() => {
     if (!token || hasTokenExpired(token)) {
-      handleAuthentication('', false, navigate);
+      window.location.reload();
+      console.log('TOKEN EXPIRADO en RequireAuth');
+      localStorage.removeItem('user');
+      store.dispatch(logout());
+      //   handleAuthentication('', false, navigate);
       return;
     }
 
     if (!access.read) {
+      console.log('Acceso denegado al módulo. Redirigiendo al 404.');
       navigate('/404');
     }
   }, [token, navigate, access]);
@@ -35,25 +35,17 @@ export const RequireAuth = ({ module }: IRequireAuthProps) => {
   return <Outlet />;
 };
 
-export const AlreadyAuthenticated: React.FC = () => {
-  const { token } = useSelector((state: RootState) => state.auth.signIn);
-
-  if (token) {
-    return <Navigate to="/" />;
-  }
-  return <AuthForm />;
-};
-
-export interface IToken {
-  token: string;
-  role?: string;
+interface Access {
+  children: React.ReactNode;
 }
-export const getUserDataFromLocalStorage = (): IToken | null => {
-  const userDataString = localStorage.getItem('user');
 
-  if (userDataString) {
-    return JSON.parse(userDataString);
-  } else {
-    return null;
-  }
+export const AlreadyAuthenticated = ({ children }: Access) => {
+  const { token, status } = useSelector(
+    (state: RootState) => state.auth.signIn
+  );
+  return status === 'authenticated' && token ? (
+    <Navigate to="/" />
+  ) : (
+    <>{children}</>
+  );
 };

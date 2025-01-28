@@ -105,7 +105,7 @@ export default function Signature({
           ) : (
             <SignatureIcon className="w-4 h-4" />
           )}
-          {buttonText}
+          <div className="hidden lg:block">{buttonText}</div>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[400px] p-0" side="top">
@@ -117,7 +117,7 @@ export default function Signature({
             <CardTitle>{title}</CardTitle>
           </CardHeader>
           <CardContent className="font-onest">
-            <div className="p-2 mb-2 border rounded-md">
+            <div className="mb-2 border rounded-md dark:bg-white">
               {savedSignature ? (
                 <img src={savedSignature} alt="firma" className="w-full" />
               ) : (

@@ -76,7 +76,7 @@ export const Roles = () => {
   return (
     <div className="container h-auto mx-auto space-y-6 max-h-[75vh]">
       <div className="flex items-center justify-between">
-        <h1 className="mb-2.5 text-4xl font-bold text-gray-800 font-onest">
+        <h1 className="mb-2.5 text-4xl font-bold text-gray-800 font-onest dark:text-white">
           Roles
         </h1>
       </div>
@@ -86,15 +86,15 @@ export const Roles = () => {
           <div className="flex items-center gap-3">
             <Waypoints size={20} />
 
-            <CardTitle className="font-onest">Roles</CardTitle>
+            <CardTitle className="font-onest dark:text-white">Roles</CardTitle>
           </div>
 
-          <CardDescription className="font-onest">
+          <CardDescription className="font-onest dark:text-white">
             Gestione sus roles
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-between w-full">
+          <div className="flex justify-between w-full gp-2 ">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <SearchComponent
@@ -107,9 +107,9 @@ export const Roles = () => {
             {access.create && (
               <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogTrigger asChild>
-                  <Button size="sm" className="h-8 gap-1">
+                  <Button size="sm" className="h-9 gap-1">
                     <PlusCircle className="h-3.5 w-3.5" />
-                    <span className="font-onest">Agregar</span>
+                    <span className="font-onest max-md:hidden">Agregar</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="font-onest">

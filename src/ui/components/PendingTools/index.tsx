@@ -137,7 +137,7 @@ const IncomingShipmentTable = ({
               <TableCell>{shipment.consecutivo}</TableCell>
               <TableCell>{shipment.sucursalOrigenId.nombre}</TableCell>
               <TableCell>{getFormatedDate(shipment.fechaEnvio)}</TableCell>
-              <TableCell>{shipment.usuarioIdEnvia.username}</TableCell>
+              <TableCell>{shipment.usuarioIdEnvia?.username}</TableCell>
               <TableCell>
                 <div className="flex items-center justify-center gap-2">
                   <Dialog>
@@ -168,7 +168,7 @@ const IncomingShipmentTable = ({
                     to={`/transfer/pending/${shipment._id}/itemdepedido`}
                     state={{ id: shipment._id }}
                   >
-                    <Button size="sm" className="text-white">
+                    <Button size="sm" className="text-white dark:bg-black">
                       Recibir
                       <ArrowDown />
                     </Button>

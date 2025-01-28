@@ -62,11 +62,11 @@ const Comment = ({
         ) : (
           <Button variant="outline">
             {!comment ? (
-              <MessageSquare className="w-4 h-4" />
+              <MessageSquare className="w-4 h-4 " />
             ) : (
               <MessageSquareMore className="w-4 h-4" />
             )}
-            {buttonText}
+            <div className="hidden lg:block">{buttonText}</div>
           </Button>
         )}
       </PopoverTrigger>

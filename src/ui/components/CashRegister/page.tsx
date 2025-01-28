@@ -21,12 +21,7 @@ export const CashRegister = () => {
   const access = useRoleAccess(PAGES_MODULES.CASHREGISTER);
   const branchesID = useAppSelector((state) => state.auth.signIn.user);
   const dataBoxes = useAppSelector((state) => state.boxes.BoxesData);
-  const statusCashRegister = useAppSelector((state) =>
-    state.boxes.BoxesData?.flatMap((box) => ({
-      id: box._id,
-      estado: box.estado,
-    }))
-  );
+
   const idbox = localStorage.getItem('opened_box_id');
   const selectBranch = localStorage.getItem('selectedBranch');
 
@@ -35,25 +30,6 @@ export const CashRegister = () => {
   const [dialogMode, setDialogMode] = useState<
     'create' | 'ABIERTA' | 'CERRADA'
   >('create');
-
-  const saveBoxStateToLocalStorage = (
-    boxes: { id: string; estado: string }[]
-  ) => {
-    // const currentBoxes = JSON.parse(localStorage.getItem('boxState') || '[]');
-    // const updatedBoxes = boxes.reduce(
-    //   (acc: any[], updatedBox) => {
-    //     const index = acc.findIndex((box) => box.id === updatedBox.id);
-    //     if (index !== -1) {
-    //       acc[index] = updatedBox;
-    //     } else {
-    //       acc.push(updatedBox);
-    //     }
-    //     return acc;
-    //   },
-    //   [...currentBoxes]
-    // );
-    // localStorage.setItem('boxState', JSON.stringify(updatedBoxes));
-  };
 
   const resetLocalStorage = () => {
     removeFromLocalStorage('boxState');
@@ -68,29 +44,9 @@ export const CashRegister = () => {
   useEffect(() => {
     store
       .dispatch(getboxesbyBranch(branchesID?.sucursalId?._id as string))
-      .unwrap()
-      .then(() => {
-        if (statusCashRegister) {
-          saveBoxStateToLocalStorage(statusCashRegister);
-        }
-      });
+      .unwrap();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (dataBoxes) {
-      const processedStates = dataBoxes.map((box) => ({
-        id: box._id,
-        estado: box.estado,
-      }));
-      saveBoxStateToLocalStorage(processedStates);
-    }
-  }, [dataBoxes]);
-
-  useEffect(() => {
-    if (statusCashRegister) {
-      saveBoxStateToLocalStorage(statusCashRegister);
-    }
-  }, [statusCashRegister]);
 
   useEffect(() => {
     if (idbox) {
@@ -108,13 +64,7 @@ export const CashRegister = () => {
             usuarioAperturaId: branchesID?._id as string,
           })
         )
-        .unwrap()
-        .then((createdBox) => {
-          saveBoxStateToLocalStorage([
-            { id: createdBox._id, estado: 'ABIERTA' },
-          ]);
-          setIsDialogOpen(false);
-        });
+        .unwrap();
     } else if (mode === 'ABIERTA') {
       store
         .dispatch(
@@ -124,11 +74,7 @@ export const CashRegister = () => {
             montoInicial: data.montoInicial,
           })
         )
-        .unwrap()
-        .then(() => {
-          saveBoxStateToLocalStorage([{ id: data.cajaId, estado: 'ABIERTA' }]);
-          setIsDialogOpen(false);
-        });
+        .unwrap();
     } else if (mode === 'CERRADA') {
       store
         .dispatch(
@@ -142,18 +88,18 @@ export const CashRegister = () => {
         .unwrap()
 
         .then(() => {
-          saveBoxStateToLocalStorage([{ id: data.cajaId, estado: 'CERRADA' }]);
           resetLocalStorage();
           setIsDialogOpen(false);
         });
     }
   };
 
-
   return (
     <div className="container py-10 mx-auto">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">Administración de Cajas</h1>
+        <h1 className="text-3xl font-bold font-onest max-sm:text-[20px]">
+          Administración de Cajas
+        </h1>
         {access.create && (
           <Button
             onClick={() => {
@@ -162,7 +108,8 @@ export const CashRegister = () => {
               setDialogMode('create');
             }}
           >
-            <Plus className="w-4 h-4 mr-2" /> Nueva Caja
+            <Plus className="w-4 h-4 mr-2 max-sm:mr-0" />
+            <p className="max-sm:hidden">Nueva Caja</p>
           </Button>
         )}
       </div>
@@ -177,11 +124,7 @@ export const CashRegister = () => {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {dataBoxes?.map((box) => (
-          <CashRegisterCard
-            key={box._id}
-            cashRegister={box}
-            access={access}
-          />
+          <CashRegisterCard key={box._id} cashRegister={box} access={access} />
         ))}
       </div>
 

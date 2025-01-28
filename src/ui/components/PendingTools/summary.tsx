@@ -30,6 +30,8 @@ import { Badge } from '@/components/ui/badge';
 import { IStatus } from '@/interfaces/branchInterfaces';
 import { Skeleton } from '@/components/ui/skeleton';
 import './styles.scss';
+import { Switch } from '../../../components/ui/switch';
+import { useState } from 'react';
 
 const productStates = [
   { id: 1, value: 'Buen estado' },
@@ -62,10 +64,16 @@ export const SummaryPendingTools = ({
   handleRemoveComment,
   handleChangeBuyback,
 }: ISummaryPendingTools) => {
+  const [supplierMode, setSupplierMode] = useState(false);
+
+  const handleChangeToogle = () => {
+    setSupplierMode(!supplierMode);
+  };
+
   return (
     <Card className="branch__transfer__list">
       <CardHeader>
-        <CardTitle>Herramientas</CardTitle>
+        <CardTitle>Productos a recibir</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
@@ -76,7 +84,7 @@ export const SummaryPendingTools = ({
               <TableHead className="w-[10%]">Enviado</TableHead>
               <TableHead className="w-[10%]">Recibido</TableHead>
               <TableHead className="w-[10%]">Precio ud.</TableHead>
-              <TableHead className="w-[10%]">Punto de Recompra</TableHead>
+              <TableHead className="w-[10%]">MinimoStock</TableHead>
               <TableHead className="w-[13%]">Estado</TableHead>
               <TableHead className=" text-center w-[15%]">Detalles</TableHead>
               <TableHead className="text-center w-[15%]">Acciones</TableHead>
@@ -85,7 +93,6 @@ export const SummaryPendingTools = ({
           <TableBody>
             {status === 'loading' &&
               [1, 2, 3].map((item) => <ShipmentSkeleton key={item} />)}
-
             {status === 'succeeded' &&
               shipments.map((product) => (
                 <TableRow key={product.id}>
@@ -121,14 +128,14 @@ export const SummaryPendingTools = ({
                           parseInt(e.target.value)
                         )
                       }
-                      disabled
+                      disabled={!supplierMode}
                     />
                   </TableCell>
                   <TableCell>
                     <Input
                       type="number"
                       min={0}
-                      className="text-center w-[60%]"
+                      className="text-center w-[80px] max-w-full"
                       value={product.precio}
                       onChange={(e) =>
                         handleChangePricing(
@@ -136,7 +143,7 @@ export const SummaryPendingTools = ({
                           parseInt(e.target.value)
                         )
                       }
-                      disabled
+                      disabled={!supplierMode}
                     />
                   </TableCell>
                   <TableCell>
@@ -151,7 +158,7 @@ export const SummaryPendingTools = ({
                           parseInt(e.target.value)
                         )
                       }
-                      disabled
+                      disabled={!supplierMode}
                     />
                   </TableCell>
                   <TableCell>
@@ -192,6 +199,12 @@ export const SummaryPendingTools = ({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-2">
+                      <Switch
+                        className="p-0"
+                        checked={supplierMode}
+                        onCheckedChange={setSupplierMode}
+                        onClick={handleChangeToogle}
+                      />
                       <Images
                         savedImages={product.archivosAdjuntosRecibido ?? []}
                         handleSaveImages={(images) =>

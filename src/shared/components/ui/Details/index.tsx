@@ -47,7 +47,7 @@ export default function DetallesEnvio({
     <Card className="w-full max-w-3xl mx-auto overflow-hidden rounded-lg shadow-lg">
       <CardContent className="p-0">
         <Header pedidoId={pedidoId} />
-        <div className="grid gap-4 p-6 bg-gray-50">
+        <div className="grid gap-4 p-6 bg-gray-50 dark:bg-black overflow-scroll max-h-[500px]">
           <FechaCreacion fecha={getTimeElapsed(fechaCreacion)} />
           <FechasEnvioRecepcion
             fechaEnvio={getFormatedDate(fechaEnvio)}
@@ -55,7 +55,7 @@ export default function DetallesEnvio({
               fechaRecepcion ? getFormatedDate(fechaRecepcion) : 'Pendiente'
             }
           />
-          <Separator className="border-gray-300" />
+          <Separator className="border-gray-300 dark:border-white" />
           <Ubicaciones origen={origen} destino={destino} />
           <Separator className="border-gray-300" />
           <ListaProductos images={productos} />
@@ -75,11 +75,11 @@ export default function DetallesEnvio({
 
 function Header({ pedidoId }: { pedidoId: string }) {
   return (
-    <div className="p-4 text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-      <h2 className="mb-2 text-2xl font-semibold uppercase">
+    <div className="p-4 text-white bg-black dark:bg-white dark:text-black">
+      <h2 className="mb-2 text-2xl font-semibold uppercase font-onest">
         Detalles del Envío
       </h2>
-      <p className="text-base uppercase opacity-90">Pedido #{pedidoId}</p>
+      <p className="text-base uppercase opacity-90">{pedidoId}</p>
     </div>
   );
 }
@@ -88,9 +88,12 @@ function FechaCreacion({ fecha }: { fecha: string }) {
   return (
     <div className="flex items-center justify-between text-gray-600">
       <div className="flex items-center space-x-2 text-sm">
-        <SquarePen className="w-5 h-5" />
-        <span className="uppercase">
-          Creado: <span className="ml-1 font-semibold text-black">{fecha}</span>
+        <SquarePen className="w-5 h-5 dark:text-white" />
+        <span className="uppercase dark:text-white">
+          Creado:
+          <span className="ml-1 font-semibold text-black dark:text-white">
+            {fecha}
+          </span>
         </span>
       </div>
     </div>
@@ -100,7 +103,7 @@ function FechaCreacion({ fecha }: { fecha: string }) {
 function Ubicaciones({ origen, destino }: { origen: string; destino: string }) {
   return (
     <div className="flex items-center justify-between text-gray-600">
-      <div className="space-y-1 w-[120px]">
+      <div className="space-y-1 w-[120px] ">
         <Ubicacion label="Origen" ubicacion={origen} />
       </div>
       <ArrowRight className="w-6 h-6 text-indigo-500" />
@@ -115,10 +118,10 @@ function Ubicacion({ label, ubicacion }: { label: string; ubicacion: string }) {
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-2 text-sm text-gray-600">
-        <Warehouse className="w-5 h-5" />
-        <span className="uppercase">{label}</span>
+        <Warehouse className="w-5 h-5 dark:text-white" />
+        <span className="uppercase dark:text-white">{label}</span>
       </div>
-      <p className="font-semibold text-gray-800">{ubicacion}</p>
+      <p className="font-semibold text-gray-800 dark:text-white">{ubicacion}</p>
     </div>
   );
 }
@@ -134,18 +137,22 @@ function FechasEnvioRecepcion({
     <div className="flex items-center justify-between text-gray-600">
       <div className="space-y-1">
         <div className="flex items-center space-x-2 text-sm">
-          <Calendar className="w-5 h-5" />
-          <span className="uppercase">Fecha de Envío</span>
+          <Calendar className="w-5 h-5 dark:text-white" />
+          <span className="uppercase dark:text-white">Fecha de Envío</span>
         </div>
-        <p className="font-semibold text-gray-800">{fechaEnvio}</p>
+        <p className="font-semibold text-gray-800 dark:text-white">
+          {fechaEnvio}
+        </p>
       </div>
       <ArrowRight className="w-6 h-6 text-indigo-500" />
       <div className="space-y-1">
         <div className="flex items-center space-x-2 text-sm">
-          <Package className="w-5 h-5" />
-          <span className="uppercase">Fecha de Recepción</span>
+          <Package className="w-5 h-5 dark:text-white" />
+          <span className="uppercase dark:text-white">Fecha de Recepción</span>
         </div>
-        <p className="font-semibold text-gray-800">{fechaRecepcion}</p>
+        <p className="font-semibold text-gray-800 dark:text-white">
+          {fechaRecepcion}
+        </p>
       </div>
     </div>
   );
@@ -154,7 +161,7 @@ function FechasEnvioRecepcion({
 function ListaProductos({ images }: { images: string[] }) {
   return (
     <div>
-      <h3 className="mb-4 text-base font-semibold text-gray-800 uppercase">
+      <h3 className="mb-4 text-base font-semibold text-gray-800 uppercase dark:text-white">
         Archivos
       </h3>
       <div
@@ -163,7 +170,7 @@ function ListaProductos({ images }: { images: string[] }) {
         {images.map((producto, idx) => (
           <div
             key={idx}
-            className="flex flex-col items-center p-2 transition duration-200 border rounded-lg shadow-sm hover:shadow-md max-h-fit"
+            className="flex flex-col items-center p-2 transition duration-200 border rounded-lg shadow-sm hover:shadow-md max-h-fit dark:bg-white"
           >
             <img
               src={producto}
@@ -184,8 +191,8 @@ function Comentario({ comentario }: { comentario: string }) {
   return (
     <div className="space-y-2">
       <div className="flex items-center space-x-2 text-sm text-gray-600">
-        <MessageSquare className="w-5 h-5" />
-        <span className="font-semibold text-black uppercase">
+        <MessageSquare className="w-5 h-5 dark:text-white" />
+        <span className="font-semibold text-black uppercase dark:text-white">
           Comentario de Envío
         </span>
       </div>
@@ -195,7 +202,7 @@ function Comentario({ comentario }: { comentario: string }) {
             {comentarioLimitado.join(' ')}
             {comentarioSplit.length > 20 && '...'}
           </TooltipTrigger>
-          <TooltipContent className="flex flex-nowrap max-w-[400px] text-sm">
+          <TooltipContent className="flex flex-nowrap max-w-[400px] text-sm dark:text-white">
             {comentario}
           </TooltipContent>
         </Tooltip>
@@ -208,8 +215,8 @@ function FirmaRecepcion({ firma }: { firma: string }) {
   return (
     <div className="space-y-2">
       <div className="flex items-center space-x-2 text-sm text-gray-600">
-        <PenTool className="w-5 h-5" />
-        <span>Firma de Recepción</span>
+        <PenTool className="w-5 h-5 dark:text-white" />
+        <span className="dark:text-white font-onest">Firma de Recepción</span>
       </div>
       <div className="flex justify-center bg-gray-100 border rounded-lg">
         <img
