@@ -37,7 +37,7 @@ import {
   ICustomerType,
   IPaymentMethod,
   IProductSale,
-  ISale,
+  INewSale,
   ITypeTransaction,
 } from '@/interfaces/salesInterfaces';
 import { cn } from '@/lib/utils';
@@ -180,7 +180,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
     setProcessingSale(true);
     setTransactionDate(new Date());
 
-    const newSale: ISale = {
+    const newSale: INewSale = {
       userId: user?._id || '',
       sucursalId: user?.sucursalId?._id || branchSelected?._id || '',
       products: productSale,

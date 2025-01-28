@@ -40,6 +40,7 @@ import { es } from 'date-fns/locale';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
+import { SaleReturnContainer } from './SaleReturnContainer';
 
 export const SaleHistory = () => {
   const branchStoraged = getSelectedBranchFromLocalStorage();
@@ -97,7 +98,7 @@ export const SaleHistory = () => {
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline">
-                <Calendar className="mr-2 h-4 w-4" />
+                <Calendar className="w-4 h-4 mr-2" />
                 {selectedDateRange
                   ? `${
                       selectedDateRange.from &&
@@ -138,6 +139,7 @@ export const SaleHistory = () => {
               <TableHead>Descuento</TableHead>
               <TableHead>Total</TableHead>
               <TableHead>Productos</TableHead>
+              <TableHead className="text-center">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -222,6 +224,9 @@ export const SaleHistory = () => {
                       </Table>
                     </DialogContent>
                   </Dialog>
+                </TableCell>
+                <TableCell className="text-center">
+                  <SaleReturnContainer sale={sale} />
                 </TableCell>
               </TableRow>
             ))}
