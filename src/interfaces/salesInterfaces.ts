@@ -5,15 +5,6 @@ export interface IListDescuentoResponse {
   descuentosPorGruposEnSucursal: IDescuentoGrupo[];
 }
 
-export interface IDescuentoMapeado {
-  descuentoId: IDescuento;
-  productId?: string;
-  sucursalId?: string;
-  deleted_at: Date | null;
-  grupoId?: string;
-  tipoEntidad: 'Product' | 'Group';
-}
-
 export interface IDescuentosProductos {
   descuentoId: IDescuento;
   productId: string;
@@ -41,6 +32,25 @@ export interface IDescuento {
   moneda_id: string;
   codigoDescunto: string;
   deleted_at: Date | null;
+  minimoType: IDescountTypePV;
+}
+
+export interface IDescuentoMapeado {
+  descuentoId: IDescuento;
+  productId?: string;
+  sucursalId?: string;
+  deleted_at: Date | null;
+  grupoId?: string;
+  tipoEntidad: 'Product' | 'Group';
+}
+
+export interface IDescuentoMapeadoExtendido extends IDescuentoMapeado {
+  tipo:
+    | 'descuentosPorGruposEnSucursal'
+    | 'descuentosPorProductosEnSucursal'
+    | 'descuentosPorGruposGenerales'
+    | 'descuentosPorProductosGenerales';
+  tipoDescuento: string;
 }
 
 export interface IDescuentoCreate {
@@ -60,8 +70,10 @@ export interface IDescuentoCreate {
   productId: string;
   groupId: string;
   sucursalId: string;
+  minimoType: IDescountTypePV;
 }
 
+export type IDescountTypePV = 'cantidad' | 'compra';
 export type IDisccountType = 'porcentaje' | 'valor';
 
 export interface IProductSale {
