@@ -82,6 +82,39 @@ export interface IProductSale {
   };
 }
 
+export interface IDescuentoAplicado {
+  id: string;
+  name: string;
+  type: 'producto' | 'grupo';
+  amount: number;
+  percentage: number;
+  productId: string | null;
+  groupId: string | null;
+  sucursalId: string;
+  fechaInicio: string;
+  fechaFin: string;
+  minimoCompra: number;
+  minimoCantidad: number;
+  activo: boolean;
+}
+
+export interface IDescuentoGeneralAplicado {
+  sucursalId: string;
+  minimoCompra: number;
+  minimoCantidad: number;
+  activo: boolean;
+  fechaInicio: string;
+  fechaFin: string;
+}
+
+export interface IDescuentoGrupoAplicado extends IDescuentoGeneralAplicado {
+  groupId: string;
+}
+
+export interface IDescuentoProductoAplicado extends IDescuentoGeneralAplicado {
+  productId: string;
+}
+
 export enum ITypeTransaction {
   VENTA = 'VENTA',
   COMPRA = 'COMPRA',
@@ -132,7 +165,7 @@ export interface ICredit {
 export interface IProductReturn {
   quantity: number;
   productId: string;
-  newUnityPrice: number | null;
+  discountApplied: boolean;
 }
 
 export interface ITransactionReturn {

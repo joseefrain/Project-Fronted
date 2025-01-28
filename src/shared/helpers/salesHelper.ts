@@ -1,12 +1,36 @@
 import {
+  IDescuentoAplicado,
+  IDescuentoGrupoAplicado,
+  IDescuentoProductoAplicado,
   IListDescuentoResponse,
   IProductSale,
 } from '@/interfaces/salesInterfaces';
 import { toast } from 'sonner';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
-import { getFormatedDate } from './transferHelper';
-import { ISaleSummary } from '@/ui/components/Sales/Inventory';
+
+export function isCurrentDateInRange(
+  startDate: string,
+  endDate: string
+): boolean {
+  const now = new Date();
+
+  const currentDate = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+  const start = new Date(
+    new Date(startDate).getFullYear(),
+    new Date(startDate).getMonth(),
+    new Date(startDate).getDate()
+  );
+  const end = new Date(
+    new Date(endDate).getFullYear(),
+    new Date(endDate).getMonth(),
+    new Date(endDate).getDate()
+  );
+
+  return currentDate >= start && currentDate <= end;
+}
 
 export const applyDiscounts = (
   sucursalId: string,
@@ -21,24 +45,42 @@ export const applyDiscounts = (
 
   const descuentosProducto = descuentos.descuentosPorProductosGenerales
     ?.concat(descuentos.descuentosPorProductosEnSucursal)
-    .filter(
-      (d) =>
-        d.productId?.toString() === productId &&
-        (!d.sucursalId || d.sucursalId === sucursalId) &&
-        d.descuentoId.activo &&
-        (price * quantity >= d.descuentoId.minimoCompra.$numberDecimal ||
-          quantity >= d.descuentoId.minimoCantidad)
+    .filter((d) =>
+      validateDiscountByProduct(
+        {
+          sucursalId: d.sucursalId ?? '',
+          minimoCompra: Number(d.descuentoId.minimoCompra.$numberDecimal),
+          minimoCantidad: Number(d.descuentoId.minimoCantidad),
+          activo: d.descuentoId.activo,
+          fechaInicio: String(d.descuentoId.fechaInicio),
+          fechaFin: String(d.descuentoId.fechaFin),
+          productId: d.productId,
+        },
+        productId,
+        sucursalId,
+        price,
+        quantity
+      )
     );
 
   const descuentosGrupo = descuentos.descuentosPorGruposGenerales
     ?.concat(descuentos.descuentosPorGruposEnSucursal)
-    .filter(
-      (d) =>
-        d.grupoId === groupId &&
-        (!d.sucursalId || d.sucursalId === sucursalId) &&
-        d.descuentoId.activo &&
-        (price * quantity >= d.descuentoId.minimoCompra.$numberDecimal ||
-          quantity >= d.descuentoId.minimoCantidad)
+    .filter((d) =>
+      validateDiscountByGroup(
+        {
+          sucursalId: d.sucursalId ?? '',
+          minimoCompra: Number(d.descuentoId.minimoCompra.$numberDecimal),
+          minimoCantidad: Number(d.descuentoId.minimoCantidad),
+          activo: d.descuentoId.activo,
+          fechaInicio: String(d.descuentoId.fechaInicio),
+          fechaFin: String(d.descuentoId.fechaFin),
+          groupId: d.grupoId,
+        },
+        groupId,
+        sucursalId,
+        price,
+        quantity
+      )
     );
 
   const descuentoAplicable =
@@ -63,21 +105,20 @@ export const applyDiscounts = (
       descuentoAplicado = descuentoAplicable.valorDescuento;
       porcentajeAplicado = (descuentoAplicado / (precioFinal * quantity)) * 100;
     }
-
-    // precioFinal = Math.max(precioFinal, 0);
   }
 
   return {
     ...producto,
-    discount: discountType
-      ? {
-          id: descuentoAplicable?._id ?? '',
-          name: descuentoAplicable?.nombre ?? '',
-          type: discountType,
-          amount: descuentoAplicado,
-          percentage: porcentajeAplicado,
-        }
-      : null,
+    discount:
+      discountType && descuentoAplicable
+        ? {
+            id: descuentoAplicable?._id ?? '',
+            name: descuentoAplicable?.nombre ?? '',
+            type: discountType,
+            amount: descuentoAplicado,
+            percentage: porcentajeAplicado,
+          }
+        : null,
   };
 };
 
@@ -93,82 +134,6 @@ export const handleProductSaleAlerts = (
   if (puntoRecompra >= stock) {
     toast.warning(`El stock de ${nombre} es menor o igual al punto recompra`);
   }
-};
-
-export interface IPrintInvoice {
-  branchSelected: string;
-  transactionDate: Date;
-  customer: string;
-  customerType: string;
-  customers: Array<any>;
-  paymentMethod: string;
-  cashReceived: number;
-  saleSummary: ISaleSummary;
-  productSale: Array<IProductSale>;
-}
-
-export const handlePrintInvoice = ({
-  branchSelected,
-  transactionDate,
-  customers,
-  customer,
-  customerType,
-  paymentMethod,
-  cashReceived,
-  saleSummary,
-}: IPrintInvoice) => {
-  const doc = new jsPDF();
-
-  doc.setFontSize(20);
-  doc.text('Factura', 105, 15, { align: 'center' });
-  doc.setFontSize(12);
-  doc.text(branchSelected ?? '', 105, 25, { align: 'center' });
-  doc.text('Fecha: ' + getFormatedDate(transactionDate!), 105, 35, {
-    align: 'center',
-  });
-
-  doc.text(
-    'Cliente: ' +
-      (customers.find((c) => c.id === customer)?.name ?? customer ?? '---'),
-    20,
-    50
-  );
-
-  doc.text(
-    'Tipo: ' + (customerType === 'registered' ? 'Registrado' : 'General'),
-    20,
-    60
-  );
-
-  // const tableColumn = ['Producto', 'Cantidad', 'Precio', 'Total'];
-  // const tableRows = productSale.map((item) => [
-  //   item.productName,
-  //   item.quantity,
-  //   `$${item.price.toFixed(2)}`,
-  //   `$${(item.price * item.quantity).toFixed(2)}`,
-  // ]);
-
-  // doc.autoTable({
-  //   startY: 70,
-  //   head: [tableColumn],
-  //   body: tableRows,
-  // });
-
-  const finalY = (doc as any).lastAutoTable.finalY || 70;
-  doc.text(`Total: $${saleSummary.total.toFixed(2)}`, 20, finalY + 10);
-  doc.text(
-    `Método de pago: ${paymentMethod === 'cash' ? 'Efectivo' : 'Crédito'}`,
-    20,
-    finalY + 20
-  );
-
-  if (paymentMethod === 'cash') {
-    doc.text(`Efectivo recibido: $${cashReceived}`, 20, finalY + 30);
-    doc.text(`Cambio: $${saleSummary.change.toFixed(2)}`, 20, finalY + 40);
-  }
-
-  doc.text('¡Gracias por su compra!', 105, 280, { align: 'center' });
-  doc.save('factura.pdf');
 };
 
 export const esFechaMayor = (fecha1: Date, fecha2: Date): boolean => {
@@ -187,3 +152,97 @@ export const esFechaMayor = (fecha1: Date, fecha2: Date): boolean => {
 
 export const NO_CASHIER_OPEN =
   'Debe abrir una caja antes de realizar una devolución';
+
+export const isDiscountApplied = (
+  sucursalId: string,
+  quantityReturned: number,
+  producto?: IProductSale
+) => {
+  if (!producto || !producto?.discount) return false;
+
+  const { productId, groupId, price, quantity, discount } = producto;
+  const newQuantity = quantity - quantityReturned;
+  const castDiscount = discount as unknown as IDescuentoAplicado;
+
+  if (castDiscount.groupId) {
+    const discountFormat = {
+      groupId: castDiscount.groupId ?? '',
+      sucursalId: castDiscount.sucursalId,
+      minimoCompra: castDiscount.minimoCompra,
+      minimoCantidad: castDiscount.minimoCantidad,
+      activo: castDiscount.activo,
+      fechaInicio: castDiscount.fechaInicio,
+      fechaFin: castDiscount.fechaFin,
+    };
+
+    const discountApplied = validateDiscountByGroup(
+      discountFormat,
+      groupId,
+      sucursalId,
+      price,
+      newQuantity
+    );
+
+    return discountApplied;
+  }
+
+  const discountFormat = {
+    productId: castDiscount.productId ?? '',
+    sucursalId: castDiscount.sucursalId,
+    minimoCompra: castDiscount.minimoCompra,
+    minimoCantidad: castDiscount.minimoCantidad,
+    activo: castDiscount.activo,
+    fechaInicio: castDiscount.fechaInicio,
+    fechaFin: castDiscount.fechaFin,
+  };
+
+  const discountApplied = validateDiscountByProduct(
+    discountFormat,
+    productId,
+    sucursalId,
+    price,
+    newQuantity
+  );
+
+  return discountApplied;
+};
+
+export const validateDiscountByGroup = (
+  discount: IDescuentoGrupoAplicado,
+  groupId: string,
+  sucursalId: string,
+  productPrice: number,
+  productQuantity: number
+) => {
+  return (
+    discount?.groupId === groupId &&
+    (!discount.sucursalId || discount.sucursalId === sucursalId) &&
+    discount.activo &&
+    isCurrentDateInRange(
+      String(discount.fechaInicio),
+      String(discount.fechaFin)
+    ) &&
+    (productPrice * productQuantity >= Number(discount.minimoCompra) ||
+      productQuantity >= discount.minimoCantidad)
+  );
+};
+
+export const validateDiscountByProduct = (
+  discount: IDescuentoProductoAplicado,
+  productId: string,
+  sucursalId: string,
+  price: number,
+  newQuantity: number
+) => {
+  return (
+    (discount.productId?.toString() === productId &&
+      (!discount.sucursalId || discount.sucursalId === sucursalId) &&
+      discount.activo &&
+      isCurrentDateInRange(
+        String(discount.fechaInicio),
+        String(discount.fechaFin)
+      ) &&
+      price * newQuantity >= Number(discount.minimoCompra)) ||
+    newQuantity >= discount.minimoCantidad
+  );
+};

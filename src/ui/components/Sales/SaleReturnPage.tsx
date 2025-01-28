@@ -24,7 +24,11 @@ import {
 import { getFormatedDate } from '../../../shared/helpers/transferHelper';
 import { useAppSelector } from '../../../app/hooks';
 import { toast, Toaster } from 'sonner';
-import { NO_CASHIER_OPEN } from '../../../shared/helpers/salesHelper';
+import {
+  isDiscountApplied,
+  NO_CASHIER_OPEN,
+} from '../../../shared/helpers/salesHelper';
+import { ICajaBrach } from '../../../app/slices/cashRegisterSlice';
 
 export default function SalesReturnPage({
   saleDetails,
@@ -32,7 +36,7 @@ export default function SalesReturnPage({
   saleDetails: ISale;
 }) {
   const userId = useAppSelector((state) => state.auth.signIn.user?._id);
-  const cashOpen = useAppSelector((state) => state.boxes.boxState);
+  const cashOpen = useAppSelector((state) => state.auth.signIn.cajaId);
 
   const [returnQuantities, setReturnQuantities] = useState<{
     [key: string]: number;
@@ -75,10 +79,17 @@ export default function SalesReturnPage({
 
     const formattedProducts: IProductReturn[] = [];
     for (const [key, value] of Object.entries(returnQuantities)) {
+      const product = saleDetails.products.find((p) => p.productId === key);
+      const discountApplied = isDiscountApplied(
+        saleDetails.sucursalId,
+        value,
+        product
+      );
+
       formattedProducts.push({
         productId: key,
         quantity: value,
-        newUnityPrice: null,
+        discountApplied: discountApplied,
       });
     }
 
@@ -96,14 +107,15 @@ export default function SalesReturnPage({
   };
 
   useEffect(() => {
-    if (!cashOpen || cashOpen.length === 0) {
+    if (!cashOpen) {
       toast.info(NO_CASHIER_OPEN);
       return;
     }
 
-    const cashier = cashOpen[0];
+    const cashier = cashOpen as ICajaBrach;
+
     setCashRegister({
-      id: cashier?._id ?? '',
+      id: cashier._id ?? '',
       cash: Number(cashier?.montoEsperado?.$numberDecimal ?? 0),
     });
   }, [cashOpen]);
@@ -114,7 +126,7 @@ export default function SalesReturnPage({
         <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-3">
           <div className="p-4 rounded-lg bg-primary/5">
             <h3 className="font-semibold text-gray-700">Realizada por</h3>
-            <p className="text-xl font-bold text-green-700">
+            <p className="text-xl font-bold text-green-700 truncate">
               {saleDetails.userId.toUpperCase()}
             </p>
           </div>
