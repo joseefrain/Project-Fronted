@@ -5,7 +5,7 @@ import {
   PATH_LIST,
 } from '../axios';
 import { Token } from '@/shared/hooks/useJWT';
-import { ISale } from '@/interfaces/salesInterfaces';
+import { INewSale } from '@/interfaces/salesInterfaces';
 import { IDescuentoCreate } from '@/interfaces/salesInterfaces';
 
 export const createDiscount = async ({
@@ -44,7 +44,9 @@ export const getDiscountByBranchId = async (
   return response;
 };
 
-export const postSale = async ({ ...data }: ISale): Promise<AxiosResponse> => {
+export const postSale = async ({
+  ...data
+}: INewSale): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstanceForTransaction(
     Token(),
     PATH_LIST.Queue
@@ -80,7 +82,7 @@ export const openCashierService = async (
 
 export const postPurchase = async ({
   ...data
-}: ISale): Promise<AxiosResponse> => {
+}: INewSale): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstanceForTransaction(
     Token(),
     PATH_LIST.Queue

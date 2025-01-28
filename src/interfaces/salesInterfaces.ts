@@ -94,6 +94,7 @@ export enum ICustomerType {
 }
 
 export interface ISale {
+  id: string;
   userId: string;
   sucursalId: string;
   products: IProductSale[];
@@ -110,9 +111,26 @@ export interface ISale {
   fechaRegistro?: Date;
 }
 
+export interface INewSale extends Omit<ISale, 'id'> {}
+
 export interface ICredit {
   modalidadCredito: ICreditMethod;
   plazoCredito: number;
   cuotaMensual: number;
   pagoMinimoMensual: number;
+}
+
+export interface IProductReturn {
+  quantity: number;
+  productId: string;
+  newUnityPrice: number | null;
+}
+
+export interface ITransactionReturn {
+  userId: string;
+  trasaccionOrigenId: string;
+  cajaId: string;
+  monto: number;
+  montoExterno?: number | null;
+  products: IProductReturn[];
 }

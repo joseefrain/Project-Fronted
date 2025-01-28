@@ -184,3 +184,6 @@ export const esFechaMayor = (fecha1: Date, fecha2: Date): boolean => {
   );
   return f1.getTime() > f2.getTime();
 };
+
+export const NO_CASHIER_OPEN =
+  'Debe abrir una caja antes de realizar una devolución';

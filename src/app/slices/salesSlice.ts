@@ -16,6 +16,7 @@ import {
   ISale,
   IDescuentoCreate,
   IListDescuentoResponse,
+  INewSale,
 } from '@/interfaces/salesInterfaces';
 import { handleThunkError } from '@/shared/utils/errorHandlers';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -120,7 +121,7 @@ export const getDiscountsByBranch = createAsyncThunk(
 
 export const createSale = createAsyncThunk(
   'transactions/createSale',
-  async (sale: ISale, { rejectWithValue }) => {
+  async (sale: INewSale, { rejectWithValue }) => {
     try {
       const response = await postSale(sale);
       return response.data;
@@ -132,7 +133,7 @@ export const createSale = createAsyncThunk(
 
 export const createPurchase = createAsyncThunk(
   'transactions/createPurchase',
-  async (sale: ISale, { rejectWithValue }) => {
+  async (sale: INewSale, { rejectWithValue }) => {
     try {
       const response = await postPurchase(sale);
       return response.data;
