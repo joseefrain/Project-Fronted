@@ -11,7 +11,6 @@ import {
 import { useAppSelector } from '@/app/hooks';
 import { getAllGroupsSlice } from '@/app/slices/groups';
 import { store } from '@/app/store';
-import { fetchAllProducts } from '@/app/slices/productsSlice';
 import {
   cleanDataSales,
   createDiscountSales,
@@ -27,12 +26,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ITablaBranch } from '@/interfaces/branchInterfaces';
 import {
   IDescuentoCreate,
-  IDescuentoGrupo,
   IDescuentoMapeado,
-  IDescuentosProductos,
+  IDescuentoMapeadoExtendido,
 } from '@/interfaces/salesInterfaces';
 import Pagination from '@/shared/components/ui/Pagination/Pagination';
 import { SearchComponent } from '@/shared/components/ui/Search';
@@ -68,9 +65,6 @@ export default function DiscountManager() {
   );
   const filteredBranche =
     userRoles?.role === ROLE.ROOT ? branches : dataFilterID;
-  const dataProduct = useAppSelector(
-    (state) => state.branches.selectedBranch?.products
-  );
   let idBranch = userRoles?.sucursalId?._id;
 
   const [formState, setFormState] = useState<IDescuentoCreate>({
@@ -89,6 +83,7 @@ export default function DiscountManager() {
     productId: '',
     groupId: '',
     sucursalId: '',
+    minimoType: 'compra',
   });
   const stateProduct = formState.tipoDescuentoEntidad === 'Product';
 
@@ -115,17 +110,12 @@ export default function DiscountManager() {
       nombre: branch.nombre,
     }));
 
-  const dataFilterBranchProducts =
-    userRoles?.role === ROLE.ROOT
-      ? dataAllProducts
-      : (dataProduct ?? ([] as ITablaBranch[]));
-
-  const opcionesProductos = dataFilterBranchProducts.map((branch) => {
-    return {
-      id: branch.id!,
-      nombre: branch.nombre,
-    };
-  });
+  const opcionesProductos = dataAllProducts
+    .filter((product) => product.sucursalId === selectedBranch?._id)
+    .map((product) => ({
+      id: product.id!,
+      nombre: product.nombre,
+    }));
 
   const handleSelectChangeBranch = (value: string) => {
     const branch = branches.find((b) => b._id === value);
@@ -171,16 +161,16 @@ export default function DiscountManager() {
       }));
     }
   };
-  const fetchData = async () => {
-    if (!idBranch) return;
-    await GetBranches(idBranch as unknown as string);
-  };
 
   useEffect(() => {
+    const fetchData = async () => {
+      if (!idBranch) return;
+      await GetBranches(idBranch as unknown as string);
+    };
     fetchData();
     store.dispatch(getAllGroupsSlice()).unwrap();
     store.dispatch(getDiscountsByBranchAll(idBranch as string)).unwrap();
-    store.dispatch(fetchAllProducts()).unwrap();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateFormState = (field: keyof IDescuentoCreate, value: string) => {
@@ -207,92 +197,65 @@ export default function DiscountManager() {
     }
   };
 
-  const openEditModal = (id: string) => {
-    const discount = Array.isArray(data)
-      ? data.find((d) => d._id === id)
-      : undefined;
-    if (discount) {
-      setFormState(discount);
-      setEditingId(id);
-      setIsModalOpen(true);
-    }
-  };
-
-  const openAddModal = () => {
-    setFormState({
-      nombre: '',
-      tipoDescuento: 'porcentaje',
-      valorDescuento: 0,
-      fechaInicio: new Date(),
-      fechaFin: new Date(),
-      minimoCompra: { $numberDecimal: 0 },
-      minimoCantidad: 0,
-      activo: true,
-      moneda_id: '64b7f1b4b4f1b5f1c7e7f2a9',
-      codigoDescunto: '',
-      deleted_at: null,
-      tipoDescuentoEntidad: 'Product',
-      productId: '',
-      groupId: '',
-      sucursalId: '',
-    });
-    setEditingId(null);
-    setIsModalOpen(true);
-  };
-
   const removeDiscount = (id: string) => {
     store.dispatch(deleteDiscountSales(id)).unwrap();
   };
 
-  const descuentosPorGruposEnSucursal = (
-    data?.descuentosPorGruposEnSucursal || []
-  ).map((descuento) => ({
-    ...descuento,
-    tipoEntidad: 'Group',
-    tipoDescuento: 'Descuento por categorías en Sucursal',
-  }));
+  const mapWithTipo = <T extends IDescuentoMapeado>(
+    items: T[],
+    tipo: IDescuentoMapeadoExtendido['tipo'],
+    tipoDescuento: string
+  ): IDescuentoMapeadoExtendido[] =>
+    items.map((item) => ({
+      ...item,
+      tipo,
+      tipoDescuento,
+    }));
 
-  const descuentosPorProductosEnSucursal = (
-    data?.descuentosPorProductosEnSucursal || []
-  ).map((descuento) => ({
-    ...descuento,
-    tipoEntidad: 'Product',
-    tipoDescuento: 'Descuento por Productos en Sucursal',
-  }));
+  const descuentosPorGruposEnSucursal = data?.descuentosPorGruposEnSucursal
+    ? mapWithTipo(
+        data.descuentosPorGruposEnSucursal as IDescuentoMapeado[],
+        'descuentosPorGruposEnSucursal',
+        'Descuento por categorías en Sucursal'
+      )
+    : [];
 
-  const descuentosPorGruposGenerales = (
-    data?.descuentosPorGruposGenerales || []
-  ).map((descuento) => ({
-    ...descuento,
-    tipoEntidad: 'Group',
-    tipoDescuento: 'Descuento por categorías Generales',
-  }));
+  const descuentosPorProductosEnSucursal =
+    data?.descuentosPorProductosEnSucursal
+      ? mapWithTipo(
+          data.descuentosPorProductosEnSucursal as IDescuentoMapeado[],
+          'descuentosPorProductosEnSucursal',
+          'Descuento por Productos en Sucursal'
+        )
+      : [];
 
-  const descuentosPorProductosGenerales = (
-    data?.descuentosPorProductosGenerales || []
-  ).map((descuento) => ({
-    ...descuento,
-    tipoEntidad: 'Product',
-    tipoDescuento: 'Descuento por Productos Generales',
-  }));
+  const descuentosPorGruposGenerales = data?.descuentosPorGruposGenerales
+    ? mapWithTipo(
+        data.descuentosPorGruposGenerales.map((item) => ({
+          ...item,
+          tipoEntidad: 'Group',
+        })) as IDescuentoMapeado[],
+        'descuentosPorGruposGenerales',
+        'Descuento por categorías Generales'
+      )
+    : [];
 
-  const allDescuentos = [
-    ...descuentosPorGruposEnSucursal.map((descuento) => ({
-      ...descuento,
-      tipo: 'descuentosPorGruposEnSucursal',
-    })),
-    ...descuentosPorProductosEnSucursal.map((descuento) => ({
-      ...descuento,
-      tipo: 'descuentosPorProductosEnSucursal',
-    })),
-    ...descuentosPorGruposGenerales.map((descuento) => ({
-      ...descuento,
-      tipo: 'descuentosPorGruposGenerales',
-    })),
-    ...descuentosPorProductosGenerales.map((descuento) => ({
-      ...descuento,
-      tipo: 'descuentosPorProductosGenerales',
-    })),
+  const descuentosPorProductosGenerales = data?.descuentosPorProductosGenerales
+    ? mapWithTipo(
+        data.descuentosPorProductosGenerales.map((item) => ({
+          ...item,
+          tipoEntidad: 'Product',
+        })) as IDescuentoMapeado[],
+        'descuentosPorProductosGenerales',
+        'Descuento por Productos Generales'
+      )
+    : [];
+
+  const allDescuentos: IDescuentoMapeadoExtendido[] = [
+    ...descuentosPorGruposEnSucursal,
+    ...descuentosPorProductosEnSucursal,
+    ...descuentosPorGruposGenerales,
+    ...descuentosPorProductosGenerales,
   ];
 
   const getSelectedData = () => {
@@ -326,6 +289,71 @@ export default function DiscountManager() {
   );
   const paginatedData = Math.ceil(filteredDiscounts.length / itemsPerPage);
 
+  const openAddModal = () => {
+    setFormState({
+      nombre: '',
+      tipoDescuento: 'porcentaje',
+      valorDescuento: 0,
+      fechaInicio: new Date(),
+      fechaFin: new Date(),
+      minimoCompra: { $numberDecimal: 0 },
+      minimoCantidad: 0,
+      activo: true,
+      moneda_id: '64b7f1b4b4f1b5f1c7e7f2a9',
+      codigoDescunto: '',
+      deleted_at: null,
+      tipoDescuentoEntidad: 'Product',
+      productId: '',
+      groupId: '',
+      sucursalId: '',
+      minimoType: 'compra',
+    });
+    setEditingId(null);
+    setIsModalOpen(true);
+  };
+
+  const editDescuentoById = (_id: string) => {
+    const discount = currentItems.find((d) => d.descuentoId._id === _id);
+    if (!discount) return;
+
+    const discountGn = currentItems.map((d) => ({
+      _id: d.descuentoId._id,
+      tipoEntidad: d.tipoEntidad,
+      sucursalId: d.sucursalId,
+      groupId: d.grupoId,
+      productId: d.productId,
+      minimoType: d.descuentoId.minimoType,
+    }));
+
+    const matchingDiscountGn = discountGn.find((d) => d._id === _id);
+
+    const discountCreate: IDescuentoCreate = {
+      _id: discount.descuentoId._id,
+      nombre: discount.descuentoId.nombre || '',
+      tipoDescuento: discount.descuentoId.tipoDescuento || 'porcentaje',
+      valorDescuento: discount.descuentoId.valorDescuento,
+      fechaInicio: new Date(discount.descuentoId.fechaInicio),
+      fechaFin: new Date(discount.descuentoId.fechaFin),
+      minimoCompra: discount.descuentoId.minimoCompra || { $numberDecimal: 0 },
+      minimoCantidad: discount.descuentoId.minimoCantidad,
+      activo: discount.descuentoId.activo,
+      moneda_id: discount.descuentoId.moneda_id,
+      codigoDescunto: discount.descuentoId.codigoDescunto,
+      deleted_at: discount.descuentoId.deleted_at,
+      tipoDescuentoEntidad: matchingDiscountGn?.tipoEntidad as
+        | 'Product'
+        | 'Group',
+      productId: matchingDiscountGn?.productId || '',
+      groupId: matchingDiscountGn?.groupId || '',
+      sucursalId: matchingDiscountGn?.sucursalId || '',
+      minimoType: matchingDiscountGn?.minimoType ?? 'compra',
+    };
+
+    setFormState(discountCreate);
+    setEditingId(_id);
+    setIsModalOpen(true);
+  };
+
   return (
     <>
       <Toaster richColors position="bottom-right" />{' '}
@@ -342,7 +370,6 @@ export default function DiscountManager() {
               </CardTitle>
               <CardDescription>Gestiona tus descuentos.</CardDescription>
             </CardHeader>
-
             <CardContent>
               <div className="flex justify-between mb-4">
                 <div className="flex items-center gap-3 place-items-baseline">
@@ -423,7 +450,7 @@ export default function DiscountManager() {
                           {access.update && (
                             <Button
                               onClick={() =>
-                                openEditModal(discount.descuentoId._id)
+                                editDescuentoById(discount.descuentoId._id)
                               }
                               variant="outline"
                               size="sm"
