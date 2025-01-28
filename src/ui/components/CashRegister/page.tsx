@@ -115,9 +115,8 @@ export const CashRegister = () => {
       </div>
       {(dataBoxes?.length === 0 || !dataBoxes) && (
         <div className="p-4 text-center">
-          <h1 className="text-white">
-            Debe de crear una caja en esta sucursal o seleccione una sucursal
-            antes.
+          <h1 className="text-lg text-gray-400 dark:text-white font-onest">
+            No hay cajas creadas en este sucursal.
           </h1>
         </div>
       )}

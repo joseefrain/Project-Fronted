@@ -8,6 +8,7 @@ import {
   openCashierService,
   postPurchase,
   postSale,
+  postTransactionReturn,
   updateDiscount,
 } from '@/api/services/sales';
 import { Branch, IStatus } from '@/interfaces/branchInterfaces';
@@ -15,6 +16,8 @@ import {
   ISale,
   IDescuentoCreate,
   IListDescuentoResponse,
+  INewSale,
+  ITransactionReturn,
 } from '@/interfaces/salesInterfaces';
 import { handleThunkError } from '@/shared/utils/errorHandlers';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -46,6 +49,7 @@ interface SalesState {
   branchPurchases: ISale[];
   status: IStatus;
   error: string | null;
+  returnSales: any[];
 }
 
 const initialState: SalesState = {
@@ -57,6 +61,7 @@ const initialState: SalesState = {
   branchDiscounts: {} as IListDescuentoResponse,
   status: 'idle',
   error: null,
+  returnSales: [],
 };
 
 export const createDiscountSales = createAsyncThunk(
@@ -121,7 +126,7 @@ export const getDiscountsByBranchAll = createAsyncThunk(
 
 export const createSale = createAsyncThunk(
   'transactions/createSale',
-  async (sale: ISale, { rejectWithValue }) => {
+  async (sale: INewSale, { rejectWithValue }) => {
     try {
       const response = await postSale(sale);
       return response.data;
@@ -133,7 +138,7 @@ export const createSale = createAsyncThunk(
 
 export const createPurchase = createAsyncThunk(
   'transactions/createPurchase',
-  async (sale: ISale, { rejectWithValue }) => {
+  async (sale: INewSale, { rejectWithValue }) => {
     try {
       const response = await postPurchase(sale);
       return response.data;
@@ -190,6 +195,18 @@ export const openCashier = createAsyncThunk(
       return response.data;
     } catch (error) {
       return handleThunkError(error);
+    }
+  }
+);
+
+export const createSaleReturn = createAsyncThunk(
+  'transactions/return',
+  async (data: ITransactionReturn, { rejectWithValue }) => {
+    try {
+      const response = await postTransactionReturn(data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
     }
   }
 );
@@ -260,6 +277,10 @@ const salesSlice = createSlice({
       .addCase(getDiscountsByBranchAll.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
         state.discounts = payload;
+      })
+      .addCase(createSaleReturn.fulfilled, (state, { payload }) => {
+        state.status = 'succeeded';
+        state.returnSales = [...state.returnSales, payload];
       });
   },
 });

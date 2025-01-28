@@ -61,11 +61,11 @@ export const ProductSale = ({
             </TableCell>
             {type === 'VENTA' && (
               <TableCell className="text-center">
-                {item.discount && item.discount?.amount > 0 ? (
+                {item.discount ? (
                   <div className="flex items-center justify-center gap-2">
                     <span className="text-green-600">
                       ${item.discount.amount.toFixed(2)} (
-                      {item.discount.percentage}
+                      {item.discount.percentage.toFixed(2)}
                       %)
                     </span>
                     <Popover>
@@ -76,7 +76,7 @@ export const ProductSale = ({
                         <CircleDollarSign color="green" size={18} />
                         <span>{item.discount.name.toUpperCase()}</span>
                         <span className="font-bold text-green-600">
-                          {item.discount.percentage}%
+                          {item.discount.percentage.toFixed(2)}%
                         </span>
                       </PopoverContent>
                     </Popover>

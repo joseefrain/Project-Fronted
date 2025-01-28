@@ -16,6 +16,7 @@ export enum PATH_LIST {
   Queue = '/createTransactionQueue',
   ROLES = 'roles',
   COINS = 'coin',
+  Return = 'devolucion',
 }
 
 export const createAxiosInstance = (
