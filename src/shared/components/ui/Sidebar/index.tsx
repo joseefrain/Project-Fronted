@@ -48,7 +48,7 @@ export const Sidebar = ({ links, className }: SidebarProps) => {
           </i>
         </button>
         <ul
-          className={`flex flex-col gap-4 p-4 mt-16 lg:mt-0 ${isCollapsed ? 'hidden' : 'flex'}`}
+          className={`flex flex-col gap-4 p-4 mt-16 lg:mt-0 max-h-[85%] h-[80%] overflow-auto ${isCollapsed ? 'hidden' : 'flex'}`}
         >
           {links.map((link) => (
             <Link
