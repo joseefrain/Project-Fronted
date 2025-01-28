@@ -28,7 +28,7 @@ export function CashRegisterCard({
     <>
       <Card
         key={cashRegister._id}
-        className="relative overflow-hidden transition-all bg-white group hover:shadow-lg dark:bg-neutral-950"
+        className="relative overflow-hidden transition-all bg-white font-onest group hover:shadow-lg dark:bg-neutral-950"
       >
         <CardHeaderCashier
           cashRegister={cashRegister}

@@ -5,7 +5,7 @@ import {
   PATH_LIST,
 } from '../axios';
 import { Token } from '@/shared/hooks/useJWT';
-import { INewSale } from '@/interfaces/salesInterfaces';
+import { INewSale, ITransactionReturn } from '@/interfaces/salesInterfaces';
 import { IDescuentoCreate } from '@/interfaces/salesInterfaces';
 
 export const createDiscount = async ({
@@ -96,5 +96,13 @@ export const getPurchaseByBranchId = async (
 ): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Sales);
   const response = await axiosInstance.get(`/compra/${id}/branch`);
+  return response;
+};
+
+export const postTransactionReturn = async ({
+  ...data
+}: ITransactionReturn): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Sales);
+  const response = await axiosInstance.post(PATH_LIST.Return, data);
   return response;
 };

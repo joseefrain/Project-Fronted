@@ -32,7 +32,7 @@ export const SaleReturnContainer = ({ sale }: { sale: ISale }) => {
             Gestione las devoluciones de productos de manera eficiente
           </DialogDescription>
         </DialogHeader>
-        <SalesReturnPage saleDetails={sale} />
+        <SalesReturnPage saleDetails={sale} setShowModal={setShowModal} />
       </DialogContent>
     </Dialog>
   );

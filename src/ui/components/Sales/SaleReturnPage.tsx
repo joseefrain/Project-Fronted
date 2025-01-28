@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
@@ -29,15 +29,20 @@ import {
   NO_CASHIER_OPEN,
 } from '../../../shared/helpers/salesHelper';
 import { ICajaBrach } from '../../../app/slices/cashRegisterSlice';
+import { store } from '../../../app/store';
+import { createSaleReturn } from '../../../app/slices/salesSlice';
 
 export default function SalesReturnPage({
   saleDetails,
+  setShowModal,
 }: {
   saleDetails: ISale;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const userId = useAppSelector((state) => state.auth.signIn.user?._id);
   const cashOpen = useAppSelector((state) => state.auth.signIn.cajaId);
 
+  const [returnProccessing, setReturnProccessing] = useState(false);
   const [returnQuantities, setReturnQuantities] = useState<{
     [key: string]: number;
   }>({});
@@ -101,6 +106,25 @@ export default function SalesReturnPage({
       montoExterno: needsExtraCash ? extraCash : undefined,
       products: formattedProducts,
     };
+
+    const request = store
+      .dispatch(createSaleReturn(saleReturn))
+      .unwrap()
+      .catch(() => {
+        setReturnProccessing(false);
+        return Promise.reject();
+      })
+      .then(() => {
+        setTimeout(() => {
+          setShowModal(false);
+        }, 500);
+      });
+
+    toast.promise(request, {
+      loading: 'Procesando...',
+      success: 'Devolución procesada exitosamente',
+      error: 'Error al procesar la devolución',
+    });
 
     console.log(saleReturn);
     console.log(saleDetails);
@@ -189,6 +213,7 @@ export default function SalesReturnPage({
                         )
                       }
                       className="w-24 text-center"
+                      disabled={returnProccessing}
                     />
                   </TableCell>
                 </TableRow>
@@ -238,13 +263,22 @@ export default function SalesReturnPage({
                     id="extraCash"
                     type="number"
                     min={0}
+                    max={Number((totalReturn - cashRegister.cash).toFixed(2))}
                     value={extraCash}
-                    onChange={(e) =>
-                      e.target.value === ''
-                        ? setExtraCash(0)
-                        : setExtraCash(Number.parseFloat(e.target.value))
-                    }
+                    onChange={(e) => {
+                      if (e.target.value === '') return setExtraCash(0);
+
+                      const cashNeeded = Number(
+                        (totalReturn - cashRegister.cash).toFixed(2)
+                      );
+
+                      if (needsExtraCash && Number(e.target.value) > cashNeeded)
+                        return setExtraCash(cashNeeded);
+
+                      setExtraCash(Number.parseFloat(e.target.value));
+                    }}
                     className="w-40 mr-2 text-black"
+                    disabled={returnProccessing}
                   />
                 </div>
               </div>
@@ -257,7 +291,9 @@ export default function SalesReturnPage({
             onClick={handleReturn}
             className="px-8 py-5 font-semibold text-green-800 uppercase bg-green-100 hover:bg-green-200 disabled:bg-gray-200 disabled:cursor-not-allowed"
             disabled={
-              totalReturn === 0 || cashRegister.cash + extraCash < totalReturn
+              totalReturn === 0 ||
+              cashRegister.cash + extraCash < totalReturn ||
+              returnProccessing
             }
           >
             <CheckCircleIcon className="w-5 h-5 mr-2" />
