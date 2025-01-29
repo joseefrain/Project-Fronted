@@ -1,3 +1,8 @@
 .container-profile__actions {
-  @apply flex gap-3;
+    @apply flex gap-3;
+}
+
+
+.container-header_profile_SC {
+    @apply flex gap-3 items-center;
 }
