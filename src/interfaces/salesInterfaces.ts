@@ -94,6 +94,39 @@ export interface IProductSale {
   };
 }
 
+export interface IDescuentoAplicado {
+  id: string;
+  name: string;
+  type: 'producto' | 'grupo';
+  amount: number;
+  percentage: number;
+  productId: string | null;
+  groupId: string | null;
+  sucursalId: string;
+  fechaInicio: string;
+  fechaFin: string;
+  minimoCompra: number;
+  minimoCantidad: number;
+  activo: boolean;
+}
+
+export interface IDescuentoGeneralAplicado {
+  sucursalId: string;
+  minimoCompra: number;
+  minimoCantidad: number;
+  activo: boolean;
+  fechaInicio: string;
+  fechaFin: string;
+}
+
+export interface IDescuentoGrupoAplicado extends IDescuentoGeneralAplicado {
+  groupId: string;
+}
+
+export interface IDescuentoProductoAplicado extends IDescuentoGeneralAplicado {
+  productId: string;
+}
+
 export enum ITypeTransaction {
   VENTA = 'VENTA',
   COMPRA = 'COMPRA',
@@ -115,6 +148,7 @@ export enum ICustomerType {
 }
 
 export interface ISale {
+  id: string;
   userId: string;
   sucursalId: string;
   products: IProductSale[];
@@ -131,6 +165,8 @@ export interface ISale {
   fechaRegistro?: Date;
 }
 
+export interface INewSale extends Omit<ISale, 'id'> {}
+
 export interface ICredit {
   modalidadCredito: ICreditMethod;
   plazoCredito: number;
@@ -138,6 +174,20 @@ export interface ICredit {
   pagoMinimoMensual: number;
 }
 
+export interface IProductReturn {
+  quantity: number;
+  productId: string;
+  discountApplied: boolean;
+}
+
+export interface ITransactionReturn {
+  userId: string;
+  trasaccionOrigenId: string;
+  cajaId: string;
+  monto: number;
+  montoExterno?: number | null;
+  products: IProductReturn[];
+}
 export const dataCoins = {
   currentS: 'C$',
   idGlobal: '6788969390f63a009f1bea40',

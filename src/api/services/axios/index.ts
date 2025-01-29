@@ -17,6 +17,7 @@ export enum PATH_LIST {
   ROLES = 'roles',
   COINS = 'coin',
   DASHBOARD = 'dashboard/product-metrics',
+  Return = 'devolucion',
 }
 
 export const createAxiosInstance = (

@@ -65,7 +65,7 @@ const LoginForm = () => {
       <div className={`min-h-screen w-full flex flex-col md:flex-row }`}>
         <div className="w-full md:w-1/2 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white p-6 md:p-12 flex flex-col justify-center items-start relative overflow-hidden min-h-[300px] md:min-h-screen">
           <motion.div
-            className="absolute inset-0 opacity-40"
+            className="absolute inset-0"
             animate={{
               backgroundPosition: ['0% 0%', '100% 100%'], // Mover de arriba a la derecha
             }}
@@ -84,13 +84,13 @@ const LoginForm = () => {
         </div>
         <div className="flex flex-col items-center justify-center w-full p-6 bg-white md:w-1/2 dark:bg-gray-800 md:p-12">
           <div className="w-full max-w-md space-y-4 md:space-y-6">
-            <div className="flex items-center">
-              <SvgComponent className="h-[300px]" />
+            <div className="flex justify-center items-">
+              <SvgComponent className="size-[200px]" />
             </div>
 
             <motion.form
               onSubmit={handleSubmit}
-              className="w-full max-w-md p-6 mt-10 rounded-lg shadow-md bg-gray-50 dark:bg-gray-800"
+              className="w-full max-w-md p-6 mt-10 rounded-lg shadow-md bg-gradient-to-b from-green-200 to-white dark:bg-gray-800"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -98,12 +98,12 @@ const LoginForm = () => {
               <div className="mb-4">
                 <label
                   htmlFor="username"
-                  className="block text-sm font-medium text-gray-700 dark:text-white"
+                  className="block mb-3 text-sm font-medium text-gray-700 uppercase dark:text-white font-onest"
                 >
                   Nombre de Usuario:
                 </label>
                 <Input
-                  className="w-full h-12 px-4 text-gray-900 bg-white rounded-lg dark:bg-gray-700 dark:text-white"
+                  className="w-full h-12 px-4 text-gray-900 bg-white rounded-lg dark:bg-gray-700 dark:text-white font-onest"
                   type="text"
                   id="username"
                   name="username"
@@ -115,12 +115,12 @@ const LoginForm = () => {
               <div className="mb-4">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 dark:text-white"
+                  className="block mb-3 text-sm font-medium text-gray-700 uppercase dark:text-white font-onest"
                 >
                   Contraseña:
                 </label>
                 <Input
-                  className="w-full h-12 px-4 text-gray-900 bg-white rounded-lg dark:bg-gray-700 dark:text-white"
+                  className="w-full h-12 px-4 text-gray-900 bg-white rounded-lg dark:bg-gray-700 dark:text-white font-onest"
                   type="password"
                   id="password"
                   name="password"
@@ -131,9 +131,9 @@ const LoginForm = () => {
               </div>
               <button
                 type="submit"
-                className="w-full h-12 text-white transition-colors bg-gray-900 dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 dark:text-gray-900"
+                className="w-full h-12 text-white uppercase transition-colors bg-gray-900 dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 dark:text-gray-900"
               >
-                Iniciar Sesión
+                Iniciar Cesión
               </button>
             </motion.form>
           </div>

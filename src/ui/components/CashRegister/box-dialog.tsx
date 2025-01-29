@@ -110,7 +110,7 @@ export function BoxDialog({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] font-onest">
           <DialogHeader>
             <DialogTitle>
               {mode === 'create'
@@ -164,7 +164,7 @@ export function BoxDialog({
                 </div>
               </>
             )}
-            <div className="flex justify-end space-x-2 pt-4">
+            <div className="flex justify-end pt-4 space-x-2">
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancelar
               </Button>

@@ -46,7 +46,7 @@ export const Sale = ({
   const selectedBranch = useAppSelector(
     (state) => state.branches.selectedBranch
   );
-  const discounts = useAppSelector((state) => state.sales.branchDiscounts);
+  const discounts = useAppSelector((state) => state.sales.discounts);
   const [open, setOpen] = useState(false);
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
@@ -104,7 +104,12 @@ export const Sale = ({
     const productWithDiscount = applyDiscounts(
       selectedProduct?.sucursalId ?? '',
       newProductSale,
-      discounts
+      discounts ?? {
+        descuentosPorProductosGenerales: [],
+        descuentosPorGruposGenerales: [],
+        descuentosPorGruposEnSucursal: [],
+        descuentosPorProductosEnSucursal: [],
+      }
     );
 
     if (isExistentProduct) {
