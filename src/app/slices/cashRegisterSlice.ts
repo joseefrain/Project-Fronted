@@ -6,6 +6,7 @@ import {
   craeteBox,
   getboxBranch,
   getboxId,
+  getUserAndBranch,
   openCashier,
 } from '../../api/services/box';
 import { IUser } from './login';
@@ -76,7 +77,7 @@ const initialState: IBox = {
 };
 
 export const createBox = createAsyncThunk(
-  'box/create',
+  'cashRegister/create',
   async (payload: ICreataCashRegister, { rejectWithValue }) => {
     try {
       const response = await craeteBox(payload);
@@ -89,7 +90,7 @@ export const createBox = createAsyncThunk(
 );
 
 export const getboxesbyBranch = createAsyncThunk(
-  'box/getAllByBranch',
+  'cashRegister/getAllByBranch',
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await getboxBranch(id);
@@ -101,7 +102,7 @@ export const getboxesbyBranch = createAsyncThunk(
 );
 
 export const openBoxes = createAsyncThunk(
-  'box/open',
+  'cashRegister/open',
   async (payload: IOpenCash, { rejectWithValue }) => {
     try {
       const response = await openCashier(payload);
@@ -113,7 +114,7 @@ export const openBoxes = createAsyncThunk(
 );
 
 export const closeBoxes = createAsyncThunk(
-  'box/close',
+  'cashRegister/close',
   async (payload: ICloseCash, { rejectWithValue }) => {
     try {
       const response = await closeCashier(payload);
@@ -125,13 +126,35 @@ export const closeBoxes = createAsyncThunk(
 );
 
 export const getBoxById = createAsyncThunk(
-  'box/getById',
+  'cashRegister/getById',
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await getboxId(id);
       return response;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
+// {
+//     "usuarioId": "678dcbe686f66b973523676b",
+//     "sucursalId": "675b4c4226c7e26ec78b8c27"
+// }
+
+export interface IGetUserCashier {
+  usuarioId: string;
+  sucursalId: string;
+}
+
+export const getUserCashier = createAsyncThunk(
+  'cashRegister/getUserAndBranch',
+  async (data: IGetUserCashier) => {
+    try {
+      const response = await getUserAndBranch(data);
+      return response;
+    } catch (error) {
+      return handleThunkError(error);
     }
   }
 );
@@ -219,6 +242,17 @@ export const boxSlice = createSlice({
       .addCase(getBoxById.rejected, (state, action) => {
         state.error = action.error.message as string;
         state.status = 'failed';
+      })
+
+      .addCase(getUserCashier.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getUserCashier.fulfilled, (state, action) => {
+        state.boxState = [
+          ...state.boxState!,
+          action.payload as unknown as ICajaBrach,
+        ];
+        state.status = 'succeeded';
       });
   },
 });

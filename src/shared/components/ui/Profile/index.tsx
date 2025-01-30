@@ -1,5 +1,5 @@
 import { useAppSelector } from '@/app/hooks';
-import { logout, openDrawer } from '@/app/slices/login';
+import { logout, openDrawer, openDrawerCashRegister } from '@/app/slices/login';
 import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,6 +25,7 @@ import {
 } from '../../../../app/slices/cashRegisterSlice.ts';
 import { motion } from 'framer-motion';
 import './styles.scss';
+import { CashDrawer } from '../../../../ui/components/ModalCashRegister/index.tsx';
 
 export const ProfileUser = () => {
   const selectedBranchFromLocalStorage = getSelectedBranchFromLocalStorage();
@@ -49,11 +50,14 @@ export const ProfileUser = () => {
   }, [id]);
 
   const userFilteredData = caja
-    ?.filter(
-      (c: ICajaBrach) =>
-        typeof c.usuarioAperturaId !== 'string' &&
-        c.usuarioAperturaId?._id === user?._id
-    )
+    ?.filter((c: ICajaBrach) => {
+      const usuarioId =
+        typeof c.usuarioAperturaId === 'string'
+          ? c.usuarioAperturaId
+          : c.usuarioAperturaId?._id;
+
+      return usuarioId === user?._id && c.estado?.toUpperCase() === 'ABIERTA';
+    })
     .map((c: ICajaBrach) => ({
       montoEsperado: c.montoEsperado,
       consecutivo: c.consecutivo,
@@ -61,6 +65,7 @@ export const ProfileUser = () => {
     }));
 
   const [, setEditingSucursal] = useState(false);
+  const [, setEditingCash] = useState(false);
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
@@ -88,9 +93,16 @@ export const ProfileUser = () => {
     store.dispatch(fetchBranches()).unwrap();
   }, []);
 
+  const open = (isEdit: boolean) => {
+    setEditingCash(isEdit);
+    store.dispatch(openDrawerCashRegister());
+  };
+
   return (
     <>
       <div>
+        <button onClick={() => open(false)}>abrir</button>
+        <CashDrawer />
         <div className="flex flex-col items-start justify-center ">
           <h1 className="m-auto text-xl font-bold uppercase font-onest">
             {user?.username}

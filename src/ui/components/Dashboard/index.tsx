@@ -18,12 +18,12 @@ export default function Dashboard() {
   const userIDBranch = useAppSelector(
     (state) => state.auth.signIn.user?.sucursalId?._id
   );
+
   const dataDashboard = useAppSelector((state) => state.dashboard.data);
+  console.log(dataDashboard, 'idScu');
 
   useEffect(() => {
-    if (userIDBranch) {
-      store.dispatch(getchartsProducts(userIDBranch)).unwrap();
-    }
+    store.dispatch(getchartsProducts(userIDBranch as string)).unwrap();
   }, [userIDBranch]);
 
   return (

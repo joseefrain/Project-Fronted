@@ -4,6 +4,7 @@ import { Token } from '../../../shared/hooks/useJWT';
 import {
   ICloseCash,
   ICreataCashRegister,
+  IGetUserCashier,
   IOpenCash,
 } from '../../../app/slices/cashRegisterSlice';
 
@@ -40,5 +41,13 @@ export const openCashier = async ({
 }: IOpenCash): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Cashier);
   const response = await axiosInstance.post('/', openCashier);
+  return response;
+};
+
+export const getUserAndBranch = async ({
+  ...data
+}: IGetUserCashier): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Cashier);
+  const response = await axiosInstance.post('/userAndBranch', { params: data });
   return response;
 };
