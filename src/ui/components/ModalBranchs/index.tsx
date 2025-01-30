@@ -24,8 +24,6 @@ import {
 export const ModalBranchs = () => {
   const branches = useAppSelector((state) => state.branches.data);
   const ID = useAppSelector((state) => state.auth.signIn.user);
-  const storedBranch = localStorage.getItem('selectedBranch');
-  const selectedBranch = storedBranch ? JSON.parse(storedBranch) : null;
 
   useEffect(() => {
     store.dispatch(fetchBranches()).unwrap();
@@ -46,7 +44,7 @@ export const ModalBranchs = () => {
 
       const data: IGetUserCashier = {
         usuarioId: ID?._id ?? '',
-        sucursalId: selectedBranch?._id ?? '',
+        sucursalId: branch._id ?? '',
       };
 
       const userCashier = await store.dispatch(getUserCashier(data)).unwrap();

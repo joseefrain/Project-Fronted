@@ -23,7 +23,9 @@ export default function Dashboard() {
   console.log(dataDashboard, 'idScu');
 
   useEffect(() => {
-    store.dispatch(getchartsProducts(userIDBranch as string)).unwrap();
+    if (userIDBranch) {
+      store.dispatch(getchartsProducts(userIDBranch as string)).unwrap();
+    }
   }, [userIDBranch]);
 
   return (

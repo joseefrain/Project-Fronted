@@ -10,8 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@radix-ui/react-dropdown-menu';
-import { useState } from 'react';
-import { ModalHistory } from './box-history';
 import { IRoleAccess } from '../../../interfaces/roleInterfaces';
 import { IUser } from '@/app/slices/login';
 
@@ -27,18 +25,8 @@ export function BoxCard({
   onOpen,
   onClose,
 }: BoxCardProps & { access: IRoleAccess }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const isOpen = box.estado === 'ABIERTA';
   const isClosed = box.estado === 'CERRADA';
-
-  const handleCardClick = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
 
   return (
     <>
@@ -47,10 +35,7 @@ export function BoxCard({
         className="relative overflow-hidden transition-all bg-white group hover:shadow-lg dark:bg-neutral-950"
       >
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-          <div
-            onClick={handleCardClick}
-            className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
-          >
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
             <span className="text-xl font-bold text-primary">
               {box.consecutivo}
             </span>
@@ -109,7 +94,6 @@ export function BoxCard({
               </p>
             </>
           )}
-
           <div className="flex items-center justify-between mt-4">
             <span className="text-sm text-muted-foreground">
               Caja #{box.consecutivo}
@@ -117,12 +101,6 @@ export function BoxCard({
           </div>
         </CardContent>
       </Card>
-
-      {isModalOpen && (
-        <>
-          <ModalHistory data={box} isOpen={isModalOpen} onClose={closeModal} />
-        </>
-      )}
     </>
   );
 }
