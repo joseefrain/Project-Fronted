@@ -1,197 +1,156 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  CreditCardIcon,
-  PackageIcon,
-  ShoppingBagIcon,
-  UsersIcon,
-} from 'lucide-react';
-import { ReactNode } from 'react';
-import {
-  Bar,
-  BarChart,
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
-import { BranchDrawer } from '../ModalBranchs';
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
+import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import { store } from '../../../app/store';
+import { useAppSelector } from '@/app/hooks';
+import { getchartsProducts } from '../../../app/slices/dashboardSlice';
 
 export default function Dashboard() {
-  const salesData = [
-    { name: 'Sept 10', total: 65 },
-    { name: 'Sept 11', total: 59 },
-    { name: 'Sept 12', total: 80 },
-    { name: 'Sept 13', total: 81 },
-    { name: 'Sept 14', total: 56 },
-    { name: 'Sept 15', total: 55 },
-    { name: 'Sept 16', total: 40 },
-  ];
-
-  const marketingData = [
-    { name: 'Adquisición', value: 300 },
-    { name: 'Compra', value: 50 },
-    { name: 'Retención', value: 100 },
-  ];
-
-  const COLORS = ['#8b5cf6', '#3b82f6', '#f59e0b'];
-
-  return (
-    <div className="">
-      <div className="mx-auto space-y-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-9 font-onest dark:text-white">
-          Dashboard
-        </h1>
-        <BranchDrawer />
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard
-            title="Ventas"
-            value="$4,000,000.00"
-            subValue="450"
-            subLabel="Volumen"
-            change={20.0}
-            icon={<CreditCardIcon className="w-6 h-6 text-blue-500" />}
-          />
-          <StatCard
-            title="Clientes"
-            value="1,250"
-            subValue="1,180"
-            subLabel="Activos"
-            change={15.8}
-            icon={<UsersIcon className="w-6 h-6 text-green-500" />}
-          />
-          <StatCard
-            title="Pedidos"
-            value="450"
-            subValue="5"
-            subLabel="Pendientes"
-            change={-4.9}
-            icon={<ShoppingBagIcon className="w-6 h-6 text-purple-500" />}
-          />
-          <StatCard
-            title="Productos"
-            value="45"
-            subValue="32"
-            subLabel="Activos"
-            change={24}
-            icon={<PackageIcon className="w-6 h-6 text-yellow-500" />}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <Card className="col-span-2">
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold font-onest">
-                Resumen de Ventas
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="h-80 font-onest">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={salesData}>
-                  <XAxis
-                    dataKey="name"
-                    stroke="#888888"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    stroke="#888888"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(value) => `$${value}`}
-                  />
-                  <Bar dataKey="total" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold font-onest">
-                Marketing
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center justify-center font-onest h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={marketingData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {marketingData.map((_entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
+  const userIDBranch = useAppSelector(
+    (state) => state.auth.signIn.user?.sucursalId?._id
   );
-}
+  const dataDashboard = useAppSelector((state) => state.dashboard.data);
 
-interface StatCardProps {
-  title: string;
-  value: string;
-  subValue: string;
-  subLabel: string;
-  change: number;
-  icon: ReactNode;
-}
+  useEffect(() => {
+    if (userIDBranch) {
+      store.dispatch(getchartsProducts(userIDBranch)).unwrap();
+    }
+  }, [userIDBranch]);
 
-function StatCard({
-  title,
-  value,
-  subValue,
-  subLabel,
-  change,
-  icon,
-}: StatCardProps) {
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-        <CardTitle className="text-sm font-medium font-onest">
-          {title}
-        </CardTitle>
-        {icon}
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold font-onest">{value}</div>
-        <div className="flex items-center mt-2 text-xs text-muted-foreground font-onest">
-          <span className="font-onest">
-            {subValue} {subLabel}
-          </span>
-          <span
-            className={`font-onest ml-2 flex items-center ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}
-          >
-            {change >= 0 ? (
-              <ArrowUpIcon className="w-4 h-4 mr-1" />
-            ) : (
-              <ArrowDownIcon className="w-4 h-4 mr-1" />
-            )}
-            {Math.abs(change)}%
-          </span>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="p-8 bg-gray-50 dark:bg-gray-950 font-onest">
+      <motion.h1
+        className="text-4xl font-bold mb-8 text-gray-800 dark:text-white"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        Dashboard de Ventas Interactivo
+      </motion.h1>
+
+      <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Producto Más Vendido
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {dataDashboard?.productoMasVendido.producto}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Cantidad: {dataDashboard?.productoMasVendido.cantidad || 0} |
+                Total: {dataDashboard?.productoMasVendido.total?.$numberDecimal}
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Mayor Venta Total
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {dataDashboard?.productoConMasTotalVenidioDelDia?.producto}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Total:{' '}
+                {dataDashboard?.productoConMasTotalVenidioDelDia?.total
+                  ?.$numberDecimal || 0}
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Mayor Ganancia Neta
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {dataDashboard?.productoConMasGananciaNetaDelDia.producto}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Ganancia:{' '}
+                {
+                  dataDashboard?.productoConMasGananciaNetaDelDia.gananciaNeta
+                    .$numberDecimal
+                }
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+      >
+        <Card>
+          <CardHeader>
+            <CardTitle>Detalles de Productos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Producto</TableHead>
+                  <TableHead>Cantidad</TableHead>
+                  <TableHead>Ventas Totales</TableHead>
+                  <TableHead>Ganancia Neta</TableHead>
+                  <TableHead>Costo Unitario</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {dataDashboard?.productos?.map((product, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">
+                      {product.nombre}
+                    </TableCell>
+                    <TableCell>{product.cantidad}</TableCell>
+                    <TableCell>{product.total.$numberDecimal}</TableCell>
+                    <TableCell>{product.gananciaNeta.$numberDecimal}</TableCell>
+                    <TableCell>
+                      {product.costoUnitario.$numberDecimal}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </div>
   );
 }
