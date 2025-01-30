@@ -290,7 +290,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                 }}
                 disabled={processingSale}
               >
-                <SelectTrigger id="customer-type">
+                <SelectTrigger id="customer-type" className="dark:bg-black">
                   <SelectValue placeholder="Seleccionar" />
                 </SelectTrigger>
                 <SelectContent className="font-onest">
@@ -318,7 +318,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                       variant="outline"
                       role="combobox"
                       aria-expanded={open}
-                      className="justify-between w-full"
+                      className="justify-between w-full dark:bg-black"
                     >
                       {customer
                         ? registeredCustomers.find((c) => c._id === customer)
@@ -371,6 +371,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
               <div className="space-y-2">
                 <Label htmlFor="customer-name">Nombre (Opcional)</Label>
                 <Input
+                  className="bg-transparent dark:bg-black"
                   id="customer-name"
                   placeholder="Cliente general"
                   value={customer}
@@ -393,7 +394,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                 value={paymentMethod}
                 disabled={processingSale}
               >
-                <SelectTrigger id="customer-type">
+                <SelectTrigger id="customer-type" className="dark:bg-black">
                   <SelectValue
                     placeholder="Seleccionar"
                     className="flex items-center gap-2"
@@ -435,7 +436,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                     value={cashReceived}
                     onChange={(e) => setCashReceived(e.target.value)}
                     placeholder="0.00"
-                    className="pl-10 text-lg font-semibold bg-white font-onest dark:bg-[#09090A]"
+                    className="pl-10 text-lg font-semibold bg-white font-onest dark:bg-black"
                     disabled={processingSale}
                   />
                 </div>
