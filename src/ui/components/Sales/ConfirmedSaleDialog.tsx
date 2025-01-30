@@ -188,7 +188,7 @@ export const ConfirmedSaleDialog = ({
 
 const ReportField = ({ icon, label, value }: IReportField) => {
   return (
-    <div className="flex items-center justify-between w-full gap-4">
+    <div className="flex items-center justify-between w-full gap-4 dark:text-white dark:bg-black">
       <Label htmlFor={label} className="flex items-center w-[30%]">
         {icon}
         {label}

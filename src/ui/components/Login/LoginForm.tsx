@@ -1,4 +1,8 @@
-import { InicioSesion, openDrawer } from '@/app/slices/login';
+import {
+  InicioSesion,
+  openDrawer,
+  openDrawerCashRegister,
+} from '@/app/slices/login';
 import { store } from '@/app/store';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -48,6 +52,10 @@ const LoginForm = () => {
 
         if (role === ROLE.ROOT) {
           store.dispatch(openDrawer());
+        }
+
+        if (role !== ROLE.ROOT) {
+          store.dispatch(openDrawerCashRegister());
         }
       } else {
         console.log('No hay datos en localStorage');

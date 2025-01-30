@@ -65,6 +65,7 @@ import './style.scss';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 import { ICajaBrach } from '../../../app/slices/cashRegisterSlice';
+import { updateUserCashier } from '../../../app/slices/login';
 
 export interface ISaleSummary {
   subTotal: number;
@@ -89,6 +90,8 @@ export const PurchaseCashier = ({
   const branchSelected = store.getState().branches.selectedBranch;
   const allEntities = useAppSelector((state) => state.entities.data);
   const coin = dataCoins.currentS;
+  const key = 'user';
+  const storedData = localStorage.getItem(key);
 
   const registeredCustomers = allEntities.filter(
     (entity) => entity.type === 'supplier'
@@ -211,6 +214,28 @@ export const PurchaseCashier = ({
           setIsModalOpen(true);
           paymentMethod !== IPaymentMethod.CREDIT &&
             setCashInRegister((prev) => prev - newSale.total);
+
+          if (storedData) {
+            try {
+              let userData = JSON.parse(storedData);
+              if (
+                userData?.cajaId?.montoEsperado?.$numberDecimal !== undefined
+              ) {
+                const montoActual =
+                  parseFloat(userData.cajaId.montoEsperado.$numberDecimal) || 0;
+                const montoNuevo = montoActual - (saleSummary?.total || 0);
+                userData.cajaId.montoEsperado = {
+                  $numberDecimal: montoNuevo.toString(),
+                };
+                store.dispatch(
+                  updateUserCashier(JSON.parse(JSON.stringify(userData.cajaId)))
+                );
+                localStorage.setItem(key, JSON.stringify(userData));
+              }
+            } catch (error) {
+              console.error('Error al parsear JSON:', error);
+            }
+          }
         }, 500);
       });
 

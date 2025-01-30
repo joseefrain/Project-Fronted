@@ -1,45 +1,26 @@
 import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { BoxDialog } from './box-dialog';
 import { store } from '../../../app/store';
 import {
-  closeBoxes,
   createBox,
-  getBoxById,
   getboxesbyBranch,
   ICreataCashRegister,
-  openBoxes,
 } from '../../../app/slices/cashRegisterSlice';
 import { useAppSelector } from '../../../app/hooks';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
-import { removeFromLocalStorage } from '../../../app/slices/login';
 import { CashRegisterCard } from './CashRegisterItem/CashRegisterCard';
+import { CashRegisterCreate } from './CashRegisterItem/CahRegisterCreate';
+import { toast } from 'sonner';
 
 export const CashRegister = () => {
   const access = useRoleAccess(PAGES_MODULES.CASHREGISTER);
   const branchesID = useAppSelector((state) => state.auth.signIn.user);
   const dataBoxes = useAppSelector((state) => state.boxes.BoxesData);
-
-  const idbox = localStorage.getItem('opened_box_id');
-  const selectBranch = localStorage.getItem('selectedBranch');
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingBox, setEditingBox] = useState<ICreataCashRegister>();
-  const [dialogMode, setDialogMode] = useState<
-    'create' | 'ABIERTA' | 'CERRADA'
-  >('create');
-
-  const resetLocalStorage = () => {
-    removeFromLocalStorage('boxState');
-  };
-
-  useEffect(() => {
-    if (selectBranch) {
-      removeFromLocalStorage('boxState');
-    }
-  }, [selectBranch]);
+  const [, setDialogMode] = useState(false);
 
   useEffect(() => {
     store
@@ -48,15 +29,9 @@ export const CashRegister = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (idbox) {
-      store.dispatch(getBoxById(idbox as string));
-    }
-  }, [idbox]);
-
-  const handleSaveBox = (data: any, mode: 'create' | 'ABIERTA' | 'CERRADA') => {
-    if (mode === 'create') {
-      store
+  const handleCreateBox = async (data: ICreataCashRegister) => {
+    try {
+      await store
         .dispatch(
           createBox({
             ...data,
@@ -65,32 +40,11 @@ export const CashRegister = () => {
           })
         )
         .unwrap();
-    } else if (mode === 'ABIERTA') {
-      store
-        .dispatch(
-          openBoxes({
-            cajaId: data.cajaId,
-            usuarioAperturaId: branchesID?._id as string,
-            montoInicial: data.montoInicial,
-          })
-        )
-        .unwrap();
-    } else if (mode === 'CERRADA') {
-      store
-        .dispatch(
-          closeBoxes({
-            cajaId: data.cajaId,
-            usuarioArqueoId: data.usuarioArqueoId,
-            montoFinalDeclarado: data.montoFinalDeclarado,
-            closeWithoutCounting: data.closeWithoutCounting,
-          })
-        )
-        .unwrap()
-
-        .then(() => {
-          resetLocalStorage();
-          setIsDialogOpen(false);
-        });
+      toast.success('Caja creada correctamente');
+      setIsDialogOpen(false);
+      setEditingBox(undefined);
+    } catch (error: any) {
+      toast.error('Error al crear la caja, intente nuevamente', error);
     }
   };
 
@@ -104,8 +58,8 @@ export const CashRegister = () => {
           <Button
             onClick={() => {
               setIsDialogOpen(true);
-              setEditingBox(null!);
-              setDialogMode('create');
+              setEditingBox(undefined);
+              setDialogMode(true);
             }}
           >
             <Plus className="w-4 h-4 mr-2 max-sm:mr-0" />
@@ -120,24 +74,16 @@ export const CashRegister = () => {
           </h1>
         </div>
       )}
-
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {dataBoxes?.map((box) => (
           <CashRegisterCard key={box._id} cashRegister={box} access={access} />
         ))}
       </div>
-
-      <BoxDialog
-        iduser={branchesID?._id as string}
-        key={editingBox?._id}
+      <CashRegisterCreate
         isOpen={isDialogOpen}
-        onClose={() => {
-          setIsDialogOpen(false);
-          setEditingBox(null!);
-        }}
-        onSave={handleSaveBox}
+        onClose={() => setIsDialogOpen(false)}
+        onSave={handleCreateBox}
         box={editingBox}
-        mode={dialogMode}
       />
     </div>
   );

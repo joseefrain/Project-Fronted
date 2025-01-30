@@ -12,51 +12,72 @@ import {
 } from '../../../components/ui/drawer';
 import {
   closeDrawer,
+  openDrawerCashRegister,
   updateBranchUser,
   updateUserCashier,
 } from '../../../app/slices/login';
-import { openCashier } from '../../../app/slices/salesSlice';
+import {
+  getUserCashier,
+  IGetUserCashier,
+} from '../../../app/slices/cashRegisterSlice';
 
 export const ModalBranchs = () => {
   const branches = useAppSelector((state) => state.branches.data);
+  const ID = useAppSelector((state) => state.auth.signIn.user);
+  const storedBranch = localStorage.getItem('selectedBranch');
+  const selectedBranch = storedBranch ? JSON.parse(storedBranch) : null;
 
   useEffect(() => {
     store.dispatch(fetchBranches()).unwrap();
   }, []);
 
   const handleSelectBranch = async (branch: Branch) => {
-    store.dispatch(setSelectedBranch(branch));
-    localStorage.setItem('selectedBranch', JSON.stringify(branch));
+    try {
+      store.dispatch(setSelectedBranch(branch));
+      localStorage.setItem('selectedBranch', JSON.stringify(branch));
 
-    const userData = localStorage.getItem('user');
-
-    if (userData) {
-      try {
-        const parsedUserData = JSON.parse(userData);
-
-        let caja = await store
-          .dispatch(
-            openCashier({
-              sucursalId: branch._id as string,
-              userId: parsedUserData.user._id,
-            })
-          )
-          .unwrap();
-        store.dispatch(updateUserCashier(caja._id));
-        store.dispatch(updateBranchUser(branch));
-
-        console.log(caja, 'day');
-
-        parsedUserData.user.sucursalId = branch;
-        parsedUserData.cajaId = caja._id;
-        localStorage.setItem('user', JSON.stringify(parsedUserData));
-
-        store.dispatch(closeDrawer());
-      } catch (error) {
-        console.error('Error al actualizar sucursalId en user:', error);
+      const userData = localStorage.getItem('user');
+      if (!userData) {
+        console.warn('No se encontró la clave "user" en localStorage');
+        return;
       }
-    } else {
-      console.warn('No se encontró la clave "user" en localStorage');
+
+      store.dispatch(updateBranchUser(branch));
+
+      const data: IGetUserCashier = {
+        usuarioId: ID?._id ?? '',
+        sucursalId: selectedBranch?._id ?? '',
+      };
+
+      const userCashier = await store.dispatch(getUserCashier(data)).unwrap();
+
+      if (userCashier.data === null) {
+        console.log(userCashier.data, 'userCashier');
+        store.dispatch(openDrawerCashRegister());
+      }
+
+      const key = 'user';
+
+      const storedData = localStorage.getItem(key);
+      if (storedData) {
+        try {
+          let userData = JSON.parse(JSON.stringify(JSON.parse(storedData)));
+
+          userData.cajaId = userCashier.data;
+          userData.user.sucursalId = branch;
+
+          store.dispatch(updateUserCashier(userData));
+          localStorage.setItem(key, JSON.stringify(userData));
+
+          console.log('Datos actualizados correctamente.');
+        } catch (error) {
+          console.error('Error al parsear JSON:', error);
+        }
+      }
+
+      store.dispatch(closeDrawer());
+    } catch (error) {
+      console.error('Error al seleccionar sucursal:', error);
     }
   };
 
