@@ -1,12 +1,16 @@
 import { ICajaBrach } from '@/app/slices/cashRegisterSlice';
 import { IUser } from '@/app/slices/login';
 import { CardContent } from '@/components/ui/card';
+import { formatNumber } from '../../../../shared/helpers/Branchs';
 
 interface CardContentProps {
   cashRegister: ICajaBrach;
 }
 
 export const CardContentCashier = ({ cashRegister }: CardContentProps) => {
+  const formattedValue = formatNumber(
+    cashRegister.montoEsperado.$numberDecimal
+  );
   return (
     <CardContent>
       <p
@@ -24,7 +28,7 @@ export const CardContentCashier = ({ cashRegister }: CardContentProps) => {
           <p
             className={`mt-2 text-sm ${cashRegister.estado === 'ABIERTA' ? 'text-green-500' : 'text-red-500'}`}
           >
-            Saldo: {cashRegister.montoEsperado.$numberDecimal}
+            Saldo: {formattedValue}
           </p>
         </>
       )}

@@ -1,5 +1,5 @@
 import { useAppSelector } from '@/app/hooks';
-import { logout, openDrawer, openDrawerCashRegister } from '@/app/slices/login';
+import { logout, openDrawer } from '@/app/slices/login';
 import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
 import {
@@ -64,8 +64,6 @@ export const ProfileUser = () => {
       estado: c.estado,
     }));
 
-  const [, setEditingSucursal] = useState(false);
-  const [, setEditingCash] = useState(false);
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
@@ -76,8 +74,7 @@ export const ProfileUser = () => {
     }
   };
 
-  const openDialog = (isEdit: boolean) => {
-    setEditingSucursal(isEdit);
+  const openDialog = () => {
     store.dispatch(openDrawer());
   };
 
@@ -93,15 +90,9 @@ export const ProfileUser = () => {
     store.dispatch(fetchBranches()).unwrap();
   }, []);
 
-  const open = (isEdit: boolean) => {
-    setEditingCash(isEdit);
-    store.dispatch(openDrawerCashRegister());
-  };
-
   return (
     <>
       <div>
-        <button onClick={() => open(false)}>abrir</button>
         <CashDrawer />
         <div className="flex flex-col items-start justify-center ">
           <h1 className="m-auto text-xl font-bold uppercase font-onest">
@@ -158,7 +149,7 @@ export const ProfileUser = () => {
 
           {user?.role === ROLE.ROOT && (
             <Button
-              onClick={() => openDialog(false)}
+              onClick={() => openDialog()}
               className="w-full h-full sm:w-auto font-onest dark:bg-[#09090b] dark:text-white dark:border-gray-700"
             >
               <Store className="w-4 h-4 mr-0 sm:mr-2 " />

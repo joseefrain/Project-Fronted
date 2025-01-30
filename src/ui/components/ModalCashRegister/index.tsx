@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -14,6 +13,7 @@ import { store } from '../../../app/store';
 import { useAppSelector } from '../../../app/hooks';
 import {
   getboxesbyBranch,
+  getUserCashier,
   ICajaBrach,
   IOpenCash,
   openBoxes,
@@ -23,47 +23,81 @@ import {
   DrawerContent,
   DrawerHeader,
 } from '../../../components/ui/drawer';
-// import React from 'react';
 import {
   closeDrawerCashRegister,
   updateUserCashier,
 } from '../../../app/slices/login';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-// import React from 'react';
 
 export const CardCash = () => {
-  const caja = store.getState().boxes.BoxesData;
-  const user = useAppSelector((state) => state.auth.signIn.user);
-  const id = user?.sucursalId?._id;
-  const [, setIsLoading] = useState(true);
-  const ID = useAppSelector((state) => state.auth.signIn.user);
-  const IDtest = store.getState().auth.signIn.cajaId as ICajaBrach;
-  const userFilteredData = IDtest?.usuarioAperturaId === ID?._id;
   const navigate = useNavigate();
+  const user = useAppSelector((state) => state.auth.signIn.user);
+  const caja = store.getState().boxes.BoxesData;
+  const id = user?.sucursalId?._id;
 
+  const [, setIsLoading] = useState(true);
   const [formValues, setFormValues] = useState<IOpenCash>({
     montoInicial: 0,
     usuarioAperturaId: user?._id as string,
     cajaId: '',
   });
 
+  const IDtest = store.getState().auth.signIn.cajaId as ICajaBrach;
+  const isUserAuthorized = IDtest?.usuarioAperturaId === user?._id;
+
   useEffect(() => {
     if (id) {
       store
         .dispatch(getboxesbyBranch(id))
         .unwrap()
-        .then(() => setIsLoading(false))
-        .catch(() => setIsLoading(false));
+        .finally(() => setIsLoading(false));
     }
   }, [id]);
 
-  const openModal = (id: string) => {
-    setFormValues((prev) => ({ ...prev, cajaId: id }));
-  };
+  useEffect(() => {
+    const fetchUserCashier = async () => {
+      const response = await store
+        .dispatch(
+          getUserCashier({
+            usuarioId: user?._id ?? '',
+            sucursalId: user?.sucursalId?._id ?? '',
+          })
+        )
+        .unwrap();
+      if (!response && (!caja || caja.length === 0)) {
+        store.dispatch(closeDrawerCashRegister());
+      }
+    };
+    fetchUserCashier();
+  }, [caja, isUserAuthorized]);
 
-  const closeModal = () => {
-    setFormValues((prev) => ({ ...prev, cajaId: '' }));
+  useEffect(() => {
+    const timeoutId = setTimeout(
+      () => {
+        if (!caja?.length) {
+          store.dispatch(closeDrawerCashRegister());
+          navigate('/cashRegister');
+        } else if (isUserAuthorized) {
+          store.dispatch(closeDrawerCashRegister());
+        }
+      },
+      caja?.length ? 10 : 1000
+    );
+
+    return () => clearTimeout(timeoutId);
+  }, [caja, isUserAuthorized]);
+
+  const openModal = (cajaId: string) =>
+    setFormValues((prev) => ({ ...prev, cajaId }));
+  const closeModal = () => setFormValues((prev) => ({ ...prev, cajaId: '' }));
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormValues((prev) => ({
+      ...prev,
+      [id]: id === 'montoInicial' ? Number(value) || 0 : value,
+    }));
   };
 
   const handleOpenCaja = () => {
@@ -78,89 +112,50 @@ export const CardCash = () => {
         parsedUserData.cajaId = data;
         store.dispatch(updateUserCashier(data));
         localStorage.setItem('user', JSON.stringify(parsedUserData));
-
         closeModal();
         store.dispatch(closeDrawerCashRegister());
         toast.success('Caja abierta correctamente');
       });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setFormValues((prev) => ({
-      ...prev,
-      [id]: id === 'montoInicial' ? Number(value) || 0 : value,
-    }));
-  };
-
-  useEffect(() => {
-    // eslint-disable-next-line no-undef
-    let timeoutId: NodeJS.Timeout;
-
-    if (!caja || caja.length === 0) {
-      timeoutId = setTimeout(() => {
-        store.dispatch(closeDrawerCashRegister());
-        navigate('/cashRegister');
-      }, 1000);
-    } else if (userFilteredData) {
-      timeoutId = setTimeout(() => {
-        store.dispatch(closeDrawerCashRegister());
-      }, 10);
-    }
-
-    return () => clearTimeout(timeoutId);
-  }, [caja, userFilteredData]);
+  const getStatusClass = (estado: string) =>
+    estado === 'ABIERTA' ? 'text-green-600' : 'text-red-600';
 
   return (
     <div className="p-6 space-y-6">
-      <h2 className="text-xl font-semibold">Cajas Abiertas</h2>
-      {(!caja || caja.length === 0) && (
+      {!caja?.length && (
         <div className="p-4 text-center">
           <h1 className="text-lg text-gray-400 dark:text-white font-onest">
-            No hay cajas creadas en este sucursal.
+            No hay cajas creadas en esta sucursal.
           </h1>
         </div>
       )}
 
       <div className="flex gap-5 justify-center">
-        {caja?.map((caja) => (
+        {caja?.map(({ _id, estado, consecutivo }) => (
           <div
-            key={caja._id}
+            key={_id}
             className="p-4 rounded-lg shadow-md border bg-white w-64 space-y-4 transition hover:shadow-lg dark:bg-gray-800"
           >
-            <div className="flex justify-between items-center">
-              <h3
-                className={`font-semibold font-onest dark:text-white ${
-                  caja.estado === 'ABIERTA' ? 'text-green-600' : 'text-red-600'
-                }`}
-              >
-                {caja.estado === 'ABIERTA'
-                  ? 'Usuario desconocido'
-                  : 'Usuario desconocido'}
-              </h3>
-            </div>
-            <p
-              className={`text-sm ${
-                caja.estado === 'ABIERTA' ? 'text-green-600' : 'text-red-600'
-              }`}
+            <h3
+              className={`font-semibold font-onest dark:text-white ${getStatusClass(estado)}`}
             >
-              {caja.estado}
-            </p>
+              Usuario desconocido
+            </h3>
+            <p className={`text-sm ${getStatusClass(estado)}`}>{estado}</p>
             <div className="flex justify-between items-center w-full">
               <span
-                className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  caja.estado === 'ABIERTA'
-                    ? 'bg-green-200 text-green-600'
-                    : 'bg-red-200 text-red-600'
-                }`}
+                className={`py-1 rounded-full text-sm font-medium ${getStatusClass(estado)}`}
               >
-                Caja #{caja.consecutivo}
+                Caja #{consecutivo}
               </span>
-              <DialogTrigger asChild>
-                <button onClick={() => openModal(caja._id)}>
-                  <ExternalLink className="w-5 h-5 text-blue-600 dark:text-white" />
-                </button>
-              </DialogTrigger>
+              {estado === 'CERRADA' && (
+                <DialogTrigger asChild>
+                  <button onClick={() => openModal(_id)}>
+                    <ExternalLink className="w-5 h-5 text-blue-600 dark:text-white" />
+                  </button>
+                </DialogTrigger>
+              )}
             </div>
           </div>
         ))}

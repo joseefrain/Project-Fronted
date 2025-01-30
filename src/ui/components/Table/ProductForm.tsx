@@ -137,7 +137,7 @@ const ProductForm = ({
     },
     { id: 'precio', label: 'Precio', type: 'number' },
     { id: 'stock', label: 'Stock', type: 'number', min: '0' },
-    { id: 'puntoReCompra', label: 'Punto de compra', type: 'number' },
+    { id: 'puntoReCompra', label: 'Minimo Stock', type: 'number' },
     { id: 'costoUnitario', label: 'Costo unitario', type: 'number' },
   ];
 

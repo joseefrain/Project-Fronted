@@ -137,11 +137,6 @@ export const getBoxById = createAsyncThunk(
   }
 );
 
-// {
-//     "usuarioId": "678dcbe686f66b973523676b",
-//     "sucursalId": "675b4c4226c7e26ec78b8c27"
-// }
-
 export interface IGetUserCashier {
   usuarioId: string;
   sucursalId: string;
@@ -152,7 +147,7 @@ export const getUserCashier = createAsyncThunk(
   async (data: IGetUserCashier) => {
     try {
       const response = await getUserAndBranch(data);
-      return response;
+      return response.data;
     } catch (error) {
       return handleThunkError(error);
     }
@@ -243,17 +238,6 @@ export const boxSlice = createSlice({
         state.error = action.error.message as string;
         state.status = 'failed';
       });
-
-    //   .addCase(getUserCashier.pending, (state) => {
-    //     state.status = 'loading';
-    //   })
-    //   .addCase(getUserCashier.fulfilled, (state, action) => {
-    //     state.boxState = [
-    //       ...state.boxState!,
-    //       action.payload as unknown as ICajaBrach,
-    //     ];
-    //     state.status = 'succeeded';
-    //   });
   },
 });
 

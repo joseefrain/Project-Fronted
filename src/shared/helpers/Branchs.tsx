@@ -12,3 +12,14 @@ export const GetBranches = async (id: string): Promise<ITablaBranch[]> => {
     throw new Error(`Failed to fetch branches: ${error.message || error}`);
   }
 };
+
+export const formatNumber = (
+  value: unknown,
+  locale = 'en-US',
+  minimumFractionDigits = 0
+) => {
+  const number = Number(value);
+  return !isNaN(number)
+    ? number.toLocaleString(locale, { minimumFractionDigits })
+    : '0';
+};
