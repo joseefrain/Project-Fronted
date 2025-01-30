@@ -59,8 +59,6 @@ export const ModalBranchs = () => {
 
       const userCashier = await store.dispatch(getUserCashier(data)).unwrap();
       
-      debugger
-
       if (userCashier.data === null) {
         console.log(userCashier.data, 'userCashier');
         store.dispatch(openDrawerCashRegister());
