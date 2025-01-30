@@ -62,9 +62,10 @@ import { ConfirmedSaleDialog } from './ConfirmedSaleDialog';
 import './style.scss';
 import { useAppSelector } from '../../../app/hooks';
 import { getEntities } from '../../../app/slices/entities';
-import { getBoxById, ICajaBrach } from '../../../app/slices/cashRegisterSlice';
+import { ICajaBrach } from '../../../app/slices/cashRegisterSlice';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import { updateUserCashier } from '../../../app/slices/login';
 
 export interface ISaleSummary {
   subTotal: number;
@@ -86,17 +87,12 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   const branchSelected = store.getState().branches.selectedBranch;
   const allEntities = useAppSelector((state) => state.entities.data);
   const coin = dataCoins.currentS;
+  const key = 'user';
+  const storedData = localStorage.getItem(key);
 
   const registeredCustomers = allEntities.filter(
     (entity) => entity.type === 'customer'
   );
-
-  const idbox = localStorage.getItem('opened_box_id');
-  useEffect(() => {
-    if (idbox) {
-      store.dispatch(getBoxById(idbox as string));
-    }
-  }, [idbox]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -214,6 +210,28 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
         setTimeout(() => {
           setIsModalOpen(true);
           setCashInRegister((prev) => prev + newSale.total);
+
+          if (storedData) {
+            try {
+              let userData = JSON.parse(storedData);
+              if (
+                userData?.cajaId?.montoEsperado?.$numberDecimal !== undefined
+              ) {
+                const montoActual =
+                  parseFloat(userData.cajaId.montoEsperado.$numberDecimal) || 0;
+                const montoNuevo = montoActual + (saleSummary?.total || 0);
+                userData.cajaId.montoEsperado = {
+                  $numberDecimal: montoNuevo.toString(),
+                };
+                store.dispatch(
+                  updateUserCashier(JSON.parse(JSON.stringify(userData.cajaId)))
+                );
+                localStorage.setItem(key, JSON.stringify(userData));
+              }
+            } catch (error) {
+              console.error('Error al parsear JSON:', error);
+            }
+          }
         }, 500);
       });
 
