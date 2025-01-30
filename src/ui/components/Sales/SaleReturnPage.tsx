@@ -18,6 +18,7 @@ import { Separator } from '@/components/ui/separator';
 import { AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
 import {
   IProductReturn,
+  IProductSale,
   ISale,
   ITransactionReturn,
 } from '../../../interfaces/salesInterfaces';
@@ -68,9 +69,25 @@ export default function SalesReturnPage({
 
   const calculateTotalReturn = () => {
     return saleDetails.products.reduce((total, product) => {
+      let productPrice = product.price;
+
+      if (product.discount) {
+        productPrice = getProductUnitPrice(product);
+      }
+
       const returnQuantity = returnQuantities[product.productId] || 0;
-      return total + returnQuantity * product.price;
+      return total + returnQuantity * productPrice;
     }, 0);
+  };
+
+  const getProductUnitPrice = (product: IProductSale) => {
+    if (!product.discount) return product.price;
+
+    const productTotalSale =
+      product.quantity * product.price - product.discount.amount;
+    const productPriceWithDiscount = productTotalSale / product.quantity;
+
+    return productPriceWithDiscount;
   };
 
   const totalReturn = calculateTotalReturn();
@@ -85,16 +102,49 @@ export default function SalesReturnPage({
     const formattedProducts: IProductReturn[] = [];
     for (const [key, value] of Object.entries(returnQuantities)) {
       const product = saleDetails.products.find((p) => p.productId === key);
-      const discountApplied = isDiscountApplied(
+      if (!product) return;
+
+      const newQuantity = product.quantity - value;
+
+      if (!product.discount || newQuantity === 0) {
+        formattedProducts.push({
+          productId: key,
+          quantity: value,
+          discountApplied: false,
+        });
+        return;
+      }
+
+      const hasActiveDiscount = isDiscountApplied(
         saleDetails.sucursalId,
         value,
         product
       );
 
+      if (hasActiveDiscount)
+        return formattedProducts.push({
+          productId: key,
+          quantity: value,
+          discountApplied: hasActiveDiscount,
+        });
+
+      // REAJUSTE PARA DESCUENTOS POR CANTIDAD
+
+      const unityPriceWithDiscount = getProductUnitPrice(product);
+      const unityPrice = product.price;
+
+      const newSubtotalWithDiscount = newQuantity * unityPriceWithDiscount;
+      const newSubtotalWithOutDiscount = newQuantity * unityPrice;
+
+      const discountAmount =
+        newSubtotalWithOutDiscount - newSubtotalWithDiscount;
+
+      console.log(discountAmount, 'REAJUSTE');
+
       formattedProducts.push({
         productId: key,
         quantity: value,
-        discountApplied: discountApplied,
+        discountApplied: hasActiveDiscount,
       });
     }
 
@@ -150,13 +200,13 @@ export default function SalesReturnPage({
         <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-3">
           <div className="p-4 rounded-lg bg-primary/5">
             <h3 className="font-semibold text-gray-700">Realizada por</h3>
-            <p className="text-xl font-bold text-green-700 truncate">
+            <p className="text-xl font-bold text-green-800 truncate">
               {saleDetails.userId.toUpperCase()}
             </p>
           </div>
           <div className="p-4 rounded-lg bg-primary/5">
             <h3 className="font-semibold text-gray-700">Fecha</h3>
-            <p className="text-xl font-bold text-green-700">
+            <p className="text-xl font-bold text-green-800">
               {saleDetails.fechaRegistro
                 ? getFormatedDate(saleDetails.fechaRegistro)
                 : ''}
@@ -166,7 +216,7 @@ export default function SalesReturnPage({
             <h3 className="font-semibold text-gray-700">
               Total de la transacción
             </h3>
-            <p className="text-xl font-bold text-green-700">
+            <p className="text-xl font-bold text-green-800">
               ${saleDetails.total}
             </p>
           </div>
@@ -184,6 +234,9 @@ export default function SalesReturnPage({
                 </TableHead>
                 <TableHead className="text-center">Precio Unitario</TableHead>
                 <TableHead className="text-center">
+                  Precio Unitario Con Descuento
+                </TableHead>
+                <TableHead className="text-center">
                   Cantidad a Devolver
                 </TableHead>
               </TableRow>
@@ -199,6 +252,9 @@ export default function SalesReturnPage({
                   </TableCell>
                   <TableCell className="text-center">
                     ${product.price.toFixed(2)}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    ${product.discount ? getProductUnitPrice(product) : ''}
                   </TableCell>
                   <TableCell className="flex items-center justify-center">
                     <Input
@@ -289,7 +345,7 @@ export default function SalesReturnPage({
         <div className="flex justify-end mt-8">
           <Button
             onClick={handleReturn}
-            className="px-8 py-5 font-semibold text-green-800 uppercase bg-green-100 hover:bg-green-200 disabled:bg-gray-200 disabled:cursor-not-allowed"
+            className="px-8 py-5 font-semibold uppercase disabled:bg-gray-200 disabled:cursor-not-allowed"
             disabled={
               totalReturn === 0 ||
               cashRegister.cash + extraCash < totalReturn ||
