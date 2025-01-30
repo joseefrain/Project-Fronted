@@ -84,6 +84,7 @@ export interface ILoginSlice {
   status: statusProgressLogin;
   error?: string;
   isOpen: boolean;
+  isOpenCashRegister: boolean;
 }
 
 const initialState: ILoginSlice = {
@@ -96,6 +97,7 @@ const initialState: ILoginSlice = {
   status: 'idle',
   error: '',
   isOpen: false,
+  isOpenCashRegister: false,
 };
 
 export const LoginSlice = createSlice({
@@ -153,6 +155,12 @@ export const LoginSlice = createSlice({
     closeDrawer: (state) => {
       state.isOpen = false;
     },
+    openDrawerCashRegister: (state) => {
+      state.isOpenCashRegister = true;
+    },
+    closeDrawerCashRegister: (state) => {
+      state.isOpenCashRegister = false;
+    },
 
     updateRoleAssigned: (state, action: PayloadAction<IRole>) => {
       if (state.signIn.user) {
@@ -202,5 +210,7 @@ export const {
   updateUserCashier,
   updateBranchUser,
   updateRoleAssigned,
+  openDrawerCashRegister,
+  closeDrawerCashRegister,
 } = LoginSlice.actions;
 export const loginReducer = LoginSlice.reducer;
