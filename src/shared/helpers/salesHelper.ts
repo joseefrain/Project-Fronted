@@ -180,7 +180,8 @@ export const isDiscountApplied = (
       groupId,
       sucursalId,
       price,
-      newQuantity
+      newQuantity,
+      false
     );
 
     return discountApplied;
@@ -201,7 +202,8 @@ export const isDiscountApplied = (
     productId,
     sucursalId,
     price,
-    newQuantity
+    newQuantity,
+    false
   );
 
   return discountApplied;
@@ -212,19 +214,24 @@ export const validateDiscountByGroup = (
   groupId: string,
   sucursalId: string,
   productPrice: number,
-  productQuantity: number
+  productQuantity: number,
+  includeDates = true
 ) => {
-  return (
-    discount?.groupId === groupId &&
-    (!discount.sucursalId || discount.sucursalId === sucursalId) &&
-    discount.activo &&
-    isCurrentDateInRange(
-      String(discount.fechaInicio),
-      String(discount.fechaFin)
-    ) &&
-    (productPrice * productQuantity >= Number(discount.minimoCompra) ||
-      productQuantity >= discount.minimoCantidad)
-  );
+  return includeDates
+    ? discount?.groupId === groupId &&
+        (!discount.sucursalId || discount.sucursalId === sucursalId) &&
+        discount.activo &&
+        isCurrentDateInRange(
+          String(discount.fechaInicio),
+          String(discount.fechaFin)
+        ) &&
+        (productPrice * productQuantity >= Number(discount.minimoCompra) ||
+          productQuantity >= discount.minimoCantidad)
+    : discount?.groupId === groupId &&
+        (!discount.sucursalId || discount.sucursalId === sucursalId) &&
+        discount.activo &&
+        (productPrice * productQuantity >= Number(discount.minimoCompra) ||
+          productQuantity >= discount.minimoCantidad);
 };
 
 export const validateDiscountByProduct = (
@@ -232,17 +239,22 @@ export const validateDiscountByProduct = (
   productId: string,
   sucursalId: string,
   price: number,
-  newQuantity: number
+  newQuantity: number,
+  includeDates = true
 ) => {
-  return (
-    (discount.productId?.toString() === productId &&
-      (!discount.sucursalId || discount.sucursalId === sucursalId) &&
-      discount.activo &&
-      isCurrentDateInRange(
-        String(discount.fechaInicio),
-        String(discount.fechaFin)
-      ) &&
-      price * newQuantity >= Number(discount.minimoCompra)) ||
-    newQuantity >= discount.minimoCantidad
-  );
+  return includeDates
+    ? (discount.productId?.toString() === productId &&
+        (!discount.sucursalId || discount.sucursalId === sucursalId) &&
+        discount.activo &&
+        isCurrentDateInRange(
+          String(discount.fechaInicio),
+          String(discount.fechaFin)
+        ) &&
+        price * newQuantity >= Number(discount.minimoCompra)) ||
+        newQuantity >= discount.minimoCantidad
+    : (discount.productId?.toString() === productId &&
+        (!discount.sucursalId || discount.sucursalId === sucursalId) &&
+        discount.activo &&
+        price * newQuantity >= Number(discount.minimoCompra)) ||
+        newQuantity >= discount.minimoCantidad;
 };
