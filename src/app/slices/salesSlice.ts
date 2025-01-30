@@ -49,7 +49,7 @@ interface SalesState {
   branchPurchases: ISale[];
   status: IStatus;
   error: string | null;
-  returnSales: any[];
+  returns: ISale[];
 }
 
 const initialState: SalesState = {
@@ -61,7 +61,7 @@ const initialState: SalesState = {
   branchDiscounts: {} as IListDescuentoResponse,
   status: 'idle',
   error: null,
-  returnSales: [],
+  returns: [],
 };
 
 export const createDiscountSales = createAsyncThunk(
@@ -280,7 +280,7 @@ const salesSlice = createSlice({
       })
       .addCase(createSaleReturn.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
-        state.returnSales = [...state.returnSales, payload];
+        state.returns = [...state.returns, payload.devolucion];
       });
   },
 });
