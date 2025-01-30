@@ -49,8 +49,7 @@ export const ModalBranchs = () => {
 
       const userCashier = await store.dispatch(getUserCashier(data)).unwrap();
 
-      if (userCashier.data === null) {
-        console.log(userCashier.data, 'userCashier');
+      if (userCashier === null) {
         store.dispatch(openDrawerCashRegister());
       }
 
@@ -66,8 +65,6 @@ export const ModalBranchs = () => {
 
           store.dispatch(updateUserCashier(userData));
           localStorage.setItem(key, JSON.stringify(userData));
-
-          console.log('Datos actualizados correctamente.');
         } catch (error) {
           console.error('Error al parsear JSON:', error);
         }
