@@ -67,7 +67,7 @@ export default function DiscountManager() {
     userRoles?.role === ROLE.ROOT ? branches : dataFilterID;
   let idBranch = userRoles?.sucursalId?._id;
 
-  const [formState, setFormState] = useState<IDescuentoCreate>({
+  const initializeFormState = (): IDescuentoCreate => ({
     nombre: '',
     tipoDescuento: 'porcentaje',
     valorDescuento: 0,
@@ -85,6 +85,11 @@ export default function DiscountManager() {
     sucursalId: '',
     minimoType: 'compra',
   });
+
+  const [formState, setFormState] = useState<IDescuentoCreate>(
+    initializeFormState()
+  );
+
   const stateProduct = formState.tipoDescuentoEntidad === 'Product';
 
   const [, setSelectedGroup] = useState<{
@@ -165,13 +170,18 @@ export default function DiscountManager() {
   useEffect(() => {
     const fetchData = async () => {
       if (!idBranch) return;
-      await GetBranches(idBranch as unknown as string);
+
+      try {
+        await GetBranches(idBranch as unknown as string);
+        store.dispatch(getAllGroupsSlice()).unwrap();
+        store.dispatch(getDiscountsByBranchAll(idBranch)).unwrap();
+      } catch (error: any) {
+        toast.error('Error al cargar los datos' + error.message);
+      }
     };
+
     fetchData();
-    store.dispatch(getAllGroupsSlice()).unwrap();
-    store.dispatch(getDiscountsByBranchAll(idBranch as string)).unwrap();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [idBranch]);
 
   const updateFormState = (field: keyof IDescuentoCreate, value: string) => {
     setFormState((prevState) => ({
