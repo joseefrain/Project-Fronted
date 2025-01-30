@@ -15,6 +15,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
+import { useEffect } from 'react';
 
 interface Option {
   id: string;
@@ -40,6 +41,10 @@ export const SelectSearch: React.FC<ComboboxProps> = ({
   const [value, setValue] = React.useState(initialValue || '');
   const [filteredOptions, setFilteredOptions] =
     React.useState<Option[]>(options);
+
+    useEffect(() => {
+      setFilteredOptions(options);
+    }, [options]);
 
   const handleSearch = (searchTerm: string) => {
     const lowercasedTerm = searchTerm.toLowerCase();
