@@ -12,21 +12,20 @@ import {
 } from '../../../components/ui/drawer';
 import {
   closeDrawer,
-  closeDrawerCashRegister,
   openDrawerCashRegister,
   updateBranchUser,
   updateUserCashier,
 } from '../../../app/slices/login';
 import {
   getUserCashier,
-  ICajaBrach,
   IGetUserCashier,
 } from '../../../app/slices/cashRegisterSlice';
 
 export const ModalBranchs = () => {
   const branches = useAppSelector((state) => state.branches.data);
   const ID = useAppSelector((state) => state.auth.signIn.user);
-  const IDtest = store.getState().auth.signIn.cajaId as ICajaBrach;
+  const storedBranch = localStorage.getItem('selectedBranch');
+  const selectedBranch = storedBranch ? JSON.parse(storedBranch) : null;
 
   useEffect(() => {
     store.dispatch(fetchBranches()).unwrap();
@@ -43,55 +42,40 @@ export const ModalBranchs = () => {
         return;
       }
 
-      const parsedUserData = JSON.parse(userData);
-
       store.dispatch(updateBranchUser(branch));
-
-      const storedBranch = localStorage.getItem('selectedBranch');
-      const selectedBranch = storedBranch ? JSON.parse(storedBranch) : null;
 
       const data: IGetUserCashier = {
         usuarioId: ID?._id ?? '',
         sucursalId: selectedBranch?._id ?? '',
       };
 
-      //   console.log(data, 'data actualizada');
-
       const userCashier = await store.dispatch(getUserCashier(data)).unwrap();
-      
+
       if (userCashier.data === null) {
         console.log(userCashier.data, 'userCashier');
         store.dispatch(openDrawerCashRegister());
       }
-      const key = 'user'; // Clave donde se almacena en localStorage
 
-      // Obtener datos actuales
+      const key = 'user';
+
       const storedData = localStorage.getItem(key);
       if (storedData) {
         try {
-          let userData = JSON.parse(JSON.stringify(JSON.parse(storedData)))
+          let userData = JSON.parse(JSON.stringify(JSON.parse(storedData)));
 
-          // Verificar si existe cajaId
-          // if (userData.cajaId) {
-            // Modificar montoEsperado
-            userData.cajaId = userCashier.data;
+          userData.cajaId = userCashier.data;
+          userData.user.sucursalId = branch;
 
-            // Guardar de nuevo en localStorage
-            store.dispatch(updateUserCashier(userData));
-            localStorage.setItem(key, JSON.stringify(userData));
-            // console.log(userData, 'modificado');
-            console.log('Datos actualizados correctamente.');
-          // } else {
-          //   console.error('No se encontró la información de la caja.');
-          // }
+          store.dispatch(updateUserCashier(userData));
+          localStorage.setItem(key, JSON.stringify(userData));
+
+          console.log('Datos actualizados correctamente.');
         } catch (error) {
           console.error('Error al parsear JSON:', error);
         }
       }
 
       store.dispatch(closeDrawer());
-      parsedUserData.user.sucursalId = branch;
-      // localStorage.setItem('user', JSON.stringify(parsedUserData));
     } catch (error) {
       console.error('Error al seleccionar sucursal:', error);
     }
