@@ -128,8 +128,6 @@ export default function SalesReturnPage({
           discountApplied: hasActiveDiscount,
         });
 
-      // REAJUSTE PARA DESCUENTOS POR CANTIDAD
-
       const unityPriceWithDiscount = getProductUnitPrice(product);
       const unityPrice = product.price;
 
@@ -152,7 +150,9 @@ export default function SalesReturnPage({
       cajaId: cashRegister.id ?? '',
       trasaccionOrigenId: saleDetails.id ?? '',
       userId: userId ?? '',
-      monto: needsExtraCash ? cashRegister.cash : totalReturn,
+      monto: needsExtraCash
+        ? Number(cashRegister.cash.toFixed(2))
+        : Number(totalReturn.toFixed(2)),
       montoExterno: needsExtraCash ? extraCash : undefined,
       products: formattedProducts,
     };
@@ -255,7 +255,7 @@ export default function SalesReturnPage({
                   </TableCell>
                   <TableCell className="text-center">
                     {product.discount
-                      ? `$${getProductUnitPrice(product)}`
+                      ? `$${getProductUnitPrice(product).toFixed(2)}`
                       : '-'}
                   </TableCell>
                   <TableCell className="flex items-center justify-center">
