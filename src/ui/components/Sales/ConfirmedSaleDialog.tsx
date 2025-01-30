@@ -44,7 +44,7 @@ export interface IConfirmedSaleDialog {
   cashReceived: number;
   username: string;
   customers: Array<any>;
-  customerType: string;
+  customerType: string | null;
   productSale: Array<IProductSale>;
   paymentMethod: IPaymentMethod;
   saleSummary: ISaleSummary;

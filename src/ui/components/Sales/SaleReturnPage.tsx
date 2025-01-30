@@ -254,7 +254,9 @@ export default function SalesReturnPage({
                     ${product.price.toFixed(2)}
                   </TableCell>
                   <TableCell className="text-center">
-                    ${product.discount ? getProductUnitPrice(product) : ''}
+                    {product.discount
+                      ? `$${getProductUnitPrice(product)}`
+                      : '-'}
                   </TableCell>
                   <TableCell className="flex items-center justify-center">
                     <Input
