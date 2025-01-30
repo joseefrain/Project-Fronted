@@ -14,15 +14,22 @@ import {
   closeDrawer,
   closeDrawerCashRegister,
   updateBranchUser,
+  updateUserCashier,
 } from '../../../app/slices/login';
 import {
   getUserCashier,
+  ICajaBrach,
   IGetUserCashier,
 } from '../../../app/slices/cashRegisterSlice';
 
 export const ModalBranchs = () => {
   const branches = useAppSelector((state) => state.branches.data);
   const ID = useAppSelector((state) => state.auth.signIn.user);
+  const IDtest = store.getState().auth.signIn.cajaId as ICajaBrach;
+  console.log(IDtest.montoEsperado, 'IDtest');
+
+  const userData = localStorage.getItem('user');
+  //   console.log(JSON.stringify(userData), 'userData');
 
   useEffect(() => {
     store.dispatch(fetchBranches()).unwrap();
@@ -51,13 +58,40 @@ export const ModalBranchs = () => {
         sucursalId: selectedBranch?._id ?? '',
       };
 
-      console.log(data, 'data actualizada');
+      //   console.log(data, 'data actualizada');
 
       const userCashier = await store.dispatch(getUserCashier(data)).unwrap();
 
       if (userCashier === null) {
         console.log(userCashier.data, 'userCashier');
         store.dispatch(closeDrawerCashRegister());
+      }
+      const key = 'user'; // Clave donde se almacena en localStorage
+
+      // Obtener datos actuales
+      const storedData = localStorage.getItem(key);
+      if (storedData) {
+        try {
+          let userData = JSON.parse(storedData);
+
+          // Verificar si existe cajaId
+          if (userData.cajaId) {
+            // Modificar montoEsperado
+            userData.cajaId.montoEsperado = {
+              $numberDecimal: IDtest.montoEsperado,
+            };
+
+            // Guardar de nuevo en localStorage
+            store.dispatch(updateUserCashier(userData));
+            localStorage.setItem(key, JSON.stringify(userData));
+            // console.log(userData, 'modificado');
+            console.log('Datos actualizados correctamente.');
+          } else {
+            console.error('No se encontró la información de la caja.');
+          }
+        } catch (error) {
+          console.error('Error al parsear JSON:', error);
+        }
       }
 
       store.dispatch(closeDrawer());

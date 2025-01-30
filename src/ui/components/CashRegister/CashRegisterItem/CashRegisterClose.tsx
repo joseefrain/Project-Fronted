@@ -72,7 +72,13 @@ export function CashRegisterClose({ box }: CashRegisterOpenProps) {
           localStorage.setItem('user', JSON.stringify(parsedUserData));
           store.dispatch(updateUserCashier(null));
           closeModal();
+
           toast.success('Caja cerrada correctamente');
+        })
+        .catch((error) => {
+          toast.error(
+            `Error al cerrar la caja: ${error.message || 'Intente nuevamente'}`
+          );
         });
     }
   };
@@ -102,25 +108,23 @@ export function CashRegisterClose({ box }: CashRegisterOpenProps) {
             <DialogTitle>Confirmar Cierre de Caja</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
-                <InputField
-                  id="montoFinalDeclarado"
-                  label="Monto Final"
-                  value={formValues.montoFinalDeclarado}
-                  onChange={handleChange}
-                  placeholder="Ingrese el monto final"
-                  type="number"
-                />
-                <div className="space-y-2">
-                  <Label htmlFor="closeWithoutCounting">
-                    Cerrar sin Arqueo
-                  </Label>
-                  <input
-                    type="checkbox"
-                    id="closeWithoutCounting"
-                    checked={formValues.closeWithoutCounting}
-                    onChange={handleChange}
-                  />
-                </div>
+            <InputField
+              id="montoFinalDeclarado"
+              label="Monto Final"
+              value={formValues.montoFinalDeclarado}
+              onChange={handleChange}
+              placeholder="Ingrese el monto final"
+              type="number"
+            />
+            <div className="space-y-2">
+              <Label htmlFor="closeWithoutCounting">Cerrar sin Arqueo</Label>
+              <input
+                type="checkbox"
+                id="closeWithoutCounting"
+                checked={formValues.closeWithoutCounting}
+                onChange={handleChange}
+              />
+            </div>
             <div className="flex justify-end pt-4 space-x-2">
               <Button type="button" variant="outline" onClick={closeModal}>
                 Cancelar

@@ -242,18 +242,18 @@ export const boxSlice = createSlice({
       .addCase(getBoxById.rejected, (state, action) => {
         state.error = action.error.message as string;
         state.status = 'failed';
-      })
-
-      .addCase(getUserCashier.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(getUserCashier.fulfilled, (state, action) => {
-        state.boxState = [
-          ...state.boxState!,
-          action.payload as unknown as ICajaBrach,
-        ];
-        state.status = 'succeeded';
       });
+
+    //   .addCase(getUserCashier.pending, (state) => {
+    //     state.status = 'loading';
+    //   })
+    //   .addCase(getUserCashier.fulfilled, (state, action) => {
+    //     state.boxState = [
+    //       ...state.boxState!,
+    //       action.payload as unknown as ICajaBrach,
+    //     ];
+    //     state.status = 'succeeded';
+    //   });
   },
 });
 
