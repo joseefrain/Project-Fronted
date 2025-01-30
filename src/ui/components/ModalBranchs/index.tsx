@@ -13,6 +13,7 @@ import {
 import {
   closeDrawer,
   closeDrawerCashRegister,
+  openDrawerCashRegister,
   updateBranchUser,
   updateUserCashier,
 } from '../../../app/slices/login';
@@ -62,7 +63,7 @@ export const ModalBranchs = () => {
 
       if (userCashier.data === null) {
         console.log(userCashier.data, 'userCashier');
-        store.dispatch(closeDrawerCashRegister());
+        store.dispatch(openDrawerCashRegister());
       }
       const key = 'user'; // Clave donde se almacena en localStorage
 
@@ -70,7 +71,7 @@ export const ModalBranchs = () => {
       const storedData = localStorage.getItem(key);
       if (storedData) {
         try {
-          let userData = JSON.parse(storedData);
+          let userData = JSON.parse(JSON.stringify(JSON.parse(storedData)))
 
           // Verificar si existe cajaId
           // if (userData.cajaId) {
