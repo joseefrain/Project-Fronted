@@ -26,10 +26,6 @@ export const ModalBranchs = () => {
   const branches = useAppSelector((state) => state.branches.data);
   const ID = useAppSelector((state) => state.auth.signIn.user);
   const IDtest = store.getState().auth.signIn.cajaId as ICajaBrach;
-  console.log(IDtest.montoEsperado, 'IDtest');
-
-  const userData = localStorage.getItem('user');
-  //   console.log(JSON.stringify(userData), 'userData');
 
   useEffect(() => {
     store.dispatch(fetchBranches()).unwrap();
@@ -78,7 +74,7 @@ export const ModalBranchs = () => {
           if (userData.cajaId) {
             // Modificar montoEsperado
             userData.cajaId.montoEsperado = {
-              $numberDecimal: IDtest.montoEsperado,
+              $numberDecimal: IDtest?.montoEsperado,
             };
 
             // Guardar de nuevo en localStorage

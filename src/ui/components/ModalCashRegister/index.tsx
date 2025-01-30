@@ -14,6 +14,7 @@ import { store } from '../../../app/store';
 import { useAppSelector } from '../../../app/hooks';
 import {
   getboxesbyBranch,
+  ICajaBrach,
   IOpenCash,
   openBoxes,
 } from '../../../app/slices/cashRegisterSlice';
@@ -22,20 +23,23 @@ import {
   DrawerContent,
   DrawerHeader,
 } from '../../../components/ui/drawer';
-import React from 'react';
+// import React from 'react';
 import {
   closeDrawerCashRegister,
   updateUserCashier,
 } from '../../../app/slices/login';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+// import React from 'react';
 
 export const CardCash = () => {
   const caja = store.getState().boxes.BoxesData;
   const user = useAppSelector((state) => state.auth.signIn.user);
   const id = user?.sucursalId?._id;
   const [, setIsLoading] = useState(true);
-
+  const ID = useAppSelector((state) => state.auth.signIn.user);
+  const IDtest = store.getState().auth.signIn.cajaId as ICajaBrach;
+  const userFilteredData = IDtest?.usuarioAperturaId === ID?._id;
   const navigate = useNavigate();
 
   const [formValues, setFormValues] = useState<IOpenCash>({
@@ -90,13 +94,22 @@ export const CardCash = () => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line no-undef
+    let timeoutId: NodeJS.Timeout;
+
     if (!caja || caja.length === 0) {
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         store.dispatch(closeDrawerCashRegister());
         navigate('/cashRegister');
-      }, 2000);
+      }, 1000);
+    } else if (userFilteredData) {
+      timeoutId = setTimeout(() => {
+        store.dispatch(closeDrawerCashRegister());
+      }, 10);
     }
-  }, []);
+
+    return () => clearTimeout(timeoutId);
+  }, [caja, userFilteredData]);
 
   return (
     <div className="p-6 space-y-6">
@@ -116,9 +129,13 @@ export const CardCash = () => {
             className="p-4 rounded-lg shadow-md border bg-white w-64 space-y-4 transition hover:shadow-lg dark:bg-gray-800"
           >
             <div className="flex justify-between items-center">
-              <h3 className="font-semibold font-onest text-black dark:text-white">
+              <h3
+                className={`font-semibold font-onest dark:text-white ${
+                  caja.estado === 'ABIERTA' ? 'text-green-600' : 'text-red-600'
+                }`}
+              >
                 {caja.estado === 'ABIERTA'
-                  ? user?.username
+                  ? 'Usuario desconocido'
                   : 'Usuario desconocido'}
               </h3>
             </div>
