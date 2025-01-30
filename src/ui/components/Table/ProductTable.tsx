@@ -85,7 +85,7 @@ const ProductsTable = ({
             <TableHead>Price</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>In Stock</TableHead>
-            <TableHead>Punto de compra</TableHead>
+            <TableHead>Minimo Stock</TableHead>
             <TableHead>Costo unitario</TableHead>
             {(access.update || access.delete) && (
               <TableHead className="text-center">
