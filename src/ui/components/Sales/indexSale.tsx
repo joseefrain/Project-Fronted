@@ -7,7 +7,7 @@ import { getDiscountsByBranch } from '@/app/slices/salesSlice';
 import { store } from '@/app/store';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Branch, ITablaBranch } from '@/interfaces/branchInterfaces';
-import { IProductSale } from '@/interfaces/salesInterfaces';
+import { IProductSale, ITypeTransaction } from '@/interfaces/salesInterfaces';
 import { getSelectedBranchFromLocalStorage } from '@/shared/helpers/branchHelpers';
 import { GetBranches } from '@/shared/helpers/Branchs';
 import { useEffect, useState } from 'react';
@@ -16,6 +16,7 @@ import { Sale } from './Sale';
 import { SaleHistory } from './SaleHistory';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import { ReturnHistory } from './ReturnHistory';
 
 export default function SalesInventorySystem() {
   const access = useRoleAccess(PAGES_MODULES.VENTAS);
@@ -78,7 +79,13 @@ export default function SalesInventorySystem() {
               className="bg-black text-[#ffffff] font-bold font-onest"
               value="sale-history"
             >
-              Historial de ventas
+              Historial
+            </TabsTrigger>
+            <TabsTrigger
+              className="bg-black text-[#ffffff] font-bold font-onest"
+              value="return-history"
+            >
+              Devoluciones
             </TabsTrigger>
           </TabsList>
         </div>
@@ -100,6 +107,9 @@ export default function SalesInventorySystem() {
         )}
         <TabsContent value="sale-history">
           <SaleHistory />
+        </TabsContent>
+        <TabsContent value="return-history">
+          <ReturnHistory type={ITypeTransaction.VENTA} />
         </TabsContent>
       </Tabs>
     </div>

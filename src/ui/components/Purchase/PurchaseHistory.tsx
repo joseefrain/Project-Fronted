@@ -41,6 +41,7 @@ import { getSelectedBranchFromLocalStorage } from '../../../shared/helpers/branc
 import { DateRange } from 'react-day-picker';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import { dataCoins } from '../../../interfaces/salesInterfaces';
+import { SaleReturnContainer } from '../Sales/SaleReturnContainer';
 
 export const PurchaseHistory = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -100,7 +101,7 @@ export const PurchaseHistory = () => {
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline">
-                <Calendar className="mr-2 h-4 w-4" />
+                <Calendar className="w-4 h-4 mr-2" />
                 {selectedDateRange
                   ? `${
                       selectedDateRange.from &&
@@ -142,6 +143,7 @@ export const PurchaseHistory = () => {
                 <TableHead>Descuento</TableHead>
                 <TableHead>Total</TableHead>
                 <TableHead>Productos</TableHead>
+                <TableHead className="text-center">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -240,6 +242,9 @@ export const PurchaseHistory = () => {
                         </div>
                       </DialogContent>
                     </Dialog>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <SaleReturnContainer sale={sale} />
                   </TableCell>
                 </TableRow>
               ))}

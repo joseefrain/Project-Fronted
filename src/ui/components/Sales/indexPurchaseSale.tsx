@@ -9,7 +9,7 @@ import { getDiscountsByBranch } from '@/app/slices/salesSlice';
 import { store } from '@/app/store';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Branch, ITablaBranch } from '@/interfaces/branchInterfaces';
-import { IProductSale } from '@/interfaces/salesInterfaces';
+import { IProductSale, ITypeTransaction } from '@/interfaces/salesInterfaces';
 import { getSelectedBranchFromLocalStorage } from '@/shared/helpers/branchHelpers';
 import { GetBranches } from '@/shared/helpers/Branchs';
 import { useEffect, useState } from 'react';
@@ -19,6 +19,7 @@ import { PurchaseCashier } from '../Purchase/Inventory';
 import { PurchaseHistory } from '../Purchase/PurchaseHistory';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { ReturnHistory } from './ReturnHistory';
 
 export const PurchaseSale = () => {
   const access = useRoleAccess(PAGES_MODULES.COMPRAS);
@@ -82,7 +83,13 @@ export const PurchaseSale = () => {
               className="bg-black text-[#ffffff] font-bold font-onest"
               value="purchase-history"
             >
-              Historial de compras
+              Historial
+            </TabsTrigger>
+            <TabsTrigger
+              className="bg-black text-[#ffffff] font-bold font-onest"
+              value="return-history"
+            >
+              Devoluciones
             </TabsTrigger>
           </TabsList>
         </div>
@@ -104,6 +111,9 @@ export const PurchaseSale = () => {
         )}
         <TabsContent value="purchase-history">
           <PurchaseHistory />
+        </TabsContent>
+        <TabsContent value="return-history">
+          <ReturnHistory type={ITypeTransaction.COMPRA} />
         </TabsContent>
       </Tabs>
     </div>
