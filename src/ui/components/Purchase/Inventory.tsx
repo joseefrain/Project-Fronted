@@ -106,9 +106,7 @@ export const PurchaseCashier = ({
 
   const [cashInRegister, setCashInRegister] = useState(0);
 
-  const [customerType, setCustomerType] = useState<ICustomerType>(
-    ICustomerType.GENERAL
-  );
+  const [customerType, setCustomerType] = useState<ICustomerType | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<IPaymentMethod>(
     IPaymentMethod.CASH
   );
@@ -561,6 +559,7 @@ export const PurchaseCashier = ({
             className="w-full bg-gradient-to-r hover:from-primary-dark hover:to-primary dark:bg-gray-950 dark:text-white"
             size="lg"
             disabled={
+              !customerType ||
               productSale.length === 0 ||
               processingSale ||
               (customerType === ICustomerType.REGISTERED && !customer) ||
