@@ -33,8 +33,10 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
   const filteredProducts = Credits.filter((credit) =>
     filterType === 'historial'
       ? credit.estadoCredito === 'CERRADO'
-      : credit.modalidadCredito === filterType.toUpperCase() &&
-        credit.estadoCredito === 'ABIERTO'
+      : filterType === 'all'
+        ? credit.estadoCredito === 'ABIERTO'
+        : credit.modalidadCredito === filterType.toUpperCase() &&
+          credit.estadoCredito === 'ABIERTO'
   ).filter((product) =>
     product?.entidadId.generalInformation.name
       .toLowerCase()
@@ -57,6 +59,8 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
     store.dispatch(getCreditsByBranch(branchId)).unwrap();
   }, [branchStoraged, user?.sucursalId]);
 
+  console.log(Credits);
+
   return (
     <div className="flex flex-col w-full font-onest">
       <main className="flex-1 py-4 md:py-6">
@@ -67,15 +71,19 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
               <CardTitle>
                 {filterType === 'historial'
                   ? 'Historial de créditos'
-                  : filterType === 'pago'
-                    ? 'Créditos a pagos'
-                    : 'Créditos a plazos'}
+                  : filterType === 'all'
+                    ? 'Créditos'
+                    : filterType === 'pago'
+                      ? 'Créditos a pagos'
+                      : 'Créditos a plazos'}
               </CardTitle>
             </div>
             <CardDescription>
               {filterType === 'historial'
                 ? 'Visualización de los créditos finalizados'
-                : `Gestione sus créditos a ${filterType}s`}
+                : filterType === 'all'
+                  ? 'Gestione sus créditos'
+                  : `Gestione sus créditos a ${filterType}s`}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -89,7 +97,7 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
 
             {currentItems.length === 0 ? (
               <span className="flex justify-center w-full text-sm text-center text-muted-foreground">
-                {`No hay créditos ${filterType === 'historial' ? 'finalizados' : filterType === 'plazo' ? 'a plazos' : 'a pagos'} en esta sucursal`}
+                {`No hay créditos ${filterType === 'all' ? '' : filterType === 'historial' ? 'finalizados' : filterType === 'plazo' ? 'a plazos' : 'a pagos'} en esta sucursal`}
               </span>
             ) : (
               <TablaCredits currentItems={currentItems} />
