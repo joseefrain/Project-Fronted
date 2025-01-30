@@ -48,6 +48,6 @@ export const getUserAndBranch = async ({
   ...data
 }: IGetUserCashier): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Cashier);
-  const response = await axiosInstance.post('/userAndBranch', { params: data });
+  const response = await axiosInstance.post('/userAndBranch', data);
   return response;
 };

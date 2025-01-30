@@ -57,8 +57,10 @@ export const ModalBranchs = () => {
       //   console.log(data, 'data actualizada');
 
       const userCashier = await store.dispatch(getUserCashier(data)).unwrap();
+      
+      debugger
 
-      if (userCashier === null) {
+      if (userCashier.data === null) {
         console.log(userCashier.data, 'userCashier');
         store.dispatch(closeDrawerCashRegister());
       }
@@ -71,20 +73,18 @@ export const ModalBranchs = () => {
           let userData = JSON.parse(storedData);
 
           // Verificar si existe cajaId
-          if (userData.cajaId) {
+          // if (userData.cajaId) {
             // Modificar montoEsperado
-            userData.cajaId.montoEsperado = {
-              $numberDecimal: IDtest?.montoEsperado,
-            };
+            userData.cajaId = userCashier.data;
 
             // Guardar de nuevo en localStorage
             store.dispatch(updateUserCashier(userData));
             localStorage.setItem(key, JSON.stringify(userData));
             // console.log(userData, 'modificado');
             console.log('Datos actualizados correctamente.');
-          } else {
-            console.error('No se encontró la información de la caja.');
-          }
+          // } else {
+          //   console.error('No se encontró la información de la caja.');
+          // }
         } catch (error) {
           console.error('Error al parsear JSON:', error);
         }
@@ -92,7 +92,7 @@ export const ModalBranchs = () => {
 
       store.dispatch(closeDrawer());
       parsedUserData.user.sucursalId = branch;
-      localStorage.setItem('user', JSON.stringify(parsedUserData));
+      // localStorage.setItem('user', JSON.stringify(parsedUserData));
     } catch (error) {
       console.error('Error al seleccionar sucursal:', error);
     }
