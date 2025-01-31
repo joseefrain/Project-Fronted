@@ -31,7 +31,8 @@ type FormFieldKeys =
   | 'descripcion'
   | 'precio'
   | 'stock'
-  | 'puntoReCompra';
+  | 'puntoReCompra'
+  | 'costoUnitario';
 
 const fields: {
   id: FormFieldKeys;
@@ -58,6 +59,7 @@ const fields: {
   },
   { id: 'precio', label: 'Precio', type: 'number' },
   { id: 'stock', label: 'Stock', type: 'number', min: '0' },
+  { id: 'costoUnitario', label: 'Costo Unitario', type: 'number', min: '0' },
   { id: 'puntoReCompra', label: 'MinimoStock', type: 'number', min: '0' },
 ];
 
@@ -70,6 +72,7 @@ const ProductForm = ({
   groups,
 }: ProductFormProps) => {
   const user = useAppSelector((state) => state.auth.signIn.user);
+
   const [formData, setFormData] = useState({
     sucursalId: sucursalId,
     nombre: initialData?.productoId.nombre || '',
@@ -79,6 +82,8 @@ const ProductForm = ({
     grupoId: selectedGroup?._id || '',
     monedaId: '6788969390f63a009f1bea40',
     puntoReCompra: initialData?.puntoReCompra || 0,
+    //@ts-ignore
+    costoUnitario: initialData?.costoUnitario.$numberDecimal || 0 || 0,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,10 +96,11 @@ const ProductForm = ({
       sucursalId: user?.sucursalId?._id ?? '',
       //@ts-ignore
       precio: parseFloat(formData.precio),
-      stock: parseInt(formData.stock.toString(), 10),
+      stock: parseInt(formData.stock.toString(), 0),
       nombre: initialData?.productoId.nombre || '',
       descripcion: initialData?.productoId.descripcion || '',
-      puntoReCompra: parseInt(formData?.puntoReCompra.toString(), 10),
+      puntoReCompra: parseInt(formData?.puntoReCompra.toString(), 0),
+      costoUnitario: formData?.costoUnitario.$numberDecimal,
     };
 
     onSubmit(productData);
