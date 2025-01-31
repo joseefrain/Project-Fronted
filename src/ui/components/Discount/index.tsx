@@ -398,7 +398,7 @@ export default function DiscountManager() {
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
                   />
-                  <div className=" flex h-full w-full">
+                  <div className="flex w-full h-full ">
                     <Select
                       value={selectedOption}
                       onValueChange={(value) => handleChange(value)}
@@ -463,7 +463,12 @@ export default function DiscountManager() {
                         {discount.descuentoId.valorDescuento}
                       </TableCell>
                       <TableCell className="px-4 py-2">
-                        {discount.minimiType}
+                        {discount.descuentoId.minimiType}
+                      </TableCell>
+                      <TableCell className="px-4 py-2">
+                        {discount.descuentoId.minimiType === 'compra'
+                          ? discount.descuentoId.minimoCompra.$numberDecimal
+                          : discount.descuentoId.minimoCantidad}
                       </TableCell>
                       <TableCell className="px-4 py-2">
                         {getFormatedDate(discount.descuentoId.fechaInicio)}
