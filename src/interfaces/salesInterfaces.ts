@@ -32,7 +32,7 @@ export interface IDescuento {
   moneda_id: string;
   codigoDescunto: string;
   deleted_at: Date | null;
-  minimoType: IDescountTypePV;
+  minimiType: IDescountTypePV;
 }
 
 export interface IDescuentoMapeado {
@@ -42,6 +42,7 @@ export interface IDescuentoMapeado {
   deleted_at: Date | null;
   grupoId?: string;
   tipoEntidad: 'Product' | 'Group';
+  minimiType: IDescountTypePV;
 }
 
 export interface IDescuentoMapeadoExtendido extends IDescuentoMapeado {
@@ -70,7 +71,7 @@ export interface IDescuentoCreate {
   productId: string;
   groupId: string;
   sucursalId: string;
-  minimoType: IDescountTypePV;
+  minimiType: IDescountTypePV;
 }
 
 export type IDescountTypePV = 'cantidad' | 'compra';

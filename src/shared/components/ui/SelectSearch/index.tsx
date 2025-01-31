@@ -58,12 +58,7 @@ export const SelectSearch: React.FC<ComboboxProps> = ({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-full justify-between"
-        >
+        <Button variant="outline" role="combobox" aria-expanded={open}>
           {value
             ? options?.find((option) => option.id === value)?.nombre
             : placeholder || 'Select an option...'}
@@ -76,13 +71,15 @@ export const SelectSearch: React.FC<ComboboxProps> = ({
             type="text"
             placeholder="Search..."
             className={cn(
-              'w-full outline-none border-none focus-visible:ring-0 bg-transparent',
+              'w-full outline-none border-none focus-visible:ring-0 bg-transparent font-onest',
               classStyles
             )}
             onChange={(e) => handleSearch(e.target.value)}
           />
           <CommandList>
-            <CommandEmpty>No options found.</CommandEmpty>
+            <CommandEmpty className="p-4 text-sm text-gray-800 dark:text-white font-onest">
+              No encontrado.
+            </CommandEmpty>
             <CommandGroup>
               {filteredOptions.map((option) => (
                 <CommandItem

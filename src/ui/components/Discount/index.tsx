@@ -85,7 +85,7 @@ export default function DiscountManager() {
     productId: '',
     groupId: '',
     sucursalId: '',
-    minimoType: 'compra',
+    minimiType: 'compra',
   });
 
   const [formState, setFormState] = useState<IDescuentoCreate>(
@@ -327,7 +327,7 @@ export default function DiscountManager() {
       productId: '',
       groupId: '',
       sucursalId: '',
-      minimoType: 'compra',
+      minimiType: 'compra',
     });
     setEditingId(null);
     setIsModalOpen(true);
@@ -343,7 +343,7 @@ export default function DiscountManager() {
       sucursalId: d.sucursalId,
       groupId: d.grupoId,
       productId: d.productId,
-      minimoType: d.descuentoId.minimoType,
+      minimiType: d.descuentoId.minimiType,
     }));
 
     const matchingDiscountGn = discountGn.find((d) => d._id === _id);
@@ -367,7 +367,7 @@ export default function DiscountManager() {
       productId: matchingDiscountGn?.productId || '',
       groupId: matchingDiscountGn?.groupId || '',
       sucursalId: matchingDiscountGn?.sucursalId || '',
-      minimoType: matchingDiscountGn?.minimoType ?? 'compra',
+      minimiType: matchingDiscountGn?.minimiType ?? 'compra',
     };
 
     setFormState(discountCreate);
@@ -398,7 +398,7 @@ export default function DiscountManager() {
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
                   />
-                  <div className=" flex h-full w-full">
+                  <div className="flex w-full h-full ">
                     <Select
                       value={selectedOption}
                       onValueChange={(value) => handleChange(value)}
@@ -438,6 +438,8 @@ export default function DiscountManager() {
                     <TableHead>Tipo de Descuento</TableHead>
                     <TableHead>Tipo Descuento</TableHead>
                     <TableHead>Valor Descuento</TableHead>
+                    <TableHead>Minimo Tipo</TableHead>
+                    <TableHead>Valor Minimo</TableHead>
                     <TableHead>Fecha Inicio</TableHead>
                     <TableHead>Fecha Fin</TableHead>
                     {(access.update || access.delete) && (
@@ -459,6 +461,14 @@ export default function DiscountManager() {
                       </TableCell>
                       <TableCell className="px-4 py-2">
                         {discount.descuentoId.valorDescuento}
+                      </TableCell>
+                      <TableCell className="px-4 py-2">
+                        {discount.descuentoId.minimiType}
+                      </TableCell>
+                      <TableCell className="px-4 py-2">
+                        {discount.descuentoId.minimiType === 'compra'
+                          ? discount.descuentoId.minimoCompra.$numberDecimal
+                          : discount.descuentoId.minimoCantidad}
                       </TableCell>
                       <TableCell className="px-4 py-2">
                         {getFormatedDate(discount.descuentoId.fechaInicio)}
