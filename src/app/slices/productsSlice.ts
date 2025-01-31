@@ -1,16 +1,19 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { handleThunkError } from '../../shared/utils/errorHandlers';
 import {
+  createTablaBranch,
+  deleteProduct,
   findProductoGrupoByProductId,
   inventoryAllProduct,
   inventoryGetAll,
   inventoryGetProdutsTransit,
   inventoryUpdateProduct,
+  updateProductApi,
+  updateProductApiProps,
 } from '@/api/services/products';
 import { IStatus, ITablaBranch } from '@/interfaces/branchInterfaces';
 import { IProductInTransit } from '@/interfaces/transferInterfaces';
 import { getProductsByBranchId } from '../../api/services/branch';
-import { deleteProduct } from '../../api/services/transfer';
 
 export const fetchTablaBranches = createAsyncThunk(
   'tablaBranches/getAll',
@@ -30,6 +33,18 @@ export const productsTransit = createAsyncThunk(
     try {
       const response = await inventoryGetProdutsTransit(sucursalId);
       return response;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
+export const createProduct = createAsyncThunk(
+  'branches/createProduct',
+  async (product: ITablaBranch, { rejectWithValue }) => {
+    try {
+      const response = await createTablaBranch(product);
+      return response.data as ITablaBranch;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
     }
@@ -97,6 +112,30 @@ export const removeProduct = createAsyncThunk(
   }
 );
 
+export const updateProductsOriginal = createAsyncThunk(
+  'products/updateOriginal',
+  async ({ product, _id }: updateProductApiProps, { rejectWithValue }) => {
+    try {
+      const response = await updateProductApi({ product, _id });
+      return response;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
+export const productByBranchId = createAsyncThunk(
+  'products/getProductById',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await getProductsByBranchId(id);
+      return response;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
 interface ProductState {
   products: ITablaBranch[];
   error: string | null;
@@ -105,7 +144,7 @@ interface ProductState {
 }
 
 const initialState: ProductState = {
-  products: [] as ITablaBranch[],
+  products: [],
   transitProducts: [],
   status: 'idle',
   error: null,
@@ -149,12 +188,26 @@ const productsSlice = createSlice({
       })
       .addCase(productsTransit.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
-        console.log(payload, 'data');
         state.transitProducts = payload as unknown as IProductInTransit[];
       })
-      .addCase(updateProduct.pending, (state) => {
+      .addCase(updateProductsOriginal.pending, (state) => {
         state.status = 'loading';
       })
+      .addCase(updateProductsOriginal.fulfilled, (state, action) => {
+        console.log('Datos recibidos en Redux:', action.payload);
+
+        if (!action.payload || !Array.isArray(action.payload)) {
+          console.error(
+            'Error: La API no devolvió un array de productos:',
+            action.payload
+          );
+          state.products = [];
+          return;
+        }
+
+        state.products = action.payload;
+      })
+
       .addCase(fetchProductsByBranchId.pending, (state) => {
         state.status = 'loading';
       })
@@ -165,9 +218,9 @@ const productsSlice = createSlice({
 
       .addCase(removeProduct.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.products = state.products.filter(
-          (branch) => branch.id !== action.meta.arg
-        );
+        state.products =
+          state.products?.filter((branch) => branch.id !== action.meta.arg) ||
+          [];
       })
 
       .addCase(removeProduct.rejected, (state, action) => {
@@ -177,6 +230,24 @@ const productsSlice = createSlice({
       .addCase(removeProduct.pending, (state) => {
         state.status = 'loading';
         state.error = null;
+      })
+
+      .addCase(productByBranchId.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(productByBranchId.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.products = action.payload;
+      })
+
+      .addCase(createProduct.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(createProduct.fulfilled, (state, action) => {
+        state.products = [...state.products!, action.payload];
+        state.status = 'succeeded';
       });
   },
 });

@@ -24,10 +24,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { updateProduct } from '../../../api/services/transfer';
 import { toast } from 'sonner';
 import { IRoleAccess } from '../../../interfaces/roleInterfaces';
-import { removeProduct } from '../../../app/slices/productsSlice';
+import {
+  removeProduct,
+  updateProductsOriginal,
+} from '../../../app/slices/productsSlice';
 
 interface ProductsTableProps {
   products: ITablaBranch[] | undefined;
@@ -56,13 +58,17 @@ const ProductsTable = ({
       const product: ITablaBranch = {
         ...updatedProduct,
       };
-      if (product.id && product.inventarioSucursalId) {
-        await updateProduct(product.inventarioSucursalId, product);
+      if (product.inventarioSucursalId) {
+        await store.dispatch(
+          updateProductsOriginal({
+            _id: product.inventarioSucursalId,
+            product,
+          })
+        );
+
         setIsEditing(false);
         setEditingProduct(null);
         toast.success(`Producto ${product.nombre} actualizado exitosamente`);
-      } else {
-        toast.error('Error al actualizar producto: ID no disponible');
       }
     } catch (error) {
       toast.error('Error al actualizar producto: ' + error);

@@ -83,7 +83,7 @@ const ProductForm = ({
     monedaId: '6788969390f63a009f1bea40',
     puntoReCompra: initialData?.puntoReCompra || 0,
     //@ts-ignore
-    costoUnitario: initialData?.costoUnitario.$numberDecimal || 0 || 0,
+    costoUnitario: initialData?.costoUnitario.$numberDecimal || 0,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
