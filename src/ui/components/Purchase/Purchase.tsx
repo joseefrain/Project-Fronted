@@ -16,7 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { ITablaBranch } from '@/interfaces/branchInterfaces';
+import { Branch, ITablaBranch } from '@/interfaces/branchInterfaces';
 import { IProductSale } from '@/interfaces/salesInterfaces';
 import { cn } from '@/lib/utils';
 import { Check, ChevronsUpDown, Plus, ShoppingBag } from 'lucide-react';
@@ -30,20 +30,25 @@ import './style.scss';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 import { createProduct } from '../../../app/slices/productsSlice';
+import { getSelectedBranchFromLocalStorage } from '../../../shared/helpers/branchHelpers';
+import { GetBranches } from '../../../shared/helpers/Branchs';
+import {
+  fetchBranchById,
+  updateSelectedBranch,
+} from '../../../app/slices/branchSlice';
+import { getDiscountsByBranch } from '../../../app/slices/salesSlice';
 
 export interface ISaleProps {
-  products: ITablaBranch[];
   productSale: IProductSale[];
   setProductSale: React.Dispatch<React.SetStateAction<IProductSale[]>>;
-  setProducts: React.Dispatch<React.SetStateAction<ITablaBranch[]>>;
 }
 
-export const Purchase = ({
-  products,
-  setProducts,
-  productSale,
-  setProductSale,
-}: ISaleProps) => {
+export const Purchase = ({ productSale, setProductSale }: ISaleProps) => {
+  const cashierId = useAppSelector((state) => state.auth.signIn.cajaId);
+  const user = useAppSelector((state) => state.auth.signIn.user);
+  const branchStoraged = getSelectedBranchFromLocalStorage();
+  const [products, setProducts] = useState<ITablaBranch[]>([]);
+
   const access = useRoleAccess(PAGES_MODULES.PRODUCTOS);
   const selectedBranch = useAppSelector(
     (state) => state.branches.selectedBranch
@@ -213,6 +218,39 @@ export const Purchase = ({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buffer, products]);
+
+  const loadProductsByBranch = async (branch: Branch) => {
+    const response = await GetBranches(branch._id ?? '');
+
+    store.dispatch(
+      updateSelectedBranch({
+        ...branch,
+        products: response,
+      })
+    );
+    setProducts(response);
+    await store.dispatch(getDiscountsByBranch(branch._id ?? ''));
+  };
+
+  const handleLoadBranch = (branch: Branch | undefined) => {
+    if (branch) {
+      loadProductsByBranch(branch);
+    } else {
+      store.dispatch(updateSelectedBranch(null));
+      setProducts([]);
+    }
+  };
+
+  useEffect(() => {
+    const branchId = !user?.sucursalId
+      ? (branchStoraged ?? '')
+      : (user?.sucursalId._id ?? '');
+
+    store.dispatch(fetchBranchById(branchId)).then((response) => {
+      handleLoadBranch(response.payload as Branch);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.sucursalId, cashierId]);
 
   return (
     <Card className="font-onest">
