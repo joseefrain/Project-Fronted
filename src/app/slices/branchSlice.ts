@@ -17,11 +17,8 @@ import {
   Branch,
   BranchState,
   IBranchWithProducts,
-  ITablaBranch,
 } from '@/interfaces/branchInterfaces';
 import { InventarioSucursalWithPopulated } from '@/interfaces/transferInterfaces';
-import { updateProduct } from '@/api/services/transfer';
-import { createTablaBranch } from '@/api/services/products';
 
 export const searchForStockProductsAtBranch = createAsyncThunk<
   InventarioSucursalWithPopulated[],
@@ -78,30 +75,6 @@ export const createBranchs = createAsyncThunk(
     try {
       const response = await createBranch(branch);
       return response.data as Branch;
-    } catch (error) {
-      return rejectWithValue(handleThunkError(error));
-    }
-  }
-);
-
-export const createProduct = createAsyncThunk(
-  'branches/createProduct',
-  async (product: ITablaBranch, { rejectWithValue }) => {
-    try {
-      const response = await createTablaBranch(product);
-      return response.data as ITablaBranch;
-    } catch (error) {
-      return rejectWithValue(handleThunkError(error));
-    }
-  }
-);
-
-export const updatedProduct = createAsyncThunk(
-  'branches/updateProduct',
-  async (product: { id: string; data: ITablaBranch }, { rejectWithValue }) => {
-    try {
-      const response = await updateProduct(product.id, product.data);
-      return response.data;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
     }
@@ -202,17 +175,6 @@ const branchesSlice = createSlice({
       .addCase(deleteBranch.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || 'Error desconocido';
-      })
-      .addCase(createProduct.pending, (state) => {
-        state.status = 'loading';
-        state.error = null;
-      })
-      .addCase(createProduct.fulfilled, (state, { payload }) => {
-        state.status = 'succeeded';
-        state.selectedBranch = {
-          ...state.selectedBranch!,
-          products: [...state.selectedBranch!.products, payload],
-        };
       });
   },
 });

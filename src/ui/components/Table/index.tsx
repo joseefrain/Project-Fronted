@@ -1,5 +1,4 @@
 import { useAppSelector } from '@/app/hooks';
-import { createProduct } from '@/app/slices/branchSlice';
 import { getAllGroupsSlice } from '@/app/slices/groups';
 import { store } from '@/app/store';
 import {
@@ -21,6 +20,10 @@ import ProductsTable from './ProductTable';
 import SearchAndFilter from './sear';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import {
+  createProduct,
+  productByBranchId,
+} from '../../../app/slices/productsSlice';
 
 export function DataTableDemo() {
   const access = useRoleAccess(PAGES_MODULES.PRODUCTOS);
@@ -37,10 +40,7 @@ export function DataTableDemo() {
     nombre: string;
     _id: string;
   } | null>(null);
-
-  const dataProduct = useAppSelector(
-    (state) => state.branches.selectedBranch?.products
-  );
+  const productsXBranch = useAppSelector((state) => state.products.products);
 
   const handleSelectChange = (value: string) => {
     const selectedBranchId = value;
@@ -58,10 +58,11 @@ export function DataTableDemo() {
   useEffect(() => {
     fetchData();
     store.dispatch(getAllGroupsSlice()).unwrap();
+    store.dispatch(productByBranchId(Id as string)).unwrap();
   }, []);
 
-  const filteredProducts = dataProduct?.filter((product) =>
-    product.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = productsXBranch?.filter((product: ITablaBranch) =>
+    product?.nombre?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;

@@ -29,7 +29,7 @@ import { getAllGroupsSlice } from '../../../app/slices/groups';
 import './style.scss';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
-import { createProduct } from '../../../app/slices/branchSlice';
+import { createProduct } from '../../../app/slices/productsSlice';
 
 export interface ISaleProps {
   products: ITablaBranch[];

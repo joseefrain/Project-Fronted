@@ -23,7 +23,7 @@ interface Option {
 }
 
 interface ComboboxProps {
-  options: Option[];
+  options?: Option[];
   placeholder?: string;
   initialValue?: string;
   onChange: (value: string) => void;
@@ -39,19 +39,20 @@ export const SelectSearch: React.FC<ComboboxProps> = ({
 }) => {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(initialValue || '');
-  const [filteredOptions, setFilteredOptions] =
-    React.useState<Option[]>(options);
+  const [filteredOptions, setFilteredOptions] = React.useState<Option[]>(
+    options || []
+  );
 
-    useEffect(() => {
-      setFilteredOptions(options);
-    }, [options]);
+  useEffect(() => {
+    setFilteredOptions(options || []);
+  }, [options]);
 
   const handleSearch = (searchTerm: string) => {
     const lowercasedTerm = searchTerm.toLowerCase();
-    const newFilteredOptions = options.filter((option) =>
+    const newFilteredOptions = options?.filter((option) =>
       option.nombre.toLowerCase().includes(lowercasedTerm)
     );
-    setFilteredOptions(newFilteredOptions);
+    setFilteredOptions(newFilteredOptions || []);
   };
 
   return (
@@ -64,7 +65,7 @@ export const SelectSearch: React.FC<ComboboxProps> = ({
           className="w-full justify-between"
         >
           {value
-            ? options.find((option) => option.id === value)?.nombre
+            ? options?.find((option) => option.id === value)?.nombre
             : placeholder || 'Select an option...'}
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>

@@ -54,10 +54,12 @@ interface IndexModalProps {
     nombre: any;
   }[];
   stateProduct: boolean;
-  opcionesProductos: {
-    id: string;
-    nombre: string;
-  }[];
+  opcionesProductos:
+    | {
+        id: string;
+        nombre: string;
+      }[]
+    | undefined;
   userRoles?: {
     _id: string;
     username: string;
