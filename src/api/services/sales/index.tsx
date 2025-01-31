@@ -110,10 +110,7 @@ export const postTransactionReturn = async ({
 export const getTransactionReturnByBranchId = async (
   id: string
 ): Promise<AxiosResponse> => {
-  const axiosInstance = createAxiosInstanceForTransaction(
-    Token(),
-    PATH_LIST.Return
-  );
-  const response = await axiosInstance.get(`/${id}/branch`);
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Sales);
+  const response = await axiosInstance.get(`${PATH_LIST.Return}/${id}/branch`);
   return response;
 };

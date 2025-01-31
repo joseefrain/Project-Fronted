@@ -298,7 +298,7 @@ const salesSlice = createSlice({
         fetchTransactionReturnByBranchId.fulfilled,
         (state, { payload }) => {
           state.status = 'succeeded';
-          state.returns = [...state.returns, payload];
+          state.returns = payload;
         }
       );
   },
