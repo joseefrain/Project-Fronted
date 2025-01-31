@@ -47,3 +47,23 @@ export const findProductoGrupoByProductId = async (
   const response = await axiosInstance.get(`/${productoId}/producto-grupo`);
   return response.data;
 };
+
+export const deleteProduct = async (id: string): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Inventory);
+  const response = await axiosInstance.delete(`/${id}`);
+  return response;
+};
+
+export interface updateProductApiProps {
+  product: ITablaBranch;
+  _id: string;
+}
+
+export const updateProductApi = async ({
+  product,
+  _id,
+}: updateProductApiProps): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Inventory);
+  const response = await axiosInstance.put(`/${_id}`, product);
+  return response.data;
+};

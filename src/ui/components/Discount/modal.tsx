@@ -54,10 +54,12 @@ interface IndexModalProps {
     nombre: any;
   }[];
   stateProduct: boolean;
-  opcionesProductos: {
-    id: string;
-    nombre: string;
-  }[];
+  opcionesProductos:
+    | {
+        id: string;
+        nombre: string;
+      }[]
+    | undefined;
   userRoles?: {
     _id: string;
     username: string;
@@ -123,9 +125,10 @@ export const IndexModal = ({
                 </Select>
               </div>
               <div className="flex w-full gap-4">
-                <div className="w-full">
+                <div className="w-auto">
                   <Label htmlFor="tipoDescuento">Seleccion</Label>
                   <SelectSearch
+                    classStyles="w-fit"
                     key={formState.tipoDescuentoEntidad}
                     options={
                       stateProduct ? opcionesProductos : groupsAllOptions
@@ -260,9 +263,9 @@ export const IndexModal = ({
                 <div className="flex w-full  flex-col gap-2">
                   <Label htmlFor="tipoDescuento"> Tipo del Minimo</Label>
                   <Select
-                    value={formState.minimoType}
+                    value={formState.minimiType}
                     onValueChange={(value) =>
-                      updateFormState('minimoType', value as IDescountTypePV)
+                      updateFormState('minimiType', value as IDescountTypePV)
                     }
                   >
                     <SelectTrigger>
@@ -275,7 +278,7 @@ export const IndexModal = ({
                   </Select>
                 </div>
 
-                {formState.minimoType === 'compra' && (
+                {formState.minimiType === 'compra' && (
                   <div className="flex w-full  flex-col gap-2">
                     <Label htmlFor="minimoCompra">Mínimo Compra</Label>
                     <Input
@@ -289,7 +292,7 @@ export const IndexModal = ({
                   </div>
                 )}
 
-                {formState.minimoType === 'cantidad' && (
+                {formState.minimiType === 'cantidad' && (
                   <div className="flex w-full  flex-col gap-2">
                     <Label htmlFor="minimoCantidad">Mínimo Cantidad</Label>
                     <Input
@@ -315,12 +318,12 @@ export const IndexModal = ({
                 />
               </div>
               <Button
-                disabled={
-                  formState.minimoCantidad === 0 ||
-                  (formState.minimoCompra &&
-                    formState.minimoCompra.$numberDecimal) === 0 ||
-                  formState.valorDescuento <= 0
-                }
+                // disabled={
+                //   formState.minimoCantidad === 0 ||
+                //   (formState.minimoCompra &&
+                //     formState.minimoCompra.$numberDecimal) === 0 ||
+                //   formState.valorDescuento <= 0
+                // }
                 type="submit"
               >
                 {editingId ? 'Editar' : 'Crear'}

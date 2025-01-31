@@ -32,6 +32,7 @@ import { toast, Toaster } from 'sonner';
 import ProductForm from './ProductForm';
 import { useRoleAccess } from '../../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../../shared/helpers/roleHelper';
+import { dataCoins } from '../../../../interfaces/salesInterfaces';
 
 interface ProductsTableProps {
   products: InventarioSucursalWithPopulated[];
@@ -70,6 +71,7 @@ const ProductsTable = ({
     setIsEditing(true);
   };
 
+  const monedaSimbole = dataCoins.currentS;
   return (
     <>
       <Toaster richColors position="bottom-right" />
@@ -77,10 +79,12 @@ const ProductsTable = ({
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Description</TableHead>
+            <TableHead>Nombre</TableHead>
+            <TableHead>Descripcion</TableHead>
+            <TableHead>Precio</TableHead>
+            <TableHead>Costo Unitario</TableHead>
             <TableHead>In Stock</TableHead>
+            <TableHead>Minimo Stock</TableHead>
             {(access.update || access.delete) && (
               <TableHead className="text-center">
                 <span className="">Actions</span>
@@ -95,7 +99,6 @@ const ProductsTable = ({
               <TableCell className="font-medium">
                 {product.productoId.nombre}
               </TableCell>
-              <TableCell>${product.precio.$numberDecimal}</TableCell>
               <TableCell>
                 <TooltipProvider>
                   <Tooltip>
@@ -108,7 +111,16 @@ const ProductsTable = ({
                   </Tooltip>
                 </TooltipProvider>
               </TableCell>
-              <TableCell>{product?.stock || '0'}</TableCell>
+              <TableCell>
+                {monedaSimbole}
+                {product.precio.$numberDecimal}
+              </TableCell>
+              <TableCell>
+                {monedaSimbole}
+                {product?.costoUnitario?.$numberDecimal}
+              </TableCell>
+              <TableCell>{product?.stock}</TableCell>
+              <TableCell>{product?.puntoReCompra}</TableCell>
               {access.create && (
                 <TableCell>
                   <Button

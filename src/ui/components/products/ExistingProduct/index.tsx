@@ -10,7 +10,6 @@ import {
 import { IProductoGroups, ITablaBranch } from '@/interfaces/branchInterfaces';
 import { useEffect, useState } from 'react';
 import ProductsTable from './ProductTable';
-// import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import { useAppSelector } from '@/app/hooks';
 import { searchForStockProductsAtBranch } from '@/app/slices/branchSlice';
 import { getAllGroupsSlice } from '@/app/slices/groups';
@@ -26,8 +25,7 @@ export function ProductFormExist() {
   const [searchTerm] = useState('');
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(20);
-  const userRoles = useAppSelector((state) => state.auth.signIn.user);
+  const [itemsPerPage] = useState(10);
   const GroupsAll = useAppSelector((state) => state.categories.groups);
   const [selectedGroup, setSelectedGroup] = useState<{
     nombre: string;
@@ -125,8 +123,7 @@ export function ProductFormExist() {
                 handleSelectChange={handleSelectChange}
                 selectedGroup={selectedGroup}
                 groups={GroupsAll}
-                products={findData}
-                userRoles={userRoles}
+                products={currentItems}
               />
             )}
           </CardContent>

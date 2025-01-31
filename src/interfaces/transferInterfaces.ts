@@ -166,6 +166,7 @@ export interface InventarioSucursal {
   created_at: string;
   update_at: string;
   puntoReCompra?: number;
+  costoUnitario?: number;
 }
 
 export interface IProductInTransit {
@@ -186,6 +187,7 @@ export interface InventarioSucursalWithPopulated {
   sucursalId: Branch;
   stock: number;
   puntoReCompra?: number;
+  costoUnitario?: { $numberDecimal: number };
   precio: { $numberDecimal: number };
   ultimo_movimiento: string;
   deleted_at: string | null;

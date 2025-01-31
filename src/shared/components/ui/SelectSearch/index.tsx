@@ -23,7 +23,7 @@ interface Option {
 }
 
 interface ComboboxProps {
-  options: Option[];
+  options?: Option[];
   placeholder?: string;
   initialValue?: string;
   onChange: (value: string) => void;
@@ -39,32 +39,28 @@ export const SelectSearch: React.FC<ComboboxProps> = ({
 }) => {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(initialValue || '');
-  const [filteredOptions, setFilteredOptions] =
-    React.useState<Option[]>(options);
+  const [filteredOptions, setFilteredOptions] = React.useState<Option[]>(
+    options || []
+  );
 
-    useEffect(() => {
-      setFilteredOptions(options);
-    }, [options]);
+  useEffect(() => {
+    setFilteredOptions(options || []);
+  }, [options]);
 
   const handleSearch = (searchTerm: string) => {
     const lowercasedTerm = searchTerm.toLowerCase();
-    const newFilteredOptions = options.filter((option) =>
+    const newFilteredOptions = options?.filter((option) =>
       option.nombre.toLowerCase().includes(lowercasedTerm)
     );
-    setFilteredOptions(newFilteredOptions);
+    setFilteredOptions(newFilteredOptions || []);
   };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-full justify-between"
-        >
+        <Button variant="outline" role="combobox" aria-expanded={open}>
           {value
-            ? options.find((option) => option.id === value)?.nombre
+            ? options?.find((option) => option.id === value)?.nombre
             : placeholder || 'Select an option...'}
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -75,13 +71,15 @@ export const SelectSearch: React.FC<ComboboxProps> = ({
             type="text"
             placeholder="Search..."
             className={cn(
-              'w-full outline-none border-none focus-visible:ring-0 bg-transparent',
+              'w-full outline-none border-none focus-visible:ring-0 bg-transparent font-onest',
               classStyles
             )}
             onChange={(e) => handleSearch(e.target.value)}
           />
           <CommandList>
-            <CommandEmpty>No options found.</CommandEmpty>
+            <CommandEmpty className="p-4 text-sm text-gray-800 dark:text-white font-onest">
+              No encontrado.
+            </CommandEmpty>
             <CommandGroup>
               {filteredOptions.map((option) => (
                 <CommandItem

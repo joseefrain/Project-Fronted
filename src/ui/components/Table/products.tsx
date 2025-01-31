@@ -1,5 +1,4 @@
 import { useAppSelector } from '@/app/hooks';
-import { createProduct } from '@/app/slices/branchSlice';
 import { getAllGroupsSlice } from '@/app/slices/groups';
 import { store } from '@/app/store';
 import {
@@ -20,11 +19,12 @@ import ProductsTable from './ProductTable';
 import SearchAndFilter from './sear';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { createProduct } from '../../../app/slices/productsSlice';
 
 export function Products() {
   const access = useRoleAccess(PAGES_MODULES.PRODUCTOS);
   const user = useAppSelector((state) => state.auth.signIn.user);
-  const dataProducts = useAppSelector((state) => state.products.products);
+  const dataProducts = useAppSelector((state) => state.products.products) || [];
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<string[]>([
     'active',
@@ -50,19 +50,21 @@ export function Products() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filteredProducts = dataProducts.filter(
-    (product) =>
-      product.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product?.barCode?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = Array.isArray(dataProducts)
+    ? dataProducts.filter(
+        (product) =>
+          product?.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product?.barCode?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredProducts.slice(
+  const currentItems = filteredProducts?.slice(
     indexOfFirstItem,
     indexOfLastItem
   );
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredProducts!.length / itemsPerPage);
 
   const handleAddProduct = async (newProduct: ITablaBranch) => {
     try {
@@ -70,7 +72,6 @@ export function Products() {
         ...newProduct,
       };
       await store.dispatch(createProduct(product)).unwrap();
-      //   setProducts((prevProducts) => [...prevProducts, product]);
       toast.success(`Producto ${product.nombre} creado exitosamente`);
     } catch (error) {
       toast.error('Error al crear producto:' + error);
@@ -98,6 +99,7 @@ export function Products() {
     if (!selectedGroup) return;
 
     const response = await GetBranches(selectedGroup._id);
+    console.log(response, 'response');
     setGroups(response);
   };
 
@@ -110,7 +112,7 @@ export function Products() {
       fetchDataGroup();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedGroup]);
+  }, []);
 
   return (
     <>
