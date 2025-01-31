@@ -24,6 +24,7 @@ import {
 export const ModalBranchs = () => {
   const branches = useAppSelector((state) => state.branches.data);
   const ID = useAppSelector((state) => state.auth.signIn.user);
+  const key = 'user';
 
   useEffect(() => {
     store.dispatch(fetchBranches()).unwrap();
@@ -53,14 +54,12 @@ export const ModalBranchs = () => {
         store.dispatch(openDrawerCashRegister());
       }
 
-      const key = 'user';
-
       const storedData = localStorage.getItem(key);
       if (storedData) {
         try {
           let userData = JSON.parse(JSON.stringify(JSON.parse(storedData)));
 
-          userData.cajaId = userCashier.data;
+          userData.cajaId = userCashier;
           userData.user.sucursalId = branch;
 
           store.dispatch(updateUserCashier(userData));
