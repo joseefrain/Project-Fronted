@@ -260,7 +260,7 @@ export const IndexModal = ({
                 </div>
               </div>
               <div className="flex w-full gap-4">
-                <div className="flex w-full  flex-col gap-2">
+                <div className="flex flex-col w-full gap-2">
                   <Label htmlFor="tipoDescuento"> Tipo del Minimo</Label>
                   <Select
                     value={formState.minimiType}
@@ -277,23 +277,21 @@ export const IndexModal = ({
                     </SelectContent>
                   </Select>
                 </div>
-
                 {formState.minimiType === 'compra' && (
-                  <div className="flex w-full  flex-col gap-2">
+                  <div className="flex flex-col w-full gap-2">
                     <Label htmlFor="minimoCompra">Mínimo Compra</Label>
                     <Input
                       id="minimoCompra"
                       type="number"
-                      value={formState.minimoCompra.$numberDecimal}
+                      value={formState?.minimoCompra?.$numberDecimal}
                       onChange={(e) =>
                         updateFormState('minimoCompra', e.target.value)
                       }
                     />
                   </div>
                 )}
-
                 {formState.minimiType === 'cantidad' && (
-                  <div className="flex w-full  flex-col gap-2">
+                  <div className="flex flex-col w-full gap-2">
                     <Label htmlFor="minimoCantidad">Mínimo Cantidad</Label>
                     <Input
                       id="minimoCantidad"
@@ -306,7 +304,6 @@ export const IndexModal = ({
                   </div>
                 )}
               </div>
-
               <div>
                 <Label htmlFor="codigoDescunto">Código Descuento</Label>
                 <Input
@@ -317,17 +314,7 @@ export const IndexModal = ({
                   }
                 />
               </div>
-              <Button
-                // disabled={
-                //   formState.minimoCantidad === 0 ||
-                //   (formState.minimoCompra &&
-                //     formState.minimoCompra.$numberDecimal) === 0 ||
-                //   formState.valorDescuento <= 0
-                // }
-                type="submit"
-              >
-                {editingId ? 'Editar' : 'Crear'}
-              </Button>
+              <Button type="submit">{editingId ? 'Editar' : 'Crear'}</Button>
             </div>
           </form>
         </DialogContent>

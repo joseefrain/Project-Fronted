@@ -204,8 +204,27 @@ export default function DiscountManager() {
   const handleSubmit = async (e: React.FormEvent) => {
     try {
       e.preventDefault();
+
+      const formattedData = {
+        ...formState,
+        minimoCompra: {
+          $numberDecimal: (formState.minimoCompra ?? 0).toString(),
+        },
+      };
+
       if (editingId) {
-        await store.dispatch(updateDiscountSales(formState)).unwrap();
+        await store
+          .dispatch(
+            updateDiscountSales({
+              ...formattedData,
+              minimoCompra: {
+                $numberDecimal: parseFloat(
+                  formattedData.minimoCompra.$numberDecimal
+                ),
+              },
+            })
+          )
+          .unwrap();
         toast.success('Descuento actualizado exitosamente');
       } else {
         await store.dispatch(createDiscountSales(formState)).unwrap();
@@ -317,7 +336,8 @@ export default function DiscountManager() {
       valorDescuento: 0,
       fechaInicio: new Date(),
       fechaFin: new Date(),
-      minimoCompra: { $numberDecimal: 0 },
+      //@ts-ignore
+      minimoCompra: 0,
       minimoCantidad: 0,
       activo: true,
       moneda_id: '64b7f1b4b4f1b5f1c7e7f2a9',
@@ -392,8 +412,8 @@ export default function DiscountManager() {
               <CardDescription>Gestiona tus descuentos.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex justify-between mb-4">
-                <div className="flex items-center gap-3 place-items-baseline">
+              <div className="flex justify-between mb-4 max-sm:flex-wrap max-sm:justify-center">
+                <div className="flex items-center gap-3 place-items-baseline max-sm:flex-col max-sm:gap-0">
                   <SearchComponent
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
@@ -428,7 +448,12 @@ export default function DiscountManager() {
                 </div>
 
                 {access.create && (
-                  <Button onClick={openAddModal}>Agregar Descuento</Button>
+                  <Button
+                    onClick={openAddModal}
+                    className="max-sm:mt-4 max-sm:w-[200px]"
+                  >
+                    Agregar Descuento
+                  </Button>
                 )}
               </div>
               <Table className="min-w-full divide-y divide-gray-200">
@@ -467,7 +492,7 @@ export default function DiscountManager() {
                       </TableCell>
                       <TableCell className="px-4 py-2">
                         {discount.descuentoId.minimiType === 'compra'
-                          ? discount.descuentoId.minimoCompra.$numberDecimal
+                          ? discount.descuentoId?.minimoCompra?.$numberDecimal
                           : discount.descuentoId.minimoCantidad}
                       </TableCell>
                       <TableCell className="px-4 py-2">
