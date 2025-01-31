@@ -65,7 +65,6 @@ import { getEntities } from '../../../app/slices/entities';
 import { ICajaBrach } from '../../../app/slices/cashRegisterSlice';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
-import { updateUserCashier } from '../../../app/slices/login';
 
 export interface ISaleSummary {
   subTotal: number;
@@ -204,11 +203,11 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
         setProcessingSale(false);
         return Promise.reject();
       })
+
       .then(() => {
         setTimeout(() => {
           setIsModalOpen(true);
           setCashInRegister((prev) => prev + newSale.total);
-
           if (storedData) {
             try {
               let userData = JSON.parse(storedData);
@@ -217,13 +216,10 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
               ) {
                 const montoActual =
                   parseFloat(userData.cajaId.montoEsperado.$numberDecimal) || 0;
-                const montoNuevo = montoActual + (saleSummary?.total || 0);
+                const montoNuevo = montoActual + newSale.total;
                 userData.cajaId.montoEsperado = {
                   $numberDecimal: montoNuevo.toString(),
                 };
-                store.dispatch(
-                  updateUserCashier(JSON.parse(JSON.stringify(userData.cajaId)))
-                );
                 localStorage.setItem(key, JSON.stringify(userData));
               }
             } catch (error) {
