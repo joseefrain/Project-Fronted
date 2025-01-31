@@ -5,6 +5,7 @@ import {
   getDiscountByBranchId,
   getPurchaseByBranchId,
   getSaleByBranchId,
+  getTransactionReturnByBranchId,
   openCashierService,
   postPurchase,
   postSale,
@@ -211,6 +212,21 @@ export const createSaleReturn = createAsyncThunk(
   }
 );
 
+export const fetchTransactionReturnByBranchId = createAsyncThunk(
+  'transactions/fetchTransactionReturnByBranchId',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await getTransactionReturnByBranchId(id);
+
+      console.log(response.data);
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
 const salesSlice = createSlice({
   name: 'transactions',
   initialState,
@@ -278,10 +294,13 @@ const salesSlice = createSlice({
         state.status = 'succeeded';
         state.discounts = payload;
       })
-      .addCase(createSaleReturn.fulfilled, (state, { payload }) => {
-        state.status = 'succeeded';
-        state.returns = [...state.returns, payload.devolucion];
-      });
+      .addCase(
+        fetchTransactionReturnByBranchId.fulfilled,
+        (state, { payload }) => {
+          state.status = 'succeeded';
+          state.returns = [...state.returns, payload];
+        }
+      );
   },
 });
 

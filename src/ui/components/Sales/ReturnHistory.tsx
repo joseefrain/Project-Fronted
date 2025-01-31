@@ -1,5 +1,5 @@
 import { useAppSelector } from '@/app/hooks';
-import { getSalesByBranch } from '@/app/slices/salesSlice';
+import { fetchTransactionReturnByBranchId } from '@/app/slices/salesSlice';
 import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
 import {
@@ -55,7 +55,11 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
 
   useEffect(() => {
     store
-      .dispatch(getSalesByBranch(user?.sucursalId?._id ?? branchStoraged ?? ''))
+      .dispatch(
+        fetchTransactionReturnByBranchId(
+          user?.sucursalId?._id ?? branchStoraged ?? ''
+        )
+      )
       .unwrap();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
