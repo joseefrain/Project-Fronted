@@ -87,18 +87,17 @@ export const fetchProductsByBranchId = createAsyncThunk<ITablaBranch[], string>(
   }
 );
 
-export const fetchAllProducts = createAsyncThunk<
-  ITablaBranch[],
-  void,
-  { rejectValue: string }
->('products/getAll', async (_, { rejectWithValue }) => {
-  try {
-    const response = await inventoryAllProduct();
-    return response;
-  } catch (error) {
-    return rejectWithValue(handleThunkError(error));
+export const fetchAllProducts = createAsyncThunk(
+  'products/getAll',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await inventoryAllProduct();
+      return response;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
   }
-});
+);
 
 export const removeProduct = createAsyncThunk(
   'branches/deleteProduct',
@@ -141,10 +140,12 @@ interface ProductState {
   error: string | null;
   transitProducts: IProductInTransit[];
   status: IStatus;
+  allProducts: ITablaBranch[] | null;
 }
 
 const initialState: ProductState = {
   products: [],
+  allProducts: null,
   transitProducts: [],
   status: 'idle',
   error: null,
@@ -172,16 +173,13 @@ const productsSlice = createSlice({
         state.products = payload;
       })
 
-      .addCase(fetchAllProducts.pending, (state) => {
-        state.status = 'loading';
-      })
       .addCase(fetchAllProducts.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
         state.products = payload;
+        state.allProducts = payload;
       })
-      .addCase(fetchAllProducts.rejected, (state, { payload }) => {
-        state.status = 'failed';
-        state.error = payload || 'Error fetching products';
+      .addCase(fetchAllProducts.pending, (state) => {
+        state.status = 'loading';
       })
       .addCase(productsTransit.pending, (state) => {
         state.status = 'loading';

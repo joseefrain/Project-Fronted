@@ -49,6 +49,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../../components/ui/select';
+import { fetchAllProducts } from '../../../app/slices/productsSlice';
 
 export default function DiscountManager() {
   const access = useRoleAccess(PAGES_MODULES.DESCUENTOS);
@@ -57,7 +58,8 @@ export default function DiscountManager() {
   const data = useAppSelector((state) => state.sales.discounts);
   const [selectedOption, setSelectedOption] = useState<string>('all');
   const { branches, selectedBranch, setSelectedBranch } = useFilteredBranches();
-  const dataAllProducts = useAppSelector((state) => state.products.products);
+  const productsBYBranch = useAppSelector((state) => state.products.products);
+  const dataAllProducts = useAppSelector((state) => state.products.allProducts);
   const userRoles = useAppSelector((state) => state.auth.signIn.user);
   const GroupsAll = useAppSelector((state) => state.categories.groups);
   const dataFilterID = branches.filter(
@@ -115,12 +117,20 @@ export default function DiscountManager() {
       nombre: branch.nombre,
     }));
 
-  const opcionesProductos = dataAllProducts
+  const opcionesProductos = productsBYBranch
     .filter((product) => product.sucursalId === selectedBranch?._id)
     .map((product) => ({
       id: product.id!,
       nombre: product.nombre,
     }));
+
+  const opcionesProductosALL = dataAllProducts?.map((product) => ({
+    id: product.id!,
+    nombre: product.nombre,
+  }));
+
+  const optionsAllProducts =
+    userRoles?.role === ROLE.ROOT ? opcionesProductosALL : opcionesProductos;
 
   const handleSelectChangeBranch = (value: string) => {
     const branch = branches.find((b) => b._id === value);
@@ -152,7 +162,7 @@ export default function DiscountManager() {
   };
 
   const handleProducts = (value: string) => {
-    const selectedProduct = dataAllProducts.find((d) => d.id === value);
+    const selectedProduct = productsBYBranch.find((d) => d.id === value);
 
     if (selectedProduct) {
       setSelectedProduct({
@@ -172,6 +182,7 @@ export default function DiscountManager() {
       if (!idBranch) return;
 
       try {
+        store.dispatch(fetchAllProducts());
         await GetBranches(idBranch as unknown as string);
         store.dispatch(getAllGroupsSlice()).unwrap();
         store.dispatch(getDiscountsByBranchAll(idBranch)).unwrap();
@@ -499,7 +510,7 @@ export default function DiscountManager() {
                 options={options}
                 groupsAllOptions={groupsAllOptions}
                 stateProduct={stateProduct}
-                opcionesProductos={opcionesProductos}
+                opcionesProductos={optionsAllProducts}
                 userRoles={userRoles}
                 handleProducts={handleProducts}
               />
