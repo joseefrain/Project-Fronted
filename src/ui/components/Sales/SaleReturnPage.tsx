@@ -14,7 +14,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Label } from '@/components/ui/label';
-import { AlertTriangleIcon, CheckCircleIcon, InfoIcon } from 'lucide-react';
+import {
+  AlertTriangleIcon,
+  BadgeInfo,
+  CheckCircleIcon,
+  InfoIcon,
+} from 'lucide-react';
 import {
   IProductReturn,
   IProductSale,
@@ -33,6 +38,11 @@ import {
 import { ICajaBrach } from '../../../app/slices/cashRegisterSlice';
 import { store } from '../../../app/store';
 import { createSaleReturn } from '../../../app/slices/salesSlice';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '../../../components/ui/popover';
 
 export default function SalesReturnPage({
   saleDetails,
@@ -276,16 +286,36 @@ export default function SalesReturnPage({
                       ? `C$${returnQuantities[product.productId]?.priceAdjustment}`
                       : '---'}
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="flex items-center justify-center gap-2 text-center">
                     {returnQuantities[product.productId]?.priceAdjustment &&
                     product.discount ? (
-                      <span>
-                        Descuento:{' '}
-                        <span className="font-semibold">
-                          {product.discount.name}
-                        </span>{' '}
-                        eliminado
-                      </span>
+                      <>
+                        Descuento eliminado
+                        <Popover>
+                          <PopoverTrigger className="p-0">
+                            <BadgeInfo size={18} />
+                          </PopoverTrigger>
+                          <PopoverContent className="flex flex-col items-center w-auto gap-1 text-sm font-onest">
+                            <span className="w-full">
+                              Descuento:{' '}
+                              <strong>{product.discount.name}</strong>
+                            </span>
+                            <div className="flex items-center gap-2">
+                              {product.discount.minimiType === 'compra' ? (
+                                <span>
+                                  Mínimo de compra: C$
+                                  {product.discount.minimoCompra.$numberDecimal}
+                                </span>
+                              ) : (
+                                <span>
+                                  Mínimo de cantidad:
+                                  {product.discount.minimoCantidad}
+                                </span>
+                              )}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </>
                     ) : (
                       '---'
                     )}
@@ -316,13 +346,13 @@ export default function SalesReturnPage({
                 Resumen de la devolución
               </span>
             </div>
-            <div className="flex justify-between text-blue-800">
+            <div className="flex items-center justify-between text-blue-800">
               <span>Subtotal:</span>
               <span className="px-2 w-[30%] flex items-center justify-between">
                 C$ <span>{totalReturn.subtotal.toFixed(2)}</span>
               </span>
             </div>
-            <div className="flex justify-between text-blue-800">
+            <div className="flex items-center justify-between text-blue-800">
               <span>Reajuste:</span>
               <span className="px-2 w-[30%] flex items-center justify-between">
                 C$ <span>-{totalReturn.reajuste.toFixed(2)}</span>

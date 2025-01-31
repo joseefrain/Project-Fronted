@@ -1,4 +1,5 @@
 import {
+  IDescountTypePV,
   IDescuentoAplicado,
   IDescuentoGrupoAplicado,
   IDescuentoProductoAplicado,
@@ -120,6 +121,11 @@ export const applyDiscounts = (
             amount: descuentoAplicado,
             percentage: porcentajeAplicado,
             minimiType: descuentoAplicable.minimiType,
+            minimoCompra: {
+              $numberDecimal:
+                descuentoAplicable.minimoCompra.$numberDecimal.toString(),
+            },
+            minimoCantidad: descuentoAplicable.minimoCantidad,
           }
         : null,
   };
@@ -224,19 +230,29 @@ export const validateDiscountByGroup = (
 ) => {
   return includeDates
     ? discount?.groupId === groupId &&
-        (!discount.sucursalId || discount.sucursalId === sucursalId) &&
+        isGeneralORSucursal(sucursalId, discount.sucursalId) &&
         discount.activo &&
         isCurrentDateInRange(
           String(discount.fechaInicio),
           String(discount.fechaFin)
         ) &&
-        (productPrice * productQuantity >= Number(discount.minimoCompra) ||
-          productQuantity >= discount.minimoCantidad)
+        meetPurchaseORQuantity(
+          productPrice,
+          productQuantity,
+          Number(discount.minimoCompra),
+          discount.minimoCantidad,
+          discount.minimiType
+        )
     : discount?.groupId === groupId &&
-        (!discount.sucursalId || discount.sucursalId === sucursalId) &&
+        isGeneralORSucursal(sucursalId, discount.sucursalId) &&
         discount.activo &&
-        (productPrice * productQuantity >= Number(discount.minimoCompra) ||
-          productQuantity >= discount.minimoCantidad);
+        meetPurchaseORQuantity(
+          productPrice,
+          productQuantity,
+          Number(discount.minimoCompra),
+          discount.minimoCantidad,
+          discount.minimiType
+        );
 };
 
 export const validateDiscountByProduct = (
@@ -248,24 +264,55 @@ export const validateDiscountByProduct = (
   includeDates = true
 ) => {
   return includeDates
-    ? (discount.productId?.toString() === productId &&
-        (!discount.sucursalId || discount.sucursalId === sucursalId) &&
+    ? discount.productId?.toString() === productId &&
+        isGeneralORSucursal(sucursalId, discount.sucursalId) &&
         discount.activo &&
         isCurrentDateInRange(
           String(discount.fechaInicio),
           String(discount.fechaFin)
         ) &&
-        price * newQuantity >= Number(discount.minimoCompra)) ||
-        newQuantity >= discount.minimoCantidad
-    : (discount.productId?.toString() === productId &&
-        (!discount.sucursalId || discount.sucursalId === sucursalId) &&
+        meetPurchaseORQuantity(
+          price,
+          newQuantity,
+          Number(discount.minimoCompra),
+          discount.minimoCantidad,
+          discount.minimiType
+        )
+    : discount.productId?.toString() === productId &&
+        isGeneralORSucursal(sucursalId, discount.sucursalId) &&
         discount.activo &&
-        price * newQuantity >= Number(discount.minimoCompra)) ||
-        newQuantity >= discount.minimoCantidad;
+        meetPurchaseORQuantity(
+          price,
+          newQuantity,
+          Number(discount.minimoCompra),
+          discount.minimoCantidad,
+          discount.minimiType
+        );
 };
+
+export const meetPurchaseORQuantity = (
+  price: number,
+  newQuantity: number,
+  minimoCompra: number,
+  minimoCantidad: number,
+  type: IDescountTypePV
+) => {
+  if (type === 'compra') {
+    return price * newQuantity >= minimoCompra;
+  }
+
+  return newQuantity >= minimoCantidad;
+};
+
+export const isGeneralORSucursal = (
+  productSucursalId: string,
+  discountSucursalId?: string
+) => !discountSucursalId || discountSucursalId === productSucursalId;
 
 export const getProductUnitPrice = (product: IProductSale) => {
   if (!product.discount) return product.price;
+
+  console.log(product);
 
   const productSubtotal = product.quantity * product.price;
   const productTotalSale = productSubtotal - product.discount.amount;

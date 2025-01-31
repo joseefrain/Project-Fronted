@@ -93,6 +93,8 @@ export interface IProductSale {
     amount: number;
     percentage: number;
     minimiType: IDescountTypePV;
+    minimoCompra: { $numberDecimal: string };
+    minimoCantidad: number;
   };
 }
 
