@@ -102,9 +102,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
 
   const [cashInRegister, setCashInRegister] = useState(0);
 
-  const [customerType, setCustomerType] = useState<ICustomerType>(
-    ICustomerType.GENERAL
-  );
+  const [customerType, setCustomerType] = useState<ICustomerType | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<IPaymentMethod>(
     IPaymentMethod.CASH
   );
@@ -531,7 +529,9 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span>Descuento ({saleSummary.totalDiscountPercentage}%):</span>
+              <span>
+                Descuento ({saleSummary.totalDiscountPercentage.toFixed(2)}%):
+              </span>
               <span>
                 {coin}
                 {saleSummary.totalDiscount.toFixed(2)}
@@ -560,6 +560,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
             className="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
             size="lg"
             disabled={
+              !customerType ||
               productSale.length === 0 ||
               processingSale ||
               (customerType === ICustomerType.REGISTERED && !customer) ||
