@@ -55,6 +55,7 @@ export const applyDiscounts = (
           fechaInicio: String(d.descuentoId.fechaInicio),
           fechaFin: String(d.descuentoId.fechaFin),
           productId: d.productId,
+          minimiType: d.descuentoId.minimiType,
         },
         productId,
         sucursalId,
@@ -75,6 +76,7 @@ export const applyDiscounts = (
           fechaInicio: String(d.descuentoId.fechaInicio),
           fechaFin: String(d.descuentoId.fechaFin),
           groupId: d.grupoId,
+          minimiType: d.descuentoId.minimiType,
         },
         groupId,
         sucursalId,
@@ -117,6 +119,7 @@ export const applyDiscounts = (
             type: discountType,
             amount: descuentoAplicado,
             percentage: porcentajeAplicado,
+            minimiType: descuentoAplicable.minimiType,
           }
         : null,
   };
@@ -173,6 +176,7 @@ export const isDiscountApplied = (
       activo: castDiscount.activo,
       fechaInicio: castDiscount.fechaInicio,
       fechaFin: castDiscount.fechaFin,
+      minimiType: castDiscount.minimiType,
     };
 
     const discountApplied = validateDiscountByGroup(
@@ -195,6 +199,7 @@ export const isDiscountApplied = (
     activo: castDiscount.activo,
     fechaInicio: castDiscount.fechaInicio,
     fechaFin: castDiscount.fechaFin,
+    minimiType: castDiscount.minimiType,
   };
 
   const discountApplied = validateDiscountByProduct(

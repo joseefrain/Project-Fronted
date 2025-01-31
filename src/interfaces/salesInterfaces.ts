@@ -32,7 +32,7 @@ export interface IDescuento {
   moneda_id: string;
   codigoDescunto: string;
   deleted_at: Date | null;
-  minimoType: IDescountTypePV;
+  minimiType: IDescountTypePV;
 }
 
 export interface IDescuentoMapeado {
@@ -91,6 +91,7 @@ export interface IProductSale {
     type: 'producto' | 'grupo';
     amount: number;
     percentage: number;
+    minimiType: IDescountTypePV;
   };
 }
 
@@ -108,6 +109,7 @@ export interface IDescuentoAplicado {
   minimoCompra: number;
   minimoCantidad: number;
   activo: boolean;
+  minimiType: IDescountTypePV;
 }
 
 export interface IDescuentoGeneralAplicado {
@@ -117,6 +119,7 @@ export interface IDescuentoGeneralAplicado {
   activo: boolean;
   fechaInicio: string;
   fechaFin: string;
+  minimiType: IDescountTypePV;
 }
 
 export interface IDescuentoGrupoAplicado extends IDescuentoGeneralAplicado {

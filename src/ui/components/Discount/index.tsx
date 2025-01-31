@@ -332,7 +332,7 @@ export default function DiscountManager() {
       sucursalId: d.sucursalId,
       groupId: d.grupoId,
       productId: d.productId,
-      minimoType: d.descuentoId.minimoType,
+      minimoType: d.descuentoId.minimiType,
     }));
 
     const matchingDiscountGn = discountGn.find((d) => d._id === _id);

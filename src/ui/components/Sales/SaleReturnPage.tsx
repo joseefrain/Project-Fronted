@@ -212,12 +212,10 @@ export default function SalesReturnPage({
               Total de la transacción
             </h3>
             <p className="text-xl font-bold text-green-800">
-              ${saleDetails.total}
+              C${saleDetails.total}
             </p>
           </div>
         </div>
-
-        {/* <Separator className="my-6" /> */}
 
         <div className="max-h-[205px] overflow-y-auto scrollbar-hide">
           <Table>
@@ -266,16 +264,17 @@ export default function SalesReturnPage({
                     />
                   </TableCell>
                   <TableCell className="text-center">
-                    ${product.price.toFixed(2)}
+                    C${product.price.toFixed(2)}
                   </TableCell>
                   <TableCell className="text-center">
                     {product.discount
-                      ? `$${getProductUnitPrice(product).toFixed(2)}`
+                      ? `C$${getProductUnitPrice(product).toFixed(2)}`
                       : '---'}
                   </TableCell>
                   <TableCell className="text-center">
-                    {returnQuantities[product.productId]?.priceAdjustment ??
-                      '---'}
+                    {returnQuantities[product.productId]?.priceAdjustment
+                      ? `C$${returnQuantities[product.productId]?.priceAdjustment}`
+                      : '---'}
                   </TableCell>
                   <TableCell className="text-center">
                     {returnQuantities[product.productId]?.priceAdjustment &&
