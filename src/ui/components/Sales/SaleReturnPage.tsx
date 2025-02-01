@@ -72,19 +72,25 @@ export default function SalesReturnPage({
 
   const handleQuantityChange = (product: IProductSale, quantity: number) => {
     let priceAdjustment = null;
+    const newQuantity = Math.min(quantity, product.quantity || 0);
 
     if (product.discount && quantity > 0 && product.quantity > quantity) {
-      priceAdjustment = getPriceAdjustment(
-        product,
-        product.quantity - quantity
+      const hasActiveDiscount = isDiscountApplied(
+        saleDetails.sucursalId,
+        newQuantity,
+        product
       );
+
+      if (!hasActiveDiscount) {
+        priceAdjustment = getPriceAdjustment(product, newQuantity);
+      }
     }
 
     setReturnQuantities((prev) => ({
       ...prev,
       [product.productId]: {
         priceAdjustment: priceAdjustment,
-        quantity: Math.min(quantity, product.quantity || 0),
+        quantity: newQuantity,
       },
     }));
   };
@@ -283,7 +289,7 @@ export default function SalesReturnPage({
                   </TableCell>
                   <TableCell className="text-center">
                     {returnQuantities[product.productId]?.priceAdjustment
-                      ? `C$${returnQuantities[product.productId]?.priceAdjustment}`
+                      ? `C$${returnQuantities[product.productId]?.priceAdjustment?.toFixed(2)}`
                       : '---'}
                   </TableCell>
                   <TableCell className="flex items-center justify-center gap-2 text-center">

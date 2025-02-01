@@ -44,13 +44,13 @@ export const applyDiscounts = (
   let descuentoAplicado = 0;
   let porcentajeAplicado = 0;
 
-  const descuentosProducto = descuentos.descuentosPorProductosGenerales
-    ?.concat(descuentos.descuentosPorProductosEnSucursal)
+  const descuentosProducto = descuentos.descuentosPorProductosEnSucursal
+    ?.concat(descuentos.descuentosPorProductosGenerales)
     .filter((d) =>
       validateDiscountByProduct(
         {
           sucursalId: d.sucursalId ?? '',
-          minimoCompra: Number(d.descuentoId.minimoCompra.$numberDecimal),
+          minimoCompra: Number(d.descuentoId.minimoCompra?.$numberDecimal ?? 0),
           minimoCantidad: Number(d.descuentoId.minimoCantidad),
           activo: d.descuentoId.activo,
           fechaInicio: String(d.descuentoId.fechaInicio),
@@ -65,13 +65,13 @@ export const applyDiscounts = (
       )
     );
 
-  const descuentosGrupo = descuentos.descuentosPorGruposGenerales
-    ?.concat(descuentos.descuentosPorGruposEnSucursal)
+  const descuentosGrupo = descuentos.descuentosPorGruposEnSucursal
+    ?.concat(descuentos.descuentosPorGruposGenerales)
     .filter((d) =>
       validateDiscountByGroup(
         {
           sucursalId: d.sucursalId ?? '',
-          minimoCompra: Number(d.descuentoId.minimoCompra.$numberDecimal),
+          minimoCompra: Number(d.descuentoId.minimoCompra?.$numberDecimal ?? 0),
           minimoCantidad: Number(d.descuentoId.minimoCantidad),
           activo: d.descuentoId.activo,
           fechaInicio: String(d.descuentoId.fechaInicio),
@@ -122,8 +122,9 @@ export const applyDiscounts = (
             percentage: porcentajeAplicado,
             minimiType: descuentoAplicable.minimiType,
             minimoCompra: {
-              $numberDecimal:
-                descuentoAplicable.minimoCompra.$numberDecimal.toString(),
+              $numberDecimal: (
+                descuentoAplicable.minimoCompra?.$numberDecimal ?? 0
+              ).toString(),
             },
             minimoCantidad: descuentoAplicable.minimoCantidad,
           }
@@ -311,8 +312,6 @@ export const isGeneralORSucursal = (
 
 export const getProductUnitPrice = (product: IProductSale) => {
   if (!product.discount) return product.price;
-
-  console.log(product);
 
   const productSubtotal = product.quantity * product.price;
   const productTotalSale = productSubtotal - product.discount.amount;
