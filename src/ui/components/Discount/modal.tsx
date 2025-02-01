@@ -90,7 +90,7 @@ export const IndexModal = ({
     <>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogTrigger asChild></DialogTrigger>
-        <DialogContent className="font-onest">
+        <DialogContent className="w-[92%] rounded-[8px]  bg-red-400">
           <DialogHeader>
             <DialogTitle>
               {editingId ? 'Editar Descuento' : 'Crear Descuento'}
@@ -98,10 +98,10 @@ export const IndexModal = ({
           </DialogHeader>
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4">
-              <div>
+              <div className="flex-col justify-center w-full gap-2">
                 <Label htmlFor="nombre">Nombre</Label>
                 <Input
-                  className="w-full"
+                  className="w-[86.5%]"
                   id="nombre"
                   value={formState.nombre}
                   onChange={(e) => updateFormState('nombre', e.target.value)}
