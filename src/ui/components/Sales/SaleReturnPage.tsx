@@ -14,8 +14,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
+import {
+  AlertTriangleIcon,
+  BadgeInfo,
+  CheckCircleIcon,
+  InfoIcon,
+} from 'lucide-react';
 import {
   IProductReturn,
   IProductSale,
@@ -26,12 +30,19 @@ import { getFormatedDate } from '../../../shared/helpers/transferHelper';
 import { useAppSelector } from '../../../app/hooks';
 import { toast, Toaster } from 'sonner';
 import {
+  getPriceAdjustment,
+  getProductUnitPrice,
   isDiscountApplied,
   NO_CASHIER_OPEN,
 } from '../../../shared/helpers/salesHelper';
 import { ICajaBrach } from '../../../app/slices/cashRegisterSlice';
 import { store } from '../../../app/store';
 import { createSaleReturn } from '../../../app/slices/salesSlice';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '../../../components/ui/popover';
 
 export default function SalesReturnPage({
   saleDetails,
@@ -45,7 +56,10 @@ export default function SalesReturnPage({
 
   const [returnProccessing, setReturnProccessing] = useState(false);
   const [returnQuantities, setReturnQuantities] = useState<{
-    [key: string]: number;
+    [key: string]: {
+      quantity: number;
+      priceAdjustment: number | null;
+    };
   }>({});
   const [cashRegister, setCashRegister] = useState<{
     id: string | null;
@@ -56,42 +70,60 @@ export default function SalesReturnPage({
   });
   const [extraCash, setExtraCash] = useState(0);
 
-  const handleQuantityChange = (productId: string, quantity: number) => {
+  const handleQuantityChange = (product: IProductSale, quantity: number) => {
+    let priceAdjustment = null;
+    const newQuantity = Math.min(quantity, product.quantity || 0);
+
+    if (product.discount && quantity > 0 && product.quantity > quantity) {
+      const hasActiveDiscount = isDiscountApplied(
+        saleDetails.sucursalId,
+        newQuantity,
+        product
+      );
+
+      if (!hasActiveDiscount) {
+        priceAdjustment = getPriceAdjustment(product, newQuantity);
+      }
+    }
+
     setReturnQuantities((prev) => ({
       ...prev,
-      [productId]: Math.min(
-        quantity,
-        saleDetails.products.find((p) => p.productId === productId)?.quantity ||
-          0
-      ),
+      [product.productId]: {
+        priceAdjustment: priceAdjustment,
+        quantity: newQuantity,
+      },
     }));
   };
 
   const calculateTotalReturn = () => {
-    return saleDetails.products.reduce((total, product) => {
-      let productPrice = product.price;
+    return saleDetails.products.reduce(
+      (acc, product) => {
+        let productPrice = product.price;
 
-      if (product.discount) {
-        productPrice = getProductUnitPrice(product);
-      }
+        if (product.discount) {
+          productPrice = getProductUnitPrice(product);
+        }
 
-      const returnQuantity = returnQuantities[product.productId] || 0;
-      return total + returnQuantity * productPrice;
-    }, 0);
-  };
+        const returnQuantity =
+          returnQuantities[product.productId]?.quantity || 0;
+        const priceAdjustment =
+          returnQuantities[product.productId]?.priceAdjustment ?? 0;
 
-  const getProductUnitPrice = (product: IProductSale) => {
-    if (!product.discount) return product.price;
+        const productSubtotal = returnQuantity * productPrice;
+        const productTotal = productSubtotal - priceAdjustment;
 
-    const productTotalSale =
-      product.quantity * product.price - product.discount.amount;
-    const productPriceWithDiscount = productTotalSale / product.quantity;
+        acc.subtotal += productSubtotal;
+        acc.reajuste += priceAdjustment;
+        acc.total += productTotal;
 
-    return productPriceWithDiscount;
+        return acc;
+      },
+      { total: 0, subtotal: 0, reajuste: 0 }
+    );
   };
 
   const totalReturn = calculateTotalReturn();
-  const needsExtraCash = totalReturn > cashRegister.cash;
+  const needsExtraCash = totalReturn.total > cashRegister.cash;
 
   const handleReturn = () => {
     if (!cashRegister.id) {
@@ -104,12 +136,12 @@ export default function SalesReturnPage({
       const product = saleDetails.products.find((p) => p.productId === key);
       if (!product) return;
 
-      const newQuantity = product.quantity - value;
+      const newQuantity = product.quantity - value.quantity;
 
       if (!product.discount || newQuantity === 0) {
         formattedProducts.push({
           productId: key,
-          quantity: value,
+          quantity: value.quantity,
           discountApplied: false,
         });
         return;
@@ -117,31 +149,13 @@ export default function SalesReturnPage({
 
       const hasActiveDiscount = isDiscountApplied(
         saleDetails.sucursalId,
-        value,
+        value.quantity,
         product
       );
 
-      if (hasActiveDiscount)
-        return formattedProducts.push({
-          productId: key,
-          quantity: value,
-          discountApplied: hasActiveDiscount,
-        });
-
-      const unityPriceWithDiscount = getProductUnitPrice(product);
-      const unityPrice = product.price;
-
-      const newSubtotalWithDiscount = newQuantity * unityPriceWithDiscount;
-      const newSubtotalWithOutDiscount = newQuantity * unityPrice;
-
-      const discountAmount =
-        newSubtotalWithOutDiscount - newSubtotalWithDiscount;
-
-      console.log(discountAmount, 'REAJUSTE');
-
       formattedProducts.push({
         productId: key,
-        quantity: value,
+        quantity: value.quantity,
         discountApplied: hasActiveDiscount,
       });
     }
@@ -152,7 +166,7 @@ export default function SalesReturnPage({
       userId: userId ?? '',
       monto: needsExtraCash
         ? Number(cashRegister.cash.toFixed(2))
-        : Number(totalReturn.toFixed(2)),
+        : Number(totalReturn.total.toFixed(2)),
       montoExterno: needsExtraCash ? extraCash : undefined,
       products: formattedProducts,
     };
@@ -175,9 +189,6 @@ export default function SalesReturnPage({
       success: 'Devolución procesada exitosamente',
       error: 'Error al procesar la devolución',
     });
-
-    console.log(saleReturn);
-    console.log(saleDetails);
   };
 
   useEffect(() => {
@@ -217,27 +228,29 @@ export default function SalesReturnPage({
               Total de la transacción
             </h3>
             <p className="text-xl font-bold text-green-800">
-              ${saleDetails.total}
+              C${saleDetails.total}
             </p>
           </div>
         </div>
-
-        <Separator className="my-6" />
 
         <div className="max-h-[205px] overflow-y-auto scrollbar-hide">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[40%]">Producto</TableHead>
+                <TableHead className="w-[20%]">Producto</TableHead>
                 <TableHead className="text-center">
                   Cantidad Procesada
                 </TableHead>
-                <TableHead className="text-center">Precio Unitario</TableHead>
                 <TableHead className="text-center">
-                  Precio Unitario Con Descuento
+                  Cantidad Devolución
                 </TableHead>
+                <TableHead className="text-center">Precio Original</TableHead>
                 <TableHead className="text-center">
-                  Cantidad a Devolver
+                  Precio con descuento
+                </TableHead>
+                <TableHead className="text-center">Reajuste</TableHead>
+                <TableHead className="text-center w-[20%]">
+                  Motivo del reajuste
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -250,23 +263,15 @@ export default function SalesReturnPage({
                   <TableCell className="text-center">
                     {product.quantity}
                   </TableCell>
-                  <TableCell className="text-center">
-                    ${product.price.toFixed(2)}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {product.discount
-                      ? `$${getProductUnitPrice(product).toFixed(2)}`
-                      : '-'}
-                  </TableCell>
                   <TableCell className="flex items-center justify-center">
                     <Input
                       type="number"
                       min="0"
                       max={product.quantity}
-                      value={returnQuantities[product.productId] || 0}
+                      value={returnQuantities[product.productId]?.quantity || 0}
                       onChange={(e) =>
                         handleQuantityChange(
-                          product.productId,
+                          product,
                           Number.parseInt(e.target.value)
                         )
                       }
@@ -274,23 +279,98 @@ export default function SalesReturnPage({
                       disabled={returnProccessing}
                     />
                   </TableCell>
+                  <TableCell className="text-center">
+                    C${product.price.toFixed(2)}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {product.discount
+                      ? `C$${getProductUnitPrice(product).toFixed(2)}`
+                      : '---'}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {returnQuantities[product.productId]?.priceAdjustment
+                      ? `C$${returnQuantities[product.productId]?.priceAdjustment?.toFixed(2)}`
+                      : '---'}
+                  </TableCell>
+                  <TableCell className="flex items-center justify-center gap-2 text-center">
+                    {returnQuantities[product.productId]?.priceAdjustment &&
+                    product.discount ? (
+                      <>
+                        Descuento eliminado
+                        <Popover>
+                          <PopoverTrigger className="p-0">
+                            <BadgeInfo size={18} />
+                          </PopoverTrigger>
+                          <PopoverContent className="flex flex-col items-center w-auto gap-1 text-sm font-onest">
+                            <span className="w-full">
+                              Descuento:{' '}
+                              <strong>{product.discount.name}</strong>
+                            </span>
+                            <div className="flex items-center gap-2">
+                              {product.discount.minimiType === 'compra' ? (
+                                <span>
+                                  Mínimo de compra: C$
+                                  {product.discount.minimoCompra.$numberDecimal}
+                                </span>
+                              ) : (
+                                <span>
+                                  Mínimo de cantidad:
+                                  {product.discount.minimoCantidad}
+                                </span>
+                              )}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </>
+                    ) : (
+                      '---'
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
 
-        <div className="p-4 mt-6 rounded-lg bg-sky-100">
-          <div className="flex items-center justify-between">
-            <span className="text-lg font-semibold text-blue-800">
-              Total a devolver:
-            </span>
-            <span className="text-2xl font-bold text-blue-800">
-              ${totalReturn.toFixed(2)}
-            </span>
-          </div>
-          <div className="mt-2 text-sm text-blue-800">
-            Dinero en caja: ${cashRegister.cash.toFixed(2)}
+        <div className="flex gap-8 mt-20">
+          <Alert variant="default" className="w-[50%]">
+            <AlertTitle className="flex items-center gap-2 font-semibold">
+              <InfoIcon className="w-4 h-4 text-gray-600" />
+              ¿Qué es un reajuste?
+            </AlertTitle>
+            <AlertDescription className="text-gray-600">
+              Si debido a una devolución, un descuento aplicado originalmente
+              deja de ser válido, genera un reajuste en los productos restantes,
+              lo que afecta tanto su precio como la cantidad a devolver. La
+              cantidad final a devolver ya considera este ajuste.
+            </AlertDescription>
+          </Alert>
+
+          <div className="w-[50%] p-3 rounded-lg bg-sky-100">
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-semibold text-blue-800">
+                Resumen de la devolución
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-blue-800">
+              <span>Subtotal:</span>
+              <span className="px-2 w-[30%] flex items-center justify-between">
+                C$ <span>{totalReturn.subtotal.toFixed(2)}</span>
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-blue-800">
+              <span>Reajuste:</span>
+              <span className="px-2 w-[30%] flex items-center justify-between">
+                C$ <span>-{totalReturn.reajuste.toFixed(2)}</span>
+              </span>
+            </div>
+            <div className="flex items-center justify-between mt-2 text-blue-800">
+              <span>Total:</span>
+              <span className="px-2 flex items-center justify-between border-t border-blue-900 w-[30%]">
+                C$
+                <span>{totalReturn.total.toFixed(2)}</span>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -306,7 +386,7 @@ export default function SalesReturnPage({
                   No hay suficiente dinero en caja para cubrir la devolución. Se
                   necesitan{' '}
                   <span className="font-bold">
-                    ${(totalReturn - cashRegister.cash).toFixed(2)}{' '}
+                    ${(totalReturn.total - cashRegister.cash).toFixed(2)}{' '}
                   </span>
                   adicionales, proceda a ingresar el dinero adicional antes de
                   continuar.
@@ -321,13 +401,15 @@ export default function SalesReturnPage({
                     id="extraCash"
                     type="number"
                     min={0}
-                    max={Number((totalReturn - cashRegister.cash).toFixed(2))}
+                    max={Number(
+                      (totalReturn.total - cashRegister.cash).toFixed(2)
+                    )}
                     value={extraCash}
                     onChange={(e) => {
                       if (e.target.value === '') return setExtraCash(0);
 
                       const cashNeeded = Number(
-                        (totalReturn - cashRegister.cash).toFixed(2)
+                        (totalReturn.total - cashRegister.cash).toFixed(2)
                       );
 
                       if (needsExtraCash && Number(e.target.value) > cashNeeded)
@@ -347,10 +429,10 @@ export default function SalesReturnPage({
         <div className="flex justify-end mt-8">
           <Button
             onClick={handleReturn}
-            className="px-8 py-5 font-semibold uppercase disabled:bg-gray-200 disabled:cursor-not-allowed"
+            className="px-8 py-5 font-semibold uppercase disabled:bg-gray-200 disabled:cursor-not-allowed disabled:text-gray-800"
             disabled={
-              totalReturn === 0 ||
-              cashRegister.cash + extraCash < totalReturn ||
+              totalReturn.total === 0 ||
+              cashRegister.cash + extraCash < totalReturn.total ||
               returnProccessing
             }
           >
