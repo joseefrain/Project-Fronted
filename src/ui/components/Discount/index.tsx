@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+
 import { useAppSelector } from '@/app/hooks';
 import { getAllGroupsSlice } from '@/app/slices/groups';
 import { store } from '@/app/store';
@@ -34,9 +27,8 @@ import {
 import Pagination from '@/shared/components/ui/Pagination/Pagination';
 import { SearchComponent } from '@/shared/components/ui/Search';
 import { GetBranches } from '@/shared/helpers/Branchs';
-import { getFormatedDate } from '@/shared/helpers/transferHelper';
 import { useFilteredBranches } from '@/shared/hooks/useSelectedBranch';
-import { Pencil, Save, Trash2 } from 'lucide-react';
+
 import { toast, Toaster } from 'sonner';
 import { IndexModal } from './modal';
 import { ROLE } from '../../../interfaces/roleInterfaces';
@@ -50,6 +42,8 @@ import {
   SelectValue,
 } from '../../../components/ui/select';
 import { fetchAllProducts } from '../../../app/slices/productsSlice';
+import { Save } from 'lucide-react';
+import { TableIndex } from './tableIndex';
 
 export default function DiscountManager() {
   const access = useRoleAccess(PAGES_MODULES.DESCUENTOS);
@@ -98,7 +92,6 @@ export default function DiscountManager() {
     nombre: string;
     _id: string;
   } | null>(null);
-
   const [, setSelectedProduct] = useState<{
     nombre: string;
     _id: string;
@@ -205,28 +198,11 @@ export default function DiscountManager() {
     try {
       e.preventDefault();
 
-      const formattedData = {
-        ...formState,
-        minimoCompra: {
-          $numberDecimal: (formState.minimoCompra ?? 0).toString(),
-        },
-      };
-
       if (editingId) {
-        await store
-          .dispatch(
-            updateDiscountSales({
-              ...formattedData,
-              minimoCompra: {
-                $numberDecimal: parseFloat(
-                  formattedData.minimoCompra.$numberDecimal
-                ),
-              },
-            })
-          )
-          .unwrap();
+        await store.dispatch(updateDiscountSales(formState)).unwrap();
         toast.success('Descuento actualizado exitosamente');
       } else {
+        console.log(formState, 'add');
         await store.dispatch(createDiscountSales(formState)).unwrap();
         toast.success('Descuento creado exitosamente');
       }
@@ -235,10 +211,6 @@ export default function DiscountManager() {
     } catch (error) {
       toast.error('' + error);
     }
-  };
-
-  const removeDiscount = (id: string) => {
-    store.dispatch(deleteDiscountSales(id)).unwrap();
   };
 
   const mapWithTipo = <T extends IDescuentoMapeado>(
@@ -353,19 +325,18 @@ export default function DiscountManager() {
     setIsModalOpen(true);
   };
 
+  const discountGn = currentItems.map((d) => ({
+    _id: d.descuentoId._id,
+    tipoEntidad: d.tipoEntidad,
+    sucursalId: d.sucursalId,
+    groupId: d.grupoId,
+    productId: d.productId,
+    minimiType: d.descuentoId.minimiType,
+  }));
+
   const editDescuentoById = (_id: string) => {
     const discount = currentItems.find((d) => d.descuentoId._id === _id);
     if (!discount) return;
-
-    const discountGn = currentItems.map((d) => ({
-      _id: d.descuentoId._id,
-      tipoEntidad: d.tipoEntidad,
-      sucursalId: d.sucursalId,
-      groupId: d.grupoId,
-      productId: d.productId,
-      minimiType: d.descuentoId.minimiType,
-    }));
-
     const matchingDiscountGn = discountGn.find((d) => d._id === _id);
 
     const discountCreate: IDescuentoCreate = {
@@ -389,10 +360,24 @@ export default function DiscountManager() {
       sucursalId: matchingDiscountGn?.sucursalId || '',
       minimiType: matchingDiscountGn?.minimiType ?? 'compra',
     };
-
+    console.log(discountCreate);
     setFormState(discountCreate);
     setEditingId(_id);
     setIsModalOpen(true);
+  };
+
+  const removeDiscount = (id: string) => {
+    const matchingDiscountGn = discountGn.find((d) => d._id === id);
+    // console.log(matchingDiscountGn);
+    const formattedData = {
+      sucursalId: '679bfbf82a07e0b22c3ed01c',
+      productoId: matchingDiscountGn?.productId || '',
+      grupoId: matchingDiscountGn?.groupId || '',
+      id,
+    };
+
+    store.dispatch(deleteDiscountSales(formattedData)).unwrap();
+    // console.log(id, 'info', formattedData);
   };
 
   return (
@@ -446,7 +431,6 @@ export default function DiscountManager() {
                     </Select>
                   </div>
                 </div>
-
                 {access.create && (
                   <Button
                     onClick={openAddModal}
@@ -456,82 +440,12 @@ export default function DiscountManager() {
                   </Button>
                 )}
               </div>
-              <Table className="min-w-full divide-y divide-gray-200">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nombre</TableHead>
-                    <TableHead>Tipo de Descuento</TableHead>
-                    <TableHead>Tipo Descuento</TableHead>
-                    <TableHead>Valor Descuento</TableHead>
-                    <TableHead>Minimo Tipo</TableHead>
-                    <TableHead>Valor Minimo</TableHead>
-                    <TableHead>Fecha Inicio</TableHead>
-                    <TableHead>Fecha Fin</TableHead>
-                    {(access.update || access.delete) && (
-                      <TableHead className="text-center">Acciones</TableHead>
-                    )}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {currentItems.map((discount) => (
-                    <TableRow key={discount.descuentoId._id}>
-                      <TableCell className="px-4 py-2">
-                        {discount.descuentoId.nombre}
-                      </TableCell>
-                      <TableCell className="px-4 py-2">
-                        {discount.tipoDescuento}
-                      </TableCell>
-                      <TableCell className="px-4 py-2">
-                        {discount.descuentoId.tipoDescuento}
-                      </TableCell>
-                      <TableCell className="px-4 py-2">
-                        {discount.descuentoId.valorDescuento}
-                      </TableCell>
-                      <TableCell className="px-4 py-2">
-                        {discount.descuentoId.minimiType}
-                      </TableCell>
-                      <TableCell className="px-4 py-2">
-                        {discount.descuentoId.minimiType === 'compra'
-                          ? discount.descuentoId?.minimoCompra?.$numberDecimal
-                          : discount.descuentoId.minimoCantidad}
-                      </TableCell>
-                      <TableCell className="px-4 py-2">
-                        {getFormatedDate(discount.descuentoId.fechaInicio)}
-                      </TableCell>
-                      <TableCell className="px-4 py-2">
-                        {getFormatedDate(discount.descuentoId.fechaFin)}
-                      </TableCell>
-                      {(access.update || access.delete) && (
-                        <TableCell className="flex items-center justify-center gap-2 px-4 py-2">
-                          {access.update && (
-                            <Button
-                              onClick={() =>
-                                editDescuentoById(discount.descuentoId._id)
-                              }
-                              variant="outline"
-                              size="sm"
-                              className="text-blue-600"
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </Button>
-                          )}
-                          {access.delete && (
-                            <Button
-                              onClick={() =>
-                                removeDiscount(discount.descuentoId._id)
-                              }
-                              className="w-8 h-8"
-                              variant="outline"
-                            >
-                              <Trash2 className="w-4 h-4 text-red-600" />
-                            </Button>
-                          )}
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <TableIndex
+                currentItems={currentItems}
+                removeDiscount={removeDiscount}
+                editDescuentoById={editDescuentoById}
+                access={access}
+              />
               <IndexModal
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
