@@ -6,7 +6,7 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Onest, serif;
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light dark;
@@ -148,6 +148,6 @@ button:focus-visible {
 }
 
 html body[data-scroll-locked] {
-    margin-right: 0 !important;
-    overflow: auto !important;
+  margin-right: 0 !important;
+  overflow: auto !important;
 }
