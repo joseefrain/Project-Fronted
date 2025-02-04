@@ -134,7 +134,7 @@ export default function SalesReturnPage({
     const formattedProducts: IProductReturn[] = [];
     for (const [key, value] of Object.entries(returnQuantities)) {
       const product = saleDetails.products.find((p) => p.productId === key);
-      if (!product) return;
+      if (!product) break;
 
       const newQuantity = product.quantity - value.quantity;
 
@@ -144,7 +144,7 @@ export default function SalesReturnPage({
           quantity: value.quantity,
           discountApplied: false,
         });
-        return;
+        break;
       }
 
       const hasActiveDiscount = isDiscountApplied(
