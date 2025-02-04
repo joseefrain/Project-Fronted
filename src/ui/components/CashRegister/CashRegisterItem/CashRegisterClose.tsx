@@ -103,7 +103,7 @@ export function CashRegisterClose({ box }: CashRegisterOpenProps) {
         openModal={openModal}
       />
       <Dialog open={isModalOpen} onOpenChange={closeModal}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] font-onest">
           <DialogHeader>
             <DialogTitle>Confirmar Cierre de Caja</DialogTitle>
           </DialogHeader>
@@ -116,7 +116,7 @@ export function CashRegisterClose({ box }: CashRegisterOpenProps) {
               placeholder="Ingrese el monto final"
               type="number"
             />
-            <div className="space-y-2">
+            <div className="space-y-2 flex items-end gap-2">
               <Label htmlFor="closeWithoutCounting">Cerrar sin Arqueo</Label>
               <input
                 type="checkbox"

@@ -7,6 +7,7 @@ import {
 import { Token } from '@/shared/hooks/useJWT';
 import { INewSale, ITransactionReturn } from '@/interfaces/salesInterfaces';
 import { IDescuentoCreate } from '@/interfaces/salesInterfaces';
+import { IDescuentoDeleteParams } from '../../../app/slices/salesSlice';
 
 export const createDiscount = async ({
   ...data
@@ -16,9 +17,12 @@ export const createDiscount = async ({
   return response;
 };
 
-export const deleteDiscount = async (id: string): Promise<AxiosResponse> => {
+export const deleteDiscount = async ({
+  ...params
+}: IDescuentoDeleteParams): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.SalesDiscounts);
-  const response = await axiosInstance.delete(`/${id}`);
+  const response = await axiosInstance.delete(`/${params.id}`);
+  console.log(response, 'infoAPI');
   return response;
 };
 
@@ -41,6 +45,7 @@ export const getDiscountByBranchId = async (
 ): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.SalesDiscounts);
   const response = await axiosInstance.get(`/${id}/branch`);
+
   return response;
 };
 

@@ -86,11 +86,12 @@ export const IndexModal = ({
   userRoles,
   handleProducts,
 }: IndexModalProps) => {
+  console.log(formState.tipoDescuentoEntidad, 'formState');
   return (
     <>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogTrigger asChild></DialogTrigger>
-        <DialogContent className="font-onest">
+        <DialogContent className="w-[92%] rounded-[8px]">
           <DialogHeader>
             <DialogTitle>
               {editingId ? 'Editar Descuento' : 'Crear Descuento'}
@@ -98,7 +99,7 @@ export const IndexModal = ({
           </DialogHeader>
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4">
-              <div>
+              <div className="flex-col justify-center w-full gap-2 flex">
                 <Label htmlFor="nombre">Nombre</Label>
                 <Input
                   className="w-full"
@@ -107,25 +108,32 @@ export const IndexModal = ({
                   onChange={(e) => updateFormState('nombre', e.target.value)}
                 />
               </div>
-              <div>
+              <div className="flex-col justify-center w-full gap-2 flex">
                 <Label htmlFor="tipoDescuento">Tipo</Label>
-                <Select
-                  value={formState.tipoDescuentoEntidad || ''}
-                  onValueChange={(value) => {
-                    updateFormState('tipoDescuentoEntidad', value);
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Product">Producto</SelectItem>
-                    <SelectItem value="Group">Categoría</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="w-full">
+                  <Select
+                    defaultValue="Product"
+                    value={
+                      formState.tipoDescuentoEntidad
+                        ? formState.tipoDescuentoEntidad
+                        : 'Product'
+                    }
+                    onValueChange={(value) => {
+                      updateFormState('tipoDescuentoEntidad', value);
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Product">Producto</SelectItem>
+                      <SelectItem value="Group">Categoría</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div className="flex w-full gap-4">
-                <div className="w-auto">
+              <div className="flex w-full gap-4 max-sm:flex-col">
+                <div className="w-full flex flex-col gap-1">
                   <Label htmlFor="tipoDescuento">Seleccion</Label>
                   <SelectSearch
                     classStyles="w-fit"
@@ -149,7 +157,7 @@ export const IndexModal = ({
                   />
                 </div>
                 {userRoles?.role === ROLE.ROOT && (
-                  <div>
+                  <div className="w-full flex flex-col gap-1">
                     <Label htmlFor="tipoDescuento">Sucursal</Label>
                     <SelectSearch
                       options={options}
@@ -194,7 +202,7 @@ export const IndexModal = ({
                 </div>
               </div>
               <div className="flex w-full gap-4">
-                <div>
+                <div className="flex-col justify-center w-full gap-2 flex">
                   <Label>Fecha Inicio</Label>
                   <Popover>
                     <PopoverTrigger asChild>
@@ -226,7 +234,7 @@ export const IndexModal = ({
                     </PopoverContent>
                   </Popover>
                 </div>
-                <div>
+                <div className="flex-col justify-center w-full gap-2 flex">
                   <Label>Fecha Fin</Label>
                   <Popover>
                     <PopoverTrigger asChild>

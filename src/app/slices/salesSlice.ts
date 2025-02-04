@@ -65,11 +65,19 @@ const initialState: SalesState = {
   returns: [],
 };
 
+export interface IDescuentoDeleteParams {
+  id: string;
+  sucursalId?: string;
+  productoId?: string;
+  grupoId?: string;
+}
+
 export const createDiscountSales = createAsyncThunk(
   'transactions/create',
   async (transfer: IDescuentoCreate, { rejectWithValue }) => {
     try {
       const response = await createDiscount(transfer);
+
       return response.data;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
@@ -78,11 +86,12 @@ export const createDiscountSales = createAsyncThunk(
 );
 
 export const deleteDiscountSales = createAsyncThunk(
-  'transactions/delete',
-  async (id: string, { rejectWithValue }) => {
+  'transactions/deleteDiscount',
+  async (params: IDescuentoDeleteParams, { rejectWithValue }) => {
     try {
-      const response = await deleteDiscount(id);
-      return response.data;
+      await deleteDiscount(params);
+      console.log(params, 'info');
+      return params;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
     }
@@ -247,31 +256,72 @@ const salesSlice = createSlice({
       .addCase(createDiscountSales.pending, (state) => {
         state.status = 'loading';
       })
+
       .addCase(deleteDiscountSales.pending, (state) => {
         state.status = 'loading';
+      })
+      .addCase(deleteDiscountSales.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+
+        if (state.discounts) {
+          const {
+            descuentosPorProductosGenerales,
+            descuentosPorProductosEnSucursal,
+            descuentosPorGruposGenerales,
+            descuentosPorGruposEnSucursal,
+          } = state.discounts;
+
+          state.discounts = {
+            descuentosPorProductosGenerales:
+              descuentosPorProductosGenerales.filter(
+                (d) => d.descuentoId._id !== action.payload.id
+              ),
+            descuentosPorProductosEnSucursal:
+              descuentosPorProductosEnSucursal.filter(
+                (d) => d.descuentoId._id !== action.payload.id
+              ),
+            descuentosPorGruposGenerales: descuentosPorGruposGenerales.filter(
+              (d) => d.descuentoId._id !== action.payload.id
+            ),
+            descuentosPorGruposEnSucursal: descuentosPorGruposEnSucursal.filter(
+              (d) => d.descuentoId._id !== action.payload.id
+            ),
+          };
+        }
       })
 
       .addCase(updateDiscountSales.pending, (state) => {
         state.status = 'loading';
       })
-      //   .addCase(updateDiscountSales.fulfilled, (state, { payload }) => {
-      //     state.status = 'succeeded';
-      //     state.discounts = state.discounts.map((discount) =>
-      //       discount._id === payload._id ? payload : discount
-      //     );
-      //   })
+      .addCase(
+        updateDiscountSales.fulfilled,
+        (state, action: PayloadAction<IDescuentoCreate>) => {
+          state.status = 'succeeded';
+          if (state.discounts) {
+            const updateDiscountList = (list: any[]) =>
+              list.map((d) =>
+                d.descuentoId._id === action.payload._id
+                  ? { ...d, descuentoId: action.payload }
+                  : d
+              );
 
-      //   .addCase(getDiscounts.pending, (state) => {
-      //     state.status = 'loading';
-      //   })
-      //   .addCase(getDiscounts.fulfilled, (state, { payload }) => {
-      //     state.status = 'succeeded';
-      //     state.discounts = payload as IDescuentoCreate[];
-      //   })
-      //   .addCase(getDiscountsByBranch.fulfilled, (state, { payload }) => {
-      //     state.status = 'succeeded';
-      //     state.branchDiscounts = payload;
-      //   })
+            state.discounts.descuentosPorProductosGenerales =
+              updateDiscountList(
+                state.discounts.descuentosPorProductosGenerales
+              );
+            state.discounts.descuentosPorProductosEnSucursal =
+              updateDiscountList(
+                state.discounts.descuentosPorProductosEnSucursal
+              );
+            state.discounts.descuentosPorGruposGenerales = updateDiscountList(
+              state.discounts.descuentosPorGruposGenerales
+            );
+            state.discounts.descuentosPorGruposEnSucursal = updateDiscountList(
+              state.discounts.descuentosPorGruposEnSucursal
+            );
+          }
+        }
+      )
       .addCase(createSale.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
         state.sales = [...state.sales, payload];

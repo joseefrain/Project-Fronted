@@ -1,14 +1,24 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { handleThunkError } from '../../shared/utils/errorHandlers';
-import { getDashboardProducts } from '../../api/services/dasboard';
+import {
+  getDashboardProducts,
+  IGetDashboardProducts,
+} from '../../api/services/dasboard';
 import { IResponseGetProductMetrics } from '../../interfaces/dashboardInterface';
 import { statusProgressLogin } from './login';
 
 export const getchartsProducts = createAsyncThunk(
   'dashboard/getProducts',
-  async (id: string, { rejectWithValue }) => {
+  async (
+    { id, fechaInicio, fechaFin }: IGetDashboardProducts,
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await getDashboardProducts(id);
+      const response = await getDashboardProducts({
+        id,
+        fechaInicio,
+        fechaFin,
+      });
       return response;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
