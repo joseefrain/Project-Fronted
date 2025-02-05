@@ -16,7 +16,7 @@ export enum PATH_LIST {
   Queue = '/createTransactionQueue',
   ROLES = 'roles',
   COINS = 'coin',
-  DASHBOARD = 'dashboard/product-metrics',
+  DASHBOARD = 'dashboard/',
   Return = 'devolucion',
 }
 

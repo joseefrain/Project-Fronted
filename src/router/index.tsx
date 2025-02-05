@@ -14,7 +14,6 @@ import PendingProductsByTransfer from '@/ui/components/PendingTools/products';
 import { ViewProucts } from '@/shared/components/ui/TabsListTable/products';
 import DiscountManager from '@/ui/components/Discount';
 import SalesInventorySystem from '@/ui/components/Sales/indexSale';
-import Dashboard from '@/ui/components/Dashboard';
 import { ViewEntities } from '../shared/components/ui/TabsListTable/entities';
 import { Contacts } from '../ui/components/clients';
 import { CreditPaymentSystem } from '../ui/components/Payments/CreditPaymentSystem';
@@ -26,6 +25,7 @@ import { PAGES_MODULES } from '../shared/helpers/roleHelper';
 import { PurchaseSale } from '../ui/components/Sales/indexPurchaseSale';
 import { ProductsCategories } from '../ui/components/Categories/ProductsCategories';
 import LoginForm from '@/ui/components/Login/LoginForm';
+import { ViewDashboard } from '../shared/components/ui/TabsListTable/dashboard';
 
 export const Router = () => {
   return (
@@ -46,7 +46,7 @@ export const Router = () => {
           path="/"
           element={
             <Layout>
-              <Dashboard />
+              <ViewDashboard />
             </Layout>
           }
         />
