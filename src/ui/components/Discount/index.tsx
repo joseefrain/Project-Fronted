@@ -9,6 +9,7 @@ import {
   createDiscountSales,
   deleteDiscountSales,
   getDiscountsByBranchAll,
+  IDescuentoDeleteParams,
   updateDiscountSales,
 } from '@/app/slices/salesSlice';
 import {
@@ -368,16 +369,15 @@ export default function DiscountManager() {
 
   const removeDiscount = (id: string) => {
     const matchingDiscountGn = discountGn.find((d) => d._id === id);
-    // console.log(matchingDiscountGn);
-    const formattedData = {
-      sucursalId: '679bfbf82a07e0b22c3ed01c',
+
+    const formattedData: IDescuentoDeleteParams = {
+      sucursalId: matchingDiscountGn?.sucursalId || '',
       productoId: matchingDiscountGn?.productId || '',
       grupoId: matchingDiscountGn?.groupId || '',
       id,
     };
 
     store.dispatch(deleteDiscountSales(formattedData)).unwrap();
-    // console.log(id, 'info', formattedData);
   };
 
   return (

@@ -90,7 +90,6 @@ export const deleteDiscountSales = createAsyncThunk(
   async (params: IDescuentoDeleteParams, { rejectWithValue }) => {
     try {
       await deleteDiscount(params);
-      console.log(params, 'info');
       return params;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
