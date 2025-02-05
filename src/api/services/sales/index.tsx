@@ -21,8 +21,10 @@ export const deleteDiscount = async ({
   ...params
 }: IDescuentoDeleteParams): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.SalesDiscounts);
-  const response = await axiosInstance.delete(`/${params.id}`);
-  console.log(response, 'infoAPI');
+  const response = await axiosInstance.post(
+    `/${params.id}`,
+    params as unknown as IDescuentoCreate
+  );
   return response;
 };
 
