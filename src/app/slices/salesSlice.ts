@@ -300,7 +300,16 @@ const salesSlice = createSlice({
           state.status = 'succeeded';
           state.returns = payload;
         }
-      );
+      )
+      .addCase(createSaleReturn.fulfilled, (state, { payload }) => {
+        state.status = 'succeeded';
+
+        const saleIndex = state.sales.findIndex(
+          (sale) => sale.id === payload.transaccionActualizada.id
+        );
+        state.sales[saleIndex] = payload.transaccionActualizada;
+        state.returns.push(payload.devolucion);
+      });
   },
 });
 

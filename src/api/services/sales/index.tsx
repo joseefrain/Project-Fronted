@@ -5,7 +5,11 @@ import {
   PATH_LIST,
 } from '../axios';
 import { Token } from '@/shared/hooks/useJWT';
-import { INewSale, ITransactionReturn } from '@/interfaces/salesInterfaces';
+import {
+  INewSale,
+  ITransactionReturn,
+  ITransactionReturnResponse,
+} from '@/interfaces/salesInterfaces';
 import { IDescuentoCreate } from '@/interfaces/salesInterfaces';
 
 export const createDiscount = async ({
@@ -101,7 +105,7 @@ export const getPurchaseByBranchId = async (
 
 export const postTransactionReturn = async ({
   ...data
-}: ITransactionReturn): Promise<AxiosResponse> => {
+}: ITransactionReturn): Promise<AxiosResponse<ITransactionReturnResponse>> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Sales);
   const response = await axiosInstance.post(PATH_LIST.Return, data);
   return response;

@@ -141,7 +141,7 @@ const LoginForm = () => {
                 type="submit"
                 className="w-full h-12 text-white uppercase transition-colors bg-gray-900 dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 dark:text-gray-900"
               >
-                Iniciar Cesión
+                Iniciar Sesión
               </button>
             </motion.form>
           </div>

@@ -1,3 +1,5 @@
+import { ICaja } from '../app/slices/salesSlice';
+
 export interface IListDescuentoResponse {
   descuentosPorProductosGenerales: IDescuentosProductos[];
   descuentosPorProductosEnSucursal: IDescuentosProductos[];
@@ -198,3 +200,9 @@ export const dataCoins = {
   currentS: 'C$',
   idGlobal: '6788969390f63a009f1bea40',
 };
+
+export interface ITransactionReturnResponse {
+  caja: ICaja;
+  devolucion: ISale;
+  transaccionActualizada: ISale;
+}
