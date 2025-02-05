@@ -33,7 +33,7 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 import { IResponseGetProductMetrics } from '../../../interfaces/dashboardInterface';
 
-export default function Dashboard() {
+export default function DashboardProducts() {
   const [activeTab, setActiveTab] = useState<'venta' | 'compra'>('venta');
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [productFilter, setProductFilter] = useState('all');

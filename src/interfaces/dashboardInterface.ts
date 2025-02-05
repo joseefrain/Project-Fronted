@@ -46,3 +46,25 @@ export interface IResponseGetProductMetrics {
     listaProductos: IProductosMetrics[];
   };
 }
+
+export interface IReturnedProduct {
+  productoId: string;
+  nombre: string;
+  cantidad: number;
+  total: Decimal128;
+  costoUnitario: Decimal128;
+  gananciaNeta: Decimal128;
+}
+
+export interface IResponseGetReturnMetrics {
+  VENTA: {
+    amountReturned: Decimal128;
+    quantityReturned: number;
+    listProduct: IReturnedProduct[];
+  };
+  COMPRA: {
+    amountReturned: Decimal128;
+    quantityReturned: number;
+    listProduct: IReturnedProduct[];
+  };
+}
