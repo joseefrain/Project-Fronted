@@ -87,15 +87,16 @@ const ProductsTable = ({
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>In Stock</TableHead>
-            <TableHead>Minimo Stock</TableHead>
+            <TableHead>Nombre</TableHead>
+
+            <TableHead className="text-start">Descripcion</TableHead>
+            <TableHead className="text-start">In Stock</TableHead>
+            <TableHead className="text-start">Minimo Stock</TableHead>
             <TableHead>Costo unitario</TableHead>
+            <TableHead>Precio</TableHead>
             {(access.update || access.delete) && (
               <TableHead className="text-center">
-                <span className="">Actions</span>
+                <span className="">Acciones</span>
               </TableHead>
             )}
           </TableRow>
@@ -105,7 +106,7 @@ const ProductsTable = ({
             <TableRow key={product.id}>
               <TableCell>{product.id}</TableCell>
               <TableCell className="font-medium">{product.nombre}</TableCell>
-              <TableCell>${product.precio.$numberDecimal}</TableCell>
+
               <TableCell>
                 <TooltipProvider>
                   <Tooltip>
@@ -119,8 +120,9 @@ const ProductsTable = ({
               <TableCell>{product?.stock || '0'}</TableCell>
               <TableCell>{product?.puntoReCompra || '0'}</TableCell>
               <TableCell>
-                {product.costoUnitario.$numberDecimal || '0'}
+                C$ {product.costoUnitario.$numberDecimal || '0'}
               </TableCell>
+              <TableCell>C${product.precio.$numberDecimal}</TableCell>
               {(access.update || access.delete) && (
                 <TableCell>
                   <div className="flex items-center justify-center gap-2">
