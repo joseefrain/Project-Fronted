@@ -78,6 +78,7 @@ const ProductsTable = ({
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>SucursAL</TableHead>
             <TableHead>ID</TableHead>
             <TableHead>Nombre</TableHead>
             <TableHead>Descripcion</TableHead>
@@ -87,7 +88,7 @@ const ProductsTable = ({
             <TableHead>Minimo Stock</TableHead>
             {(access.update || access.delete) && (
               <TableHead className="text-center">
-                <span className="">Actions</span>
+                <span className="">Acciones</span>
               </TableHead>
             )}
           </TableRow>
@@ -95,6 +96,9 @@ const ProductsTable = ({
         <TableBody>
           {products?.map((product) => (
             <TableRow key={product.productoId._id}>
+              <TableCell className="font-medium">
+                {product.sucursalId.nombre}
+              </TableCell>
               <TableCell>{product.productoId._id}</TableCell>
               <TableCell className="font-medium">
                 {product.productoId.nombre}

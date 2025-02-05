@@ -14,6 +14,20 @@ export const getDashboardProducts = async ({
   fechaFin,
 }: IGetDashboardProducts): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.DASHBOARD);
-  const response = await axiosInstance.get(`/${id}/${fechaInicio}/${fechaFin}`);
+  const response = await axiosInstance.get(
+    `/product-metrics/${id}/${fechaInicio}/${fechaFin}`
+  );
+  return response.data;
+};
+
+export const getDashboardReturnsMetrics = async ({
+  id,
+  fechaInicio,
+  fechaFin,
+}: IGetDashboardProducts): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.DASHBOARD);
+  const response = await axiosInstance.get(
+    `/returns-metrics/${id}/${fechaInicio}/${fechaFin}`
+  );
   return response.data;
 };
