@@ -56,9 +56,10 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
   useEffect(() => {
     store
       .dispatch(
-        fetchTransactionReturnByBranchId(
-          user?.sucursalId?._id ?? branchStoraged ?? ''
-        )
+        fetchTransactionReturnByBranchId({
+          id: user?.sucursalId?._id ?? branchStoraged ?? '',
+          type: type,
+        })
       )
       .unwrap();
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -64,7 +64,6 @@ import { ConfirmedPurchaseDialog } from './ConfirmedPurchaseDialog';
 import './style.scss';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
-import { ICajaBrach } from '../../../app/slices/cashRegisterSlice';
 
 export interface ISaleSummary {
   subTotal: number;
@@ -84,7 +83,7 @@ export const PurchaseCashier = ({
   setProductSale,
 }: ICashierProps) => {
   const access = useRoleAccess(PAGES_MODULES.CREDITOS);
-  const caja = store.getState().auth.signIn.cajaId as ICajaBrach;
+  const caja = useAppSelector((state) => state.boxes.BoxesData);
   const user = store.getState().auth.signIn.user;
   const branchSelected = store.getState().branches.selectedBranch;
   const allEntities = useAppSelector((state) => state.entities.data);
@@ -160,9 +159,9 @@ export const PurchaseCashier = ({
   }, []);
 
   useEffect(() => {
-    if (!caja) return;
+    if (!caja || caja?.length === 0) return;
     setCashInRegister(
-      parseFloat(caja?.montoEsperado?.$numberDecimal.toString()) ?? 0
+      parseFloat(caja[0].montoEsperado?.$numberDecimal.toString()) ?? 0
     );
   }, [caja]);
 
@@ -184,7 +183,7 @@ export const PurchaseCashier = ({
       discount: saleSummary.totalDiscount,
       cambioCliente: saleSummary.change,
       monto: Number(cashReceived),
-      cajaId: caja._id,
+      cajaId: caja && caja.length > 0 ? caja[0]._id : '',
       paymentMethod,
       tipoTransaccion: ITypeTransaction.COMPRA,
     };

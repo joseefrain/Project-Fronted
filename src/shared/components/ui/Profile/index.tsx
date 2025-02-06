@@ -26,6 +26,7 @@ import {
 import { motion } from 'framer-motion';
 import './styles.scss';
 import { CashDrawer } from '../../../../ui/components/ModalCashRegister/index.tsx';
+import { formatNumber } from '../../../helpers/Branchs.tsx';
 
 export const ProfileUser = () => {
   const selectedBranchFromLocalStorage = getSelectedBranchFromLocalStorage();
@@ -34,7 +35,7 @@ export const ProfileUser = () => {
     nombre: string;
     _id: string;
   } | null>(null);
-  const caja = store.getState().boxes.BoxesData;
+  const caja = useAppSelector((state) => state.boxes.BoxesData);
   const user = useAppSelector((state) => state.auth.signIn.user);
   const id = user?.sucursalId?._id;
   const [, setIsLoading] = useState(true);
@@ -112,11 +113,15 @@ export const ProfileUser = () => {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex flex-wrap items-center gap-2  sm:flex-nowrap"
+            className="flex flex-wrap items-center gap-2 sm:flex-nowrap"
           >
             {userFilteredData?.map(
               (
-                caja: { consecutivo: number; estado: string },
+                caja: {
+                  consecutivo: number;
+                  estado: string;
+                  montoEsperado: { $numberDecimal: number };
+                },
                 index: number
               ) => (
                 <motion.div
@@ -133,12 +138,12 @@ export const ProfileUser = () => {
                       <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
                       <div className="absolute inset-0 rounded-full animate-ping bg-green-500/40" />
                     </motion.div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 uppercase font-onest">
                       <span className="font-semibold text-[14px] font-onest dark:text-white">
                         caja #{caja.consecutivo}
                       </span>
                       <span className="font-semibold text-green-500 text-[14px] font-onest max-sm:hidden">
-                        {caja.estado}
+                        C$ {formatNumber(caja.montoEsperado.$numberDecimal)}
                       </span>
                     </div>
                   </div>

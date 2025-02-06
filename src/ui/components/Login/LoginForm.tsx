@@ -98,7 +98,7 @@ const LoginForm = () => {
 
             <motion.form
               onSubmit={handleSubmit}
-              className="w-full max-w-md p-6 mt-10 rounded-lg shadow-md bg-gradient-to-b from-green-200 to-white dark:bg-gray-800"
+              className="w-full max-w-md p-6 mt-10 bg-gray-100 rounded-lg shadow-md dark:bg-gray-800"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -141,7 +141,7 @@ const LoginForm = () => {
                 type="submit"
                 className="w-full h-12 text-white uppercase transition-colors bg-gray-900 dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 dark:text-gray-900"
               >
-                Iniciar Cesión
+                Iniciar Sesión
               </button>
             </motion.form>
           </div>
