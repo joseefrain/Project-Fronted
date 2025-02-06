@@ -85,12 +85,12 @@ export default function SalesReturnPage({
 
   const handleQuantityChange = (product: IProductSale, quantity: number) => {
     let priceAdjustment = null;
-    const newQuantity = Math.min(quantity, product.quantity || 0);
+    const newQuantity = product.quantity - quantity;
 
-    if (product.discount && quantity > 0 && product.quantity > quantity) {
+    if (product.discount && quantity > 0 && newQuantity > 0) {
       const hasActiveDiscount = isDiscountApplied(
         saleDetails.sucursalId,
-        newQuantity,
+        quantity,
         product
       );
 
@@ -103,7 +103,7 @@ export default function SalesReturnPage({
       ...prev,
       [product.productId]: {
         priceAdjustment: priceAdjustment,
-        quantity: newQuantity,
+        quantity: quantity,
       },
     }));
   };

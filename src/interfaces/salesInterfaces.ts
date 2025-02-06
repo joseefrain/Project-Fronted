@@ -111,7 +111,9 @@ export interface IDescuentoAplicado {
   sucursalId: string;
   fechaInicio: string;
   fechaFin: string;
-  minimoCompra: number;
+  minimoCompra: {
+    $numberDecimal: string;
+  };
   minimoCantidad: number;
   activo: boolean;
   minimiType: IDescountTypePV;
