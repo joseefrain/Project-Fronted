@@ -57,7 +57,7 @@ export const CardCash = () => {
 
   useEffect(() => {
     const fetchUserCashier = async () => {
-      const response = await store
+      await store
         .dispatch(
           getUserCashier({
             usuarioId: user?._id ?? '',
@@ -65,9 +65,6 @@ export const CardCash = () => {
           })
         )
         .unwrap();
-      if (!response && (!caja || caja.length === 0)) {
-        store.dispatch(closeDrawerCashRegister());
-      }
     };
     fetchUserCashier();
   }, [caja, isUserAuthorized]);
@@ -194,6 +191,12 @@ export const CardCash = () => {
 
 export const CashDrawer = () => {
   const isDrawerOpen = useAppSelector((state) => state.auth.isOpenCashRegister);
+  const navigate = useNavigate();
+
+  const handleGoToCashRegister = () => {
+    navigate('/cashRegister');
+    store.dispatch(closeDrawerCashRegister());
+  };
 
   return (
     <Drawer open={isDrawerOpen} dismissible={false} disablePreventScroll>
@@ -201,6 +204,12 @@ export const CashDrawer = () => {
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
             Seleccione una Caja, para poder continuar.
+            <Button
+              onClick={handleGoToCashRegister}
+              className="uppercase font-semibold text-sm text-white bg-green-600 hover:bg-green-700 rounded-md"
+            >
+              Ir a cajas
+            </Button>
           </DrawerHeader>
           <div className="p-4 pb-0">
             <div className="flex items-center justify-center space-x-2">

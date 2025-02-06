@@ -229,7 +229,7 @@ const ProductForm = ({
           )}
         </div>
         <DialogFooter>
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading || !selectedGroup}>
             {initialData ? 'Guardar Cambios' : 'Agregar Producto'}
           </Button>
         </DialogFooter>

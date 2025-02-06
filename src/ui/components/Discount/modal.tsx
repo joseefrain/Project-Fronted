@@ -113,11 +113,7 @@ export const IndexModal = ({
                 <div className="w-full">
                   <Select
                     defaultValue="Product"
-                    value={
-                      formState.tipoDescuentoEntidad
-                        ? formState.tipoDescuentoEntidad
-                        : 'Product'
-                    }
+                    value={formState.tipoDescuentoEntidad || 'Product'}
                     onValueChange={(value) => {
                       updateFormState('tipoDescuentoEntidad', value);
                     }}
@@ -225,8 +221,12 @@ export const IndexModal = ({
                         mode="single"
                         selected={formState.fechaInicio}
                         onSelect={(date) => {
-                          if (date) {
+                          if (date && date >= new Date()) {
                             updateFormState('fechaInicio', date.toISOString());
+                          } else {
+                            alert(
+                              'La fecha inicial no puede ser menor a la fecha actual.'
+                            );
                           }
                         }}
                         initialFocus
