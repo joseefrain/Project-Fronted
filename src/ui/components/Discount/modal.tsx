@@ -113,11 +113,7 @@ export const IndexModal = ({
                 <div className="w-full">
                   <Select
                     defaultValue="Product"
-                    value={
-                      formState.tipoDescuentoEntidad
-                        ? formState.tipoDescuentoEntidad
-                        : 'Product'
-                    }
+                    value={formState.tipoDescuentoEntidad || 'Product'}
                     onValueChange={(value) => {
                       updateFormState('tipoDescuentoEntidad', value);
                     }}
