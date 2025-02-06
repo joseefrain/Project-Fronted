@@ -324,8 +324,15 @@ export default function SalesReturnPage({
                       : '---'}
                   </TableCell>
                   <TableCell className="flex items-center justify-center gap-2 text-center">
-                    {returnQuantities[product.productId]?.priceAdjustment &&
-                    product.discount ? (
+                    {!product.discount ||
+                    !returnQuantities[product.productId]?.priceAdjustment ? (
+                      '---'
+                    ) : product.discount &&
+                      !isDiscountApplied(
+                        saleDetails.sucursalId,
+                        returnQuantities[product.productId]?.quantity ?? 0,
+                        product
+                      ) ? (
                       <>
                         Descuento eliminado
                         <Popover>
@@ -353,8 +360,35 @@ export default function SalesReturnPage({
                           </PopoverContent>
                         </Popover>
                       </>
+                    ) : product.discount &&
+                      (product.discount as IDescuentoAplicado).tipoDescuento ===
+                        'porcentaje' &&
+                      isDiscountApplied(
+                        saleDetails.sucursalId,
+                        returnQuantities[product.productId]?.quantity ?? 0,
+                        product
+                      ) ? (
+                      <>
+                        Descuento actualizado
+                        <Popover>
+                          <PopoverTrigger className="p-0">
+                            <BadgeInfo size={18} />
+                          </PopoverTrigger>
+                          <PopoverContent className="flex flex-col items-center w-auto gap-1 text-sm font-onest">
+                            <span className="w-full">
+                              Descuento:{' '}
+                              <strong>{product.discount.name}</strong>
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <span>
+                                Porcentaje: {product.discount.percentage}%
+                              </span>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </>
                     ) : (
-                      '---'
+                      <></>
                     )}
                   </TableCell>
                 </TableRow>
@@ -371,9 +405,10 @@ export default function SalesReturnPage({
             </AlertTitle>
             <AlertDescription className="text-gray-600">
               Si debido a una devolución, un descuento aplicado originalmente
-              deja de ser válido, genera un reajuste en los productos restantes,
-              lo que afecta tanto su precio como la cantidad a devolver. La
-              cantidad final a devolver ya considera este ajuste.
+              deja de ser válido o actualiza el monto de descuento basado en el
+              porcentaje, genera un reajuste en los productos restantes, lo que
+              afecta tanto su precio como la cantidad a devolver. La cantidad
+              final a devolver ya considera este ajuste.
             </AlertDescription>
           </Alert>
 

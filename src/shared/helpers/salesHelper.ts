@@ -325,7 +325,7 @@ export const getProductUnitPrice = (product: IProductSale) => {
   }
 
   const productSubtotal = product.quantity * product.price;
-  const percentage = product.discount.amount / 100;
+  const percentage = product.discount.percentage / 100;
   const percentageAmount = productSubtotal * percentage;
   const productTotalSale = productSubtotal - percentageAmount;
   const productPriceWithDiscount = productTotalSale / product.quantity;
@@ -350,11 +350,17 @@ export const getPriceAdjustmentWithPercentage = (
   product: IProductSale,
   newQuantity: number
 ) => {
-  const unityPriceWithDiscount = getProductUnitPrice(product);
-  const unityPrice = product.price;
-  const newSubtotalWithDiscount = newQuantity * unityPriceWithDiscount;
-  const newSubtotalWithOutDiscount = newQuantity * unityPrice;
-  const discountAmount = newSubtotalWithOutDiscount - newSubtotalWithDiscount;
+  const originalPrice = getProductUnitPrice(product);
+  const originalSubtotal = product.quantity * originalPrice;
+
+  const productCopy = {
+    ...product,
+    quantity: newQuantity,
+  };
+
+  const newPrice = getProductUnitPrice(productCopy);
+  const newSubtotal = newQuantity * newPrice;
+  const discountAmount = originalSubtotal - newSubtotal;
 
   return Math.abs(discountAmount);
 };
