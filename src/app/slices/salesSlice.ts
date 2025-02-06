@@ -218,9 +218,18 @@ export const createSaleReturn = createAsyncThunk(
 
 export const fetchTransactionReturnByBranchId = createAsyncThunk(
   'transactions/fetchTransactionReturnByBranchId',
-  async (id: string, { rejectWithValue }) => {
+  async (
+    {
+      id,
+      type,
+    }: {
+      id: string;
+      type: ITypeTransaction;
+    },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await getTransactionReturnByBranchId(id);
+      const response = await getTransactionReturnByBranchId(id, type);
 
       console.log(response.data);
 

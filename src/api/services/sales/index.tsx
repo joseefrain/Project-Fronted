@@ -9,6 +9,7 @@ import {
   INewSale,
   ITransactionReturn,
   ITransactionReturnResponse,
+  ITypeTransaction,
 } from '@/interfaces/salesInterfaces';
 import { IDescuentoCreate } from '@/interfaces/salesInterfaces';
 
@@ -112,9 +113,14 @@ export const postTransactionReturn = async ({
 };
 
 export const getTransactionReturnByBranchId = async (
-  id: string
+  id: string,
+  type: ITypeTransaction
 ): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Sales);
-  const response = await axiosInstance.get(`${PATH_LIST.Return}/${id}/branch`);
+  const response = await axiosInstance.get(
+    `${PATH_LIST.Return}/${id}/${type}/branch`
+  );
   return response;
 };
+
+// '/devolucion/:id/:typeTransaction/branch',
