@@ -90,7 +90,7 @@ export const Sale = ({ productSale, setProductSale }: ISaleProps) => {
       quantity: quantity,
       price: price,
       discount: null,
-      groupId: '',
+      groupId: selectedProduct?.groupId ?? '',
       clientType: supplierMode ? 'Proveedor' : 'Regular',
       inventarioSucursalId: selectedProduct?.inventarioSucursalId ?? '',
       costoUnitario: selectedProduct?.costoUnitario ?? { $numberDecimal: 0 },

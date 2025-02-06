@@ -21,6 +21,7 @@ import {
   InfoIcon,
 } from 'lucide-react';
 import {
+  IDescuentoAplicado,
   IProductReturn,
   IProductSale,
   ISale,
@@ -31,6 +32,7 @@ import { useAppSelector } from '../../../app/hooks';
 import { toast, Toaster } from 'sonner';
 import {
   getPriceAdjustment,
+  getPriceAdjustmentWithPercentage,
   getProductUnitPrice,
   isDiscountApplied,
   NO_CASHIER_OPEN,
@@ -96,6 +98,14 @@ export default function SalesReturnPage({
 
       if (!hasActiveDiscount) {
         priceAdjustment = getPriceAdjustment(product, newQuantity);
+      }
+
+      const castDiscount = product.discount as unknown as IDescuentoAplicado;
+      if (hasActiveDiscount && castDiscount.tipoDescuento === 'porcentaje') {
+        priceAdjustment = getPriceAdjustmentWithPercentage(
+          product,
+          newQuantity
+        );
       }
     }
 
