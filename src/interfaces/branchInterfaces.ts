@@ -64,7 +64,7 @@ export interface ITablaBranch {
   descripcion: string;
   precio: { $numberDecimal: number };
   monedaId?: string;
-  grupoId?: string;
+  groupId?: string;
   stock: number;
   sucursalId: string;
   inventarioSucursalId?: string;

@@ -91,7 +91,7 @@ const ProductForm = ({
 
     const productData: ITablaBranch = {
       ...formData,
-      grupoId: selectedGroup?._id || '',
+      groupId: selectedGroup?._id || '',
       monedaId: '6788969390f63a009f1bea40',
       sucursalId: user?.sucursalId?._id ?? '',
       //@ts-ignore
