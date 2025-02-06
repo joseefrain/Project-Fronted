@@ -158,12 +158,20 @@ export const boxSlice = createSlice({
   name: 'Boxes',
   initialState,
   reducers: {
-    updateCashAmount: (state, action: PayloadAction<number>) => {
+    updateCashAmount: (
+      state,
+      action: PayloadAction<{
+        cajaId: string;
+        amount: number;
+      }>
+    ) => {
       if (state.BoxesData) {
         state.BoxesData.forEach((box) => {
-          box.montoEsperado = {
-            $numberDecimal: action.payload,
-          };
+          if (box._id === action.payload.cajaId) {
+            box.montoEsperado = {
+              $numberDecimal: action.payload.amount,
+            };
+          }
         });
       }
     },

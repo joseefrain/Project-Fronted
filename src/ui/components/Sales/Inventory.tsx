@@ -64,6 +64,7 @@ import { useAppSelector } from '../../../app/hooks';
 import { getEntities } from '../../../app/slices/entities';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import { updateCashAmount } from '../../../app/slices/cashRegisterSlice';
 
 export interface ISaleSummary {
   subTotal: number;
@@ -80,8 +81,19 @@ export interface ICashierProps {
 
 export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   const access = useRoleAccess(PAGES_MODULES.CREDITOS);
-  const caja = useAppSelector((state) => state.boxes.BoxesData);
   const user = store.getState().auth.signIn.user;
+  const caja = useAppSelector((state) => state.boxes.BoxesData);
+  const userCashierList = caja?.filter((c) => {
+    const usuarioId =
+      typeof c.usuarioAperturaId === 'string'
+        ? c.usuarioAperturaId
+        : c.usuarioAperturaId?._id;
+
+    return usuarioId === user?._id && c.estado?.toUpperCase() === 'ABIERTA';
+  });
+  const userCashier =
+    userCashierList && userCashierList.length > 0 ? userCashierList[0] : null;
+
   const branchSelected = store.getState().branches.selectedBranch;
   const allEntities = useAppSelector((state) => state.entities.data);
   const coin = dataCoins.currentS;
@@ -156,14 +168,14 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   }, []);
 
   useEffect(() => {
-    if (!caja || caja?.length === 0) return;
+    if (!userCashier) return;
     setCashInRegister(
-      parseFloat(caja[0]?.montoEsperado?.$numberDecimal.toString()) ?? 0
+      parseFloat(userCashier?.montoEsperado?.$numberDecimal.toString()) ?? 0
     );
-  }, [caja]);
+  }, [userCashier]);
 
   const handleProcessSale = () => {
-    if (!caja) {
+    if (!userCashier) {
       toast.error('Debe abrir una caja para procesar la venta.');
       return;
     }
@@ -180,7 +192,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
       discount: saleSummary.totalDiscount,
       cambioCliente: saleSummary.change,
       monto: Number(cashReceived),
-      cajaId: caja && caja.length > 0 ? caja[0]._id : '',
+      cajaId: userCashier ? userCashier._id : '',
       paymentMethod,
       tipoTransaccion: ITypeTransaction.VENTA,
     };
@@ -206,7 +218,16 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
       .then(() => {
         setTimeout(() => {
           setIsModalOpen(true);
-          setCashInRegister((prev) => prev + newSale.total);
+          if (paymentMethod !== IPaymentMethod.CREDIT) {
+            store.dispatch(
+              updateCashAmount({
+                cajaId: userCashier._id ?? '',
+                amount: cashInRegister + newSale.total,
+              })
+            );
+            setCashInRegister((prev) => prev + newSale.total);
+          }
+
           if (storedData) {
             try {
               let userData = JSON.parse(storedData);
