@@ -221,8 +221,12 @@ export const IndexModal = ({
                         mode="single"
                         selected={formState.fechaInicio}
                         onSelect={(date) => {
-                          if (date) {
+                          if (date && date >= new Date()) {
                             updateFormState('fechaInicio', date.toISOString());
+                          } else {
+                            alert(
+                              'La fecha inicial no puede ser menor a la fecha actual.'
+                            );
                           }
                         }}
                         initialFocus
