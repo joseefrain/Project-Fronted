@@ -1,16 +1,20 @@
-import { ICajaBrach } from "@/app/slices/cashRegisterSlice";
-import { CardHeader } from "@/components/ui/card";
-import { IRoleAccess } from "@/interfaces/roleInterfaces";
-import { CashRegisterOpen } from "./CashRegisterOpen";
-import { CashRegisterClose } from "./CashRegisterClose";
+import { ICajaBrach } from '@/app/slices/cashRegisterSlice';
+import { CardHeader } from '@/components/ui/card';
+import { IRoleAccess } from '@/interfaces/roleInterfaces';
+import { CashRegisterOpen } from './CashRegisterOpen';
+import { CashRegisterClose } from './CashRegisterClose';
 
 interface CardHeaderCashierProps {
   cashRegister: ICajaBrach;
-  openModalHistory: () => void
-  access: IRoleAccess
+  openModalHistory: () => void;
+  access: IRoleAccess;
 }
 
-const CardHeaderCashier = ({ cashRegister, openModalHistory, access }: CardHeaderCashierProps) => {
+const CardHeaderCashier = ({
+  cashRegister,
+  openModalHistory,
+  access,
+}: CardHeaderCashierProps) => {
   return (
     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
       <div
@@ -21,11 +25,14 @@ const CardHeaderCashier = ({ cashRegister, openModalHistory, access }: CardHeade
           {cashRegister.consecutivo}
         </span>
       </div>
-      {access.update && (
-        cashRegister.estado === 'ABIERTA' ? <CashRegisterClose box={cashRegister} /> : <CashRegisterOpen box={cashRegister} />
-      )}
+      {access.update &&
+        (cashRegister.estado === 'ABIERTA' ? (
+          <CashRegisterClose box={cashRegister} />
+        ) : (
+          <CashRegisterOpen box={cashRegister} />
+        ))}
     </CardHeader>
   );
-}
- 
+};
+
 export default CardHeaderCashier;

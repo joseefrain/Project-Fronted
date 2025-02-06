@@ -39,14 +39,16 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead className="w-fit">Description</TableHead>
+            <TableHead>Nombre</TableHead>
+            <TableHead className="w-fit">Descripcion</TableHead>
             <TableHead>Sucursal</TableHead>
             <TableHead>Stock</TableHead>
-            <TableHead>Price</TableHead>
+            <TableHead>Minimo Stock</TableHead>
+            <TableHead>Costo Unitario</TableHead>
+            <TableHead>Precio</TableHead>
             {(access.update || access.delete) && (
               <TableHead className="text-center">
-                <span className="">Actions</span>
+                <span className="">Acciones</span>
               </TableHead>
             )}
           </TableRow>
@@ -65,7 +67,9 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
               </TooltipProvider>
               <TableCell>{product.nombreSucursal}</TableCell>
               <TableCell>{product.stock}</TableCell>
-              <TableCell>{`$${product.precio.$numberDecimal}`}</TableCell>
+              <TableCell>{product.puntoReCompra}</TableCell>
+              <TableCell> C${product.costoUnitario.$numberDecimal}</TableCell>
+              <TableCell>{`C$ ${product.precio.$numberDecimal}`}</TableCell>
               {(access.update || access.delete) && (
                 <TableCell>
                   <div className="flex items-center justify-center gap-3">

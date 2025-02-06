@@ -43,22 +43,23 @@ export default [
         { allowConstantExport: true },
       ],
       '@typescript-eslint/no-unused-vars': [
-        'warn',
+        'error',
         { argsIgnorePattern: '^_' },
       ],
       '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn', // Detecta el uso de 'any'
 
       ...js.configs.recommended.rules,
     },
   },
-
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.jsx', '**/*.js'],
     rules: {
       '@typescript-eslint/no-unused-vars': [
-        'warn',
+        'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
+      '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
 ];
