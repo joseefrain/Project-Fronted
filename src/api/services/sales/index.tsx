@@ -5,7 +5,12 @@ import {
   PATH_LIST,
 } from '../axios';
 import { Token } from '@/shared/hooks/useJWT';
-import { INewSale, ITransactionReturn } from '@/interfaces/salesInterfaces';
+import {
+  INewSale,
+  ITransactionReturn,
+  ITransactionReturnResponse,
+  ITypeTransaction,
+} from '@/interfaces/salesInterfaces';
 import { IDescuentoCreate } from '@/interfaces/salesInterfaces';
 import { IDescuentoDeleteParams } from '../../../app/slices/salesSlice';
 
@@ -108,16 +113,21 @@ export const getPurchaseByBranchId = async (
 
 export const postTransactionReturn = async ({
   ...data
-}: ITransactionReturn): Promise<AxiosResponse> => {
+}: ITransactionReturn): Promise<AxiosResponse<ITransactionReturnResponse>> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Sales);
   const response = await axiosInstance.post(PATH_LIST.Return, data);
   return response;
 };
 
 export const getTransactionReturnByBranchId = async (
-  id: string
+  id: string,
+  type: ITypeTransaction
 ): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Sales);
-  const response = await axiosInstance.get(`${PATH_LIST.Return}/${id}/branch`);
+  const response = await axiosInstance.get(
+    `${PATH_LIST.Return}/${id}/${type}/branch`
+  );
   return response;
 };
+
+// '/devolucion/:id/:typeTransaction/branch',

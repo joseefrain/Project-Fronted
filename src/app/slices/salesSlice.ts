@@ -19,6 +19,7 @@ import {
   IListDescuentoResponse,
   INewSale,
   ITransactionReturn,
+  ITypeTransaction,
 } from '@/interfaces/salesInterfaces';
 import { handleThunkError } from '@/shared/utils/errorHandlers';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -213,7 +214,10 @@ export const createSaleReturn = createAsyncThunk(
   async (data: ITransactionReturn, { rejectWithValue }) => {
     try {
       const response = await postTransactionReturn(data);
-      return response.data;
+      return {
+        ...response.data,
+        type: data.tipoTransaccion,
+      };
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
     }
@@ -222,9 +226,18 @@ export const createSaleReturn = createAsyncThunk(
 
 export const fetchTransactionReturnByBranchId = createAsyncThunk(
   'transactions/fetchTransactionReturnByBranchId',
-  async (id: string, { rejectWithValue }) => {
+  async (
+    {
+      id,
+      type,
+    }: {
+      id: string;
+      type: ITypeTransaction;
+    },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await getTransactionReturnByBranchId(id);
+      const response = await getTransactionReturnByBranchId(id, type);
 
       console.log(response.data);
 
@@ -349,7 +362,25 @@ const salesSlice = createSlice({
           state.status = 'succeeded';
           state.returns = payload;
         }
-      );
+      )
+      .addCase(createSaleReturn.fulfilled, (state, { payload }) => {
+        state.status = 'succeeded';
+
+        if (payload.type === ITypeTransaction.VENTA) {
+          const saleIndex = state.branchSales.findIndex(
+            (sale) => sale.id === payload.transaccionActualizada.id
+          );
+          state.branchSales[saleIndex] = payload.transaccionActualizada;
+          state.returns.push(payload.devolucion);
+          return;
+        }
+
+        const purchaseIndex = state.branchPurchases.findIndex(
+          (purchase) => purchase.id === payload.transaccionActualizada.id
+        );
+        state.branchPurchases[purchaseIndex] = payload.transaccionActualizada;
+        state.returns.push(payload.devolucion);
+      });
   },
 });
 

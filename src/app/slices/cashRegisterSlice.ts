@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Branch, IStatus } from '../../interfaces/branchInterfaces';
 import { handleThunkError } from '../../shared/utils/errorHandlers';
 import {
@@ -157,7 +157,17 @@ export const getUserCashier = createAsyncThunk(
 export const boxSlice = createSlice({
   name: 'Boxes',
   initialState,
-  reducers: {},
+  reducers: {
+    updateCashAmount: (state, action: PayloadAction<number>) => {
+      if (state.BoxesData) {
+        state.BoxesData.forEach((box) => {
+          box.montoEsperado = {
+            $numberDecimal: action.payload,
+          };
+        });
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createBox.pending, (state) => {
@@ -241,6 +251,5 @@ export const boxSlice = createSlice({
   },
 });
 
-// eslint-disable-next-line no-empty-pattern
-export const {} = boxSlice.actions;
+export const { updateCashAmount } = boxSlice.actions;
 export const boxReducer = boxSlice.reducer;

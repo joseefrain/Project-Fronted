@@ -62,7 +62,6 @@ import { ConfirmedSaleDialog } from './ConfirmedSaleDialog';
 import './style.scss';
 import { useAppSelector } from '../../../app/hooks';
 import { getEntities } from '../../../app/slices/entities';
-import { ICajaBrach } from '../../../app/slices/cashRegisterSlice';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
@@ -81,7 +80,7 @@ export interface ICashierProps {
 
 export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   const access = useRoleAccess(PAGES_MODULES.CREDITOS);
-  const caja = store.getState().auth.signIn.cajaId as ICajaBrach;
+  const caja = useAppSelector((state) => state.boxes.BoxesData);
   const user = store.getState().auth.signIn.user;
   const branchSelected = store.getState().branches.selectedBranch;
   const allEntities = useAppSelector((state) => state.entities.data);
@@ -157,9 +156,9 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
   }, []);
 
   useEffect(() => {
-    if (!caja) return;
+    if (!caja || caja?.length === 0) return;
     setCashInRegister(
-      parseFloat(caja?.montoEsperado?.$numberDecimal.toString()) ?? 0
+      parseFloat(caja[0]?.montoEsperado?.$numberDecimal.toString()) ?? 0
     );
   }, [caja]);
 
@@ -181,7 +180,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
       discount: saleSummary.totalDiscount,
       cambioCliente: saleSummary.change,
       monto: Number(cashReceived),
-      cajaId: caja._id,
+      cajaId: caja && caja.length > 0 ? caja[0]._id : '',
       paymentMethod,
       tipoTransaccion: ITypeTransaction.VENTA,
     };
