@@ -117,6 +117,7 @@ export interface IDescuentoAplicado {
   minimoCantidad: number;
   activo: boolean;
   minimiType: IDescountTypePV;
+  tipoDescuento: IDisccountType;
 }
 
 export interface IDescuentoGeneralAplicado {
