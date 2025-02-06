@@ -25,6 +25,8 @@ import {
 import { Button } from '../../../components/ui/button';
 import { ICajaBrach } from '../../../app/slices/cashRegisterSlice';
 import { DateRange } from 'react-day-picker';
+import { CardFooter } from '../../../components/ui/card';
+import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 
 interface ICajaHistory {
   data: ICajaBrach;
@@ -36,6 +38,7 @@ export const ModalHistory = ({ data, isOpen, onClose }: ICajaHistory) => {
   const [selectedDateRange, setSelectedDateRange] = useState<
     DateRange | undefined
   >(undefined);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredHistorico = selectedDateRange
     ? data.historico.filter((entry) => {
@@ -52,6 +55,12 @@ export const ModalHistory = ({ data, isOpen, onClose }: ICajaHistory) => {
   };
 
   if (!data) return null;
+
+  const itemsPerPage = 10;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = data.historico.slice(indexOfFirstItem, indexOfLastItem);
+  const paginatedData = Math.ceil(filteredHistorico.length / itemsPerPage);
 
   return (
     <>
@@ -105,13 +114,13 @@ export const ModalHistory = ({ data, isOpen, onClose }: ICajaHistory) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredHistorico.map((entry, index) => (
+              {currentItems.map((entry, index) => (
                 <TableRow key={index}>
                   <TableCell>
                     {format(new Date(entry.fechaApertura), 'P', { locale: es })}
                   </TableCell>
                   <TableCell className="text-center">
-                    $
+                    C$
                     {parseFloat(
                       entry.montoInicial?.$numberDecimal?.toString() ?? '0'
                     ).toLocaleString('es-ES')}
@@ -121,19 +130,26 @@ export const ModalHistory = ({ data, isOpen, onClose }: ICajaHistory) => {
                     {entry.diferencia?.$numberDecimal?.toString()}
                   </TableCell>
                   <TableCell className="text-center">
-                    $
+                    C$
                     {parseFloat(
                       entry.montoEsperado?.$numberDecimal?.toString() ?? '0'
                     ).toLocaleString('es-ES')}
                   </TableCell>
                   <TableCell className="text-center">
-                    ${/* @ts-ignore */}
+                    C${/* @ts-ignore */}
                     {entry.montoFinalDeclarado?.$numberDecimal?.toString()}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+          <CardFooter className="flex items-center justify-between">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={paginatedData}
+              onPageChange={setCurrentPage}
+            />
+          </CardFooter>
         </DialogContent>
       </Dialog>
     </>
