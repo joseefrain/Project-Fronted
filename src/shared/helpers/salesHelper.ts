@@ -40,6 +40,10 @@ export const applyDiscounts = (
 ): IProductSale => {
   const { productId, groupId, price, quantity } = producto;
 
+  console.log(producto, 'producto');
+
+  console.log(descuentos, 'descuentos');
+
   let precioFinal = price;
   let descuentoAplicado = 0;
   let porcentajeAplicado = 0;
@@ -85,6 +89,8 @@ export const applyDiscounts = (
         quantity
       )
     );
+
+  console.log(descuentosGrupo, 'descuentosGrupo');
 
   const descuentoAplicable =
     descuentosProducto?.length > 0

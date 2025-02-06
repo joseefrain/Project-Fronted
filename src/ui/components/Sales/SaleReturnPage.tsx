@@ -35,7 +35,10 @@ import {
   isDiscountApplied,
   NO_CASHIER_OPEN,
 } from '../../../shared/helpers/salesHelper';
-import { ICajaBrach } from '../../../app/slices/cashRegisterSlice';
+import {
+  ICajaBrach,
+  updateCashAmount,
+} from '../../../app/slices/cashRegisterSlice';
 import { store } from '../../../app/store';
 import { createSaleReturn } from '../../../app/slices/salesSlice';
 import {
@@ -169,6 +172,7 @@ export default function SalesReturnPage({
         : Number(totalReturn.total.toFixed(2)),
       montoExterno: needsExtraCash ? extraCash : undefined,
       products: formattedProducts,
+      tipoTransaccion: saleDetails.tipoTransaccion,
     };
 
     const request = store
@@ -178,7 +182,9 @@ export default function SalesReturnPage({
         setReturnProccessing(false);
         return Promise.reject();
       })
-      .then(() => {
+      .then((res) => {
+        store.dispatch(updateCashAmount(res.caja.montoEsperado.$numberDecimal));
+
         setTimeout(() => {
           setShowModal(false);
         }, 500);

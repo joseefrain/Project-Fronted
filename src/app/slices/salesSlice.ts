@@ -19,6 +19,7 @@ import {
   IListDescuentoResponse,
   INewSale,
   ITransactionReturn,
+  ITypeTransaction,
 } from '@/interfaces/salesInterfaces';
 import { handleThunkError } from '@/shared/utils/errorHandlers';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -205,7 +206,10 @@ export const createSaleReturn = createAsyncThunk(
   async (data: ITransactionReturn, { rejectWithValue }) => {
     try {
       const response = await postTransactionReturn(data);
-      return response.data;
+      return {
+        ...response.data,
+        type: data.tipoTransaccion,
+      };
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
     }
@@ -304,10 +308,19 @@ const salesSlice = createSlice({
       .addCase(createSaleReturn.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
 
-        const saleIndex = state.sales.findIndex(
-          (sale) => sale.id === payload.transaccionActualizada.id
+        if (payload.type === ITypeTransaction.VENTA) {
+          const saleIndex = state.branchSales.findIndex(
+            (sale) => sale.id === payload.transaccionActualizada.id
+          );
+          state.branchSales[saleIndex] = payload.transaccionActualizada;
+          state.returns.push(payload.devolucion);
+          return;
+        }
+
+        const purchaseIndex = state.branchPurchases.findIndex(
+          (purchase) => purchase.id === payload.transaccionActualizada.id
         );
-        state.sales[saleIndex] = payload.transaccionActualizada;
+        state.branchPurchases[purchaseIndex] = payload.transaccionActualizada;
         state.returns.push(payload.devolucion);
       });
   },

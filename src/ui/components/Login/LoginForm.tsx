@@ -98,7 +98,7 @@ const LoginForm = () => {
 
             <motion.form
               onSubmit={handleSubmit}
-              className="w-full max-w-md p-6 mt-10 rounded-lg shadow-md bg-gradient-to-b from-green-200 to-white dark:bg-gray-800"
+              className="w-full max-w-md p-6 mt-10 bg-gray-100 rounded-lg shadow-md dark:bg-gray-800"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
