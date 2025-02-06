@@ -40,10 +40,6 @@ export const applyDiscounts = (
 ): IProductSale => {
   const { productId, groupId, price, quantity } = producto;
 
-  console.log(producto, 'producto');
-
-  console.log(descuentos, 'descuentos');
-
   let precioFinal = price;
   let descuentoAplicado = 0;
   let porcentajeAplicado = 0;
@@ -184,7 +180,7 @@ export const isDiscountApplied = (
     const discountFormat = {
       groupId: castDiscount.groupId ?? '',
       sucursalId: castDiscount.sucursalId,
-      minimoCompra: castDiscount.minimoCompra,
+      minimoCompra: Number(castDiscount.minimoCompra?.$numberDecimal ?? 0),
       minimoCantidad: castDiscount.minimoCantidad,
       activo: castDiscount.activo,
       fechaInicio: castDiscount.fechaInicio,
@@ -207,7 +203,7 @@ export const isDiscountApplied = (
   const discountFormat = {
     productId: castDiscount.productId ?? '',
     sucursalId: castDiscount.sucursalId,
-    minimoCompra: castDiscount.minimoCompra,
+    minimoCompra: Number(castDiscount.minimoCompra?.$numberDecimal ?? 0),
     minimoCantidad: castDiscount.minimoCantidad,
     activo: castDiscount.activo,
     fechaInicio: castDiscount.fechaInicio,

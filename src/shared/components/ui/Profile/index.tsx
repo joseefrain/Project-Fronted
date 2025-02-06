@@ -75,6 +75,10 @@ export const ProfileUser = () => {
     }
   };
 
+  const goToCashiers = () => {
+    navigate('/cashRegister');
+  };
+
   const openDialog = () => {
     store.dispatch(openDrawer());
   };
@@ -115,40 +119,65 @@ export const ProfileUser = () => {
             animate={{ opacity: 1, x: 0 }}
             className="flex flex-wrap items-center gap-2 sm:flex-nowrap"
           >
-            {userFilteredData?.map(
-              (
-                caja: {
-                  consecutivo: number;
-                  estado: string;
-                  montoEsperado: { $numberDecimal: number };
-                },
-                index: number
-              ) => (
-                <motion.div
-                  key={index}
-                  whileHover={{ scale: 1.02 }}
-                  className="group relative rounded bg-background/50 px-3 py-2 shadow-sm transition-shadow h-[38px] max-sm:h-[34px] hover:shadow-md border dark:border-gray-700"
-                >
-                  <div className="flex items-center gap-3 max-sm:w-[4.5rem] w-full">
-                    <motion.div
-                      initial={{ scale: 0.5 }}
-                      animate={{ scale: 1 }}
-                      className="relative"
-                    >
-                      <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
-                      <div className="absolute inset-0 rounded-full animate-ping bg-green-500/40" />
-                    </motion.div>
-                    <div className="flex items-center gap-3 uppercase font-onest">
-                      <span className="font-semibold text-[14px] font-onest dark:text-white">
-                        caja #{caja.consecutivo}
-                      </span>
-                      <span className="font-semibold text-green-500 text-[14px] font-onest max-sm:hidden">
-                        C$ {formatNumber(caja.montoEsperado.$numberDecimal)}
-                      </span>
+            {userFilteredData && userFilteredData.length > 0 ? (
+              userFilteredData?.map(
+                (
+                  caja: {
+                    consecutivo: number;
+                    estado: string;
+                    montoEsperado: { $numberDecimal: number };
+                  },
+                  index: number
+                ) => (
+                  <motion.div
+                    key={index}
+                    whileHover={{ scale: 1.02 }}
+                    className="group relative rounded bg-background/50 px-3 py-2 shadow-sm transition-shadow h-[38px] max-sm:h-[34px] hover:shadow-md border dark:border-gray-700 hover:cursor-pointer"
+                    onClick={goToCashiers}
+                  >
+                    <div className="flex items-center gap-3 max-sm:w-[4.5rem] w-full">
+                      <motion.div
+                        initial={{ scale: 0.5 }}
+                        animate={{ scale: 1 }}
+                        className="relative"
+                      >
+                        <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
+                        <div className="absolute inset-0 rounded-full animate-ping bg-green-500/40" />
+                      </motion.div>
+                      <div className="flex items-center gap-3 uppercase font-onest">
+                        <span className="font-semibold text-[14px] font-onest dark:text-white">
+                          caja #{caja.consecutivo}
+                        </span>
+                        <span className="font-semibold text-green-500 text-[14px] font-onest max-sm:hidden">
+                          C$ {formatNumber(caja.montoEsperado.$numberDecimal)}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
+                )
               )
+            ) : (
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="group relative rounded bg-background/50 px-3 py-2 shadow-sm transition-shadow h-[38px] max-sm:h-[34px] hover:shadow-md border dark:border-gray-700 border-red-300 hover:cursor-pointer"
+                onClick={goToCashiers}
+              >
+                <div className="flex items-center gap-3 max-sm:w-[4.5rem] w-full">
+                  <motion.div
+                    initial={{ scale: 0.5 }}
+                    animate={{ scale: 1 }}
+                    className="relative"
+                  >
+                    <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
+                    <div className="absolute inset-0 rounded-full animate-ping bg-green-500/40" />
+                  </motion.div>
+                  <div className="flex items-center gap-3 uppercase font-onest">
+                    <span className="font-semibold text-[14px] font-onest text-red-500 dark:text-white">
+                      No hay caja abierta
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
             )}
           </motion.div>
 
