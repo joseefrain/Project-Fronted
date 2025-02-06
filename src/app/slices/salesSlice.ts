@@ -268,7 +268,28 @@ const salesSlice = createSlice({
       .addCase(createDiscountSales.pending, (state) => {
         state.status = 'loading';
       })
-
+      .addCase(createDiscountSales.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.discounts = {
+          ...state.discounts,
+          descuentosPorProductosGenerales: [
+            ...(state?.discounts?.descuentosPorProductosGenerales || []),
+            action.payload,
+          ],
+          descuentosPorProductosEnSucursal: [
+            ...(state?.discounts?.descuentosPorProductosEnSucursal || []),
+            action.payload,
+          ],
+          descuentosPorGruposGenerales: [
+            ...(state?.discounts?.descuentosPorGruposGenerales || []),
+            action.payload,
+          ],
+          descuentosPorGruposEnSucursal: [
+            ...(state?.discounts?.descuentosPorGruposEnSucursal || []),
+            action.payload,
+          ],
+        };
+      })
       .addCase(deleteDiscountSales.pending, (state) => {
         state.status = 'loading';
       })
