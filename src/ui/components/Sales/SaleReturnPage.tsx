@@ -55,7 +55,17 @@ export default function SalesReturnPage({
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const userId = useAppSelector((state) => state.auth.signIn.user?._id);
-  const cashOpen = useAppSelector((state) => state.auth.signIn.cajaId);
+  const caja = useAppSelector((state) => state.boxes.BoxesData);
+  const userCashierList = caja?.filter((c) => {
+    const usuarioId =
+      typeof c.usuarioAperturaId === 'string'
+        ? c.usuarioAperturaId
+        : c.usuarioAperturaId?._id;
+
+    return usuarioId === userId && c.estado?.toUpperCase() === 'ABIERTA';
+  });
+  const userCashier =
+    userCashierList && userCashierList.length > 0 ? userCashierList[0] : null;
 
   const [returnProccessing, setReturnProccessing] = useState(false);
   const [returnQuantities, setReturnQuantities] = useState<{
@@ -183,7 +193,12 @@ export default function SalesReturnPage({
         return Promise.reject();
       })
       .then((res) => {
-        store.dispatch(updateCashAmount(res.caja.montoEsperado.$numberDecimal));
+        store.dispatch(
+          updateCashAmount({
+            cajaId: res.caja._id ?? '',
+            amount: res.caja.montoEsperado.$numberDecimal,
+          })
+        );
 
         setTimeout(() => {
           setShowModal(false);
@@ -198,18 +213,18 @@ export default function SalesReturnPage({
   };
 
   useEffect(() => {
-    if (!cashOpen) {
+    if (!userCashier) {
       toast.info(NO_CASHIER_OPEN);
       return;
     }
 
-    const cashier = cashOpen as ICajaBrach;
+    const cashier = userCashier as ICajaBrach;
 
     setCashRegister({
       id: cashier._id ?? '',
       cash: Number(cashier?.montoEsperado?.$numberDecimal ?? 0),
     });
-  }, [cashOpen]);
+  }, [userCashier]);
 
   return (
     <Card className="w-full border-0 font-onest">
