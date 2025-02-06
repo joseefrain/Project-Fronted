@@ -15,7 +15,7 @@ export function ModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" className="size-[40px]">
           <AnimatePresence mode="wait" initial={false}>
             {theme === 'light' ? (
               <motion.div
