@@ -76,7 +76,7 @@ export default function DiscountManager() {
     moneda_id: '64b7f1b4b4f1b5f1c7e7f2a9',
     codigoDescunto: '',
     deleted_at: null,
-    tipoDescuentoEntidad: 'Product',
+    tipoDescuentoEntidad: 'Group',
     productId: '',
     groupId: '',
     sucursalId: '',
@@ -90,10 +90,6 @@ export default function DiscountManager() {
   const stateProduct = formState.tipoDescuentoEntidad === 'Product';
 
   const [, setSelectedGroup] = useState<{
-    nombre: string;
-    _id: string;
-  } | null>(null);
-  const [, setSelectedProduct] = useState<{
     nombre: string;
     _id: string;
   } | null>(null);
@@ -124,24 +120,34 @@ export default function DiscountManager() {
   }));
 
   const optionsAllProducts =
-    userRoles?.role === ROLE.ROOT ? opcionesProductosALL : opcionesProductos;
+    !selectedBranch || selectedBranch?._id === ''
+      ? opcionesProductosALL || []
+      : opcionesProductos;
 
   const handleSelectChangeBranch = (value: string) => {
-    const branch = branches.find((b) => b._id === value);
-    if (branch) {
-      setSelectedBranch({ nombre: branch.nombre, _id: branch._id ?? '' });
-    }
+    if (value === 'Todos') {
+      setSelectedBranch(null);
+      setFormState((prevState) => ({
+        ...prevState,
+        sucursalId: '',
+        productId: '',
+      }));
+    } else {
+      const branch = branches.find((b) => b._id === value);
+      if (branch) {
+        setSelectedBranch({ nombre: branch.nombre, _id: branch._id ?? '' });
+      }
 
-    setFormState((prevState) => ({
-      ...prevState,
-      sucursalId: branch?._id ?? '',
-    }));
+      setFormState((prevState) => ({
+        ...prevState,
+        sucursalId: branch?._id ?? '',
+        productId: '',
+      }));
+    }
   };
 
-  const handleSelectChange = (value: string) => {
-    const selectedGroupId = value;
-    const category = GroupsAll.find((b) => b._id === selectedGroupId);
-
+  const handleSelectChangeCategory = (value: string) => {
+    const category = GroupsAll.find((b) => b._id === value);
     if (category) {
       setSelectedGroup({
         nombre: category.nombre,
@@ -151,24 +157,13 @@ export default function DiscountManager() {
       setFormState((prevState) => ({
         ...prevState,
         groupId: category._id ?? '',
+        productId: '',
       }));
     }
   };
 
   const handleProducts = (value: string) => {
-    const selectedProduct = productsBYBranch.find((d) => d.id === value);
-
-    if (selectedProduct) {
-      setSelectedProduct({
-        nombre: selectedProduct.nombre,
-        _id: selectedProduct.id ?? '',
-      });
-
-      setFormState((prevState) => ({
-        ...prevState,
-        productId: selectedProduct.id ?? '',
-      }));
-    }
+    updateFormState('productId', value);
   };
 
   useEffect(() => {
@@ -188,10 +183,14 @@ export default function DiscountManager() {
     fetchData();
   }, [idBranch]);
 
-  const updateFormState = (field: keyof IDescuentoCreate, value: string) => {
-    setFormState((prevState) => ({
-      ...prevState,
+  const updateFormState = (field: string, value: string) => {
+    setFormState((prev) => ({
+      ...prev,
       [field]: value,
+      ...(field === 'tipoDescuentoEntidad' && {
+        productId: value === 'Product' ? prev.productId : '',
+        groupId: value === 'Group' ? prev.groupId : '',
+      }),
     }));
   };
 
@@ -203,10 +202,10 @@ export default function DiscountManager() {
         await store.dispatch(updateDiscountSales(formState)).unwrap();
         toast.success('Descuento actualizado exitosamente');
       } else {
-        console.log(formState, 'add');
         await store.dispatch(createDiscountSales(formState)).unwrap();
         toast.success('Descuento creado exitosamente');
       }
+
       setIsModalOpen(false);
       cleanDataSales();
     } catch (error) {
@@ -340,6 +339,12 @@ export default function DiscountManager() {
     if (!discount) return;
     const matchingDiscountGn = discountGn.find((d) => d._id === _id);
 
+    const typeEntity: 'Product' | 'Group' = matchingDiscountGn?.groupId
+      ? 'Group'
+      : matchingDiscountGn?.productId
+        ? 'Product'
+        : 'Product';
+
     const discountCreate: IDescuentoCreate = {
       _id: discount.descuentoId._id,
       nombre: discount.descuentoId.nombre || '',
@@ -353,15 +358,12 @@ export default function DiscountManager() {
       moneda_id: discount.descuentoId.moneda_id,
       codigoDescunto: discount.descuentoId.codigoDescunto,
       deleted_at: discount.descuentoId.deleted_at,
-      tipoDescuentoEntidad: matchingDiscountGn?.tipoEntidad as
-        | 'Product'
-        | 'Group',
+      tipoDescuentoEntidad: typeEntity,
       productId: matchingDiscountGn?.productId || '',
       groupId: matchingDiscountGn?.groupId || '',
       sucursalId: matchingDiscountGn?.sucursalId || '',
       minimiType: matchingDiscountGn?.minimiType ?? 'compra',
     };
-    console.log(discountCreate);
     setFormState(discountCreate);
     setEditingId(_id);
     setIsModalOpen(true);
@@ -369,14 +371,12 @@ export default function DiscountManager() {
 
   const removeDiscount = (id: string) => {
     const matchingDiscountGn = discountGn.find((d) => d._id === id);
-
     const formattedData: IDescuentoDeleteParams = {
       sucursalId: matchingDiscountGn?.sucursalId || '',
       productoId: matchingDiscountGn?.productId || '',
       grupoId: matchingDiscountGn?.groupId || '',
       id,
     };
-
     store.dispatch(deleteDiscountSales(formattedData)).unwrap();
   };
 
@@ -453,7 +453,7 @@ export default function DiscountManager() {
                 updateFormState={updateFormState}
                 formState={formState}
                 handleSubmit={handleSubmit}
-                handleSelectChange={handleSelectChange}
+                handleSelectChangeCategory={handleSelectChangeCategory}
                 handleSelectChangeBranch={handleSelectChangeBranch}
                 selectedBranch={selectedBranch}
                 options={options}

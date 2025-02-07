@@ -192,18 +192,20 @@ const productsSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(updateProductsOriginal.fulfilled, (state, action) => {
-        console.log('Datos recibidos en Redux:', action.payload);
+        state.status = 'succeeded';
 
-        if (!action.payload || !Array.isArray(action.payload)) {
-          console.error(
-            'Error: La API no devolvió un array de productos:',
-            action.payload
-          );
-          state.products = [];
-          return;
-        }
+        const updatedProducts = state.products.map((product) => {
+          if (
+            product.inventarioSucursalId &&
+            //@ts-ignore
+            product.inventarioSucursalId === action.payload._id
+          ) {
+            return { ...product, ...action.payload };
+          }
+          return product;
+        });
 
-        state.products = action.payload;
+        state.products = [...updatedProducts];
       })
 
       .addCase(fetchProductsByBranchId.pending, (state) => {
