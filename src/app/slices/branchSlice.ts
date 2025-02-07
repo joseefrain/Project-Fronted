@@ -47,16 +47,19 @@ export const fetchBranches = createAsyncThunk('branches/getAll', async () => {
   }
 });
 
+interface IupdateBranchs {
+  branch: Branch;
+  id: string;
+}
+
 export const updateBranchs = createAsyncThunk(
   'branches/update',
-  async (payload: { branch: Branch; id: string }) => {
+  async ({ branch, id }: IupdateBranchs, { rejectWithValue }) => {
     try {
-      const { branch, id } = payload;
       const response = await updateBranch(branch, id);
-      return response as unknown as Branch;
+      return response.data;
     } catch (error) {
-      handleAsyncThunkError(error as Error);
-      throw error;
+      return rejectWithValue(handleThunkError(error));
     }
   }
 );
@@ -123,14 +126,7 @@ const branchesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(updateBranchs.fulfilled, (state, action) => {
-        const index = state.data.findIndex(
-          (branch) => branch._id === action.payload._id
-        );
-        if (index !== -1) {
-          state.data[index] = action.payload;
-        }
-      })
+
       .addCase(fetchBranches.pending, (state) => {
         state.data = [];
         state.status = 'loading';
@@ -175,6 +171,20 @@ const branchesSlice = createSlice({
       .addCase(deleteBranch.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || 'Error desconocido';
+      })
+      .addCase(updateBranchs.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateBranchs.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+
+        const updatedBranchs = state.data.map((product) => {
+          if (product._id && product._id === action.payload._id) {
+            return { ...product, ...action.payload };
+          }
+          return product;
+        });
+        state.data = [...updatedBranchs];
       });
   },
 });
