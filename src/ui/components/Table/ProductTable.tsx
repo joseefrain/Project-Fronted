@@ -76,9 +76,13 @@ const ProductsTable = ({
     setIsEditing(false);
     setEditingProduct(null);
   };
-
-  const handleOnDelete = (id: string) => {
-    store.dispatch(removeProduct(id));
+  const handleOnDelete = async (id: string) => {
+    try {
+      await store.dispatch(removeProduct(id)).unwrap();
+      toast.success(`Producto eliminado exitosamente`);
+    } catch (error) {
+      toast.error('' + error);
+    }
   };
 
   return (
