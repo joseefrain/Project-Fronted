@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { addEntity } from '../../../app/slices/entities';
+import { addEntity, updateEntityById } from '../../../app/slices/entities';
 import { store } from '../../../app/store';
 import {
   IEntities,
@@ -10,6 +10,7 @@ import {
   IEntitiesGeneralInfo,
   IEntityType,
 } from '../../../interfaces/entitiesInterfaces';
+import { toast } from 'sonner';
 
 interface AddContactProps {
   initialData: IEntities | null;
@@ -63,17 +64,9 @@ export const AddContact = ({ initialData, onClose }: AddContactProps) => {
         mobilePhone: initialData.contactInformation.mobilePhone || '',
         telephone: initialData.contactInformation.telephone || '',
       });
-    } else {
-      setFormData({
-        identificationNumber: '',
-        department: '',
-        country: '',
-        address: '',
-        name: '',
-        email: '',
-        mobilePhone: '',
-        telephone: '',
-      });
+      if (initialData.type) {
+        setEntityType(initialData.type);
+      }
     }
   }, [initialData]);
 
@@ -81,52 +74,43 @@ export const AddContact = ({ initialData, onClose }: AddContactProps) => {
     setLoading(true);
 
     try {
+      const entidadAEnviar: IEntities = {
+        generalInformation: {
+          identificationNumber: formData.identificationNumber,
+          department: formData.department,
+          country: formData.country,
+          address: formData.address,
+          name: formData.name,
+        },
+        contactInformation: {
+          email: formData.email,
+          mobilePhone: formData.mobilePhone,
+          telephone: formData.telephone,
+        },
+        commercialInformation: {
+          paymentTerm: '',
+          seller: '',
+        },
+        state: undefined,
+        Products: [],
+        entities: dataType,
+        type: entityType,
+      };
+
       if (initialData) {
-        const entidadAEnviar: IEntities = {
-          ...initialData,
-          generalInformation: {
-            identificationNumber: formData.identificationNumber,
-            department: formData.department,
-            country: formData.country,
-            address: formData.address,
-            name: formData.name,
-          },
-          contactInformation: {
-            email: formData.email,
-            mobilePhone: formData.mobilePhone,
-            telephone: formData.telephone,
-          },
-          entities: dataType,
-          type: entityType,
-        };
+        await store
+          .dispatch(
+            updateEntityById({
+              entity: entidadAEnviar,
+              id: initialData._id ?? '',
+            })
+          )
+          .unwrap();
 
-        await store.dispatch(addEntity(entidadAEnviar)).unwrap();
+        toast.success(`Contacto ${formData.name} actualizado exitosamente`);
       } else {
-        const entidadAEnviar: IEntities = {
-          generalInformation: {
-            identificationNumber: formData.identificationNumber,
-            department: formData.department,
-            country: formData.country,
-            address: formData.address,
-            name: formData.name,
-          },
-          contactInformation: {
-            email: formData.email,
-            mobilePhone: formData.mobilePhone,
-            telephone: formData.telephone,
-          },
-          commercialInformation: {
-            paymentTerm: '',
-            seller: '',
-          },
-          state: undefined,
-          Products: [],
-          entities: dataType,
-          type: entityType,
-        };
-
-        //updateEntity(entidadAEnviar); remp
         await store.dispatch(addEntity(entidadAEnviar)).unwrap();
+        toast.success(`Contacto ${formData.name} creado exitosamente`);
       }
 
       setFormData({
@@ -139,9 +123,10 @@ export const AddContact = ({ initialData, onClose }: AddContactProps) => {
         mobilePhone: '',
         telephone: '',
       });
+
       onClose();
     } catch (error) {
-      console.error('Error al crear o actualizar la entidad:', error);
+      toast.error('' + error);
     } finally {
       setLoading(false);
     }
@@ -151,7 +136,7 @@ export const AddContact = ({ initialData, onClose }: AddContactProps) => {
     <div className="">
       <div className="flex items-center justify-between p-4 border-b">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-          Nuevo contacto
+          {initialData ? 'Editar contacto' : 'Nuevo contacto'}
         </h2>
       </div>
 
@@ -165,6 +150,7 @@ export const AddContact = ({ initialData, onClose }: AddContactProps) => {
             }`}
             onClick={() => setEntityType('customer')}
             type="button"
+            value={entityType}
           >
             Cliente
           </Button>
@@ -176,6 +162,7 @@ export const AddContact = ({ initialData, onClose }: AddContactProps) => {
             }`}
             onClick={() => setEntityType('supplier')}
             type="button"
+            value={entityType}
           >
             Proveedor
           </Button>
@@ -200,7 +187,7 @@ export const AddContact = ({ initialData, onClose }: AddContactProps) => {
             className="text-white bg-black"
             disabled={loading}
           >
-            {loading ? 'Creando...' : 'Crear contacto'}
+            {initialData ? 'Editar contacto' : 'Nuevo contacto'}
           </Button>
         </div>
       </form>

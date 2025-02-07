@@ -3,13 +3,19 @@ import {
   createEntity,
   deleteEntity,
   getAllEntities,
+  updateEntity,
 } from '../../api/services/entities';
 import { handleThunkError } from '../../shared/utils/errorHandlers';
 import { entitiesState, IEntities } from '../../interfaces/entitiesInterfaces';
 
+interface updateEntityByIdParams {
+  entity: IEntities;
+  id: string;
+}
+
 export const addEntity = createAsyncThunk(
   'entities/addEntity',
-  async (entity: any, { rejectWithValue }) => {
+  async (entity: IEntities, { rejectWithValue }) => {
     try {
       const response = await createEntity(entity);
       return response.data;
@@ -30,18 +36,30 @@ export const getEntities = createAsyncThunk('entities/getAll', async () => {
 
 export const deleteEntityById = createAsyncThunk(
   'entities/delete',
-  async (id: string) => {
+  async (id: string, { rejectWithValue }) => {
     try {
-      const response = await deleteEntity(id);
-      return response as unknown as IEntities;
+      await deleteEntity(id);
+      return id;
     } catch (error) {
-      return handleThunkError(error);
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
+export const updateEntityById = createAsyncThunk(
+  'entities/update',
+  async ({ entity, id }: updateEntityByIdParams, { rejectWithValue }) => {
+    try {
+      const response = await updateEntity(entity, id);
+      return response;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
     }
   }
 );
 
 const initialState: entitiesState = {
-  data: [] as IEntities[],
+  data: [],
   selectedEntity: null,
   status: 'idle',
   error: null,
@@ -83,10 +101,27 @@ const entitiesSlice = createSlice({
       })
       .addCase(deleteEntityById.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        console.log(state.data, 'state.data');
         state.data = state.data.filter(
-          (branch) => branch._id !== action.meta.arg
+          (product) => product._id !== action.payload
         );
+      })
+
+      .addCase(updateEntityById.pending, (state) => {
+        state.status = 'loading';
+      })
+
+      .addCase(updateEntityById.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+
+        const updatedEntities = state.data.map((entity) => {
+          //@ts-ignore
+          if (entity._id === action.payload._id) {
+            return action.payload;
+          }
+          return entity;
+        });
+        //@ts-ignore
+        state.data = updatedEntities;
       });
   },
 });
