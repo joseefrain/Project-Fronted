@@ -58,14 +58,14 @@ const ProductsTable = ({
       const product: ITablaBranch = {
         ...updatedProduct,
       };
+
       if (product.inventarioSucursalId) {
         await store.dispatch(
           updateProductsOriginal({
-            _id: product.inventarioSucursalId,
+            _id: product.inventarioSucursalId!,
             product,
           })
         );
-
         setIsEditing(false);
         setEditingProduct(null);
         toast.success(`Producto ${product.nombre} actualizado exitosamente`);
@@ -88,7 +88,6 @@ const ProductsTable = ({
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Nombre</TableHead>
-
             <TableHead className="text-start">Descripcion</TableHead>
             <TableHead className="text-start">In Stock</TableHead>
             <TableHead className="text-start">Minimo Stock</TableHead>
@@ -144,7 +143,9 @@ const ProductsTable = ({
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleOnDelete(product?.id!)}
+                        onClick={() =>
+                          handleOnDelete(product?.inventarioSucursalId!)
+                        }
                       >
                         <Trash className="w-4 h-4" />
                         <span className="sr-only">Delete</span>

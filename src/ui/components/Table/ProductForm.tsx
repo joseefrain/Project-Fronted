@@ -76,7 +76,7 @@ const ProductForm = ({
         sucursalId: initialData.sucursalId || '',
         puntoReCompra: initialData.puntoReCompra || '',
         barCode: initialData?.barCode || '',
-        costoUnitario: initialData?.costoUnitario || 0,
+        costoUnitario: initialData?.costoUnitario.$numberDecimal || 0,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -146,7 +146,6 @@ const ProductForm = ({
       ...prevData,
       barCode: barcode,
     }));
-    console.log(barcode);
   };
 
   return (
@@ -229,7 +228,10 @@ const ProductForm = ({
           )}
         </div>
         <DialogFooter>
-          <Button type="submit" disabled={loading || !selectedGroup}>
+          <Button
+            type="submit"
+            disabled={loading || (!initialData && !selectedGroup)}
+          >
             {initialData ? 'Guardar Cambios' : 'Agregar Producto'}
           </Button>
         </DialogFooter>

@@ -97,9 +97,7 @@ export function Products() {
 
   const fetchDataGroup = async () => {
     if (!selectedGroup) return;
-
     const response = await GetBranches(selectedGroup._id);
-    console.log(response, 'response');
     setGroups(response);
   };
 
@@ -126,7 +124,6 @@ export function Products() {
 
                 <CardTitle>Products</CardTitle>
               </div>
-
               <CardDescription>Gestione sus productos</CardDescription>
             </CardHeader>
             <CardContent>
