@@ -174,6 +174,7 @@ export interface ISale {
   tipoTransaccion: ITypeTransaction;
   credito?: ICredit;
   fechaRegistro?: Date;
+  username?: string;
 }
 
 export interface INewSale extends Omit<ISale, 'id'> {}
