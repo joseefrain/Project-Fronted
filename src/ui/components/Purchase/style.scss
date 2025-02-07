@@ -1,41 +1,49 @@
 .inventory__card {
-    @apply h-[36rem] max-h-[36rem] overflow-y-auto;
+  @apply h-[36rem] max-h-[36rem] overflow-y-auto;
 
-    &::-webkit-scrollbar {
-        @apply hidden #{!important};
-    }
+  &::-webkit-scrollbar {
+    @apply hidden #{!important};
+  }
 }
 
 .product__list {
-    &::-webkit-scrollbar {
-        @apply hidden #{!important};
-    }
+  &::-webkit-scrollbar {
+    @apply hidden #{!important};
+  }
 }
 
 .product__sale__list {
-    @apply max-h-[20rem] overflow-auto;
+  @apply max-h-[20rem] overflow-auto;
 
-    &::-webkit-scrollbar {
-        @apply hidden #{!important};
-    }
+  &::-webkit-scrollbar {
+    @apply hidden #{!important};
+  }
 }
 
 .saled__btn {
-    @apply flex items-center justify-center gap-3 w-full min-w-full #{!important};
+  @apply flex items-center justify-center gap-3 w-full min-w-full #{!important};
 }
 
 .container-inventory {
-    @apply flex flex-row items-center justify-between;
+  @apply flex flex-row items-center justify-between;
+
+  @media (max-width: 768px) {
+    @apply flex-wrap gap-3;
+  }
+
+  &__text {
+    @apply flex items-center gap-2 font-bold text-primary font-onest;
 
     @media (max-width: 768px) {
-        @apply flex-wrap gap-3;
+      @apply w-fit;
     }
+  }
+}
 
-    &__text {
-        @apply flex items-center gap-2 font-bold text-primary font-onest;
+.typeCustomer {
+  @apply grid grid-cols-2 gap-8 md:grid-cols-1;
 
-        @media (max-width: 768px) {
-            @apply w-fit;
-        }
-    }
+  @media (max-width: 480px) {
+    @apply grid-cols-1 gap-4;
+  }
 }

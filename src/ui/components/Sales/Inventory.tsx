@@ -307,7 +307,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-8">
+          <div className="typeCustomer">
             <div className="space-y-2">
               <Label htmlFor="customer-type">
                 Tipo de cliente
@@ -489,7 +489,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
                     value={creditMethod}
                     disabled={processingSale}
                   >
-                    <SelectTrigger id="credit-type">
+                    <SelectTrigger className="dark:bg-black" id="credit-type">
                       <SelectValue
                         placeholder="Seleccionar"
                         className="flex items-center gap-2"

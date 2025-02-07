@@ -100,11 +100,11 @@ export const fetchAllProducts = createAsyncThunk(
 );
 
 export const removeProduct = createAsyncThunk(
-  'branches/deleteProduct',
+  'products/deleteProduct',
   async (id: string, { rejectWithValue }) => {
     try {
-      const response = await deleteProduct(id);
-      return response.data;
+      await deleteProduct(id);
+      return id;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
     }
@@ -215,17 +215,12 @@ const productsSlice = createSlice({
         state.status = 'succeeded';
         state.products = payload;
       })
-
       .addCase(removeProduct.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.products =
-          state.products?.filter((branch) => branch.id !== action.meta.arg) ||
-          [];
-      })
 
-      .addCase(removeProduct.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message || 'Error desconocido';
+        state.products = state.products.filter(
+          (product) => product.inventarioSucursalId !== action.payload
+        );
       })
       .addCase(removeProduct.pending, (state) => {
         state.status = 'loading';

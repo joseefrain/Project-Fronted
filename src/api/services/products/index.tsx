@@ -51,7 +51,7 @@ export const findProductoGrupoByProductId = async (
 export const deleteProduct = async (id: string): Promise<AxiosResponse> => {
   const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Inventory);
   const response = await axiosInstance.delete(`/${id}`);
-  return response;
+  return response.data;
 };
 
 export interface updateProductApiProps {

@@ -29,6 +29,7 @@ import {
 } from '../../../app/slices/login';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { Card } from '../../../components/ui/card';
 
 export const CardCash = () => {
   const navigate = useNavigate();
@@ -128,9 +129,9 @@ export const CardCash = () => {
         </div>
       )}
 
-      <div className="flex gap-5 justify-center">
+      <div className="container-cardBranchs">
         {caja?.map(({ _id, estado, consecutivo }) => (
-          <div
+          <Card
             key={_id}
             className="p-4 rounded-lg shadow-md border bg-white w-64 space-y-4 transition hover:shadow-lg dark:bg-gray-800"
           >
@@ -154,7 +155,7 @@ export const CardCash = () => {
                 </DialogTrigger>
               )}
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
@@ -200,8 +201,8 @@ export const CashDrawer = () => {
 
   return (
     <Drawer open={isDrawerOpen} dismissible={false} disablePreventScroll>
-      <DrawerContent className="  mb-[10rem] ">
-        <div className="mx-auto w-full max-w-sm">
+      <DrawerContent className="drawer-content">
+        <div className="container-DrawerContent">
           <DrawerHeader>
             Seleccione una Caja, para poder continuar.
             <Button
@@ -211,11 +212,8 @@ export const CashDrawer = () => {
               Ir a cajas
             </Button>
           </DrawerHeader>
-          <div className="p-4 pb-0">
-            <div className="flex items-center justify-center space-x-2">
-              <CardCash />
-            </div>
-            <div className="mt-3 h-[120px]"></div>
+          <div className="flex items-center justify-center space-x-2">
+            <CardCash />
           </div>
         </div>
       </DrawerContent>

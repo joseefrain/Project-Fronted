@@ -1,7 +1,22 @@
-.container-modalBranchs {
-  @apply gap-6  w-full justify-center flex;
+.container-cardBranchs {
+  @apply flex flex-wrap justify-center gap-4 w-full;
+
+  @media (max-width: 1024px) {
+    @apply justify-center;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.container-DrawerContent {
+  @apply mx-auto w-full justify-center items-center max-w-max mb-[8rem];
 
   @media (max-width: 768px) {
-    @apply flex-col;
+    @apply mb-8;
   }
 }

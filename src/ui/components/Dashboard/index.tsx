@@ -32,6 +32,7 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 import { IResponseGetProductMetrics } from '../../../interfaces/dashboardInterface';
+import './styles.scss';
 
 export default function DashboardProducts() {
   const [activeTab, setActiveTab] = useState<'venta' | 'compra'>('venta');
@@ -115,7 +116,7 @@ export default function DashboardProducts() {
       >
         Dashboard
       </motion.h1>
-      <div className="mb-6 flex space-x-4">
+      <div className="mb-6 flex space-x-4 max-sm:justify-center">
         <Button
           variant={activeTab === 'venta' ? 'default' : 'outline'}
           onClick={() => setActiveTab('venta')}
@@ -207,12 +208,12 @@ export default function DashboardProducts() {
         transition={{ duration: 0.5, delay: 0.5 }}
       >
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="container-DashboardTable">
             <CardTitle>
               Detalles de Productos
               {activeTab === 'venta' ? 'de Ventas' : 'de Compras'}
             </CardTitle>
-            <div className="flex flex-row items-center justify-between gap-4">
+            <div className="container-DashboardTable__container">
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="outline">

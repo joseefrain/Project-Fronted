@@ -18,3 +18,24 @@
     }
   }
 }
+
+.container-TabsDasboard {
+  @apply flex flex-col items-start justify-between gap-4 mb-3 sm:flex-row sm:items-center;
+
+  &__title {
+    @apply text-4xl font-bold text-gray-800 font-onest w-[38%] dark:text-white;
+
+    @media (max-width: 768px) {
+      @apply m-auto;
+    }
+  }
+
+  &__tabs {
+    @apply gap-4 font-bold text-white font-onest;
+
+    @media (max-width: 768px) {
+      @apply flex;
+      place-self: center;
+    }
+  }
+}

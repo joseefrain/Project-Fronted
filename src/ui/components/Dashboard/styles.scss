@@ -1,0 +1,23 @@
+.container-DashboardTable {
+  @apply flex flex-row items-center justify-between #{!important};
+
+  @media (max-width: 480px) {
+    @apply flex-col #{!important};
+  }
+
+  &__container {
+    @apply flex flex-row items-center justify-between gap-4;
+
+    @media (max-width: 480px) {
+      @apply flex-col mt-2 #{!important};
+    }
+  }
+}
+
+.container-TabsReturn {
+  @apply flex w-full gap-2 mb-6;
+
+  @media (max-width: 480px) {
+    @apply flex-col mb-10 bg-transparent #{!important};
+  }
+}
