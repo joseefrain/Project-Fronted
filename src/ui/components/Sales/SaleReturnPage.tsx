@@ -21,7 +21,6 @@ import {
   InfoIcon,
 } from 'lucide-react';
 import {
-  IDescuentoAplicado,
   IProductReturn,
   IProductSale,
   ISale,
@@ -32,7 +31,6 @@ import { useAppSelector } from '../../../app/hooks';
 import { toast, Toaster } from 'sonner';
 import {
   getPriceAdjustment,
-  getPriceAdjustmentWithPercentage,
   getProductUnitPrice,
   isDiscountApplied,
   NO_CASHIER_OPEN,
@@ -98,14 +96,6 @@ export default function SalesReturnPage({
 
       if (!hasActiveDiscount) {
         priceAdjustment = getPriceAdjustment(product, newQuantity);
-      }
-
-      const castDiscount = product.discount as unknown as IDescuentoAplicado;
-      if (hasActiveDiscount && castDiscount.tipoDescuento === 'porcentaje') {
-        priceAdjustment = getPriceAdjustmentWithPercentage(
-          product,
-          newQuantity
-        );
       }
     }
 
@@ -237,28 +227,32 @@ export default function SalesReturnPage({
   }, [userCashier]);
 
   return (
-    <Card className="w-full border-0 font-onest">
+    <Card className="w-full border-0 font-onest dark:bg-gray-800">
       <CardContent>
         <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-3">
           <div className="p-4 rounded-lg bg-primary/5">
-            <h3 className="font-semibold text-gray-700">Realizada por</h3>
-            <p className="text-xl font-bold text-green-800 truncate">
-              {saleDetails.userId.toUpperCase()}
+            <h3 className="font-semibold text-gray-700 dark:text-white">
+              Realizada por
+            </h3>
+            <p className="text-xl font-bold text-green-800 truncate dark:text-green-500">
+              {saleDetails.username?.toUpperCase()}
             </p>
           </div>
           <div className="p-4 rounded-lg bg-primary/5">
-            <h3 className="font-semibold text-gray-700">Fecha</h3>
-            <p className="text-xl font-bold text-green-800">
+            <h3 className="font-semibold text-gray-700 dark:text-white">
+              Fecha
+            </h3>
+            <p className="text-xl font-bold text-green-800 dark:text-green-500">
               {saleDetails.fechaRegistro
                 ? getFormatedDate(saleDetails.fechaRegistro)
                 : ''}
             </p>
           </div>
           <div className="p-4 rounded-lg bg-primary/5">
-            <h3 className="font-semibold text-gray-700">
+            <h3 className="font-semibold text-gray-700 dark:text-white">
               Total de la transacción
             </h3>
-            <p className="text-xl font-bold text-green-800">
+            <p className="text-xl font-bold text-green-800 dark:text-green-500">
               C${saleDetails.total}
             </p>
           </div>
@@ -267,7 +261,7 @@ export default function SalesReturnPage({
         <div className="max-h-[205px] overflow-y-auto scrollbar-hide">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="dark:border-white">
                 <TableHead className="w-[20%]">Producto</TableHead>
                 <TableHead className="text-center">
                   Cantidad Procesada
@@ -306,7 +300,7 @@ export default function SalesReturnPage({
                           Number.parseInt(e.target.value)
                         )
                       }
-                      className="w-24 text-center"
+                      className="w-24 text-center dark:border-white"
                       disabled={returnProccessing}
                     />
                   </TableCell>
@@ -324,15 +318,8 @@ export default function SalesReturnPage({
                       : '---'}
                   </TableCell>
                   <TableCell className="flex items-center justify-center gap-2 text-center">
-                    {!product.discount ||
-                    !returnQuantities[product.productId]?.priceAdjustment ? (
-                      '---'
-                    ) : product.discount &&
-                      !isDiscountApplied(
-                        saleDetails.sucursalId,
-                        returnQuantities[product.productId]?.quantity ?? 0,
-                        product
-                      ) ? (
+                    {returnQuantities[product.productId]?.priceAdjustment &&
+                    product.discount ? (
                       <>
                         Descuento eliminado
                         <Popover>
@@ -347,12 +334,12 @@ export default function SalesReturnPage({
                             <div className="flex items-center gap-2">
                               {product.discount.minimiType === 'compra' ? (
                                 <span>
-                                  Mínimo de compra: C$
+                                  Mínimo de compra: C${' '}
                                   {product.discount.minimoCompra.$numberDecimal}
                                 </span>
                               ) : (
                                 <span>
-                                  Mínimo de cantidad:
+                                  Mínimo de cantidad:{' '}
                                   {product.discount.minimoCantidad}
                                 </span>
                               )}
@@ -360,35 +347,8 @@ export default function SalesReturnPage({
                           </PopoverContent>
                         </Popover>
                       </>
-                    ) : product.discount &&
-                      (product.discount as IDescuentoAplicado).tipoDescuento ===
-                        'porcentaje' &&
-                      isDiscountApplied(
-                        saleDetails.sucursalId,
-                        returnQuantities[product.productId]?.quantity ?? 0,
-                        product
-                      ) ? (
-                      <>
-                        Descuento actualizado
-                        <Popover>
-                          <PopoverTrigger className="p-0">
-                            <BadgeInfo size={18} />
-                          </PopoverTrigger>
-                          <PopoverContent className="flex flex-col items-center w-auto gap-1 text-sm font-onest">
-                            <span className="w-full">
-                              Descuento:{' '}
-                              <strong>{product.discount.name}</strong>
-                            </span>
-                            <div className="flex items-center gap-2">
-                              <span>
-                                Porcentaje: {product.discount.percentage}%
-                              </span>
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                      </>
                     ) : (
-                      <></>
+                      '---'
                     )}
                   </TableCell>
                 </TableRow>
@@ -398,12 +358,12 @@ export default function SalesReturnPage({
         </div>
 
         <div className="flex gap-8 mt-20">
-          <Alert variant="default" className="w-[50%]">
+          <Alert variant="default" className="w-[50%] dark:bg-primary/5">
             <AlertTitle className="flex items-center gap-2 font-semibold">
-              <InfoIcon className="w-4 h-4 text-gray-600" />
+              <InfoIcon className="w-4 h-4 text-gray-600 dark:text-gray-100" />
               ¿Qué es un reajuste?
             </AlertTitle>
-            <AlertDescription className="text-gray-600">
+            <AlertDescription className="text-gray-600 dark:text-gray-400">
               Si debido a una devolución, un descuento aplicado originalmente
               deja de ser válido o actualiza el monto de descuento basado en el
               porcentaje, genera un reajuste en los productos restantes, lo que
@@ -412,7 +372,7 @@ export default function SalesReturnPage({
             </AlertDescription>
           </Alert>
 
-          <div className="w-[50%] p-3 rounded-lg bg-sky-100">
+          <div className="w-[50%] p-3 rounded-lg bg-sky-50 dark:bg-gray-300">
             <div className="flex items-center justify-between">
               <span className="text-lg font-semibold text-blue-800">
                 Resumen de la devolución
@@ -442,13 +402,16 @@ export default function SalesReturnPage({
 
         {needsExtraCash && (
           <div className="flex items-center justify-center w-full">
-            <Alert variant="destructive" className="flex w-full mt-4">
+            <Alert
+              variant="destructive"
+              className="flex w-full mt-4 bg-gray-200 dark:border-red-500"
+            >
               <div className="w-[80%]">
-                <AlertTitle className="flex items-center gap-2">
+                <AlertTitle className="flex items-center gap-2 dark:text-red-500">
                   <AlertTriangleIcon className="w-4 h-4" />
                   Advertencia
                 </AlertTitle>
-                <AlertDescription className="w-[90%]">
+                <AlertDescription className="w-[90%] dark:text-red-500">
                   No hay suficiente dinero en caja para cubrir la devolución. Se
                   necesitan{' '}
                   <span className="font-bold">
@@ -459,7 +422,10 @@ export default function SalesReturnPage({
                 </AlertDescription>
               </div>
               <div>
-                <Label htmlFor="extraCash" className="font-semibold">
+                <Label
+                  htmlFor="extraCash"
+                  className="font-semibold dark:text-red-500"
+                >
                   Ingrese dinero extra:
                 </Label>
                 <div className="flex items-center mt-2">
@@ -495,7 +461,7 @@ export default function SalesReturnPage({
         <div className="flex justify-end mt-8">
           <Button
             onClick={handleReturn}
-            className="px-8 py-5 font-semibold uppercase disabled:bg-gray-200 disabled:cursor-not-allowed disabled:text-gray-800"
+            className="px-8 py-5 font-semibold uppercase disabled:bg-gray-200 dark:disabled:bg-gray-900 disabled:cursor-not-allowed disabled:text-gray-800 dark:disabled:text-gray-200 dark:bg-white"
             disabled={
               totalReturn.total === 0 ||
               cashRegister.cash + extraCash < totalReturn.total ||
