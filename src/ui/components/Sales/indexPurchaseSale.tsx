@@ -10,13 +10,14 @@ import { PurchaseHistory } from '../Purchase/PurchaseHistory';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { ReturnHistory } from './ReturnHistory';
+import './style.scss';
 
 export const PurchaseSale = () => {
   const access = useRoleAccess(PAGES_MODULES.COMPRAS);
   const [productSale, setProductSale] = useState<IProductSale[]>([]);
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto h-[100vh]">
       <Tabs defaultValue={access.create ? 'purchase' : 'purchase-history'}>
         <div className="flex flex-col items-center justify-between gap-4 mb-9 sm:flex-row sm:items-center">
           <h1 className="text-4xl font-bold text-gray-800 font-onest w-[38%] dark:text-white">
@@ -48,7 +49,7 @@ export const PurchaseSale = () => {
         </div>
         {access.create && (
           <TabsContent value="purchase">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 h-[36rem] max-h-[36rem]">
+            <div className="containertabsCV">
               <Purchase
                 productSale={productSale}
                 setProductSale={setProductSale}

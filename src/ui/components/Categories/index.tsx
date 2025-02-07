@@ -105,7 +105,7 @@ export default function Categories() {
         <h1 className="text-4xl font-bold text-gray-800 font-onest w-[38%] dark:text-white">
           Categorías
         </h1>
-        <nav className="flex flex-col gap-5 mb-6 space-y-4 mt-9 sm:flex-row sm:items-center sm:space-y-0">
+        <nav className="flex flex-col gap-5 mb-6 space-y-4 mt-9 sm:flex-row sm:items-center sm:space-y-0 justify-between">
           <div className="flex items-center space-x-4">
             <Input
               placeholder="Buscar categorías"
@@ -183,7 +183,7 @@ export default function Categories() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-        <div className="flex flex-row flex-wrap gap-4">
+        <div className="flex flex-row flex-wrap gap-4 justify-center">
           {filteredCategories.length > 0 &&
             filteredCategories.map((branch) => (
               <CategoriesCard

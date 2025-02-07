@@ -135,7 +135,7 @@ export const ProfileUser = () => {
                     className="group relative rounded bg-background/50 px-3 py-2 shadow-sm transition-shadow h-[38px] max-sm:h-[34px] hover:shadow-md border dark:border-gray-700 hover:cursor-pointer"
                     onClick={goToCashiers}
                   >
-                    <div className="flex items-center gap-3 max-sm:w-[4.5rem] w-full">
+                    <div className="flex items-center gap-3 max-sm:min-w-[4.5rem] w-full">
                       <motion.div
                         initial={{ scale: 0.5 }}
                         animate={{ scale: 1 }}
@@ -159,10 +159,10 @@ export const ProfileUser = () => {
             ) : (
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="group relative rounded bg-background/50 px-3 py-2 shadow-sm transition-shadow h-[38px] max-sm:h-[34px] hover:shadow-md border dark:border-gray-700 border-red-300 hover:cursor-pointer"
+                className="group relative rounded bg-background/50 px-3 py-2 shadow-sm transition-shadow h-[38px] max-sm:h-max hover:shadow-md border dark:border-gray-700 border-red-300 hover:cursor-pointer"
                 onClick={goToCashiers}
               >
-                <div className="flex items-center gap-3 max-sm:w-[4.5rem] w-full">
+                <div className="flex items-center gap-3 max-sm:min-w-min w-full">
                   <motion.div
                     initial={{ scale: 0.5 }}
                     animate={{ scale: 1 }}

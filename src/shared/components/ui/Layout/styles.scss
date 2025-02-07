@@ -1,14 +1,10 @@
 .container-Layout {
-  @apply flex flex-col w-full px-[7rem] bg-white dark:bg-gray-950;
+  @apply w-full px-[6.7rem] bg-white dark:bg-gray-950;
   max-width: unset;
 
   @media (max-width: 768px) {
     @apply px-[1.5rem];
   }
-
-  //   @media (min-width: 1440px) {
-  //     @apply px-[3.8rem];
-  //   }
 
   @media (max-width: 1440px) {
     @apply px-[1.5rem];

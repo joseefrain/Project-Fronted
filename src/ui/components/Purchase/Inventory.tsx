@@ -65,6 +65,7 @@ import './style.scss';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 import { updateCashAmount } from '../../../app/slices/cashRegisterSlice';
+import './style.scss';
 
 export interface ISaleSummary {
   subTotal: number;
@@ -310,7 +311,7 @@ export const PurchaseCashier = ({
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-8">
+          <div className="typeCustomer">
             <div className="space-y-2">
               <Label htmlFor="customer-type">
                 Tipo de proveedor
@@ -325,7 +326,7 @@ export const PurchaseCashier = ({
                 }}
                 disabled={processingSale}
               >
-                <SelectTrigger id="customer-type">
+                <SelectTrigger className="dark:bg-black" id="customer-type">
                   <SelectValue placeholder="Seleccionar" />
                 </SelectTrigger>
                 <SelectContent className="font-onest">
@@ -353,7 +354,7 @@ export const PurchaseCashier = ({
                       variant="outline"
                       role="combobox"
                       aria-expanded={open}
-                      className="justify-between w-full"
+                      className="justify-between dark:bg-black w-full  "
                     >
                       {customer
                         ? registeredCustomers.find((c) => c._id === customer)
@@ -406,6 +407,7 @@ export const PurchaseCashier = ({
               <div className="space-y-2">
                 <Label htmlFor="customer-name">Nombre (Opcional)</Label>
                 <Input
+                  className="dark:bg-black"
                   id="customer-name"
                   placeholder="Proveedor general"
                   value={customer}
@@ -428,7 +430,7 @@ export const PurchaseCashier = ({
                 value={paymentMethod}
                 disabled={processingSale}
               >
-                <SelectTrigger id="customer-type">
+                <SelectTrigger className="dark:bg-black" id="customer-type">
                   <SelectValue
                     placeholder="Seleccionar"
                     className="flex items-center gap-2"
@@ -491,7 +493,7 @@ export const PurchaseCashier = ({
                     value={creditMethod}
                     disabled={processingSale}
                   >
-                    <SelectTrigger id="credit-type">
+                    <SelectTrigger className="dark:bg-black" id="credit-type">
                       <SelectValue
                         placeholder="Seleccionar"
                         className="flex items-center gap-2"
