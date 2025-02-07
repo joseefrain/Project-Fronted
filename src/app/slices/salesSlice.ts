@@ -20,6 +20,9 @@ import {
   INewSale,
   ITransactionReturn,
   ITypeTransaction,
+  IDescuentosProductos,
+  IDescuentoGrupo,
+  IDescuento,
 } from '@/interfaces/salesInterfaces';
 import { handleThunkError } from '@/shared/utils/errorHandlers';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -269,27 +272,82 @@ const salesSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(createDiscountSales.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.discounts = {
-          ...state.discounts,
-          descuentosPorProductosGenerales: [
-            ...(state?.discounts?.descuentosPorProductosGenerales || []),
-            action.payload,
-          ],
-          descuentosPorProductosEnSucursal: [
-            ...(state?.discounts?.descuentosPorProductosEnSucursal || []),
-            action.payload,
-          ],
-          descuentosPorGruposGenerales: [
-            ...(state?.discounts?.descuentosPorGruposGenerales || []),
-            action.payload,
-          ],
-          descuentosPorGruposEnSucursal: [
-            ...(state?.discounts?.descuentosPorGruposEnSucursal || []),
-            action.payload,
-          ],
+        if (!action.payload) return;
+
+        const {
+          _id,
+          nombre,
+          tipoDescuento,
+          valorDescuento,
+          fechaInicio,
+          fechaFin,
+          minimoCompra,
+          minimoCantidad,
+          activo,
+          moneda_id,
+          codigoDescunto,
+          deleted_at,
+          minimiType,
+          productId,
+          groupId,
+          sucursalId,
+        } = action.payload;
+
+        const mappedDiscount: IDescuento = {
+          _id,
+          nombre,
+          tipoDescuento,
+          valorDescuento,
+          fechaInicio,
+          fechaFin,
+          minimoCompra,
+          minimoCantidad,
+          activo,
+          moneda_id,
+          codigoDescunto,
+          deleted_at,
+          minimiType,
         };
+
+        let newDiscount;
+
+        if (groupId) {
+          newDiscount = {
+            descuentoId: mappedDiscount,
+            grupoId: groupId,
+            sucursalId,
+            deleted_at,
+          } as IDescuentoGrupo;
+        } else {
+          newDiscount = {
+            descuentoId: mappedDiscount,
+            productId,
+            sucursalId,
+            deleted_at,
+          } as IDescuentosProductos;
+        }
+
+        const discountType = groupId
+          ? sucursalId
+            ? 'descuentosPorGruposEnSucursal'
+            : 'descuentosPorGruposGenerales'
+          : sucursalId
+            ? 'descuentosPorProductosEnSucursal'
+            : 'descuentosPorProductosGenerales';
+
+        if (state.discounts) {
+          if (groupId) {
+            (
+              state.discounts[discountType] as unknown as IDescuentoGrupo[]
+            )?.push(newDiscount as IDescuentoGrupo);
+          } else {
+            (
+              state.discounts[discountType] as unknown as IDescuentosProductos[]
+            )?.push(newDiscount as IDescuentosProductos);
+          }
+        }
       })
+
       .addCase(deleteDiscountSales.pending, (state) => {
         state.status = 'loading';
       })

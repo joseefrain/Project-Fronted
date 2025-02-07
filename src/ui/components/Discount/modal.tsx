@@ -17,7 +17,9 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -31,6 +33,7 @@ import { SelectSearch } from '@/shared/components/ui/SelectSearch';
 import { format } from 'date-fns';
 import React from 'react';
 import { ROLE } from '../../../interfaces/roleInterfaces';
+import { toast } from 'sonner';
 
 interface IndexModalProps {
   isModalOpen: boolean;
@@ -39,7 +42,7 @@ interface IndexModalProps {
   updateFormState: (field: keyof IDescuentoCreate, value: string) => void;
   formState: IDescuentoCreate;
   handleSubmit: (e: React.FormEvent) => void;
-  handleSelectChange: (value: string) => void;
+  handleSelectChangeCategory: (value: string) => void;
   handleSelectChangeBranch: (value: string) => void;
   selectedBranch: {
     _id: string;
@@ -76,9 +79,8 @@ export const IndexModal = ({
   updateFormState,
   formState,
   handleSubmit,
-  handleSelectChange,
+  handleSelectChangeCategory,
   handleSelectChangeBranch,
-  selectedBranch,
   options,
   groupsAllOptions,
   stateProduct,
@@ -86,7 +88,6 @@ export const IndexModal = ({
   userRoles,
   handleProducts,
 }: IndexModalProps) => {
-  console.log(formState.tipoDescuentoEntidad, 'formState');
   return (
     <>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -99,7 +100,7 @@ export const IndexModal = ({
           </DialogHeader>
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4">
-              <div className="flex-col justify-center w-full gap-2 flex">
+              <div className="flex flex-col justify-center w-full gap-2">
                 <Label htmlFor="nombre">Nombre</Label>
                 <Input
                   className="w-full"
@@ -108,32 +109,33 @@ export const IndexModal = ({
                   onChange={(e) => updateFormState('nombre', e.target.value)}
                 />
               </div>
-              <div className="flex-col justify-center w-full gap-2 flex">
+              <div className="flex flex-col justify-center w-full gap-2">
                 <Label htmlFor="tipoDescuento">Tipo</Label>
                 <div className="w-full">
                   <Select
-                    defaultValue="Product"
-                    value={formState.tipoDescuentoEntidad || 'Product'}
+                    value={formState.tipoDescuentoEntidad}
                     onValueChange={(value) => {
                       updateFormState('tipoDescuentoEntidad', value);
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
+                      <SelectValue placeholder="Seleccionar" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Product">Producto</SelectItem>
-                      <SelectItem value="Group">Categoría</SelectItem>
+                      <SelectGroup>
+                        <SelectLabel>Opciones</SelectLabel>
+                        <SelectItem value="Product">Producto</SelectItem>
+                        <SelectItem value="Group">Categoría</SelectItem>
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <div className="flex w-full gap-4 max-sm:flex-col">
-                <div className="w-full flex flex-col gap-1">
+                <div className="flex flex-col w-full gap-1">
                   <Label htmlFor="tipoDescuento">Seleccion</Label>
                   <SelectSearch
                     classStyles="w-fit"
-                    key={formState.tipoDescuentoEntidad}
                     options={
                       stateProduct ? opcionesProductos : groupsAllOptions
                     }
@@ -148,17 +150,24 @@ export const IndexModal = ({
                         : formState.groupId || ''
                     }
                     onChange={
-                      stateProduct ? handleProducts : handleSelectChange
+                      stateProduct ? handleProducts : handleSelectChangeCategory
                     }
                   />
                 </div>
                 {userRoles?.role === ROLE.ROOT && (
-                  <div className="w-full flex flex-col gap-1">
+                  <div className="flex flex-col w-full gap-1">
                     <Label htmlFor="tipoDescuento">Sucursal</Label>
                     <SelectSearch
-                      options={options}
-                      placeholder="Selecione Sucursal"
-                      initialValue={selectedBranch?._id ?? ''}
+                      classStyles="w-fit"
+                      options={[
+                        { id: 'Todos', nombre: 'Todos' },
+                        ...options.map((b) => ({
+                          id: b.id,
+                          nombre: b.nombre,
+                        })),
+                      ]}
+                      placeholder="Seleccione una sucursal"
+                      initialValue={formState.sucursalId || 'Todos'}
                       onChange={handleSelectChangeBranch}
                     />
                   </div>
@@ -198,7 +207,7 @@ export const IndexModal = ({
                 </div>
               </div>
               <div className="flex w-full gap-4">
-                <div className="flex-col justify-center w-full gap-2 flex">
+                <div className="flex flex-col justify-center w-full gap-2">
                   <Label>Fecha Inicio</Label>
                   <Popover>
                     <PopoverTrigger asChild>
@@ -224,7 +233,7 @@ export const IndexModal = ({
                           if (date && date >= new Date()) {
                             updateFormState('fechaInicio', date.toISOString());
                           } else {
-                            alert(
+                            toast.error(
                               'La fecha inicial no puede ser menor a la fecha actual.'
                             );
                           }
@@ -234,7 +243,7 @@ export const IndexModal = ({
                     </PopoverContent>
                   </Popover>
                 </div>
-                <div className="flex-col justify-center w-full gap-2 flex">
+                <div className="flex flex-col justify-center w-full gap-2">
                   <Label>Fecha Fin</Label>
                   <Popover>
                     <PopoverTrigger asChild>
@@ -257,8 +266,12 @@ export const IndexModal = ({
                         mode="single"
                         selected={formState.fechaFin}
                         onSelect={(date) => {
-                          if (date) {
+                          if (date && date >= new Date()) {
                             updateFormState('fechaFin', date.toISOString());
+                          } else {
+                            toast.error(
+                              'La fecha final no puede ser a la fecha Inicial'
+                            );
                           }
                         }}
                         initialFocus

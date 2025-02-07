@@ -22,18 +22,19 @@ export const createGroupSlice = createAsyncThunk(
   }
 );
 
+interface IUpdatedGroup {
+  group: IProductoGroups;
+  id: string;
+}
+
 export const updateGroupSlice = createAsyncThunk(
   'groups/update',
-  async (
-    payload: { group: IProductoGroups; id: string },
-    { rejectWithValue }
-  ) => {
+  async ({ group, id }: IUpdatedGroup, { rejectWithValue }) => {
     try {
-      const { group, id } = payload;
-      const response = await updateGroup(group, id); // Función API
-      return response.data; // Devuelve los datos actualizados
+      const response = await updateGroup(group, id);
+      return response.data;
     } catch (error) {
-      return rejectWithValue(handleThunkError(error)); // Manejo de errores
+      return rejectWithValue(handleThunkError(error));
     }
   }
 );
@@ -145,6 +146,18 @@ const groupsSlice = createSlice({
       .addCase(productsCatetories.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.productsbyGroup = action.payload as IProductoGroups;
+      })
+
+      .addCase(updateGroupSlice.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+
+        const updatedGroups = state.groups.map((product) => {
+          if (product._id && product._id === action.payload._id) {
+            return { ...product, ...action.payload };
+          }
+          return product;
+        });
+        state.groups = [...updatedGroups];
       });
   },
 });
