@@ -176,6 +176,14 @@ export const isDiscountApplied = (
   const newQuantity = quantity - quantityReturned;
   const castDiscount = discount as unknown as IDescuentoAplicado;
 
+  console.log(castDiscount);
+  console.log({
+    productId,
+    groupId,
+    price,
+    newQuantity,
+  });
+
   if (castDiscount.groupId) {
     const discountFormat = {
       groupId: castDiscount.groupId ?? '',
@@ -342,25 +350,6 @@ export const getPriceAdjustment = (
   const newSubtotalWithDiscount = newQuantity * unityPriceWithDiscount;
   const newSubtotalWithOutDiscount = newQuantity * unityPrice;
   const discountAmount = newSubtotalWithOutDiscount - newSubtotalWithDiscount;
-
-  return Math.abs(discountAmount);
-};
-
-export const getPriceAdjustmentWithPercentage = (
-  product: IProductSale,
-  newQuantity: number
-) => {
-  const originalPrice = getProductUnitPrice(product);
-  const originalSubtotal = product.quantity * originalPrice;
-
-  const productCopy = {
-    ...product,
-    quantity: newQuantity,
-  };
-
-  const newPrice = getProductUnitPrice(productCopy);
-  const newSubtotal = newQuantity * newPrice;
-  const discountAmount = originalSubtotal - newSubtotal;
 
   return Math.abs(discountAmount);
 };

@@ -145,7 +145,7 @@ export const SaleHistory = () => {
             <TableBody>
               {currentItems.map((sale) => (
                 <TableRow key={sale.id} className="h-[50px]">
-                  <TableCell>{sale.userId}</TableCell>
+                  <TableCell>{sale.username}</TableCell>
                   <TableCell>{getFormatedDate(new Date())}</TableCell>
                   <TableCell>${sale.subtotal.toFixed(2)}</TableCell>
                   <TableCell>${sale.discount.toFixed(2)}</TableCell>

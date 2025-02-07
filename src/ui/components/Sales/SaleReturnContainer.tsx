@@ -23,12 +23,12 @@ export const SaleReturnContainer = ({ sale }: { sale: ISale }) => {
           <Undo2 className="w-4 h-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-6xl p-0 border-0">
-        <DialogHeader className="p-6 pb-0 text-black rounded-t font-onest bg-gradient-to-b from-sky-50 to-white">
-          <DialogTitle className="text-2xl font-bold">
+      <DialogContent className="max-w-6xl p-0 border-0 dark:bg-gray-800">
+        <DialogHeader className="p-6 pb-0 text-black rounded-t font-onest bg-gradient-to-b from-sky-50 to-white dark:from-gray-800">
+          <DialogTitle className="text-2xl font-bold dark:text-white">
             Devolución de productos
           </DialogTitle>
-          <DialogDescription className="text-black">
+          <DialogDescription className="text-black dark:text-white">
             Gestione las devoluciones de productos de manera eficiente
           </DialogDescription>
         </DialogHeader>

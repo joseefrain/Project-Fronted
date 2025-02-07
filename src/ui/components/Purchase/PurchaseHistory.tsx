@@ -149,7 +149,7 @@ export const PurchaseHistory = () => {
             <TableBody>
               {currentItems.map((sale, index) => (
                 <TableRow key={index} className="h-[50px]">
-                  <TableCell>{sale.userId}</TableCell>
+                  <TableCell>{sale.username}</TableCell>
                   <TableCell>{getFormatedDate(new Date())}</TableCell>
                   <TableCell>
                     {coin}

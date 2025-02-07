@@ -150,7 +150,7 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
             <TableBody>
               {currentItems.map((sale) => (
                 <TableRow key={sale.id} className="h-[50px]">
-                  <TableCell>{sale.userId}</TableCell>
+                  <TableCell>{sale.username}</TableCell>
                   <TableCell>{getFormatedDate(new Date())}</TableCell>
                   <TableCell>${sale.total.toFixed(2)}</TableCell>
                   <TableCell>
