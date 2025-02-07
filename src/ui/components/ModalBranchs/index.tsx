@@ -3,8 +3,7 @@ import { store } from '@/app/store';
 import { fetchBranches, setSelectedBranch } from '@/app/slices/branchSlice';
 import { useAppSelector } from '@/app/hooks';
 import { Branch } from '@/interfaces/branchInterfaces';
-import { Card, CardFooter, CardHeader } from '../../../components/ui/card';
-import './styles.scss';
+import { Card, CardHeader } from '../../../components/ui/card';
 import {
   Drawer,
   DrawerContent,
@@ -20,6 +19,7 @@ import {
   getUserCashier,
   IGetUserCashier,
 } from '../../../app/slices/cashRegisterSlice';
+import './styles.scss';
 
 export const ModalBranchs = () => {
   const branches = useAppSelector((state) => state.branches.data);
@@ -76,38 +76,27 @@ export const ModalBranchs = () => {
   };
 
   return (
-    <>
-      <div className="container mx-auto ">
-        <div>
-          <div className="container-modalBranchs">
-            {branches.map((branch) => (
-              <Card
-                onClick={() => {
-                  handleSelectBranch(branch);
-                }}
-                key={branch._id}
-                className="cursor-pointer"
-              >
-                <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 ">
-                  <div className="flex items-center space-x-2 ">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground">
-                      {branch.nombre[0]}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">{branch.nombre}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {branch.ciudad}
-                      </p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardFooter className="flex flex-wrap justify-between gap-2"></CardFooter>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </div>
-    </>
+    <div className="container-cardBranchs">
+      {branches.map((branch) => (
+        <Card
+          key={branch._id}
+          onClick={() => handleSelectBranch(branch)}
+          className="cursor-pointer w-[15rem] h-[8rem] rounded-lg border-2"
+        >
+          <CardHeader>
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-center min-w-8 w-8 h-8 rounded-full bg-primary text-primary-foreground">
+                {branch.nombre[0]}
+              </div>
+              <div>
+                <h3 className="font-semibold">{branch.nombre}</h3>
+                <p className="text-sm text-muted-foreground">{branch.ciudad}</p>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+      ))}
+    </div>
   );
 };
 
@@ -116,14 +105,11 @@ export const BranchDrawer = () => {
 
   return (
     <Drawer open={isDrawerOpen} dismissible={false} disablePreventScroll>
-      <DrawerContent className="  mb-[10rem] ">
-        <div className="mx-auto w-full max-w-sm">
-          <DrawerHeader>Seleciona una sucursal, para continuar</DrawerHeader>
-          <div className="p-4 pb-0">
-            <div className="flex items-center justify-center space-x-2">
-              <ModalBranchs />
-            </div>
-            <div className="mt-3 h-[120px]"></div>
+      <DrawerContent className="drawer-content">
+        <div className="container-DrawerContent">
+          <DrawerHeader>Selecciona una sucursal para continuar</DrawerHeader>
+          <div className="flex items-center justify-center">
+            <ModalBranchs />
           </div>
         </div>
       </DrawerContent>

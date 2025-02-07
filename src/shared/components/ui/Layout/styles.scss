@@ -1,28 +1,32 @@
 .container-Layout {
-    @apply flex flex-col w-full px-[7rem] bg-white dark:bg-gray-950;
-    max-width: unset;
+  @apply flex flex-col w-full px-[7rem] bg-white dark:bg-gray-950;
+  max-width: unset;
 
-    @media (max-width: 768px) {
-        @apply px-[1.5rem] h-[125vh];
-    }
+  @media (max-width: 768px) {
+    @apply px-[1.5rem];
+  }
 
-    @media (min-width: 1440px) {
-        @apply px-[3.8rem];
-    }
+  //   @media (min-width: 1440px) {
+  //     @apply px-[3.8rem];
+  //   }
+
+  @media (max-width: 1440px) {
+    @apply px-[1.5rem];
+  }
 }
 
 .containerInputs {
-    @apply flex gap-4 mb-4;
+  @apply flex gap-4 mb-4;
 
-    @media (max-width: 768px) {
-        flex-wrap: wrap;
-    }
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+  }
 
-    @media (max-width: 435px) {
-        flex-wrap: wrap;
-    }
+  @media (max-width: 435px) {
+    flex-wrap: wrap;
+  }
 
-    @media (max-width: 1300px) {
-        flex-wrap: wrap;
-    }
+  @media (max-width: 1300px) {
+    flex-wrap: wrap;
+  }
 }

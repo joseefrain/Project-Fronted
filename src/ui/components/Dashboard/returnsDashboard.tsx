@@ -222,9 +222,9 @@ const DashboardTab = ({ type }: { type: ReturnType }) => {
 
       <div className="">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="container-DashboardTable">
             <CardTitle>Detalles de Productos Devueltos</CardTitle>
-            <div className="flex flex-row items-center justify-between gap-4">
+            <div className="container-DashboardTable__container">
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="outline">
@@ -314,12 +314,24 @@ const DashboardTab = ({ type }: { type: ReturnType }) => {
 
 const DashboardDevoluciones = () => {
   return (
-    <div className="bg-gray-50 dark:bg-gray-950 font-onest">
-      <h1 className="text-4xl font-bold mb-8">Dashboard de Devoluciones</h1>
-      <Tabs defaultValue="VENTA" className="w-full">
-        <TabsList className="grid grid-cols-2 mb-6">
-          <TabsTrigger value="VENTA">Devoluciones de Venta</TabsTrigger>
-          <TabsTrigger value="COMPRA">Devoluciones de Compra</TabsTrigger>
+    <div className="p-4">
+      <h1 className="text-lg sm:text-xl lg:text-4xl font-bold mb-6 dark:text-white text-black">
+        Dashboard de Devoluciones
+      </h1>
+      <Tabs defaultValue="VENTA">
+        <TabsList className="container-TabsReturn">
+          <TabsTrigger
+            className="font-bold border-b-2 border-opacity-0 bg-black text-white dark:bg-black dark:text-white w-full"
+            value="VENTA"
+          >
+            Devoluciones de Venta
+          </TabsTrigger>
+          <TabsTrigger
+            className="bg-black text-white  dark:bg-black dark:text-white font-bold w-full"
+            value="COMPRA"
+          >
+            Devoluciones de Compra
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="VENTA">
           <DashboardTab type="VENTA" />

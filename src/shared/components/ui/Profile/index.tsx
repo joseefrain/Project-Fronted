@@ -103,7 +103,7 @@ export const ProfileUser = () => {
           <h1 className="m-auto text-xl font-bold uppercase font-onest">
             {user?.username}
           </h1>
-          <p className="justify-center w-full text-sm text-muted-foreground font-onest ">
+          <p className="justify-center w-full text-sm text-muted-foreground font-onest whitespace-pre">
             <span className="font-semibold text-[14px] font-onest text-black dark:text-white">
               {user?.role}-
             </span>
@@ -144,7 +144,7 @@ export const ProfileUser = () => {
                         <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
                         <div className="absolute inset-0 rounded-full animate-ping bg-green-500/40" />
                       </motion.div>
-                      <div className="flex items-center gap-3 uppercase font-onest">
+                      <div className="flex items-center gap-3 uppercase font-onest whitespace-pre">
                         <span className="font-semibold text-[14px] font-onest dark:text-white">
                           caja #{caja.consecutivo}
                         </span>

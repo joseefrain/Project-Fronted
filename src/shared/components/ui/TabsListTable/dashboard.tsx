@@ -7,8 +7,8 @@ export const ViewDashboard = () => {
   return (
     <div className="container mx-auto">
       <Tabs defaultValue="prductos">
-        <div className="container-TabsListTable ">
-          <TabsList className="container-TabsListTable__tabs">
+        <div className="container-TabsDasboard">
+          <TabsList className="container-TabsDasboard__tabs">
             <TabsTrigger
               className="text-[#ffffff] font-bold border-b-2 border-bg-gray-200 border-opacity-0 bg-black"
               value="prductos"
