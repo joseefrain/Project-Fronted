@@ -41,7 +41,7 @@
 }
 
 .typeCustomer {
-  @apply grid grid-cols-2 gap-8 md:grid-cols-1;
+  @apply grid grid-cols-2 gap-8;
 
   @media (max-width: 480px) {
     @apply grid-cols-1 gap-4;

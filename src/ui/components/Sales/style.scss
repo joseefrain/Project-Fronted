@@ -40,3 +40,75 @@
     @apply grid-cols-1 h-[20rem] max-h-[20rem];
   }
 }
+
+.containerModalReturn {
+  @apply w-full max-w-[96%] border-0 font-onest dark:bg-gray-800;
+
+  @media (max-width: 480px) {
+    @apply max-w-[58.7%];
+  }
+
+  @media (min-width: 375px) and (max-width: 400px) {
+    @apply w-[51.5%];
+  }
+}
+
+.containerModalCardContent {
+  @apply w-full;
+
+  //   @media (max-width: 480px) {
+  //     @apply w-[51.5%] max-w-[60%];
+  //   }
+
+  &__into {
+    @apply grid grid-cols-1 gap-4 mb-6 md:grid-cols-3;
+  }
+}
+
+.cardTitle {
+  @apply p-4 rounded-lg bg-primary/5;
+
+  @media (max-width: 767px) {
+    @apply flex flex-col items-center justify-center w-full;
+  }
+}
+
+.container-cardAlert {
+  @apply flex gap-8 mt-20;
+
+  @media (max-width: 480px) {
+    @apply w-full justify-center mt-4;
+  }
+
+  &__containerAlert {
+    @apply w-[50%] dark:bg-primary/5;
+
+    @media (max-width: 480px) {
+      @apply hidden;
+    }
+  }
+}
+
+.container-cashierModal {
+  @apply w-[50%] p-3 rounded-lg bg-sky-50 dark:bg-gray-300;
+
+  @media (max-width: 480px) {
+    @apply w-full;
+  }
+}
+
+.container-DialogContent {
+  @apply w-full max-w-[95%] md:max-w-[85%] lg:max-w-[75%] xl:max-w-[65%] p-4 sm:p-6 border-0 dark:bg-gray-800;
+
+  &__into {
+    @apply md:max-w-[95%] p-4 sm:p-6 pb-0 text-black rounded-t font-onest bg-gradient-to-b from-sky-50 to-white dark:from-gray-800;
+
+    @media (max-width: 480px) {
+      @apply w-[60%];
+    }
+
+    @media (min-width: 375px) and (max-width: 400px) {
+      @apply w-[51.5%] max-w-[58.5%];
+    }
+  }
+}
