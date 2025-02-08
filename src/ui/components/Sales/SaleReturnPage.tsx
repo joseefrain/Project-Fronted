@@ -297,7 +297,9 @@ export default function SalesReturnPage({
                       onChange={(e) =>
                         handleQuantityChange(
                           product,
-                          Number.parseInt(e.target.value)
+                          Number.parseInt(e.target.value) > product.quantity
+                            ? product.quantity
+                            : Number.parseInt(e.target.value)
                         )
                       }
                       className="w-24 text-center dark:border-white"
