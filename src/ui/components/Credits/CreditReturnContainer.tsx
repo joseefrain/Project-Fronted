@@ -8,31 +8,44 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../../../components/ui/dialog';
-import { ISale } from '../../../interfaces/salesInterfaces';
-import { useState } from 'react';
-import SalesReturnPage from './SaleReturnPage';
+import React, { useState } from 'react';
+import CreditReturnPage from './CreditReturnPage';
+import { ITransacionCredit } from '../../../interfaces/creditsInterfaces';
 
-export const SaleReturnContainer = ({ sale }: { sale: ISale }) => {
+export const CreditReturnContainer = ({
+  credit,
+}: {
+  credit: ITransacionCredit;
+}) => {
   const [showModal, setShowModal] = useState(false);
+
+  const handleOpenModal = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.stopPropagation();
+    setShowModal(true);
+  };
 
   return (
     <Dialog open={showModal} onOpenChange={setShowModal}>
       <DialogTrigger asChild>
-        <Button variant="default" size="sm">
+        <Button variant="default" size="sm" onClick={(e) => handleOpenModal(e)}>
           Devolución
           <Undo2 className="w-4 h-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-6xl p-0 border-0 dark:bg-gray-800">
+      <DialogContent className="flex flex-col max-w-6xl p-0 border-0 max-h-5/6 dark:bg-gray-800">
         <DialogHeader className="p-6 pb-0 text-black rounded-t font-onest bg-gradient-to-b from-sky-50 to-white dark:from-gray-800">
           <DialogTitle className="text-2xl font-bold dark:text-white">
-            Devolución de productos
+            Devolución de productos en crédito a{' '}
+            {credit.credito.modalidadCredito.toLowerCase()}s
           </DialogTitle>
           <DialogDescription className="text-black dark:text-white">
-            Gestione las devoluciones de productos de manera eficiente
+            Gestione las devoluciones de productos en crédito de manera
+            eficiente
           </DialogDescription>
         </DialogHeader>
-        <SalesReturnPage saleDetails={sale} setShowModal={setShowModal} />
+        <CreditReturnPage credit={credit} setShowModal={setShowModal} />
       </DialogContent>
     </Dialog>
   );
