@@ -13,6 +13,7 @@ import { roleReducer } from './slices/roleSlice';
 import { userReducer } from './slices/userSlice';
 import { coinsReducer } from './slices/coinsSlice';
 import { dashboardReducer } from './slices/dashboardSlice';
+import { workHoursReducer } from './slices/workHours';
 
 export const store = configureStore({
   reducer: {
@@ -29,6 +30,7 @@ export const store = configureStore({
     users: userReducer,
     coins: coinsReducer,
     dashboard: dashboardReducer,
+    workHours: workHoursReducer,
   },
 });
 
