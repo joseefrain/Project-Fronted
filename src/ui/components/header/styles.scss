@@ -1,5 +1,5 @@
 .container-header {
-  @apply flex items-center justify-between py-5 pl-4 pr-[2.8rem] bg-white dark:bg-gray-950;
+  @apply flex items-center justify-between pb-5 pl-4 pr-[2.8rem] bg-white dark:bg-gray-950;
 
   @media (max-width: 768px) {
     @apply flex-col pr-4;
