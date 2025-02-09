@@ -17,7 +17,7 @@ export const PurchaseSale = () => {
   const [productSale, setProductSale] = useState<IProductSale[]>([]);
 
   return (
-    <div className="container mx-auto h-[100vh]">
+    <div className="container mx-auto h-[85vh] max-sm:h-[135vh]">
       <Tabs defaultValue={access.create ? 'purchase' : 'purchase-history'}>
         <div className="flex flex-col items-center justify-between gap-4 mb-9 sm:flex-row sm:items-center">
           <h1 className="text-4xl font-bold text-gray-800 font-onest w-[38%] dark:text-white">

@@ -27,6 +27,10 @@ import { motion } from 'framer-motion';
 import './styles.scss';
 import { CashDrawer } from '../../../../ui/components/ModalCashRegister/index.tsx';
 import { formatNumber } from '../../../helpers/Branchs.tsx';
+import {
+  createRecordedHoursPatch,
+  exitRecordedHourPatch,
+} from '../../../../app/slices/workHours.ts';
 
 export const ProfileUser = () => {
   const selectedBranchFromLocalStorage = getSelectedBranchFromLocalStorage();
@@ -69,7 +73,24 @@ export const ProfileUser = () => {
   const handleLogout = async () => {
     try {
       store.dispatch(logout());
+      store.dispatch(exitRecordedHourPatch(user?._id ?? ''));
       navigate('/login');
+    } catch (error) {
+      console.error('Error trying to logout: ', error);
+    }
+  };
+
+  const hoursLocal = new Date();
+
+  const registerHour = async () => {
+    try {
+      store.dispatch(
+        createRecordedHoursPatch({
+          userId: user?._id ?? '',
+          date: hoursLocal,
+          hourEntry: hoursLocal,
+        })
+      );
     } catch (error) {
       console.error('Error trying to logout: ', error);
     }
@@ -215,7 +236,7 @@ export const ProfileUser = () => {
                   </span>
                 </div>
               </PopoverTrigger>
-              <PopoverContent className="w-22">
+              <PopoverContent className="w-22 flex flex-col items-center justify-center gap-3">
                 <Button
                   onClick={handleLogout}
                   variant="secondary"
@@ -223,6 +244,14 @@ export const ProfileUser = () => {
                 >
                   <DoorClosed className="w-4 h-4" />
                   Salir
+                </Button>
+                <Button
+                  onClick={registerHour}
+                  variant="secondary"
+                  className="font-onest"
+                >
+                  <DoorClosed className="w-4 h-4" />
+                  Registrar hora de entrada
                 </Button>
               </PopoverContent>
             </Popover>
