@@ -228,10 +228,14 @@ export default function SalesReturnPage({
   }, [userCashier]);
 
   return (
-    <Card className="w-full border-0 font-onest dark:bg-gray-800">
-      <CardContent>
-        <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-3">
-          <div className="p-4 rounded-lg bg-primary/5">
+    <Card className="containerModalReturn">
+      <CardContent
+        className="
+containerModalCardContent
+      "
+      >
+        <div className="containerModalCardContent__into">
+          <div className="cardTitle">
             <h3 className="font-semibold text-gray-700 dark:text-white">
               Realizada por
             </h3>
@@ -239,7 +243,7 @@ export default function SalesReturnPage({
               {saleDetails.username?.toUpperCase()}
             </p>
           </div>
-          <div className="p-4 rounded-lg bg-primary/5">
+          <div className="cardTitle">
             <h3 className="font-semibold text-gray-700 dark:text-white">
               Fecha
             </h3>
@@ -249,7 +253,7 @@ export default function SalesReturnPage({
                 : ''}
             </p>
           </div>
-          <div className="p-4 rounded-lg bg-primary/5">
+          <div className="cardTitle">
             <h3 className="font-semibold text-gray-700 dark:text-white">
               Total de la transacción
             </h3>
@@ -360,8 +364,11 @@ export default function SalesReturnPage({
           </Table>
         </div>
 
-        <div className="flex gap-8 mt-20">
-          <Alert variant="default" className="w-[50%] dark:bg-primary/5">
+        <div className="container-cardAlert">
+          <Alert
+            variant="default"
+            className="container-cardAlert__containerAlert"
+          >
             <AlertTitle className="flex items-center gap-2 font-semibold">
               <InfoIcon className="w-4 h-4 text-gray-600 dark:text-gray-100" />
               ¿Qué es un reajuste?
@@ -375,7 +382,7 @@ export default function SalesReturnPage({
             </AlertDescription>
           </Alert>
 
-          <div className="w-[50%] p-3 rounded-lg bg-sky-50 dark:bg-gray-300">
+          <div className="container-cashierModal">
             <div className="flex items-center justify-between">
               <span className="text-lg font-semibold text-blue-800">
                 Resumen de la devolución
