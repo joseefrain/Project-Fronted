@@ -26,6 +26,7 @@ import { PurchaseSale } from '../ui/components/Sales/indexPurchaseSale';
 import { ProductsCategories } from '../ui/components/Categories/ProductsCategories';
 import LoginForm from '@/ui/components/Login/LoginForm';
 import { ViewDashboard } from '../shared/components/ui/TabsListTable/dashboard';
+import PageWorkHours from '../ui/components/WorkHours';
 import { OutTime } from '../pages/OutTime';
 
 export const Router = () => {
@@ -282,6 +283,19 @@ export const Router = () => {
           element={
             <Layout>
               <CashRegister />
+            </Layout>
+          }
+        />
+      </Route>
+      <Route
+        path="/hours"
+        element={<RequireAuth module={PAGES_MODULES.HOURS} />}
+      >
+        <Route
+          path="/hours"
+          element={
+            <Layout>
+              <PageWorkHours />
             </Layout>
           }
         />

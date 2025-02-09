@@ -1,6 +1,7 @@
 import { IRole, IRolePrivilege, ROLE } from '../../interfaces/roleInterfaces';
 import {
   BadgeDollarSign,
+  ClockAlert,
   CreditCard,
   Group,
   House,
@@ -33,6 +34,7 @@ export enum PAGES_MODULES {
   CONTACTOS = 'CONTACTOS',
   ROLES = 'ROLES',
   CASHREGISTER = 'CASHREGISTER',
+  HOURS = 'HORARIOS',
 }
 
 export const getLevelValueLabel = (level: number) => {
@@ -163,6 +165,15 @@ export const DEFAULT_ROLE_PAGES: IRolePrivilege[] = [
       LEVEL_VALUES.DELETE,
     ],
   },
+  {
+    module: PAGES_MODULES.HOURS,
+    levels: [
+      LEVEL_VALUES.CREATE,
+      LEVEL_VALUES.READ,
+      LEVEL_VALUES.UPDATE,
+      LEVEL_VALUES.DELETE,
+    ],
+  },
 ];
 
 export const isUserWithAllAccess = (roles: IRole[]): boolean => {
@@ -279,6 +290,12 @@ export const sidebarLinks = [
     path: '/cashRegister',
     icon: <CreditCard />,
     module: PAGES_MODULES.CASHREGISTER,
+  },
+  {
+    name: 'HORARIOS',
+    path: '/hours',
+    icon: <ClockAlert />,
+    module: PAGES_MODULES.HOURS,
   },
 ];
 
