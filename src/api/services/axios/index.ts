@@ -21,6 +21,8 @@ export enum PATH_LIST {
   RecordedHours = 'daily-registers',
 }
 
+const OUT_TIME_RESPONSE = 'ya se ha cerrado la hora de trabajo';
+
 export const createAxiosInstance = (
   JWT: string | null,
   PATH: string
@@ -33,10 +35,32 @@ export const createAxiosInstance = (
     'Access-Control-Allow-Origin': '*',
   };
 
-  return axios.create({
+  const api = axios.create({
     baseURL,
     headers,
   });
+
+  // api.interceptors.request.use((error) => {
+  //   console.log('ERROR', error);
+
+  //   return error;
+  // });
+
+  api.interceptors.response.use(
+    (res) => res,
+    (error) => {
+      if (
+        error?.response?.data?.error &&
+        error?.response?.data?.error.includes(OUT_TIME_RESPONSE)
+      ) {
+        window.location.replace('/out-time');
+      }
+
+      return error;
+    }
+  );
+
+  return api;
 };
 
 export const createAxiosInstanceForTransaction = (
