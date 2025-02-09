@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,6 +10,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -30,6 +31,7 @@ import {
   removeProduct,
   updateProductsOriginal,
 } from '../../../app/slices/productsSlice';
+import { formatNumber } from '../../../shared/helpers/Branchs';
 
 interface ProductsTableProps {
   products: ITablaBranch[] | undefined;
@@ -85,6 +87,16 @@ const ProductsTable = ({
     }
   };
 
+  const total = products?.reduce((acc, product) => {
+    return acc + Number(product.costoUnitario.$numberDecimal);
+  }, 0);
+
+  const totalStock = products?.reduce((acc, product) => {
+    return acc + product.stock;
+  }, 0);
+
+  let totalCosto = (totalStock ?? 0) * (total ?? 0);
+
   return (
     <>
       <Table>
@@ -93,9 +105,11 @@ const ProductsTable = ({
             <TableHead>ID</TableHead>
             <TableHead>Nombre</TableHead>
             <TableHead className="text-start">Descripcion</TableHead>
-            <TableHead className="text-start">In Stock</TableHead>
             <TableHead className="text-start">Minimo Stock</TableHead>
+            <TableHead className="text-start">Stock</TableHead>
             <TableHead>Costo unitario</TableHead>
+            <TableHead className="text-start">Total</TableHead>
+
             <TableHead>Precio</TableHead>
             {(access.update || access.delete) && (
               <TableHead className="text-center">
@@ -120,10 +134,14 @@ const ProductsTable = ({
                   </Tooltip>
                 </TooltipProvider>
               </TableCell>
-              <TableCell>{product?.stock || '0'}</TableCell>
               <TableCell>{product?.puntoReCompra || '0'}</TableCell>
+              <TableCell>{product?.stock || '0'}</TableCell>
+
               <TableCell>
-                C$ {product.costoUnitario.$numberDecimal || '0'}
+                C$ {product?.costoUnitario?.$numberDecimal || '0'}
+              </TableCell>
+              <TableCell>
+                C$ {product.stock * product.costoUnitario.$numberDecimal}
               </TableCell>
               <TableCell>C${product.precio.$numberDecimal}</TableCell>
               {(access.update || access.delete) && (
@@ -161,6 +179,14 @@ const ProductsTable = ({
             </TableRow>
           ))}
         </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell colSpan={7}>Total</TableCell>
+            <TableCell className="text-right">
+              C$ {formatNumber(totalCosto)}
+            </TableCell>
+          </TableRow>
+        </TableFooter>
       </Table>
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent>
