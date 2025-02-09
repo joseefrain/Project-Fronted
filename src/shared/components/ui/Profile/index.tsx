@@ -103,7 +103,7 @@ export const ProfileUser = () => {
           <h1 className="m-auto text-xl font-bold uppercase font-onest">
             {user?.username}
           </h1>
-          <p className="justify-center w-full text-sm text-muted-foreground font-onest whitespace-pre">
+          <p className="justify-center w-full text-sm whitespace-pre text-muted-foreground font-onest">
             <span className="font-semibold text-[14px] font-onest text-black dark:text-white">
               {user?.role}-
             </span>
@@ -144,7 +144,7 @@ export const ProfileUser = () => {
                         <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
                         <div className="absolute inset-0 rounded-full animate-ping bg-green-500/40" />
                       </motion.div>
-                      <div className="flex items-center gap-3 uppercase font-onest whitespace-pre">
+                      <div className="flex items-center gap-3 uppercase whitespace-pre font-onest">
                         <span className="font-semibold text-[14px] font-onest dark:text-white">
                           caja #{caja.consecutivo}
                         </span>
@@ -159,10 +159,10 @@ export const ProfileUser = () => {
             ) : (
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="group relative rounded bg-background/50 px-3 py-2 shadow-sm transition-shadow h-[38px] max-sm:h-max hover:shadow-md border dark:border-gray-700 border-red-300 hover:cursor-pointer"
+                className="group relative rounded bg-background/50 px-3 py-2 shadow-sm transition-shadow h-[38px] max-sm:h-max hover:shadow-md border dark:border-gray-700 border-red-300 hover:cursor-pointer min-w-[115px]"
                 onClick={goToCashiers}
               >
-                <div className="flex items-center gap-3 max-sm:min-w-min w-full">
+                <div className="flex items-center w-full gap-3 max-sm:min-w-min">
                   <motion.div
                     initial={{ scale: 0.5 }}
                     animate={{ scale: 1 }}
@@ -172,8 +172,11 @@ export const ProfileUser = () => {
                     <div className="absolute inset-0 rounded-full animate-ping bg-green-500/40" />
                   </motion.div>
                   <div className="flex items-center gap-3 uppercase font-onest">
-                    <span className="font-semibold text-[14px] font-onest text-red-500 dark:text-white">
+                    <span className="hidden md:flex font-semibold text-[14px] font-onest text-red-500 dark:text-white">
                       No hay caja abierta
+                    </span>
+                    <span className="flex md:hidden font-semibold text-[14px] font-onest text-red-500 dark:text-white">
+                      Sin caja
                     </span>
                   </div>
                 </div>
