@@ -18,17 +18,21 @@ export const SaleReturnContainer = ({ sale }: { sale: ISale }) => {
   return (
     <Dialog open={showModal} onOpenChange={setShowModal}>
       <DialogTrigger asChild>
-        <Button variant="default" size="sm">
+        <Button
+          variant="default"
+          size="sm"
+          className="flex items-center gap-2 px-3 py-2 text-sm md:text-base md:px-4 md:py-2"
+        >
           Devolver
-          <Undo2 className="w-4 h-4" />
+          <Undo2 className="w-4 h-4 md:w-5 md:h-5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-6xl p-0 border-0 dark:bg-gray-800">
-        <DialogHeader className="p-6 pb-0 text-black rounded-t font-onest bg-gradient-to-b from-sky-50 to-white dark:from-gray-800">
-          <DialogTitle className="text-2xl font-bold dark:text-white">
+      <DialogContent className="container-DialogContent">
+        <DialogHeader className="container-DialogContent__into">
+          <DialogTitle className="text-lg sm:text-xl md:text-2xl font-bold dark:text-white">
             Devolución de productos
           </DialogTitle>
-          <DialogDescription className="text-black dark:text-white">
+          <DialogDescription className="text-sm sm:text-base text-black dark:text-white">
             Gestione las devoluciones de productos de manera eficiente
           </DialogDescription>
         </DialogHeader>
