@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
   TableBody,
   TableCell,
+  // TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -20,13 +21,6 @@ import {
   CheckCircleIcon,
   InfoIcon,
 } from 'lucide-react';
-import {
-  IProductReturn,
-  IProductSale,
-  ISale,
-  ITransactionReturn,
-} from '../../../interfaces/salesInterfaces';
-import { getFormatedDate } from '../../../shared/helpers/transferHelper';
 import { useAppSelector } from '../../../app/hooks';
 import { toast, Toaster } from 'sonner';
 import {
@@ -39,19 +33,26 @@ import {
   ICajaBrach,
   updateCashAmount,
 } from '../../../app/slices/cashRegisterSlice';
-import { store } from '../../../app/store';
-import { createSaleReturn } from '../../../app/slices/salesSlice';
+import { ITransacionCredit } from '../../../interfaces/creditsInterfaces';
+import { getFormatedDate } from '../../../shared/helpers/transferHelper';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '../../../components/ui/popover';
+import {
+  IProductReturn,
+  IProductSale,
+  ITransactionReturn,
+} from '../../../interfaces/salesInterfaces';
+import { store } from '../../../app/store';
+import { createCreditReturn } from '../../../app/slices/credits';
 
-export default function SalesReturnPage({
-  saleDetails,
+export default function CreditReturnPage({
+  credit,
   setShowModal,
 }: {
-  saleDetails: ISale;
+  credit: ITransacionCredit;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const userId = useAppSelector((state) => state.auth.signIn.user?._id);
@@ -89,7 +90,7 @@ export default function SalesReturnPage({
 
     if (product.discount && quantity > 0 && newQuantity > 0) {
       const hasActiveDiscount = isDiscountApplied(
-        saleDetails.sucursalId,
+        credit.transaccion.sucursalId,
         quantity,
         product
       );
@@ -109,7 +110,10 @@ export default function SalesReturnPage({
   };
 
   const calculateTotalReturn = () => {
-    return saleDetails.products.reduce(
+    const currentBalanceDue =
+      credit?.credito?.saldoPendiente?.$numberDecimal ?? 0;
+
+    const totalReturn = credit.transaccion.products.reduce(
       (acc, product) => {
         let productPrice = product.price;
 
@@ -133,6 +137,11 @@ export default function SalesReturnPage({
       },
       { total: 0, subtotal: 0, reajuste: 0 }
     );
+
+    return {
+      ...totalReturn,
+      balanceDue: Number(currentBalanceDue) - totalReturn.total,
+    };
   };
 
   const totalReturn = calculateTotalReturn();
@@ -143,14 +152,13 @@ export default function SalesReturnPage({
       toast.error(NO_CASHIER_OPEN);
       return;
     }
-
     const formattedProducts: IProductReturn[] = [];
     for (const [key, value] of Object.entries(returnQuantities)) {
-      const product = saleDetails.products.find((p) => p.productId === key);
+      const product = credit.transaccion.products.find(
+        (p) => p.productId === key
+      );
       if (!product) break;
-
       const newQuantity = product.quantity - value.quantity;
-
       if (!product.discount || newQuantity === 0) {
         formattedProducts.push({
           productId: key,
@@ -159,35 +167,31 @@ export default function SalesReturnPage({
         });
         break;
       }
-
       const hasActiveDiscount = isDiscountApplied(
-        saleDetails.sucursalId,
+        credit.transaccion.sucursalId,
         value.quantity,
         product
       );
-
       formattedProducts.push({
         productId: key,
         quantity: value.quantity,
         discountApplied: hasActiveDiscount,
       });
     }
-
     const saleReturn: ITransactionReturn = {
       cajaId: cashRegister.id ?? '',
-      trasaccionOrigenId: saleDetails.id ?? '',
+      trasaccionOrigenId: credit.transaccion.id ?? '',
       userId: userId ?? '',
       monto: needsExtraCash
         ? Number(cashRegister.cash.toFixed(2))
         : Number(totalReturn.total.toFixed(2)),
       montoExterno: needsExtraCash ? extraCash : undefined,
       products: formattedProducts,
-      tipoTransaccion: saleDetails.tipoTransaccion,
-      balanceDue: 0,
+      tipoTransaccion: credit.transaccion.tipoTransaccion,
+      balanceDue: totalReturn.balanceDue,
     };
-
     const request = store
-      .dispatch(createSaleReturn(saleReturn))
+      .dispatch(createCreditReturn(saleReturn))
       .unwrap()
       .catch(() => {
         setReturnProccessing(false);
@@ -200,18 +204,52 @@ export default function SalesReturnPage({
             amount: res.caja.montoEsperado.$numberDecimal,
           })
         );
-
         setTimeout(() => {
           setShowModal(false);
         }, 500);
       });
-
     toast.promise(request, {
       loading: 'Procesando...',
       success: 'Devolución procesada exitosamente',
       error: 'Error al procesar la devolución',
     });
   };
+
+  const paymentCredit = useMemo(() => {
+    if (credit.credito?.modalidadCredito === 'PAGO') {
+      if (credit.credito?.cuotasCredito!.length <= 0) return;
+
+      return credit.credito?.cuotasCredito[
+        credit.credito?.cuotasCredito.length - 1
+      ];
+    }
+  }, [credit]);
+
+  const installmentCredit = useMemo(() => {
+    if (credit.credito?.modalidadCredito === 'PLAZO') {
+      const cuotasTotales = credit.credito?.cuotasCredito.length;
+      const cuotasPagadas =
+        credit.credito?.cuotasCredito.filter(
+          (pago) => pago.estadoPago === 'PAGADO'
+        ).length ?? 0;
+      const fechaSiguienteCuota = credit.credito?.cuotasCredito.find(
+        (pago) => pago.estadoPago === 'PENDIENTE'
+      );
+      const cuotasRestantes = cuotasTotales - cuotasPagadas;
+      const montoCuota =
+        totalReturn.balanceDue < 0
+          ? 0
+          : totalReturn.balanceDue / cuotasRestantes;
+
+      return {
+        cuotasTotales,
+        cuotasPagadas,
+        fechaSiguienteCuota,
+        cuotasRestantes,
+        montoCuota,
+      };
+    }
+  }, [credit, totalReturn.balanceDue]);
 
   useEffect(() => {
     if (!userCashier) {
@@ -228,37 +266,41 @@ export default function SalesReturnPage({
   }, [userCashier]);
 
   return (
-    <Card className="containerModalReturn">
-      <CardContent
-        className="
-containerModalCardContent
-      "
-      >
-        <div className="containerModalCardContent__into">
-          <div className="cardTitle">
+    <Card className="w-full border-0 font-onest dark:bg-gray-800">
+      <CardContent>
+        <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-4">
+          <div className="p-4 rounded-lg bg-primary/5">
             <h3 className="font-semibold text-gray-700 dark:text-white">
               Realizada por
             </h3>
             <p className="text-xl font-bold text-green-800 truncate dark:text-green-500">
-              {saleDetails.username?.toUpperCase()}
+              {credit.credito.transaccionId.usuarioId.username?.toUpperCase()}
             </p>
           </div>
-          <div className="cardTitle">
+          <div className="p-4 rounded-lg bg-primary/5">
             <h3 className="font-semibold text-gray-700 dark:text-white">
               Fecha
             </h3>
             <p className="text-xl font-bold text-green-800 dark:text-green-500">
-              {saleDetails.fechaRegistro
-                ? getFormatedDate(saleDetails.fechaRegistro)
+              {credit.credito.fechaVencimiento
+                ? getFormatedDate(credit.credito.fechaVencimiento)
                 : ''}
             </p>
           </div>
-          <div className="cardTitle">
+          <div className="p-4 rounded-lg bg-primary/5">
             <h3 className="font-semibold text-gray-700 dark:text-white">
-              Total de la transacción
+              Total de crédito
             </h3>
             <p className="text-xl font-bold text-green-800 dark:text-green-500">
-              C${saleDetails.total}
+              C${credit.credito.saldoCredito.$numberDecimal}
+            </p>
+          </div>
+          <div className="p-4 rounded-lg bg-primary/5">
+            <h3 className="font-semibold text-gray-700 dark:text-white">
+              Saldo pendiente
+            </h3>
+            <p className="text-xl font-bold text-green-800 truncate dark:text-green-500">
+              C${credit.credito.saldoPendiente.$numberDecimal}
             </p>
           </div>
         </div>
@@ -285,7 +327,7 @@ containerModalCardContent
               </TableRow>
             </TableHeader>
             <TableBody>
-              {saleDetails.products.map((product) => (
+              {credit.transaccion.products.map((product) => (
                 <TableRow key={product.productId}>
                   <TableCell className="font-medium">
                     {product.productName}
@@ -364,16 +406,13 @@ containerModalCardContent
           </Table>
         </div>
 
-        <div className="container-cardAlert">
-          <Alert
-            variant="default"
-            className="container-cardAlert__containerAlert"
-          >
+        <div className="flex gap-8 mt-20">
+          <Alert variant="default" className="w-[33%] dark:bg-primary/5">
             <AlertTitle className="flex items-center gap-2 font-semibold">
               <InfoIcon className="w-4 h-4 text-gray-600 dark:text-gray-100" />
               ¿Qué es un reajuste?
             </AlertTitle>
-            <AlertDescription className="text-gray-600 dark:text-gray-400">
+            <AlertDescription className="text-justify text-gray-600 dark:text-gray-400">
               Si debido a una devolución, un descuento aplicado originalmente
               deja de ser válido o actualiza el monto de descuento basado en el
               porcentaje, genera un reajuste en los productos restantes, lo que
@@ -382,8 +421,91 @@ containerModalCardContent
             </AlertDescription>
           </Alert>
 
-          <div className="container-cashierModal">
-            <div className="flex items-center justify-between">
+          {credit.credito.modalidadCredito === 'PAGO' ? (
+            <div className="w-[40%] p-3 rounded-lg bg-gradient-to-b from-sky-50 dark:bg-gray-300 shadow-md">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-lg font-semibold text-black">
+                  Actualización de crédito
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-black">
+                <span>Saldo pendiente:</span>
+                <span className="px-2 w-[30%] flex items-center justify-between">
+                  C${' '}
+                  <span>
+                    {totalReturn.balanceDue <= 0
+                      ? '0.00'
+                      : totalReturn.balanceDue.toFixed(2)}
+                  </span>
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-black">
+                <span>Monto mínimo de pago (20%):</span>
+                <span className="px-2 w-[30%] flex items-center justify-between">
+                  C${' '}
+                  <span>
+                    {totalReturn.balanceDue <= 0
+                      ? '0.00'
+                      : (totalReturn.balanceDue * 0.2).toFixed(2)}
+                  </span>
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-black">
+                <span>Fecha próximo pago:</span>
+                <span className="w-[50%] flex items-center justify-end px-2">
+                  {paymentCredit
+                    ? getFormatedDate(paymentCredit.fechaVencimiento)
+                    : '-'}
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="w-[40%] p-3 rounded-lg bg-gradient-to-b from-sky-50 dark:bg-gray-300 shadow-md">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-lg font-semibold text-black">
+                  Actualización de crédito
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-black">
+                <span>Saldo pendiente:</span>
+                <span className="px-2 w-[30%] flex items-center justify-between">
+                  C${' '}
+                  <span>
+                    {totalReturn.balanceDue <= 0
+                      ? '0.00'
+                      : totalReturn.balanceDue.toFixed(2)}
+                  </span>
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-black">
+                <span>Fecha próximo pago:</span>
+                <span className="w-[50%] flex items-center justify-end px-2">
+                  {installmentCredit?.fechaSiguienteCuota?.fechaVencimiento
+                    ? getFormatedDate(
+                        installmentCredit?.fechaSiguienteCuota.fechaVencimiento
+                      )
+                    : '-'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-black">
+                <span>Cuotas restantes:</span>
+                <span className="w-[50%] flex items-center justify-end px-2">
+                  {totalReturn.balanceDue <= 0
+                    ? '-'
+                    : installmentCredit?.cuotasRestantes}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-black">
+                <span>Monto de cuota:</span>
+                <span className="w-[50%] flex items-center justify-end px-2">
+                  {installmentCredit?.montoCuota.toFixed(2)}
+                </span>
+              </div>
+            </div>
+          )}
+
+          <div className="w-[26%] p-3 rounded-lg bg-sky-50 dark:bg-gray-300 shadow-md">
+            <div className="flex items-center justify-between mb-3">
               <span className="text-lg font-semibold text-blue-800">
                 Resumen de la devolución
               </span>

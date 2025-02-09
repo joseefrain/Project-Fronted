@@ -4,12 +4,13 @@ import { IEntities } from './entitiesInterfaces';
 import {
   IPaymentMethod,
   IProductSale,
+  ISale,
   ITypeTransaction,
 } from './salesInterfaces';
 
 export interface ICreditsState {
   creditSelected: ICredit | null;
-  credits: ICredit[];
+  credits: ITransacionCredit[];
   status: IStatus;
   error: string | null;
 }
@@ -75,4 +76,9 @@ export interface IPostPagoCredito {
   montoPago: number;
   modalidadCredito: ModalidadCredito;
   cajaId: string;
+}
+
+export interface ITransacionCredit {
+  credito: ICredit;
+  transaccion: ISale;
 }

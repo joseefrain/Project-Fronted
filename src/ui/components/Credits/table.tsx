@@ -6,22 +6,28 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Pencil } from 'lucide-react';
+import { Eye, Pencil } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ICredit } from '../../../interfaces/creditsInterfaces';
+import { ITransacionCredit } from '../../../interfaces/creditsInterfaces';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import { Button } from '../../../components/ui/button';
+import { CreditReturnContainer } from './CreditReturnContainer';
 
 interface ProductsTableProps {
-  currentItems: ICredit[];
+  currentItems: ITransacionCredit[];
+  filterType: string;
 }
 
-export const TablaCredits = ({ currentItems }: ProductsTableProps) => {
+export const TablaCredits = ({
+  currentItems,
+  filterType,
+}: ProductsTableProps) => {
   const navigate = useNavigate();
   const access = useRoleAccess(PAGES_MODULES.CREDITOS);
 
-  const handleSelectEntity = (entity: ICredit) => {
-    navigate(`/credits/${entity._id}`);
+  const handleSelectEntity = (entity: ITransacionCredit) => {
+    navigate(`/credits/${entity.credito._id}`);
   };
 
   return (
@@ -41,31 +47,39 @@ export const TablaCredits = ({ currentItems }: ProductsTableProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {currentItems?.map((product) => (
-            <TableRow
-              key={product._id ?? ''}
-              onClick={() => handleSelectEntity(product)}
-            >
+          {currentItems?.map((item) => (
+            <TableRow key={item.credito._id ?? ''}>
               <TableCell className="font-medium">
-                {product?.transaccionId.usuarioId.username ?? ''}
+                {item.credito?.transaccionId.usuarioId.username ?? ''}
               </TableCell>
               <TableCell className="font-medium">
-                {product?.entidadId.generalInformation.name ?? ''}
+                {item.credito?.entidadId.generalInformation.name ?? ''}
               </TableCell>
-              <TableCell>{product.modalidadCredito}</TableCell>
+              <TableCell>{item.credito.modalidadCredito}</TableCell>
               <TableCell
-                className={`${product.estadoCredito === 'ABIERTO' ? 'text-blue-500' : ''}`}
+                className={`${item.credito.estadoCredito === 'ABIERTO' ? 'text-blue-500' : ''}`}
               >
-                {product.estadoCredito}
+                {item.credito.estadoCredito}
               </TableCell>
               {access.update && (
-                <TableCell>
-                  <div
-                    onClick={() => handleSelectEntity(product)}
+                <TableCell className="flex items-center justify-center gap-2">
+                  <Button
+                    onClick={() => handleSelectEntity(item)}
                     className="flex items-center justify-center"
+                    variant={filterType === 'historial' ? 'outline' : 'default'}
+                    size="sm"
                   >
-                    <Pencil className="w-4 h-4 mr-2 cursor-pointer" />
-                  </div>
+                    {filterType === 'historial' ? (
+                      <>
+                        <Eye className="w-2 h-2 cursor-pointer" /> Ver
+                      </>
+                    ) : (
+                      <>
+                        <Pencil className="w-2 h-2 cursor-pointer" /> Pagar
+                      </>
+                    )}
+                  </Button>
+                  <CreditReturnContainer credit={item} />
                 </TableCell>
               )}
             </TableRow>

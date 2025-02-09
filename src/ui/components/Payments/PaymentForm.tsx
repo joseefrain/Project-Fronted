@@ -13,6 +13,8 @@ import { toast, Toaster } from 'sonner';
 import { Banknote } from 'lucide-react';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import { useAppSelector } from '../../../app/hooks';
+import { updateCashAmount } from '../../../app/slices/cashRegisterSlice';
 
 interface PaymentFormProps {
   creditSelected: ICredit | null;
@@ -20,18 +22,37 @@ interface PaymentFormProps {
 
 export function PaymentForm({ creditSelected }: PaymentFormProps) {
   const access = useRoleAccess(PAGES_MODULES.CREDITOS);
+
+  const user = store.getState().auth.signIn.user;
+  const caja = useAppSelector((state) => state.boxes.BoxesData);
+  const userCashierList = caja?.filter((c) => {
+    const usuarioId =
+      typeof c.usuarioAperturaId === 'string'
+        ? c.usuarioAperturaId
+        : c.usuarioAperturaId?._id;
+
+    return usuarioId === user?._id && c.estado?.toUpperCase() === 'ABIERTA';
+  });
+  const userCashier =
+    userCashierList && userCashierList.length > 0 ? userCashierList[0] : null;
+
   const [amount, setAmount] = useState<number>(0.0);
   const [processingSale, setProcessingSale] = useState(false);
 
   const creditoPagado = creditSelected?.estadoCredito === 'CERRADO';
 
   const handleSubmit = () => {
+    if (!userCashier) {
+      toast.error('Debe abrir una caja para procesar la venta.');
+      return;
+    }
+
     setProcessingSale(true);
     const data: IPostPagoCredito = {
       creditoIdStr: creditSelected?._id ?? '',
       montoPago: amount,
       modalidadCredito: creditSelected?.modalidadCredito ?? 'PLAZO',
-      cajaId: "678dc99686f66b97352366d7"
+      cajaId: userCashier._id,
     };
 
     const request = store
@@ -42,9 +63,15 @@ export function PaymentForm({ creditSelected }: PaymentFormProps) {
         return Promise.reject();
       })
       .then(() => {
+        store.dispatch(
+          updateCashAmount({
+            cajaId: userCashier._id ?? '',
+            amount: Number(userCashier.montoEsperado.$numberDecimal) + amount,
+          })
+        );
+
         setTimeout(() => {
           setProcessingSale(false);
-          creditSelected?.modalidadCredito === 'PAGO' && setAmount(0);
         }, 500);
       });
 
