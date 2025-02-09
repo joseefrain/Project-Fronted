@@ -268,7 +268,7 @@ export default function CreditReturnPage({
   return (
     <Card className="w-full border-0 font-onest dark:bg-gray-800">
       <CardContent>
-        <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-4">
+        <div className="flex flex-col grid-cols-1 gap-4 mb-6 md:grid md:grid-cols-4">
           <div className="p-4 rounded-lg bg-primary/5">
             <h3 className="font-semibold text-gray-700 dark:text-white">
               Realizada por
@@ -406,8 +406,11 @@ export default function CreditReturnPage({
           </Table>
         </div>
 
-        <div className="flex gap-8 mt-20">
-          <Alert variant="default" className="w-[33%] dark:bg-primary/5">
+        <div className="flex flex-col gap-5 mt-5 md:gap-8 md:mt-20 md:flex-row">
+          <Alert
+            variant="default"
+            className="w-full md:w-[33%] dark:bg-primary/5"
+          >
             <AlertTitle className="flex items-center gap-2 font-semibold">
               <InfoIcon className="w-4 h-4 text-gray-600 dark:text-gray-100" />
               ¿Qué es un reajuste?
@@ -422,7 +425,7 @@ export default function CreditReturnPage({
           </Alert>
 
           {credit.credito.modalidadCredito === 'PAGO' ? (
-            <div className="w-[40%] p-3 rounded-lg bg-gradient-to-b from-sky-50 dark:bg-gray-300 shadow-md">
+            <div className="w-full md:w-[40%] p-3 rounded-lg bg-gradient-to-b from-sky-50 dark:bg-gray-300 shadow-md">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-lg font-semibold text-black">
                   Actualización de crédito
@@ -460,7 +463,7 @@ export default function CreditReturnPage({
               </div>
             </div>
           ) : (
-            <div className="w-[40%] p-3 rounded-lg bg-gradient-to-b from-sky-50 dark:bg-gray-300 shadow-md">
+            <div className="w-full md:w-[40%] p-3 rounded-lg bg-gradient-to-b from-sky-50 dark:bg-gray-300 shadow-md">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-lg font-semibold text-black">
                   Actualización de crédito
@@ -504,7 +507,7 @@ export default function CreditReturnPage({
             </div>
           )}
 
-          <div className="w-[26%] p-3 rounded-lg bg-sky-50 dark:bg-gray-300 shadow-md">
+          <div className="w-full md:w-[26%] p-3 rounded-lg bg-sky-50 dark:bg-gray-300 shadow-md">
             <div className="flex items-center justify-between mb-3">
               <span className="text-lg font-semibold text-blue-800">
                 Resumen de la devolución
@@ -536,14 +539,14 @@ export default function CreditReturnPage({
           <div className="flex items-center justify-center w-full">
             <Alert
               variant="destructive"
-              className="flex w-full mt-4 dark:bg-gray-200 dark:border-red-500"
+              className="flex flex-col w-full mt-4 md:flex-row dark:bg-gray-200 dark:border-red-500"
             >
-              <div className="w-[80%]">
+              <div className="w-full md:w-[80%]">
                 <AlertTitle className="flex items-center gap-2 dark:text-red-500">
                   <AlertTriangleIcon className="w-4 h-4" />
                   Advertencia
                 </AlertTitle>
-                <AlertDescription className="w-[90%] dark:text-red-500">
+                <AlertDescription className="w-full md:w-[90%] dark:text-red-500">
                   No hay suficiente dinero en caja para cubrir la devolución. Se
                   necesitan{' '}
                   <span className="font-bold">
@@ -553,7 +556,7 @@ export default function CreditReturnPage({
                   continuar.
                 </AlertDescription>
               </div>
-              <div>
+              <div className="mt-3 md:mt-0">
                 <Label
                   htmlFor="extraCash"
                   className="font-semibold dark:text-red-500"
@@ -581,7 +584,7 @@ export default function CreditReturnPage({
 
                       setExtraCash(Number.parseFloat(e.target.value));
                     }}
-                    className="w-40 mr-2 text-black"
+                    className="w-full mr-2 text-black md:w-40"
                     disabled={returnProccessing}
                   />
                 </div>
@@ -593,7 +596,7 @@ export default function CreditReturnPage({
         <div className="flex justify-end mt-8">
           <Button
             onClick={handleReturn}
-            className="px-8 py-5 font-semibold uppercase disabled:bg-gray-200 dark:disabled:bg-gray-900 disabled:cursor-not-allowed disabled:text-gray-800 dark:disabled:text-gray-200 dark:bg-white"
+            className="w-full px-8 py-5 font-semibold uppercase md:w-auto disabled:bg-gray-200 dark:disabled:bg-gray-900 disabled:cursor-not-allowed disabled:text-gray-800 dark:disabled:text-gray-200 dark:bg-white"
             disabled={
               totalReturn.total === 0 ||
               cashRegister.cash + extraCash < totalReturn.total ||

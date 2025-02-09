@@ -27,6 +27,7 @@ import { ProductsCategories } from '../ui/components/Categories/ProductsCategori
 import LoginForm from '@/ui/components/Login/LoginForm';
 import { ViewDashboard } from '../shared/components/ui/TabsListTable/dashboard';
 import PageWorkHours from '../ui/components/WorkHours';
+import { OutTime } from '../pages/OutTime';
 
 export const Router = () => {
   return (
@@ -298,6 +299,10 @@ export const Router = () => {
             </Layout>
           }
         />
+      </Route>
+
+      <Route path="/out-time">
+        <Route path="/out-time" element={<OutTime />} />
       </Route>
 
       <Route path="/404" element={<Page404 />} />

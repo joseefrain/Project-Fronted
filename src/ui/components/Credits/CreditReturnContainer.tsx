@@ -34,11 +34,10 @@ export const CreditReturnContainer = ({
           <Undo2 className="w-4 h-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="flex flex-col max-w-6xl p-0 border-0 max-h-5/6 dark:bg-gray-800">
+      <DialogContent className="rounded overflow-auto max-h-[90vh] flex flex-col p-0 border-0 max-w-[95%] md:max-w-6xl md:max-h-5/6 dark:bg-gray-800">
         <DialogHeader className="p-6 pb-0 text-black rounded-t font-onest bg-gradient-to-b from-sky-50 to-white dark:from-gray-800">
           <DialogTitle className="text-2xl font-bold dark:text-white">
-            Devolución de productos en crédito a{' '}
-            {credit.credito.modalidadCredito.toLowerCase()}s
+            Devolución de productos
           </DialogTitle>
           <DialogDescription className="text-black dark:text-white">
             Gestione las devoluciones de productos en crédito de manera
