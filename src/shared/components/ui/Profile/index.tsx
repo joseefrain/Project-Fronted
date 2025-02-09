@@ -7,7 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { DoorClosed, Store, User } from 'lucide-react';
+import { Check, DoorClosed, Store, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchBranches } from '../../../../app/slices/branchSlice';
@@ -30,7 +30,15 @@ import { formatNumber } from '../../../helpers/Branchs.tsx';
 import {
   createRecordedHoursPatch,
   exitRecordedHourPatch,
+  getRecordedHoursPatch,
 } from '../../../../app/slices/workHours.ts';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from '../../../../components/ui/dialog.tsx';
 
 export const ProfileUser = () => {
   const selectedBranchFromLocalStorage = getSelectedBranchFromLocalStorage();
@@ -73,24 +81,7 @@ export const ProfileUser = () => {
   const handleLogout = async () => {
     try {
       store.dispatch(logout());
-      store.dispatch(exitRecordedHourPatch(user?._id ?? ''));
       navigate('/login');
-    } catch (error) {
-      console.error('Error trying to logout: ', error);
-    }
-  };
-
-  const hoursLocal = new Date();
-
-  const registerHour = async () => {
-    try {
-      store.dispatch(
-        createRecordedHoursPatch({
-          userId: user?._id ?? '',
-          date: hoursLocal,
-          hourEntry: hoursLocal,
-        })
-      );
     } catch (error) {
       console.error('Error trying to logout: ', error);
     }
@@ -115,6 +106,77 @@ export const ProfileUser = () => {
   useEffect(() => {
     store.dispatch(fetchBranches()).unwrap();
   }, []);
+
+  const formatDate = (date: Date) =>
+    date
+      .toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      })
+      .replace(/\//g, '-');
+
+  const today = new Date();
+  const returnStartDate = new Date(today);
+  const returnEndDate = new Date(today);
+
+  returnStartDate.setDate(returnStartDate.getDate() - 1);
+  returnEndDate.setDate(returnEndDate.getDate() + 1);
+
+  const dataSend = {
+    startDate: formatDate(returnStartDate),
+    endDate: formatDate(returnEndDate),
+    sucursalId: user?.sucursalId?._id ?? '',
+  };
+
+  useEffect(() => {
+    store.dispatch(getRecordedHoursPatch(dataSend)).unwrap();
+  }, [user?.sucursalId?._id ?? '']);
+  const dataWorkHours = useAppSelector(
+    (state) => state.workHours.recordedHours
+  );
+  const hoursInit = dataWorkHours?.map((e) => e.startWork.split('T')[0]);
+  //   console.log(hoursInit);
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [isExitRegister, setIsExitRegister] = useState(false);
+  const [hoursLocal] = useState(new Date());
+  const [, setIsOpenDialog] = useState(false);
+
+  const [error, setError] = useState(null); // Estado para manejar errores
+
+  // Manejo para confirmar la entrada
+  const handleConfirmRegister = async () => {
+    try {
+      await store.dispatch(
+        createRecordedHoursPatch({
+          userId: user?._id ?? '',
+          date: hoursLocal,
+          hourEntry: hoursLocal,
+        })
+      );
+      setIsRegistered(true); // Solo cambia el estado si la petición fue exitosa
+      setError(null); // Limpiar cualquier error previo
+      setIsOpenDialog(false); // Cierra el modal después de confirmar
+    } catch (error) {
+      console.error('Error trying to register hour: ', error);
+      setError(null); // Reset error state to null
+      setIsOpenDialog(false); // Close modal if desired
+    }
+  };
+
+  // Manejo para confirmar la salida
+  const handleExitRegister = async () => {
+    try {
+      await store.dispatch(exitRecordedHourPatch(user?._id ?? ''));
+      setIsExitRegister(true); // Solo cambia el estado si la petición fue exitosa
+      setError(null); // Limpiar cualquier error previo
+      setIsOpenDialog(false); // Cierra el modal después de confirmar
+    } catch (error) {
+      console.error('Error trying to exit register hour: ', error);
+      setError(null);
+      setIsOpenDialog(false); // Puedes cerrar el modal también si lo deseas
+    }
+  };
 
   return (
     <>
@@ -242,14 +304,62 @@ export const ProfileUser = () => {
                   <DoorClosed className="w-4 h-4" />
                   Salir
                 </Button>
-                <Button
-                  onClick={registerHour}
-                  variant="secondary"
-                  className="font-onest"
-                >
-                  <DoorClosed className="w-4 h-4" />
-                  Registrar hora de entrada
-                </Button>
+
+                {/* Botón para Marcar entrada o salida */}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      className={`font-onest border-2 ${isRegistered ? 'border-green-500' : isExitRegister ? 'border-red-500' : 'border-gray-500'}`}
+                      onClick={() => setIsOpenDialog(true)} // Solo abre el modal, no ejecuta la acción
+                    >
+                      <Check className="w-4 h-4" />
+                      {isRegistered ? 'Marcar salida' : 'Marcar entrada'}
+                    </Button>
+                  </DialogTrigger>
+
+                  {/* Dialogo de confirmación */}
+                  <DialogContent>
+                    <DialogHeader>
+                      <h2 className="text-lg font-semibold">
+                        {isRegistered
+                          ? 'Confirmar salida'
+                          : 'Confirmar entrada'}
+                      </h2>
+                    </DialogHeader>
+                    <p className="mb-4">
+                      Hora actual: {hoursLocal.toLocaleTimeString()}
+                    </p>
+
+                    {/* Mostrar el mensaje de error, si hay */}
+                    {error && <p className="text-red-500">{error}</p>}
+
+                    <DialogFooter>
+                      <Button
+                        onClick={
+                          isRegistered
+                            ? handleExitRegister
+                            : handleConfirmRegister
+                        } // Solo realiza la acción cuando se confirma
+                        disabled={isRegistered && isExitRegister}
+                      >
+                        {isRegistered
+                          ? 'Confirmar salida'
+                          : 'Confirmar entrada'}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setIsRegistered(false);
+                          setIsExitRegister(false);
+                          setIsOpenDialog(false); // Cierra el modal
+                        }}
+                      >
+                        Cancelar
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </PopoverContent>
             </Popover>
           </div>
