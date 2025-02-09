@@ -23,16 +23,16 @@ export const SaleReturnContainer = ({ sale }: { sale: ISale }) => {
           size="sm"
           className="flex items-center gap-2 px-3 py-2 text-sm md:text-base md:px-4 md:py-2"
         >
-          Devolver
+          Devolución
           <Undo2 className="w-4 h-4 md:w-5 md:h-5" />
         </Button>
       </DialogTrigger>
       <DialogContent className="container-DialogContent">
         <DialogHeader className="container-DialogContent__into">
-          <DialogTitle className="text-lg sm:text-xl md:text-2xl font-bold dark:text-white">
+          <DialogTitle className="text-lg font-bold sm:text-xl md:text-2xl dark:text-white">
             Devolución de productos
           </DialogTitle>
-          <DialogDescription className="text-sm sm:text-base text-black dark:text-white">
+          <DialogDescription className="text-sm text-black sm:text-base dark:text-white">
             Gestione las devoluciones de productos de manera eficiente
           </DialogDescription>
         </DialogHeader>

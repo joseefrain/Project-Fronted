@@ -32,13 +32,13 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
 
   const filteredProducts = Credits.filter((credit) =>
     filterType === 'historial'
-      ? credit.estadoCredito === 'CERRADO'
+      ? credit.credito.estadoCredito === 'CERRADO'
       : filterType === 'all'
-        ? credit.estadoCredito === 'ABIERTO'
-        : credit.modalidadCredito === filterType.toUpperCase() &&
-          credit.estadoCredito === 'ABIERTO'
+        ? credit.credito.estadoCredito === 'ABIERTO'
+        : credit.credito.modalidadCredito === filterType.toUpperCase() &&
+          credit.credito.estadoCredito === 'ABIERTO'
   ).filter((product) =>
-    product?.entidadId.generalInformation.name
+    product.credito?.entidadId.generalInformation.name
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   );
@@ -100,7 +100,10 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
                 {`No hay créditos ${filterType === 'all' ? '' : filterType === 'historial' ? 'finalizados' : filterType === 'plazo' ? 'a plazos' : 'a pagos'} en esta sucursal`}
               </span>
             ) : (
-              <TablaCredits currentItems={currentItems} />
+              <TablaCredits
+                currentItems={currentItems}
+                filterType={filterType}
+              />
             )}
           </CardContent>
           <CardFooter className="flex items-center justify-between">

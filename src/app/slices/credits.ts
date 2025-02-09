@@ -10,6 +10,8 @@ import {
   fetchCreditsByBranch,
   postPayCredit,
 } from '../../api/services/credits';
+import { ITransactionReturn } from '../../interfaces/salesInterfaces';
+import { postTransactionReturn } from '../../api/services/sales';
 
 export const getCreditsByBranch = createAsyncThunk(
   'credits/getByBranch',
@@ -43,6 +45,21 @@ export const payCredit = createAsyncThunk(
       return response;
     } catch (error) {
       return handleThunkError(error);
+    }
+  }
+);
+
+export const createCreditReturn = createAsyncThunk(
+  'transactions/return',
+  async (data: ITransactionReturn, { rejectWithValue }) => {
+    try {
+      const response = await postTransactionReturn(data);
+      return {
+        ...response.data,
+        balanceDue: data.balanceDue,
+      };
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
     }
   }
 );
@@ -81,6 +98,18 @@ const creditsSlice = createSlice({
       .addCase(getCreditById.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
         state.creditSelected = payload;
+      })
+      .addCase(createCreditReturn.fulfilled, (state, { payload }) => {
+        state.status = 'succeeded';
+
+        const credit = state.credits.find(
+          (credit) =>
+            credit.transaccion.id === payload.transaccionActualizada.id
+        );
+
+        if (credit && payload.balanceDue <= 0) {
+          credit.credito.estadoCredito = 'CERRADO';
+        }
       });
   },
 });

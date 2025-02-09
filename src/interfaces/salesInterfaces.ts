@@ -200,6 +200,7 @@ export interface ITransactionReturn {
   montoExterno?: number | null;
   products: IProductReturn[];
   tipoTransaccion: ITypeTransaction;
+  balanceDue: number;
 }
 
 export const dataCoins = {
