@@ -36,16 +36,14 @@ export const CardCash = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
   const caja = store.getState().boxes.BoxesData;
   const id = user?.sucursalId?._id;
-
+  const IDtest = store.getState().auth.signIn.cajaId as ICajaBrach;
+  const isUserAuthorized = IDtest?.usuarioAperturaId === user?._id;
   const [, setIsLoading] = useState(true);
   const [formValues, setFormValues] = useState<IOpenCash>({
     montoInicial: 0,
     usuarioAperturaId: user?._id as string,
     cajaId: '',
   });
-
-  const IDtest = store.getState().auth.signIn.cajaId as ICajaBrach;
-  const isUserAuthorized = IDtest?.usuarioAperturaId === user?._id;
 
   useEffect(() => {
     if (id) {
@@ -68,6 +66,7 @@ export const CardCash = () => {
         .unwrap();
     };
     fetchUserCashier();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [caja, isUserAuthorized]);
 
   useEffect(() => {
@@ -84,11 +83,22 @@ export const CardCash = () => {
     );
 
     return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [caja, isUserAuthorized]);
 
-  const openModal = (cajaId: string) =>
-    setFormValues((prev) => ({ ...prev, cajaId }));
+  const openModal = (cajaId: string) => {
+    const selectedCaja = caja?.find((c) => c._id === cajaId);
+    setFormValues((prev) => ({
+      ...prev,
+      cajaId,
+      hasMovementCashier: selectedCaja?.hasMovementCashier ?? false,
+    }));
+  };
   const closeModal = () => setFormValues((prev) => ({ ...prev, cajaId: '' }));
+
+  const txtHMC = formValues.hasMovementCashier
+    ? 'La caja se cerró sin arqueo. Para abrirla, ingrese el efectivo adicional necesario.'
+    : 'Monto Inicial';
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -159,15 +169,14 @@ export const CardCash = () => {
         ))}
       </div>
 
-      {/* Modal Global */}
       <Dialog open={!!formValues.cajaId} onOpenChange={closeModal}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="text-lg font-bold">Abrir Caja</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Monto Inicial
+            <label className="text-sm font-medium text-black dark:text-white flex items-center w-[70%]">
+              {txtHMC}
             </label>
             <Input
               type="number"
