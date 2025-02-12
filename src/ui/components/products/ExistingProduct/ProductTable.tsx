@@ -33,6 +33,7 @@ import ProductForm from './ProductForm';
 import { useRoleAccess } from '../../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../../shared/helpers/roleHelper';
 import { dataCoins } from '../../../../interfaces/salesInterfaces';
+import { formatNumber } from '../../../../shared/helpers/Branchs';
 
 interface ProductsTableProps {
   products: InventarioSucursalWithPopulated[];
@@ -78,14 +79,15 @@ const ProductsTable = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>SucursAL</TableHead>
-            <TableHead>ID</TableHead>
-            <TableHead>Nombre</TableHead>
-            <TableHead>Descripcion</TableHead>
-            <TableHead>Precio</TableHead>
-            <TableHead>Costo Unitario</TableHead>
-            <TableHead>In Stock</TableHead>
-            <TableHead>Minimo Stock</TableHead>
+            <TableHead className="text-center">Sucursal</TableHead>
+            <TableHead className="text-center">Nombre</TableHead>
+            <TableHead className="">Descripcion</TableHead>
+            <TableHead className="text-center">Minimo Stock</TableHead>
+            <TableHead className="text-center">In Stock</TableHead>
+            {(access.update || access.delete) && (
+              <TableHead className="text-center">Costo Unitario</TableHead>
+            )}
+            <TableHead className="text-center">Precio</TableHead>
             {(access.update || access.delete) && (
               <TableHead className="text-center">
                 <span className="">Acciones</span>
@@ -96,17 +98,16 @@ const ProductsTable = ({
         <TableBody>
           {products?.map((product) => (
             <TableRow key={product.productoId._id}>
-              <TableCell className="font-medium">
+              <TableCell className="text-center">
                 {product.sucursalId.nombre}
               </TableCell>
-              <TableCell>{product.productoId._id}</TableCell>
-              <TableCell className="font-medium">
+              <TableCell className="text-center">
                 {product.productoId.nombre}
               </TableCell>
               <TableCell>
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger className="w-64 overflow-hidden whitespace-nowrap text-ellipsis">
+                    <TooltipTrigger className="w-64 overflow-hidden whitespace-nowrap text-ellipsis text-center">
                       {product.productoId.descripcion}
                     </TooltipTrigger>
                     <TooltipContent>
@@ -115,16 +116,33 @@ const ProductsTable = ({
                   </Tooltip>
                 </TooltipProvider>
               </TableCell>
-              <TableCell>
-                {monedaSimbole}
-                {product.precio.$numberDecimal}
+              <TableCell className="text-center">
+                {product?.puntoReCompra}
               </TableCell>
-              <TableCell>
-                {monedaSimbole}
-                {product?.costoUnitario?.$numberDecimal}
+              <TableCell
+                className={
+                  product?.puntoReCompra !== undefined &&
+                  product?.stock <= product?.puntoReCompra
+                    ? 'text-red-500 text-center'
+                    : 'text-green-500 text-center'
+                }
+              >
+                {product?.stock}
               </TableCell>
-              <TableCell>{product?.stock}</TableCell>
-              <TableCell>{product?.puntoReCompra}</TableCell>
+              {(access.update || access.delete) && (
+                <TableCell className="text-center">
+                  <>
+                    {monedaSimbole}
+                    {formatNumber(
+                      Number(product?.costoUnitario?.$numberDecimal)
+                    ) || '0'}
+                  </>
+                </TableCell>
+              )}
+              <TableCell className="text-center">
+                {monedaSimbole}
+                {formatNumber(Number(product.precio.$numberDecimal))}
+              </TableCell>
               {access.create && (
                 <TableCell>
                   <Button

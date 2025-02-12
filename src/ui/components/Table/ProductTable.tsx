@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -32,6 +32,7 @@ import {
   updateProductsOriginal,
 } from '../../../app/slices/productsSlice';
 import { formatNumber } from '../../../shared/helpers/Branchs';
+import { dataCoins } from '../../../interfaces/salesInterfaces';
 
 interface ProductsTableProps {
   products: ITablaBranch[] | undefined;
@@ -90,12 +91,11 @@ const ProductsTable = ({
   const total = products?.reduce((acc, product) => {
     return acc + Number(product.costoUnitario.$numberDecimal);
   }, 0);
-
   const totalStock = products?.reduce((acc, product) => {
     return acc + product.stock;
   }, 0);
-
   let totalCosto = (totalStock ?? 0) * (total ?? 0);
+  const monedaSimbole = dataCoins.currentS;
 
   return (
     <>
@@ -104,13 +104,16 @@ const ProductsTable = ({
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Nombre</TableHead>
-            <TableHead className="text-start">Descripcion</TableHead>
-            <TableHead className="text-start">Minimo Stock</TableHead>
-            <TableHead className="text-start">Stock</TableHead>
-            <TableHead>Costo unitario</TableHead>
-            <TableHead className="text-start">Total</TableHead>
-
-            <TableHead>Precio</TableHead>
+            <TableHead>Descripcion</TableHead>
+            <TableHead className="text-center">Minimo Stock</TableHead>
+            <TableHead className="text-center">Stock</TableHead>
+            {(access.update || access.delete) && (
+              <>
+                <TableHead className="text-center">Costo unitario</TableHead>
+                <TableHead className="text-center">Total</TableHead>
+              </>
+            )}
+            <TableHead className="text-center">Precio</TableHead>
             {(access.update || access.delete) && (
               <TableHead className="text-center">
                 <span className="">Acciones</span>
@@ -134,16 +137,41 @@ const ProductsTable = ({
                   </Tooltip>
                 </TooltipProvider>
               </TableCell>
-              <TableCell>{product?.puntoReCompra || '0'}</TableCell>
-              <TableCell>{product?.stock || '0'}</TableCell>
-
-              <TableCell>
-                C$ {product?.costoUnitario?.$numberDecimal || '0'}
+              <TableCell className="text-center">
+                {product?.puntoReCompra || '0'}
               </TableCell>
-              <TableCell>
-                C$ {product.stock * product.costoUnitario.$numberDecimal}
+              <TableCell
+                className={
+                  product?.puntoReCompra !== undefined &&
+                  product?.stock <= product?.puntoReCompra
+                    ? 'text-red-500 text-center'
+                    : 'text-green-500 text-center'
+                }
+              >
+                {product?.stock || '0'}
               </TableCell>
-              <TableCell>C${product.precio.$numberDecimal}</TableCell>
+              {(access.update || access.delete) && (
+                <>
+                  <TableCell className="text-center">
+                    {monedaSimbole}
+                    {formatNumber(
+                      Number(product?.costoUnitario?.$numberDecimal)
+                    ) || '0'}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {monedaSimbole}
+                    {formatNumber(
+                      Number(
+                        product.stock * product.costoUnitario.$numberDecimal
+                      )
+                    )}
+                  </TableCell>
+                </>
+              )}
+              <TableCell className="text-center">
+                {monedaSimbole}
+                {formatNumber(Number(product.precio.$numberDecimal))}
+              </TableCell>
               {(access.update || access.delete) && (
                 <TableCell>
                   <div className="flex items-center justify-center gap-2">
@@ -179,14 +207,21 @@ const ProductsTable = ({
             </TableRow>
           ))}
         </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={7}>Total</TableCell>
-            <TableCell className="text-right">
-              C$ {formatNumber(totalCosto)}
-            </TableCell>
-          </TableRow>
-        </TableFooter>
+        {(access.update || access.delete) && (
+          <>
+            <TableFooter>
+              <TableRow>
+                <TableCell className="" colSpan={7}>
+                  Total de Inventario{' '}
+                </TableCell>
+                <TableCell className="text-center text-green-500 border border-green-500">
+                  {monedaSimbole}
+                  {formatNumber(totalCosto)}
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          </>
+        )}
       </Table>
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent>
