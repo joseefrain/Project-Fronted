@@ -1,0 +1,9 @@
+.subContainer {
+    @apply grid gap-4 p-6 bg-gray-50 dark:bg-black;
+
+    @media (max-width: 480px) {
+        @apply overflow-scroll max-h-[500px];
+    }
+
+
+}

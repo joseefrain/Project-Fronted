@@ -19,6 +19,7 @@ import {
   PenTool,
   SquarePen,
 } from 'lucide-react';
+import './styles.scss';
 
 interface DetallesEnvioProps {
   pedidoId: string;
@@ -47,7 +48,7 @@ export default function DetallesEnvio({
     <Card className="w-full max-w-3xl mx-auto overflow-hidden rounded-lg shadow-lg">
       <CardContent className="p-0">
         <Header pedidoId={pedidoId} />
-        <div className="grid gap-4 p-6 bg-gray-50 dark:bg-black overflow-scroll max-h-[500px]">
+        <div className="subContainer">
           <FechaCreacion fecha={getTimeElapsed(fechaCreacion)} />
           <FechasEnvioRecepcion
             fechaEnvio={getFormatedDate(fechaEnvio)}

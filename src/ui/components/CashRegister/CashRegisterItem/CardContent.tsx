@@ -8,9 +8,7 @@ interface CardContentProps {
 }
 
 export const CardContentCashier = ({ cashRegister }: CardContentProps) => {
-  const formattedValue = formatNumber(
-    cashRegister.montoEsperado.$numberDecimal
-  );
+  const formattedValue = formatNumber(cashRegister.montoInicial.$numberDecimal);
   return (
     <CardContent>
       <p

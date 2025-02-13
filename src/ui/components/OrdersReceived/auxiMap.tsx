@@ -16,6 +16,7 @@ import {
 } from '@/interfaces/transferInterfaces';
 import DetallesEnvio from '@/shared/components/ui/Details';
 import { CornerDownLeft, Eye } from 'lucide-react';
+import { useState } from 'react';
 
 interface IOrder {
   dataTable: ListItemDePedido;
@@ -25,10 +26,11 @@ interface IOrder {
 export const AuxiliarMap = ({ dataTable, dataAuxiliar }: IOrder) => {
   const originBranch = dataAuxiliar?.sucursalOrigenId.nombre;
   const destinationBranch = dataAuxiliar?.sucursalDestinoId.nombre;
+  const [isReturned, setIsReturned] = useState(dataTable.regresado);
 
   const handleReturnProducts = async (id: string) => {
     await store.dispatch(returnProducts(id));
-    dataTable.regresado = true;
+    setIsReturned(true);
   };
 
   const getBadgeVariant = () => {
@@ -72,12 +74,12 @@ export const AuxiliarMap = ({ dataTable, dataAuxiliar }: IOrder) => {
       {
         <TableCell>
           <div className="flex items-center justify-center gap-2">
-            {!dataTable.regresado ? (
+            {!isReturned ? (
               <div className="flex items-center justify-center gap-2">
                 {!dataTable.recibido && (
                   <Button
                     size="sm"
-                    className="text-white dark:bg-black"
+                    className="text-white bg-black dark:bg-white dark:text-black"
                     onClick={() => handleReturnProducts(dataTable._id)}
                   >
                     Regresar Producto
@@ -86,7 +88,7 @@ export const AuxiliarMap = ({ dataTable, dataAuxiliar }: IOrder) => {
                 )}
               </div>
             ) : (
-              <span>-</span>
+              <span className="text-green-500">Regresado</span>
             )}
           </div>
         </TableCell>
