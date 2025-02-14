@@ -3,11 +3,13 @@ import {
   IDailyRegisterResponse,
   IGetRecordedHours,
   IRecordedHours,
+  IUpdateRecordedHours,
 } from '../../interfaces/workHours';
 import {
   createRecordedHours,
   exitRecordedHours,
   getRecordedHours,
+  updateRecordedHours,
 } from '../../api/services/RecordedHours';
 import { handleThunkError } from '../../shared/utils/errorHandlers';
 import { IStatus } from '../../interfaces/branchInterfaces';
@@ -17,7 +19,6 @@ export const createRecordedHoursPatch = createAsyncThunk(
   async (payload: IRecordedHours, { rejectWithValue }) => {
     try {
       const response = await createRecordedHours(payload);
-      console.log(response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
@@ -30,7 +31,7 @@ export const exitRecordedHourPatch = createAsyncThunk(
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await exitRecordedHours(id);
-      return response.data;
+      return response;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
     }
@@ -42,6 +43,18 @@ export const getRecordedHoursPatch = createAsyncThunk(
   async (payload: IGetRecordedHours, { rejectWithValue }) => {
     try {
       const response = await getRecordedHours(payload);
+      return response;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
+export const updateRecordedHoursPatch = createAsyncThunk(
+  'workHours/update',
+  async (payload: IUpdateRecordedHours, { rejectWithValue }) => {
+    try {
+      const response = await updateRecordedHours(payload);
       return response;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
@@ -82,6 +95,7 @@ export const workHoursSlice = createSlice({
       .addCase(exitRecordedHourPatch.fulfilled, (state, action) => {
         if (state.recordedHours) {
           state.recordedHours = state.recordedHours.filter(
+            //@ts-ignore
             (h) => h._id !== action.payload.id
           );
         }
@@ -93,7 +107,6 @@ export const workHoursSlice = createSlice({
       .addCase(getRecordedHoursPatch.fulfilled, (state, action) => {
         //@ts-ignore
         state.recordedHours = action.payload;
-        console.log(action.payload, 'state.recordedHours');
         state.status = 'succeeded';
       });
   },

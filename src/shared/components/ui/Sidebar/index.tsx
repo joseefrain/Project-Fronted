@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { PanelRightOpen, Menu } from 'lucide-react';
 import './styles.scss';
-
 interface SidebarProps {
   links: {
     name: string;
@@ -21,6 +20,15 @@ export const Sidebar = ({ links, className }: SidebarProps) => {
   const toggleSidebar = () => setIsCollapsed((prev) => !prev);
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const closeMenu = () => setIsMenuOpen(false);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const currentLink = links.find((link) => link.path === location.pathname);
+    if (currentLink) {
+      setCurrentPage(currentLink.name);
+    }
+  }, [location.pathname, links]);
 
   return (
     <>

@@ -22,23 +22,24 @@ interface CashRegisterOpenState {
   montoInicial: string;
   usuarioAperturaId: string;
   cajaId: string;
+  hasMovementCashier: boolean;
 }
 
 export function CashRegisterOpen({ box }: CashRegisterOpenProps) {
   const userId = useAppSelector((state) => state.auth.signIn.user)
     ?._id as string;
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const openModal = () => setIsModalOpen(true);
-
   const closeModal = () => setIsModalOpen(false);
-
   const [formValues, setFormValues] = useState<CashRegisterOpenState>({
     montoInicial: '',
     usuarioAperturaId: userId,
     cajaId: box._id,
+    hasMovementCashier: box.hasMovementCashier,
   });
+  const txtHMC = formValues.hasMovementCashier
+    ? 'La caja se cerró sin arqueo. Para abrirla, ingrese el efectivo adicional necesario.'
+    : 'Monto Inicial';
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value, type, checked } = e.target;
@@ -51,7 +52,6 @@ export function CashRegisterOpen({ box }: CashRegisterOpenProps) {
 
   const handleOpenCashier = () => {
     const userData = localStorage.getItem('user');
-
     if (userData) {
       const parsedUserData = JSON.parse(userData);
       store
@@ -77,7 +77,6 @@ export function CashRegisterOpen({ box }: CashRegisterOpenProps) {
     e.preventDefault();
 
     const { montoInicial } = formValues;
-
     if (!montoInicial) {
       toast.error('Debe ingresar todos los campos para abrir la caja');
       return;
@@ -100,7 +99,7 @@ export function CashRegisterOpen({ box }: CashRegisterOpenProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <InputField
               id="montoInicial"
-              label="Monto Inicial"
+              label={txtHMC}
               value={formValues.montoInicial}
               onChange={handleChange}
               placeholder="Ingrese el monto inicial"
@@ -115,7 +114,6 @@ export function CashRegisterOpen({ box }: CashRegisterOpenProps) {
           </form>
         </DialogContent>
       </Dialog>
-      {/* <Toaster /> */}
     </>
   );
 }

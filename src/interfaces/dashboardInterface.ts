@@ -28,8 +28,10 @@ export interface IProductosMetrics {
   nombre: string;
   cantidad: number;
   total: Decimal128;
+  totalCosto: Decimal128;
   gananciaNeta: Decimal128;
   costoUnitario: Decimal128;
+  precio: Decimal128;
 }
 
 export interface IResponseGetProductMetrics {
@@ -45,6 +47,10 @@ export interface IResponseGetProductMetrics {
     productoMayorGanancia: IProductoConMasGananciaNetaDelDia;
     listaProductos: IProductosMetrics[];
   };
+  totalBuyBranch: Decimal128;
+  totalBuyProfitBranch: Decimal128;
+  totalSaleProfitBranch: Decimal128;
+  totalSalesBranch: Decimal128;
 }
 
 export interface IReturnedProduct {

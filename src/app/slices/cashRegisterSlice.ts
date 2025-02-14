@@ -43,6 +43,7 @@ export interface IOpenCash {
   usuarioAperturaId: string;
   montoInicial: number;
   cajaId: string;
+  hasMovementCashier?: boolean;
 }
 
 export interface ICloseCash {

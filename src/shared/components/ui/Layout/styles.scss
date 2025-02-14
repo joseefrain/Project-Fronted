@@ -1,28 +1,33 @@
 .container-Layout {
-  @apply w-full px-[6.7rem] bg-white dark:bg-gray-950;
-  max-width: unset;
+    @apply w-full px-[6.7rem] bg-white dark:bg-gray-950;
+    max-width: unset;
 
-  @media (max-width: 768px) {
-    @apply px-[1.5rem];
-  }
+    @media (max-width: 768px) {
+        @apply px-[1.5rem];
+    }
 
-  @media (max-width: 1440px) {
-    @apply px-[1.5rem];
-  }
+    @media (max-width: 1440px) {
+        @apply px-[1.5rem];
+    }
 }
 
 .containerInputs {
-  @apply flex gap-4 mb-4;
+    @apply flex gap-4 mb-4;
 
-  @media (max-width: 768px) {
-    flex-wrap: wrap;
-  }
+    @media (max-width: 768px) {
+        flex-wrap: wrap;
+    }
 
-  @media (max-width: 435px) {
-    flex-wrap: wrap;
-  }
+    @media (max-width: 435px) {
+        flex-wrap: wrap;
+    }
 
-  @media (max-width: 1300px) {
-    flex-wrap: wrap;
-  }
+    @media (max-width: 1300px) {
+        flex-wrap: wrap;
+    }
+}
+
+
+.sidebar-disabled {
+    display: none;
 }

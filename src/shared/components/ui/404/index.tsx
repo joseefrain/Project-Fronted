@@ -6,7 +6,7 @@ import { Typography } from '../Typography';
 export const NotFound404 = () => {
   return (
     <div className="not-found-404">
-      <img src={Image404} alt="SoymichelDev Board 404 image" />
+      <img src={Image404} alt="" />
 
       <Typography component="h1">Oooops! Sentimos el error 😵</Typography>
 

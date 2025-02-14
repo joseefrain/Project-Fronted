@@ -29,7 +29,7 @@ const Pagination: React.FC<PaginationProps> = ({
     <div className="flex items-center justify-between w-full">
       <div className="text-sm text-muted-foreground">
         Mostrando {currentPage} a {Math.min(currentPage * 10, totalPages * 10)}{' '}
-        de {totalPages * 10} productos
+        de {totalPages * 10}
       </div>
       <div className="flex items-center space-x-2">
         <Button

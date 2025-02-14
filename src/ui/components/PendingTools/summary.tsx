@@ -32,6 +32,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import './styles.scss';
 import { Switch } from '../../../components/ui/switch';
 import { useState } from 'react';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 const productStates = [
   { id: 1, value: 'Buen estado' },
@@ -65,7 +67,7 @@ export const SummaryPendingTools = ({
   handleChangeBuyback,
 }: ISummaryPendingTools) => {
   const [supplierMode, setSupplierMode] = useState(false);
-
+  const access = useRoleAccess(PAGES_MODULES.PRODUCTOS);
   const handleChangeToogle = () => {
     setSupplierMode(!supplierMode);
   };
@@ -199,12 +201,14 @@ export const SummaryPendingTools = ({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-2">
-                      <Switch
-                        className="p-0"
-                        checked={supplierMode}
-                        onCheckedChange={setSupplierMode}
-                        onClick={handleChangeToogle}
-                      />
+                      {(access.update || access.delete) && (
+                        <Switch
+                          className="p-0"
+                          checked={supplierMode}
+                          onCheckedChange={setSupplierMode}
+                          onClick={handleChangeToogle}
+                        />
+                      )}
                       <Images
                         savedImages={product.archivosAdjuntosRecibido ?? []}
                         handleSaveImages={(images) =>

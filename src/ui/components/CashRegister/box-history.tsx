@@ -27,6 +27,8 @@ import { ICajaBrach } from '../../../app/slices/cashRegisterSlice';
 import { DateRange } from 'react-day-picker';
 import { CardFooter } from '../../../components/ui/card';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 interface ICajaHistory {
   data: ICajaBrach;
@@ -39,7 +41,7 @@ export const ModalHistory = ({ data, isOpen, onClose }: ICajaHistory) => {
     DateRange | undefined
   >(undefined);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const access = useRoleAccess(PAGES_MODULES.PRODUCTOS);
   const filteredHistorico = selectedDateRange
     ? data.historico.filter((entry) => {
         const aperturaDate = new Date(entry.fechaApertura);
@@ -108,8 +110,14 @@ export const ModalHistory = ({ data, isOpen, onClose }: ICajaHistory) => {
               <TableRow>
                 <TableHead>Fecha</TableHead>
                 <TableHead className="text-center">Monto Inicial</TableHead>
-                <TableHead className="text-center">Diferencia</TableHead>
-                <TableHead className="text-center">Monto Esperado</TableHead>
+                {(access.update || access.delete) && (
+                  <>
+                    <TableHead className="text-center">Diferencia</TableHead>
+                    <TableHead className="text-center">
+                      Monto Esperado
+                    </TableHead>
+                  </>
+                )}
                 <TableHead className="text-center">Monto Final</TableHead>
               </TableRow>
             </TableHeader>

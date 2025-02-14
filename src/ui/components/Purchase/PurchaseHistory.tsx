@@ -150,7 +150,12 @@ export const PurchaseHistory = () => {
               {currentItems.map((sale, index) => (
                 <TableRow key={index} className="h-[50px]">
                   <TableCell>{sale.username}</TableCell>
-                  <TableCell>{getFormatedDate(new Date())}</TableCell>
+                  <TableCell>
+                    {' '}
+                    {sale.fechaRegistro
+                      ? getFormatedDate(sale.fechaRegistro)
+                      : 'N/A'}
+                  </TableCell>
                   <TableCell>
                     {coin}
                     {sale.subtotal.toFixed(2)}

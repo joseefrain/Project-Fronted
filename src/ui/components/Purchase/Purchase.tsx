@@ -92,7 +92,7 @@ export const Purchase = ({ productSale, setProductSale }: ISaleProps) => {
       clientType: 'Proveedor',
       inventarioSucursalId: selectedProduct?.inventarioSucursalId ?? '',
       //@ts-ignore
-      costoUnitario: parseFloat(selectedProduct?.costoUnitario?.$numberDecimal),
+      costoUnitario: price,
     };
 
     const isExistentProduct = productSale.find(
