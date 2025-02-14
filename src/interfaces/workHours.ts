@@ -36,3 +36,9 @@ export interface IDailyRegisterResponse {
   userId: IUser;
   _id?: string;
 }
+
+export interface IUpdateRecordedHours {
+  sucursalId: string;
+  endWork: string;
+  startWork: string;
+}
