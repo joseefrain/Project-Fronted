@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Building2, Mail, Phone, MapPin, User, Calendar } from 'lucide-react';
+import { Building2, Mail, Phone, MapPin, User } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { useAppSelector } from '../../../app/hooks';
 import { store } from '../../../app/store';
@@ -56,47 +56,47 @@ export const Contacts = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <InfoCard
                   icon={Building2}
-                  label="Amount Receivable"
+                  label=" Monto por cobrar"
                   value={`$${Math.floor(Number(client.state.amountReceivable?.$numberDecimal ?? 0))}`}
                 />
                 <InfoCard
                   icon={Building2}
-                  label="Advances Received"
+                  label="Anticipos recibidos"
                   value={`$${Math.floor(Number(client.state.advancesReceipts?.$numberDecimal ?? 0))}`}
                 />
                 <InfoCard
                   icon={Building2}
-                  label="Advances Delivered"
+                  label="Montos entregador"
                   value={`$${Math.floor(Number(client.state.advancesDelivered?.$numberDecimal ?? 0))}`}
                 />
                 <InfoCard
                   icon={Building2}
-                  label="Amount Payable"
+                  label="Montos a pagar"
                   value={`$${Math.floor(Number(client.state.amountPayable?.$numberDecimal ?? 0))}`}
                 />
               </div>
             )}
             <Separator />
-            <Section title="General Information">
+            <Section title="Informacion General">
               <div className="grid gap-4 md:grid-cols-2">
                 <InfoItem
                   icon={User}
-                  label="Identification Number"
+                  label="Numero de Identificacion"
                   value={client.generalInformation.identificationNumber}
                 />
                 <InfoItem
                   icon={MapPin}
-                  label="Department"
+                  label="Departamento"
                   value={client.generalInformation.department}
                 />
                 <InfoItem
                   icon={MapPin}
-                  label="Country"
+                  label="Pais"
                   value={client.generalInformation.country}
                 />
                 <InfoItem
                   icon={MapPin}
-                  label="Address"
+                  label="Direccion"
                   value={client.generalInformation.address}
                 />
               </div>
@@ -104,7 +104,7 @@ export const Contacts = () => {
 
             <Separator />
 
-            <Section title="Contact Information">
+            <Section title="Informacion de Contacto">
               <div className="grid gap-4 md:grid-cols-3">
                 <InfoItem
                   icon={Mail}
@@ -113,30 +113,13 @@ export const Contacts = () => {
                 />
                 <InfoItem
                   icon={Phone}
-                  label="Mobile Phone"
+                  label="Telefono Celular"
                   value={client.contactInformation.mobilePhone}
                 />
                 <InfoItem
                   icon={Phone}
-                  label="Telephone"
+                  label="Telefono Fijo"
                   value={client.contactInformation.telephone}
-                />
-              </div>
-            </Section>
-
-            <Separator />
-
-            <Section title="Commercial Information">
-              <div className="grid gap-4 md:grid-cols-2">
-                <InfoItem
-                  icon={Calendar}
-                  label="Payment Term"
-                  value={client.commercialInformation.paymentTerm}
-                />
-                <InfoItem
-                  icon={User}
-                  label="Seller"
-                  value={client.commercialInformation.seller}
                 />
               </div>
             </Section>
