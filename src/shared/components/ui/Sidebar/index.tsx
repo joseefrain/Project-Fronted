@@ -45,7 +45,7 @@ export const Sidebar = ({ links, className }: SidebarProps) => {
       >
         <button
           onClick={toggleSidebar}
-          className={`absolute top-4 right-4 p-2 rounded-md transition-all duration-200 
+          className={`isCollapsed
             ${isCollapsed ? 'rotate-180' : ''}`}
         >
           <PanelRightOpen />

@@ -8,6 +8,7 @@ import './styles.scss';
 import { formatDate } from '../../../helpers/Branchs';
 import { store } from '../../../../app/store';
 import { getRecordedHoursPatch } from '../../../../app/slices/workHours';
+import { ROLE } from '../../../../interfaces/roleInterfaces';
 
 interface LayoutProps {
   children: ReactNode;
@@ -48,16 +49,23 @@ export const Layout = ({ children }: LayoutProps) => {
   const hideSidebar =
     (isHoursInitDayFilled && isHoursEndDayEmpty) || areBothEmpty;
 
+  const shouldShowSidebar =
+    user?.role === ROLE.ROOT ||
+    (!hideSidebar &&
+      (user?.role === ROLE.ADMIN || user?.role === ROLE.EMPLEADO));
+
   const sidebarClass = hideSidebar ? 'sidebar-disabled' : '';
 
   return (
     <div className="flex flex-col h-screen">
       <Header />
       <div className="flex flex-1">
-        <Sidebar
-          className={`capitalize ${sidebarClass}`}
-          links={sidebarLinks}
-        />
+        {shouldShowSidebar && (
+          <Sidebar
+            className={`capitalize ${user?.role !== ROLE.ROOT ? sidebarClass : ''}`}
+            links={sidebarLinks}
+          />
+        )}
         <div className="container-Layout">{children}</div>
         <Toaster />
       </div>

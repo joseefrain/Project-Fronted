@@ -9,11 +9,11 @@
 }
 
 .sidebar-list {
-  @apply flex flex-col gap-4 p-4 mt-16 md:max-h-[60%] overflow-auto;
+  @apply flex flex-col gap-4 p-4 mt-[5.7rem] overflow-auto;
 }
 
 .sidebar-item {
-  @apply flex items-center w-full h-10 gap-2 p-2 transition-all duration-200 border-b rounded-sm border-border hover:bg-gray-200 hover:text-blue-500 font-onest;
+  @apply flex items-center h-10 gap-2 p-2 transition-all duration-200 border-b rounded-sm border-border hover:bg-gray-200 hover:text-blue-500 font-onest;
   &.active {
     @apply bg-gray-200 text-blue-500;
   }
@@ -45,4 +45,12 @@
 
 .sidebar-list::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-700;
+}
+
+.isCollapsed {
+  @apply absolute top-4 right-4 p-2 rounded-md transition-all duration-200;
+
+  @media (max-width: 1024px) {
+    @apply mt-[66%] right-2;
+  }
 }
