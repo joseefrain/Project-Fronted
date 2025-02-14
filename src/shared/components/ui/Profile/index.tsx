@@ -39,6 +39,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from '../../../../components/ui/dialog.tsx';
+import { toast } from 'sonner';
 
 export const ProfileUser = () => {
   const selectedBranchFromLocalStorage = getSelectedBranchFromLocalStorage();
@@ -51,6 +52,9 @@ export const ProfileUser = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
   const id = user?.sucursalId?._id;
   const [, setIsLoading] = useState(true);
+  const dataWorkHours = useAppSelector(
+    (state) => state.workHours.recordedHours
+  );
 
   useEffect(() => {
     if (id) {
@@ -72,7 +76,7 @@ export const ProfileUser = () => {
       return usuarioId === user?._id && c.estado?.toUpperCase() === 'ABIERTA';
     })
     .map((c: ICajaBrach) => ({
-      montoEsperado: c.montoEsperado,
+      montoInicial: c.montoInicial,
       consecutivo: c.consecutivo,
       estado: c.estado,
     }));
@@ -120,8 +124,8 @@ export const ProfileUser = () => {
   const returnStartDate = new Date(today);
   const returnEndDate = new Date(today);
 
-  returnStartDate.setDate(returnStartDate.getDate() - 1);
-  returnEndDate.setDate(returnEndDate.getDate() + 1);
+  returnStartDate.setDate(returnStartDate.getDate());
+  returnEndDate.setDate(returnEndDate.getDate());
 
   const dataSend = {
     startDate: formatDate(returnStartDate),
@@ -131,20 +135,22 @@ export const ProfileUser = () => {
 
   useEffect(() => {
     store.dispatch(getRecordedHoursPatch(dataSend)).unwrap();
+    ``;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.sucursalId?._id ?? '']);
-  const dataWorkHours = useAppSelector(
-    (state) => state.workHours.recordedHours
-  );
-  const hoursInit = dataWorkHours?.map((e) => e.startWork.split('T')[0]);
-  //   console.log(hoursInit);
+
   const [isRegistered, setIsRegistered] = useState(false);
   const [isExitRegister, setIsExitRegister] = useState(false);
   const [hoursLocal] = useState(new Date());
-  const [, setIsOpenDialog] = useState(false);
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const [error, setError] = useState(null);
 
-  const [error, setError] = useState(null); // Estado para manejar errores
+  useEffect(() => {
+    const compareIds = dataWorkHours?.some((e) => e?.userId._id === user?._id);
+    setIsRegistered(compareIds ?? false);
+    setIsExitRegister(compareIds ?? false);
+  }, [dataWorkHours, user]);
 
-  // Manejo para confirmar la entrada
   const handleConfirmRegister = async () => {
     try {
       await store.dispatch(
@@ -154,29 +160,30 @@ export const ProfileUser = () => {
           hourEntry: hoursLocal,
         })
       );
-      setIsRegistered(true); // Solo cambia el estado si la petición fue exitosa
-      setError(null); // Limpiar cualquier error previo
-      setIsOpenDialog(false); // Cierra el modal después de confirmar
-    } catch (error) {
-      console.error('Error trying to register hour: ', error);
-      setError(null); // Reset error state to null
-      setIsOpenDialog(false); // Close modal if desired
+      setIsOpenDialog(false);
+      setIsRegistered(true);
+      setError(null);
+    } catch (error: any) {
+      toast.error('Error trying to register hour: ', error);
+      setError(null);
+      setIsOpenDialog(false);
     }
   };
 
-  // Manejo para confirmar la salida
   const handleExitRegister = async () => {
     try {
       await store.dispatch(exitRecordedHourPatch(user?._id ?? ''));
-      setIsExitRegister(true); // Solo cambia el estado si la petición fue exitosa
-      setError(null); // Limpiar cualquier error previo
-      setIsOpenDialog(false); // Cierra el modal después de confirmar
-    } catch (error) {
+      setIsExitRegister(true);
+      setError(null);
+      setIsOpenDialog(false);
+    } catch (error: any) {
       console.error('Error trying to exit register hour: ', error);
       setError(null);
-      setIsOpenDialog(false); // Puedes cerrar el modal también si lo deseas
+      setIsOpenDialog(false);
     }
   };
+
+  const validation = isExitRegister ? !isExitRegister : isExitRegister;
 
   return (
     <>
@@ -208,7 +215,7 @@ export const ProfileUser = () => {
                   caja: {
                     consecutivo: number;
                     estado: string;
-                    montoEsperado: { $numberDecimal: number };
+                    montoInicial: { $numberDecimal: number };
                   },
                   index: number
                 ) => (
@@ -232,7 +239,7 @@ export const ProfileUser = () => {
                           caja #{caja.consecutivo}
                         </span>
                         <span className="font-semibold text-green-500 text-[14px] font-onest max-sm:hidden">
-                          C$ {formatNumber(caja.montoEsperado.$numberDecimal)}
+                          C$ {formatNumber(caja.montoInicial.$numberDecimal)}
                         </span>
                       </div>
                     </div>
@@ -307,62 +314,58 @@ export const ProfileUser = () => {
                   <DoorClosed className="w-4 h-4" />
                   Salir
                 </Button>
-
-                {/* Botón para Marcar entrada o salida */}
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="secondary"
-                      className={`font-onest border-2 ${isRegistered ? 'border-green-500' : isExitRegister ? 'border-red-500' : 'border-gray-500'}`}
-                      onClick={() => setIsOpenDialog(true)} // Solo abre el modal, no ejecuta la acción
-                    >
-                      <Check className="w-4 h-4" />
-                      {isRegistered ? 'Marcar salida' : 'Marcar entrada'}
-                    </Button>
-                  </DialogTrigger>
-
-                  {/* Dialogo de confirmación */}
-                  <DialogContent>
-                    <DialogHeader>
-                      <h2 className="text-lg font-semibold">
-                        {isRegistered
-                          ? 'Confirmar salida'
-                          : 'Confirmar entrada'}
-                      </h2>
-                    </DialogHeader>
-                    <p className="mb-4">
-                      Hora actual: {hoursLocal.toLocaleTimeString()}
-                    </p>
-
-                    {/* Mostrar el mensaje de error, si hay */}
-                    {error && <p className="text-red-500">{error}</p>}
-
-                    <DialogFooter>
+                {(user?.role === ROLE.ADMIN ||
+                  user?.role === ROLE.EMPLEADO) && (
+                  <Dialog open={isOpenDialog} onOpenChange={setIsOpenDialog}>
+                    <DialogTrigger asChild>
                       <Button
-                        onClick={
-                          isRegistered
-                            ? handleExitRegister
-                            : handleConfirmRegister
-                        } // Solo realiza la acción cuando se confirma
-                        disabled={isRegistered && isExitRegister}
+                        variant="secondary"
+                        className={`font-onest border-2 ${isRegistered ? 'border-red-500 bg-red-500' : ' border-green-500 bg-green-500'}`}
+                        onClick={() => setIsOpenDialog(true)}
                       >
-                        {isRegistered
-                          ? 'Confirmar salida'
-                          : 'Confirmar entrada'}
+                        <Check className="w-4 h-4" />
+                        {isRegistered ? 'Marcar salida' : 'Marcar entrada'}
                       </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setIsRegistered(false);
-                          setIsExitRegister(false);
-                          setIsOpenDialog(false); // Cierra el modal
-                        }}
-                      >
-                        Cancelar
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <h2 className="text-lg font-semibold">
+                          {isRegistered
+                            ? 'Confirmar salida'
+                            : 'Confirmar entrada'}
+                        </h2>
+                      </DialogHeader>
+                      <p className="mb-4">
+                        Hora actual: {hoursLocal.toLocaleTimeString()}
+                      </p>
+                      {error && <p className="text-red-500">{error}</p>}
+
+                      <DialogFooter>
+                        <Button
+                          className={`${validation ? 'bg-red-500 cursor-none' : 'bg-green-500'}`}
+                          onClick={
+                            isRegistered
+                              ? handleExitRegister
+                              : handleConfirmRegister
+                          }
+                          disabled={isRegistered && !isExitRegister}
+                        >
+                          {isRegistered
+                            ? 'Confirmar salida'
+                            : 'Confirmar entrada'}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setIsOpenDialog(false);
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                )}
               </PopoverContent>
             </Popover>
           </div>
