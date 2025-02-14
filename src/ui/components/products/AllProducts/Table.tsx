@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Pencil, Trash } from 'lucide-react';
 import { Branch, ITablaBranch } from '@/interfaces/branchInterfaces';
 import { IRoles } from '@/app/slices/login';
 import {
@@ -15,9 +14,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useRoleAccess } from '../../../../shared/hooks/useRoleAccess';
-import { PAGES_MODULES } from '../../../../shared/helpers/roleHelper';
-import { Button } from '../../../../components/ui/button';
 import { dataCoins } from '../../../../interfaces/salesInterfaces';
 import { formatNumber } from '../../../../shared/helpers/Branchs';
 
@@ -34,7 +30,6 @@ interface ProductsTableProps {
 }
 
 const ProductsTable = ({ products }: ProductsTableProps) => {
-  const access = useRoleAccess(PAGES_MODULES.PRODUCTOS);
   const monedaSimbole = dataCoins.currentS;
   return (
     <>
@@ -48,11 +43,6 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
             <TableHead className="text-center">Stock</TableHead>
             <TableHead className="text-center">Costo Unitario</TableHead>
             <TableHead className="text-center">Precio</TableHead>
-            {(access.update || access.delete) && (
-              <TableHead className="text-center">
-                <span className="">Acciones</span>
-              </TableHead>
-            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -93,22 +83,6 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
                 {monedaSimbole}
                 {formatNumber(Number(product.precio.$numberDecimal))}
               </TableCell>
-              {(access.update || access.delete) && (
-                <TableCell>
-                  <div className="flex items-center justify-center gap-3">
-                    {access.update && (
-                      <Button variant="ghost" size="sm">
-                        <Pencil className="w-4 h-4 cursor-pointer" />
-                      </Button>
-                    )}
-                    {access.delete && (
-                      <Button variant="ghost" size="sm">
-                        <Trash className="w-4 h-4 cursor-pointer" />
-                      </Button>
-                    )}
-                  </div>
-                </TableCell>
-              )}
             </TableRow>
           ))}
         </TableBody>

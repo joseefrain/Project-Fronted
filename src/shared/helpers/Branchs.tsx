@@ -23,3 +23,12 @@ export const formatNumber = (
     ? number.toLocaleString(locale, { minimumFractionDigits })
     : '0';
 };
+
+export const formatDate = (date: Date) =>
+  date
+    .toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+    .replace(/\//g, '-');
