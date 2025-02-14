@@ -85,6 +85,22 @@ export default function DashboardProducts() {
   const card2Title =
     activeTab === 'venta' ? 'Mayor Venta Total' : 'Mayor Compra Total';
   const card3Title = 'Mayor Ganancia Neta';
+  const card4Title =
+    activeTab === 'venta'
+      ? 'Total de Ventas Globales'
+      : 'Total de Compras Globales';
+  const card5Title =
+    activeTab === 'venta'
+      ? 'Total Ganancia Neta Bruto'
+      : 'Total Ganancia Neta Bruto';
+  const dataNT =
+    activeTab === 'venta'
+      ? dataDashboard?.totalSalesBranch
+      : dataDashboard?.totalBuyBranch;
+  const dataNTP =
+    activeTab === 'venta'
+      ? dataDashboard?.totalSaleProfitBranch
+      : dataDashboard?.totalBuyProfitBranch;
   const {
     productoMayorCantidad,
     productoMayorTotal,
@@ -143,15 +159,27 @@ export default function DashboardProducts() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold w-64 truncate">
                 {productoMayorCantidad?.producto || ''}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Cantidad: {productoMayorCantidad?.cantidad || 0} | Total: C$
-                {formatNumber(
-                  productoMayorCantidad?.total?.$numberDecimal || 0
-                )}
-              </p>
+              <div className=" flex gap-1 items-center">
+                <div className="flex gap-1 text-xs text-muted-foreground">
+                  Cantidad:{' '}
+                  <p className="text-black dark:text-white  text-xs font-semibold">
+                    C$
+                    {productoMayorCantidad?.cantidad || 0}
+                  </p>{' '}
+                </div>
+                <div className="flex gap-1 text-xs text-muted-foreground">
+                  | Total:
+                  <p className="text-black dark:text-white  text-xs font-semibold">
+                    C${' '}
+                    {formatNumber(
+                      productoMayorCantidad?.total?.$numberDecimal || 0
+                    )}
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </motion.div>
@@ -167,12 +195,15 @@ export default function DashboardProducts() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold w-64 truncate">
                 {productoMayorTotal?.producto || ''}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Total: C$
-                {formatNumber(productoMayorTotal?.total?.$numberDecimal || 0)}
+              <p className="text-xs text-muted-foreground flex gap-1">
+                Total:
+                <p className="text-black dark:text-white  text-xs font-semibold">
+                  C$
+                  {formatNumber(productoMayorTotal?.total?.$numberDecimal || 0)}
+                </p>
               </p>
             </CardContent>
           </Card>
@@ -189,18 +220,63 @@ export default function DashboardProducts() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold w-64 truncate">
                 {productoMayorGanancia?.producto || ''}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Ganancia: C$
-                {formatNumber(
-                  productoMayorGanancia?.gananciaNeta?.$numberDecimal || 0
-                )}
-              </p>
+              <div className="flex items-center gap-1">
+                <p className="text-xs text-muted-foreground ">Ganancia:</p>
+                <span className="text-black dark:text-white  text-xs font-semibold">
+                  C$
+                  {formatNumber(
+                    productoMayorGanancia?.gananciaNeta?.$numberDecimal || 0
+                  )}
+                </span>
+              </div>
             </CardContent>
           </Card>
         </motion.div>
+        <div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {card5Title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  C$
+                  {formatNumber(dataNTP?.$numberDecimal || 0)}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+        <div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {card4Title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  C$
+                  {formatNumber(dataNT?.$numberDecimal || 0)}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
       </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -251,6 +327,8 @@ export default function DashboardProducts() {
                 <TableRow>
                   <TableHead>Producto</TableHead>
                   <TableHead>Cantidad</TableHead>
+                  <TableHead>Precio</TableHead>
+                  <TableHead>Total de Costo</TableHead>
                   <TableHead>Costo Unitario</TableHead>
                   <TableHead>
                     {activeTab === 'venta'
@@ -263,7 +341,7 @@ export default function DashboardProducts() {
               <TableBody>
                 {showError ? (
                   <tr>
-                    <td colSpan={5} className="p-4 text-center">
+                    <td colSpan={7} className="p-4 text-center">
                       <h1 className="text-lg text-gray-400 dark:text-white font-onest">
                         {errorBE ||
                           'No hay datos disponibles para las fechas seleccionadas'}
@@ -277,6 +355,12 @@ export default function DashboardProducts() {
                         {product.nombre}
                       </TableCell>
                       <TableCell>{product.cantidad}</TableCell>
+                      <TableCell>
+                        C$ {formatNumber(product.precio.$numberDecimal)}
+                      </TableCell>
+                      <TableCell>
+                        C$ {formatNumber(product.totalCosto.$numberDecimal)}
+                      </TableCell>
                       <TableCell>
                         C$ {formatNumber(product.costoUnitario.$numberDecimal)}
                       </TableCell>
