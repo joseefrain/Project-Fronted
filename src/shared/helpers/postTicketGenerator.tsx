@@ -16,7 +16,27 @@ interface IPOSTicketGenerator {
   metodoPago: string;
   efectivoRecibido: string;
   tipoCredit: string;
+  change: string;
+  totalDiscount: string;
 }
+
+const formatProductLines = (name: string, maxWidth: number) => {
+  const words = name.split(' ');
+  let lines: string[] = [];
+  let currentLine = '';
+
+  words.forEach((word) => {
+    if ((currentLine + word).length <= maxWidth) {
+      currentLine += (currentLine ? ' ' : '') + word;
+    } else {
+      lines.push(currentLine);
+      currentLine = word;
+    }
+  });
+
+  if (currentLine) lines.push(currentLine);
+  return lines;
+};
 
 export const POSTicketGenerator = ({
   products,
@@ -29,54 +49,57 @@ export const POSTicketGenerator = ({
   metodoPago,
   efectivoRecibido,
   tipoCredit,
+  change,
+  totalDiscount,
 }: IPOSTicketGenerator) => {
   const printFrame = useRef<HTMLIFrameElement>(null);
-
+  const typeClient = products[0]?.clientType ?? '';
   const generateTicketText = (): string => {
-    const lineBreak = '---------------------------------------------';
+    const lineBreak = '---------------------------------------------------';
     const space = ' '.repeat(40);
     const center = (text: string, width = 40) =>
       text.padStart((width - text.length) / 2 + text.length).padEnd(width);
 
     let ticketText = `
-${center('Nichos.CORPS', 45)}
-${center('Frente a la Materno Infantil', 45)}
-${center('(505) 86349918', 45)}
+${center('ZONA CONEXION', 55)}
+${center('COMOAPA, BOACO', 55)}
+${center('(505) 77041065', 55)}
 ${lineBreak}
-  Transaccion: ${transactionId}
- 
+Transaccion: ${transactionId}
 ${lineBreak}
 
-Cajero: ${cashierName}
-Sucursal: ${Branchs}
-
-Cliente: ${Cliente}
 Fecha: ${fechaHora}
-
+Sucursal: ${Branchs}
+Cajero: ${cashierName}
+Cliente: ${Cliente}
 Metodo de Pago: ${metodoPago}
-Efectivo Recibido: ${efectivoRecibido ? efectivoRecibido : '-'} 
-${tipoCredit ? `Tipo de Credito: ${tipoCredit}\n` : ''}
+${typeClient ? `Tipo de Cliente: ${typeClient}\n` : tipoCredit ? '' : ''}
 ${lineBreak}
-
-${'Producto'.padEnd(20)}${'Cant.'.padStart(6)}${'Precio'.padStart(15)}
+${'Producto'.padEnd(27)}${'Cant.'.padStart(11)}${'Precio'.padStart(10)}
 ${lineBreak}
 
 ${products
-  .map(
-    (product) =>
-      `${product.productName.slice(0, 20).padEnd(20)} x${product.quantity}${product.price
-        .toFixed(2)
-        .padStart(20)}`
-  )
+  .map((product) => {
+    const productLines = formatProductLines(product.productName, 30);
+    return productLines
+      .map((line, index) =>
+        index === 0
+          ? `${line.padEnd(30)}${`x${product.quantity}`.padStart(6)}${product.price.toFixed(2).padStart(13)}`
+          : `${line.padEnd(30)}`
+      )
+      .join('\n');
+  })
   .join('\n')}
 
-
 ${lineBreak}
-TOTAL: ${total.padStart(37)}
+EFECTIVO: ${`C${efectivoRecibido}`.padStart(37)}
+CAMBIO: ${`C$${change}`.padStart(41)}
+${totalDiscount ? `DESCUENTO TOTAL: ${`C$${totalDiscount}`.padStart(32)}` : ''}
+TOTAL: ${`C${total}`.padStart(43)}
 ${lineBreak}
 ${space}
 ${space}
-${center('Gracias por su Compra !', 50)}
+${center('Gracias por su Preferencia', 55)}
 `;
     return ticketText;
   };
