@@ -179,6 +179,8 @@ export const ConfirmedSaleDialog = ({
               paymentMethod === IPaymentMethod.CASH ? `$${cashReceived}` : ''
             }
             tipoCredit={creditMethod}
+            change={saleSummary.change.toFixed(2)}
+            totalDiscount={saleSummary.totalDiscount.toFixed(2)}
           />
         </DialogFooter>
       </DialogContent>
@@ -188,7 +190,7 @@ export const ConfirmedSaleDialog = ({
 
 const ReportField = ({ icon, label, value }: IReportField) => {
   return (
-    <div className="flex items-center justify-between w-full gap-4 dark:text-white dark:bg-black">
+    <div className="flex items-center justify-between w-full gap-4 dark:text-white ">
       <Label htmlFor={label} className="flex items-center w-[30%]">
         {icon}
         {label}
