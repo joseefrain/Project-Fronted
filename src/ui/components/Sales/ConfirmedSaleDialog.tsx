@@ -52,6 +52,7 @@ export interface IConfirmedSaleDialog {
   months: string;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleCloseModal: () => void;
+  saleId: string;
 }
 
 export const ConfirmedSaleDialog = ({
@@ -68,6 +69,7 @@ export const ConfirmedSaleDialog = ({
   paymentMethod,
   creditMethod,
   months,
+  saleId,
 }: IConfirmedSaleDialog) => {
   return (
     <Dialog
@@ -164,7 +166,7 @@ export const ConfirmedSaleDialog = ({
         <DialogFooter className="saled__btn">
           <POSTicketGenerator
             cashierName={username.toUpperCase() ?? ''}
-            transactionId="1234"
+            transactionId={saleId}
             date={getFormatedDate(transactionDate!, true).toUpperCase()}
             total={`$${saleSummary.total.toFixed(2)}`}
             products={productSale}
