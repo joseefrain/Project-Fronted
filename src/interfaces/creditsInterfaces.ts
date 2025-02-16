@@ -13,6 +13,7 @@ export interface ICreditsState {
   credits: ITransacionCredit[];
   status: IStatus;
   error: string | null;
+  returns: ISale[];
 }
 
 type TypeCredito = 'VENTA' | 'COMPRA';

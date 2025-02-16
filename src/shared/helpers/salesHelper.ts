@@ -86,8 +86,6 @@ export const applyDiscounts = (
       )
     );
 
-  console.log(descuentosGrupo, 'descuentosGrupo');
-
   const descuentoAplicable =
     descuentosProducto?.length > 0
       ? descuentosProducto[0]?.descuentoId

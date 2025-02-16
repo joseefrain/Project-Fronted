@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MainCredits } from '../../../../ui/components/Credits/main';
+import { ReturnCreditHistory } from '../../../../ui/components/Credits/ReturnCreditHistory';
 
 export const Credits = () => {
   return (
@@ -34,6 +35,12 @@ export const Credits = () => {
             >
               Historial
             </TabsTrigger>
+            <TabsTrigger
+              className="bg-black text-[#ffffff] font-bold"
+              value="return"
+            >
+              Devoluciones
+            </TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="all">
@@ -47,6 +54,9 @@ export const Credits = () => {
         </TabsContent>
         <TabsContent value="historial">
           <MainCredits filterType="historial" />
+        </TabsContent>
+        <TabsContent value="return">
+          <ReturnCreditHistory />
         </TabsContent>
       </Tabs>
     </div>

@@ -175,6 +175,9 @@ export interface ISale {
   credito?: ICredit;
   fechaRegistro?: Date;
   username?: string;
+  montoExterno?: {
+    $numberDecimal: number;
+  };
 }
 
 export interface INewSale extends Omit<ISale, 'id'> {}

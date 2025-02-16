@@ -27,3 +27,13 @@ export const fetchCreditById = async (id: string): Promise<AxiosResponse> => {
   const response = await axiosInstance.get(`/${id}`);
   return response.data;
 };
+
+export const getCreditReturnByBranchId = async (
+  id: string
+): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Sales);
+  const response = await axiosInstance.get(
+    `credit/${PATH_LIST.Return}/${id}/branch`
+  );
+  return response;
+};

@@ -71,7 +71,6 @@ export interface ISaleSummary {
   subTotal: number;
   totalDiscount: number;
   total: number;
-  change: number;
   totalDiscountPercentage: number;
 }
 
@@ -126,7 +125,6 @@ export const PurchaseCashier = ({
   );
 
   const [open, setOpen] = useState(false);
-  const [cashReceived, setCashReceived] = useState<string>('');
   const [months, setMonths] = useState<string>('');
   const [customer, setCustomer] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -155,16 +153,14 @@ export const PurchaseCashier = ({
 
     const totalDiscountPercentage = (totalDiscount / subTotal) * 100;
     const total = subTotal - totalDiscount;
-    const change = cashReceived ? Number(cashReceived) - total : 0;
 
     return {
       subTotal,
       totalDiscount,
       total,
-      change,
       totalDiscountPercentage,
     };
-  }, [productSale, cashReceived]);
+  }, [productSale]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -184,6 +180,14 @@ export const PurchaseCashier = ({
       return;
     }
 
+    if (
+      paymentMethod === IPaymentMethod.CASH &&
+      Number(userCashier.montoEsperado.$numberDecimal ?? 0) < saleSummary.total
+    ) {
+      toast.error('Debe tener suficiente efectivo para pagar la compra.');
+      return;
+    }
+
     setProcessingSale(true);
     setTransactionDate(new Date());
 
@@ -194,8 +198,8 @@ export const PurchaseCashier = ({
       subtotal: saleSummary.subTotal,
       total: saleSummary.total,
       discount: saleSummary.totalDiscount,
-      cambioCliente: saleSummary.change,
-      monto: Number(cashReceived),
+      cambioCliente: 0,
+      monto: saleSummary.total,
       cajaId: userCashier ? userCashier._id : '',
       paymentMethod,
       tipoTransaccion: ITypeTransaction.COMPRA,
@@ -260,7 +264,6 @@ export const PurchaseCashier = ({
   };
 
   const handleCloseModal = () => {
-    setCashReceived('');
     setCustomer('');
     setTransactionDate(null);
     setProductSale([]);
@@ -354,7 +357,7 @@ export const PurchaseCashier = ({
                       variant="outline"
                       role="combobox"
                       aria-expanded={open}
-                      className="justify-between dark:bg-black w-full  "
+                      className="justify-between w-full dark:bg-black "
                     >
                       {customer
                         ? registeredCustomers.find((c) => c._id === customer)
@@ -418,7 +421,9 @@ export const PurchaseCashier = ({
           </div>
 
           <div className="flex items-center justify-between w-full">
-            <div className="space-y-2 w-[47.5%]">
+            <div
+              className={`space-y-2 ${paymentMethod === IPaymentMethod.CASH ? 'w-full' : 'w-[47.5%]'}`}
+            >
               <Label>
                 Método de pago
                 <span className="text-red-600">*</span>
@@ -457,27 +462,6 @@ export const PurchaseCashier = ({
                 </SelectContent>
               </Select>
             </div>
-
-            {paymentMethod === IPaymentMethod.CASH && (
-              <div className="space-y-2 w-[47.5%]">
-                <Label htmlFor="cash-received">
-                  Efectivo recibido
-                  <span className="text-red-600">*</span>
-                </Label>
-                <div className="relative">
-                  <Banknote className="absolute text-green-600 transform -translate-y-1/2 left-2 top-1/2 " />
-                  <Input
-                    id="cash-received"
-                    type="number"
-                    value={cashReceived}
-                    onChange={(e) => setCashReceived(e.target.value)}
-                    placeholder="0.00"
-                    className="pl-10 text-lg font-semibold bg-white font-onest dark:bg-[#09090A]"
-                    disabled={processingSale}
-                  />
-                </div>
-              </div>
-            )}
 
             {paymentMethod === IPaymentMethod.CREDIT && (
               <div className="w-[47.5%] flex justify-between items-center gap-4">
@@ -560,14 +544,6 @@ export const PurchaseCashier = ({
                 {saleSummary.total.toFixed(2)}
               </span>
             </div>
-
-            <div className="flex justify-between p-2 text-sm bg-green-100 rounded shadow-md dark:bg-black">
-              <span>Cambio:</span>
-              <span className="font-medium">
-                {coin}
-                {saleSummary.change.toFixed(2)}
-              </span>
-            </div>
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
@@ -579,8 +555,6 @@ export const PurchaseCashier = ({
               productSale.length === 0 ||
               processingSale ||
               (customerType === ICustomerType.REGISTERED && !customer) ||
-              (paymentMethod === IPaymentMethod.CASH &&
-                Number(cashReceived ?? 0) < saleSummary.total) ||
               (paymentMethod === IPaymentMethod.CREDIT &&
                 creditMethod === ICreditMethod.PLAZO &&
                 Number(months ?? 0) <= 0)
@@ -601,7 +575,7 @@ export const PurchaseCashier = ({
         }
         branchName={branchSelected?.nombre ?? ''}
         transactionDate={transactionDate}
-        cashReceived={Number(cashReceived)}
+        cashReceived={Number(saleSummary.total)}
         saleSummary={saleSummary}
         username={user?.username ?? ''}
         setIsModalOpen={setIsModalOpen}

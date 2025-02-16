@@ -8,6 +8,7 @@ import {
 import {
   fetchCreditById,
   fetchCreditsByBranch,
+  getCreditReturnByBranchId,
   postPayCredit,
 } from '../../api/services/credits';
 import { ITransactionReturn } from '../../interfaces/salesInterfaces';
@@ -64,9 +65,22 @@ export const createCreditReturn = createAsyncThunk(
   }
 );
 
+export const getCreditsReturnByBranchId = createAsyncThunk(
+  'credits/getReturnByBranchId',
+  async (id: string) => {
+    try {
+      const response = await getCreditReturnByBranchId(id);
+      return response.data;
+    } catch (error) {
+      return handleThunkError(error);
+    }
+  }
+);
+
 const initialState: ICreditsState = {
   creditSelected: null,
   credits: [],
+  returns: [],
   status: 'idle',
   error: null,
 };
@@ -110,6 +124,10 @@ const creditsSlice = createSlice({
         if (credit && payload.balanceDue <= 0) {
           credit.credito.estadoCredito = 'CERRADO';
         }
+      })
+      .addCase(getCreditsReturnByBranchId.fulfilled, (state, { payload }) => {
+        state.status = 'succeeded';
+        state.returns = payload;
       });
   },
 });

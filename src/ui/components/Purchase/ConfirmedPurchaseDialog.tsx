@@ -21,7 +21,6 @@ import {
   CalendarCheck,
   Captions,
   Clock,
-  Coins,
   Receipt,
   Store,
   User,
@@ -147,18 +146,11 @@ export const ConfirmedPurchaseDialog = ({
             icon={<BadgeDollarSign className="mr-3" />}
           />
           {paymentMethod === IPaymentMethod.CASH && (
-            <>
-              <ReportField
-                label="Efectivo"
-                value={`$${cashReceived}`}
-                icon={<Banknote className="mr-3" />}
-              />
-              <ReportField
-                label="Cambio"
-                value={`$${saleSummary.change.toFixed(2)}`}
-                icon={<Coins className="mr-3" />}
-              />
-            </>
+            <ReportField
+              label="Efectivo"
+              value={`$${cashReceived}`}
+              icon={<Banknote className="mr-3" />}
+            />
           )}
         </div>
         <DialogFooter className="saled__btn">

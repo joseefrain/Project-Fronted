@@ -129,5 +129,3 @@ export const getTransactionReturnByBranchId = async (
   );
   return response;
 };
-
-// '/devolucion/:id/:typeTransaction/branch',
