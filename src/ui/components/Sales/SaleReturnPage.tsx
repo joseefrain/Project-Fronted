@@ -474,7 +474,8 @@ export default function SalesReturnPage({
             className="px-8 py-5 font-semibold uppercase disabled:bg-gray-200 dark:disabled:bg-gray-900 disabled:cursor-not-allowed disabled:text-gray-800 dark:disabled:text-gray-200 dark:bg-white"
             disabled={
               totalReturn.total === 0 ||
-              cashRegister.cash + extraCash < totalReturn.total ||
+              Number(cashRegister.cash.toFixed(2)) + Number(extraCash) <
+                Number(totalReturn.total.toFixed(2)) ||
               returnProccessing
             }
           >
