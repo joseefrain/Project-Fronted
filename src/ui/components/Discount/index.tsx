@@ -63,13 +63,17 @@ export default function DiscountManager() {
   const filteredBranche =
     userRoles?.role === ROLE.ROOT ? branches : dataFilterID;
   let idBranch = userRoles?.sucursalId?._id;
+  const now = new Date();
+  const localISOTime = new Date(
+    now.getTime() - now.getTimezoneOffset() * 60000
+  ).toISOString();
 
   const initializeFormState = (): IDescuentoCreate => ({
     nombre: '',
     tipoDescuento: 'porcentaje',
     valorDescuento: 0,
-    fechaInicio: new Date(),
-    fechaFin: new Date(),
+    fechaInicio: new Date(localISOTime),
+    fechaFin: new Date(localISOTime),
     minimoCompra: { $numberDecimal: 0 },
     minimoCantidad: 0,
     activo: true,
@@ -197,7 +201,6 @@ export default function DiscountManager() {
   const handleSubmit = async (e: React.FormEvent) => {
     try {
       e.preventDefault();
-
       if (editingId) {
         await store.dispatch(updateDiscountSales(formState)).unwrap();
         toast.success('Descuento actualizado exitosamente');
@@ -306,7 +309,7 @@ export default function DiscountManager() {
       nombre: '',
       tipoDescuento: 'porcentaje',
       valorDescuento: 0,
-      fechaInicio: new Date(),
+      fechaInicio: new Date(localISOTime),
       fechaFin: new Date(),
       //@ts-ignore
       minimoCompra: 0,
