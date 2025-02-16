@@ -335,7 +335,22 @@ export const IndexModal = ({
                   }
                 />
               </div>
-              <Button type="submit">{editingId ? 'Editar' : 'Crear'}</Button>
+              <Button
+                disabled={
+                  !(
+                    formState.minimoCompra?.$numberDecimal &&
+                    formState.minimoCantidad &&
+                    formState.codigoDescunto &&
+                    formState.tipoDescuento &&
+                    formState.valorDescuento &&
+                    formState.fechaInicio &&
+                    formState.fechaFin
+                  )
+                }
+                type="submit"
+              >
+                {editingId ? 'Editar' : 'Crear'}
+              </Button>
             </div>
           </form>
         </DialogContent>
