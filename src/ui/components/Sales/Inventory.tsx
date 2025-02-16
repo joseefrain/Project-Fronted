@@ -121,6 +121,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
     ICreditMethod.PLAZO
   );
 
+  const [saleId, setSaleId] = useState('');
   const [open, setOpen] = useState(false);
   const [cashReceived, setCashReceived] = useState<string>('');
   const [months, setMonths] = useState<string>('');
@@ -214,8 +215,9 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
         setProcessingSale(false);
         return Promise.reject();
       })
+      .then((res) => {
+        setSaleId(res.id);
 
-      .then(() => {
         setTimeout(() => {
           setIsModalOpen(true);
           if (paymentMethod !== IPaymentMethod.CREDIT) {
@@ -263,6 +265,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
     setProductSale([]);
     setProcessingSale(false);
     setIsModalOpen(false);
+    setSaleId('');
   };
 
   return (
@@ -612,6 +615,7 @@ export const Cashier = ({ productSale, setProductSale }: ICashierProps) => {
         paymentMethod={paymentMethod}
         creditMethod={creditMethod}
         months={months}
+        saleId={saleId}
       />
       <Toaster richColors />
     </>

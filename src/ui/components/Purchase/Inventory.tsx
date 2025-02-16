@@ -102,6 +102,7 @@ export const PurchaseCashier = ({
   const coin = dataCoins.currentS;
   const key = 'user';
   const storedData = localStorage.getItem(key);
+  const [saleId, setSaleId] = useState('');
 
   const registeredCustomers = allEntities.filter(
     (entity) => entity.type === 'supplier'
@@ -222,7 +223,8 @@ export const PurchaseCashier = ({
         setProcessingSale(false);
         return Promise.reject();
       })
-      .then(() => {
+      .then((res) => {
+        setSaleId(res.id);
         setTimeout(() => {
           setIsModalOpen(true);
           if (paymentMethod !== IPaymentMethod.CREDIT) {
@@ -586,6 +588,7 @@ export const PurchaseCashier = ({
         paymentMethod={paymentMethod}
         creditMethod={creditMethod}
         months={months}
+        saleId={saleId}
       />
       <Toaster richColors />
     </>
