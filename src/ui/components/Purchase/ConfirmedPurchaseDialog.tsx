@@ -171,6 +171,8 @@ export const ConfirmedPurchaseDialog = ({
               paymentMethod === IPaymentMethod.CASH ? `$${cashReceived}` : ''
             }
             tipoCredit={creditMethod}
+            change={saleSummary.change.toFixed(2)}
+            totalDiscount={saleSummary.totalDiscount.toFixed(2)}
           />
         </DialogFooter>
       </DialogContent>
