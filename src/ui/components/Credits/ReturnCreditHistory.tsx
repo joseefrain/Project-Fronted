@@ -1,5 +1,4 @@
 import { useAppSelector } from '@/app/hooks';
-import { fetchTransactionReturnByBranchId } from '@/app/slices/salesSlice';
 import { store } from '@/app/store';
 import { Button } from '@/components/ui/button';
 import {
@@ -40,15 +39,13 @@ import { es } from 'date-fns/locale';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
-import {
-  dataCoins,
-  ITypeTransaction,
-} from '../../../interfaces/salesInterfaces';
+import { dataCoins } from '../../../interfaces/salesInterfaces';
+import { getCreditsReturnByBranchId } from '../../../app/slices/credits';
 
-export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
+export const ReturnCreditHistory = () => {
   const branchStoraged = getSelectedBranchFromLocalStorage();
   const user = useAppSelector((state) => state.auth.signIn.user);
-  const returnHistory = useAppSelector((state) => state.sales.returns);
+  const returnHistory = useAppSelector((state) => state.credits.returns);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const coin = dataCoins.currentS;
@@ -56,10 +53,9 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
   useEffect(() => {
     store
       .dispatch(
-        fetchTransactionReturnByBranchId({
-          id: user?.sucursalId?._id ?? branchStoraged ?? '',
-          type: type,
-        })
+        getCreditsReturnByBranchId(
+          user?.sucursalId?._id ?? branchStoraged ?? ''
+        )
       )
       .unwrap();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,13 +67,12 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
 
   const filteredReturn = selectedDateRange
     ? returnHistory.filter((entry) => {
-        const aperturaDate = entry.fechaRegistro
-          ? new Date(entry.fechaRegistro)
+        const aperturaDate = entry?.fechaRegistro
+          ? new Date(entry?.fechaRegistro)
           : new Date();
         return (
           aperturaDate >= (selectedDateRange.from ?? new Date(0)) &&
-          aperturaDate <= (selectedDateRange.to ?? new Date()) &&
-          type === entry.tipoTransaccion
+          aperturaDate <= (selectedDateRange.to ?? new Date())
         );
       })
     : returnHistory;
@@ -92,7 +87,7 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
   const totalPages = Math.ceil(filteredReturn.length / itemsPerPage);
 
   return (
-    <Card>
+    <Card className="mt-10">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <History />
