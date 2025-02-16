@@ -338,13 +338,11 @@ export const IndexModal = ({
               <Button
                 disabled={
                   !(
-                    formState.minimoCompra?.$numberDecimal &&
-                    formState.minimoCantidad &&
                     formState.codigoDescunto &&
                     formState.tipoDescuento &&
-                    formState.valorDescuento &&
                     formState.fechaInicio &&
-                    formState.fechaFin
+                    formState.fechaFin &&
+                    formState.nombre
                   )
                 }
                 type="submit"
