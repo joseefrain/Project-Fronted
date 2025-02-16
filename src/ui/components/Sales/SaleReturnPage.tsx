@@ -229,11 +229,7 @@ export default function SalesReturnPage({
 
   return (
     <Card className="containerModalReturn">
-      <CardContent
-        className="
-containerModalCardContent
-      "
-      >
+      <CardContent className=" containerModalCardContent">
         <div className="containerModalCardContent__into">
           <div className="cardTitle">
             <h3 className="font-semibold text-gray-700 dark:text-white">
@@ -410,63 +406,67 @@ containerModalCardContent
           </div>
         </div>
 
-        {needsExtraCash && (
-          <div className="flex items-center justify-center w-full">
-            <Alert
-              variant="destructive"
-              className="flex w-full mt-4 dark:bg-gray-200 dark:border-red-500"
-            >
-              <div className="w-[80%]">
-                <AlertTitle className="flex items-center gap-2 dark:text-red-500">
-                  <AlertTriangleIcon className="w-4 h-4" />
-                  Advertencia
-                </AlertTitle>
-                <AlertDescription className="w-[90%] dark:text-red-500">
-                  No hay suficiente dinero en caja para cubrir la devolución. Se
-                  necesitan{' '}
-                  <span className="font-bold">
-                    ${(totalReturn.total - cashRegister.cash).toFixed(2)}{' '}
-                  </span>
-                  adicionales, proceda a ingresar el dinero adicional antes de
-                  continuar.
-                </AlertDescription>
-              </div>
-              <div>
-                <Label
-                  htmlFor="extraCash"
-                  className="font-semibold dark:text-red-500"
-                >
-                  Ingrese dinero extra:
-                </Label>
-                <div className="flex items-center mt-2">
-                  <Input
-                    id="extraCash"
-                    type="number"
-                    min={0}
-                    max={Number(
-                      (totalReturn.total - cashRegister.cash).toFixed(2)
-                    )}
-                    value={extraCash}
-                    onChange={(e) => {
-                      if (e.target.value === '') return setExtraCash(0);
-
-                      const cashNeeded = Number(
-                        (totalReturn.total - cashRegister.cash).toFixed(2)
-                      );
-
-                      if (needsExtraCash && Number(e.target.value) > cashNeeded)
-                        return setExtraCash(cashNeeded);
-
-                      setExtraCash(Number.parseFloat(e.target.value));
-                    }}
-                    className="w-40 mr-2 text-black"
-                    disabled={returnProccessing}
-                  />
+        {needsExtraCash &&
+          Object.values(returnQuantities).some((q) => q.quantity > 0) && (
+            <div className="flex items-center justify-center w-full">
+              <Alert
+                variant="destructive"
+                className="flex w-full mt-4 dark:bg-gray-200 dark:border-red-500"
+              >
+                <div className="w-[80%]">
+                  <AlertTitle className="flex items-center gap-2 dark:text-red-500">
+                    <AlertTriangleIcon className="w-4 h-4" />
+                    Advertencia
+                  </AlertTitle>
+                  <AlertDescription className="w-[90%] dark:text-red-500">
+                    No hay suficiente dinero en caja para cubrir la devolución.
+                    Se necesitan{' '}
+                    <span className="font-bold">
+                      ${(totalReturn.total - cashRegister.cash).toFixed(2)}{' '}
+                    </span>
+                    adicionales, proceda a ingresar el dinero adicional antes de
+                    continuar.
+                  </AlertDescription>
                 </div>
-              </div>
-            </Alert>
-          </div>
-        )}
+                <div>
+                  <Label
+                    htmlFor="extraCash"
+                    className="font-semibold dark:text-red-500"
+                  >
+                    Ingrese dinero extra:
+                  </Label>
+                  <div className="flex items-center mt-2">
+                    <Input
+                      id="extraCash"
+                      type="number"
+                      min={0}
+                      max={Number(
+                        (totalReturn.total - cashRegister.cash).toFixed(2)
+                      )}
+                      value={extraCash}
+                      onChange={(e) => {
+                        if (e.target.value === '') return setExtraCash(0);
+
+                        const cashNeeded = Number(
+                          (totalReturn.total - cashRegister.cash).toFixed(2)
+                        );
+
+                        if (
+                          needsExtraCash &&
+                          Number(e.target.value) > cashNeeded
+                        )
+                          return setExtraCash(cashNeeded);
+
+                        setExtraCash(Number.parseFloat(e.target.value));
+                      }}
+                      className="w-40 mr-2 text-black"
+                      disabled={returnProccessing}
+                    />
+                  </div>
+                </div>
+              </Alert>
+            </div>
+          )}
 
         <div className="flex justify-end mt-8">
           <Button

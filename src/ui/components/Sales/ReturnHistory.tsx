@@ -143,6 +143,9 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
               <TableRow>
                 <TableHead>Usuario</TableHead>
                 <TableHead>Fecha</TableHead>
+                <TableHead className="text-center">
+                  Dinero extra ingresado
+                </TableHead>
                 <TableHead>Total</TableHead>
                 <TableHead>Productos</TableHead>
               </TableRow>
@@ -152,6 +155,12 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
                 <TableRow key={sale.id} className="h-[50px]">
                   <TableCell>{sale.username}</TableCell>
                   <TableCell>{getFormatedDate(new Date())}</TableCell>
+                  <TableCell className="text-center">
+                    $
+                    {sale.montoExterno
+                      ? sale.montoExterno.$numberDecimal.toFixed(2)
+                      : 0}
+                  </TableCell>
                   <TableCell>${sale.total.toFixed(2)}</TableCell>
                   <TableCell>
                     <Dialog>
