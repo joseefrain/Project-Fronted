@@ -51,3 +51,9 @@ export const getUserAndBranch = async ({
   const response = await axiosInstance.post('/userAndBranch', data);
   return response;
 };
+
+export const getHistoryCashier = async (id: string): Promise<AxiosResponse> => {
+  const axiosInstance = createAxiosInstance(Token(), PATH_LIST.Cashier);
+  const response = await axiosInstance.get(`/daily/${id}/:limit/:skip`);
+  return response.data;
+};

@@ -6,6 +6,7 @@ import {
   craeteBox,
   getboxBranch,
   getboxId,
+  getHistoryCashier,
   getUserAndBranch,
   openCashier,
 } from '../../api/services/box';
@@ -61,8 +62,29 @@ export interface ICreataCashRegister {
   consecutivo?: number;
 }
 
+interface ITotal {
+  $numberDecimal: string;
+}
+
+export interface IHistoryCashier {
+  _id: string;
+  sucursalId: Branch;
+  cajaId: string;
+  fecha: string;
+  totalVentas: ITotal;
+  totalCompras: ITotal;
+  totalIngresos: ITotal;
+  totalEgresos: ITotal;
+  montoFinalSistema: ITotal;
+  montoDeclaradoPorUsuario: number | null;
+  diferencia: number | null;
+  ventas: string[];
+  compras: string[];
+}
+
 export interface IBox {
   BoxesData: ICajaBrach[] | null;
+  historyCashier: IHistoryCashier[] | null;
   create: ICreataCashRegister | null;
   boxState: ICajaBrach[] | null;
   status: IStatus;
@@ -71,6 +93,7 @@ export interface IBox {
 
 const initialState: IBox = {
   BoxesData: null,
+  historyCashier: null,
   create: null,
   boxState: [],
   status: 'idle',
@@ -131,6 +154,18 @@ export const getBoxById = createAsyncThunk(
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await getboxId(id);
+      return response;
+    } catch (error) {
+      return rejectWithValue(handleThunkError(error));
+    }
+  }
+);
+
+export const getHistoryCashiers = createAsyncThunk(
+  'cashRegister/getHistoryCashier',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await getHistoryCashier(id);
       return response;
     } catch (error) {
       return rejectWithValue(handleThunkError(error));
@@ -256,6 +291,13 @@ export const boxSlice = createSlice({
       .addCase(getBoxById.rejected, (state, action) => {
         state.error = action.error.message as string;
         state.status = 'failed';
+      })
+      .addCase(getHistoryCashiers.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getHistoryCashiers.fulfilled, (state, action) => {
+        state.historyCashier = action.payload as unknown as IHistoryCashier[];
+        state.status = 'succeeded';
       });
   },
 });

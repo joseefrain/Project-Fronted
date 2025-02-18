@@ -4,7 +4,13 @@ import {
   receiveTransfer,
 } from '@/app/slices/transferSlice';
 import { store } from '@/app/store';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -22,7 +28,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Loader } from '@/shared/components/ui/Loader';
 import { ListOrdered } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { MapIndex } from './table';
@@ -35,6 +40,7 @@ import { updateSelectedBranch } from '../../../app/slices/branchSlice';
 import { GetBranches } from '../../../shared/helpers/Branchs';
 import { Button } from '../../../components/ui/button';
 import { Branch } from '../../../interfaces/branchInterfaces';
+import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 
 const orderStatusOptions = [
   { value: 'Todos', label: 'Ver Todos' },
@@ -47,7 +53,7 @@ const orderStatusOptions = [
 export const BranchReceived = () => {
   const DataAlls = useAppSelector((state) => state.transfer.dataBranchReceived);
   const branches = useAppSelector((state) => state.branches.data);
-  const { selectedBranch, loading } = useAppSelector((state) => state.branches);
+  const { selectedBranch } = useAppSelector((state) => state.branches);
   const userRoles = useAppSelector((state) => state.auth.signIn.user);
   const [sourceBranch, setSourceBranch] = useState<Branch | null>(null);
   const branchIdFromLocalStorage = getSelectedBranchFromLocalStorage();
@@ -108,6 +114,16 @@ export const BranchReceived = () => {
     );
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredProducts.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+  const paginatedData = Math.ceil(filteredProducts.length / itemsPerPage);
+  console.log(currentItems, 'currentItems');
   return (
     <div className="container mx-auto space-y-6 font-onest">
       <Card>
@@ -158,11 +174,8 @@ export const BranchReceived = () => {
             </div>
           </div>
 
-          {loading ? (
-            <div className="flex items-center justify-center h-40">
-              <Loader />
-            </div>
-          ) : selectedBranch ? (
+          <>
+            {' '}
             <Table>
               <TableHeader>
                 <TableRow>
@@ -176,8 +189,8 @@ export const BranchReceived = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProducts && filteredProducts.length > 0 ? (
-                  filteredProducts.map((order) => (
+                {currentItems && currentItems.length > 0 ? (
+                  currentItems.map((order) => (
                     <MapIndex order={order} key={order._id} />
                   ))
                 ) : (
@@ -189,11 +202,14 @@ export const BranchReceived = () => {
                 )}
               </TableBody>
             </Table>
-          ) : (
-            <div className="flex items-center justify-center h-40 text-red-600">
-              Seleccione una sucursal
-            </div>
-          )}
+            <CardFooter className="flex items-center justify-between">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={paginatedData}
+                onPageChange={setCurrentPage}
+              />
+            </CardFooter>
+          </>
         </CardContent>
       </Card>
     </div>
