@@ -24,7 +24,8 @@ interface IHistoryCahier {
 }
 
 export const HistoryCahierCount = ({ data, access }: IHistoryCahier) => {
-  const dataHisotry = useAppSelector((state) => state.boxes.historyCashier);
+  const dataHisotry =
+    useAppSelector((state) => state.boxes.historyCashier) || [];
 
   const [currentPage, setCurrentPage] = useState(1);
   console.log(dataHisotry, 'dataHisotry');
@@ -38,7 +39,7 @@ export const HistoryCahierCount = ({ data, access }: IHistoryCahier) => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = dataHisotry?.slice(indexOfFirstItem, indexOfLastItem);
-  const paginatedData = Math.ceil(dataHisotry?.length / itemsPerPage);
+  const paginatedData = Math.ceil(dataHisotry.length / itemsPerPage);
   return (
     <>
       <div>
@@ -60,7 +61,7 @@ export const HistoryCahierCount = ({ data, access }: IHistoryCahier) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {dataHisotry?.map((entry, index) => (
+            {currentItems?.map((entry, index) => (
               <TableRow key={index}>
                 <TableCell>
                   {entry.fecha ? getFormatedDate(new Date(entry.fecha)) : 'N/A'}
