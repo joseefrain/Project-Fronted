@@ -11,6 +11,7 @@ import {
   Store,
   UserPlus,
   Waypoints,
+  LayoutDashboardIcon,
 } from 'lucide-react';
 
 export enum LEVEL_VALUES {
@@ -35,6 +36,7 @@ export enum PAGES_MODULES {
   ROLES = 'ROLES',
   CASHREGISTER = 'CASHREGISTER',
   HOURS = 'HORARIOS',
+  HOME = 'HOME',
 }
 
 export const getLevelValueLabel = (level: number) => {
@@ -214,8 +216,14 @@ export const sidebarLinks = [
   {
     name: 'INICIO',
     path: '/',
-    module: PAGES_MODULES.DASHBOARD,
+    module: PAGES_MODULES.HOME,
     icon: <House />,
+  },
+  {
+    name: 'DASHBOARD',
+    path: '/dashboard',
+    module: PAGES_MODULES.DASHBOARD,
+    icon: <LayoutDashboardIcon />,
   },
 
   {
@@ -320,7 +328,15 @@ const getSidebarLinks = (roles: IRole[]) => {
 export const getSidebarLinksByRoles = (roles: IRole[]) => {
   const filteredLinks = getSidebarLinks(roles);
 
-  return filteredLinks;
+  return [
+    {
+      name: 'INICIO',
+      path: '/',
+      module: PAGES_MODULES.HOME,
+      icon: <House />,
+    },
+    ...filteredLinks,
+  ];
 };
 
 export const hasLevelInModuleByRoles = (
