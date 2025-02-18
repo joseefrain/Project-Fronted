@@ -28,6 +28,7 @@ import LoginForm from '@/ui/components/Login/LoginForm';
 import { ViewDashboard } from '../shared/components/ui/TabsListTable/dashboard';
 import PageWorkHours from '../ui/components/WorkHours';
 import { OutTime } from '../pages/OutTime';
+import { Home } from '../pages/Home';
 
 export const Router = () => {
   return (
@@ -40,12 +41,22 @@ export const Router = () => {
           </AlreadyAuthenticated>
         }
       />
+      <Route path="/" element={<RequireAuth module={PAGES_MODULES.HOME} />}>
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <Home />
+            </Layout>
+          }
+        />
+      </Route>
       <Route
-        path="/"
+        path="/dashboard"
         element={<RequireAuth module={PAGES_MODULES.DASHBOARD} />}
       >
         <Route
-          path="/"
+          path="/dashboard"
           element={
             <Layout>
               <ViewDashboard />

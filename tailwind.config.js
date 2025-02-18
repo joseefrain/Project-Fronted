@@ -9,9 +9,14 @@ export default {
           '0%, 100%': { boxShadow: '0 0 5px 2px white' },
           '50%': { boxShadow: '0 0 5px 2px red' },
         },
+        green: {
+          '0%, 100%': { boxShadow: '0 0 2px 1px white' },
+          '50%': { boxShadow: '0 0 2px 1px green' },
+        },
       },
       animation: {
         flash: 'flash 1.5s infinite',
+        green: 'green 1.5s infinite',
       },
       borderRadius: {
         lg: 'var(--radius)',

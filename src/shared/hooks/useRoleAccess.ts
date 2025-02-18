@@ -11,6 +11,15 @@ export const useRoleAccess = (module: PAGES_MODULES) => {
     (role) => role.module === module
   );
 
+  if (module === PAGES_MODULES.HOME) {
+    return {
+      create: true,
+      read: true,
+      update: true,
+      delete: true,
+    };
+  }
+
   if (!moduleFound) {
     return {
       create: false,
