@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { dataCoins, IProductSale } from '@/interfaces/salesInterfaces';
+import { store } from '../../../app/store';
 
 export interface IProductSaleProps {
   type?: 'VENTA' | 'COMPRA';
@@ -27,14 +28,19 @@ export const ProductSale = ({
   handleRemoveProductSale,
 }: IProductSaleProps) => {
   const coin = dataCoins.currentS;
+  const isRoot = store.getState().auth.signIn.user?.role === 'ROOT';
 
   return (
     <Table className="">
       <TableHeader>
         <TableRow>
           <TableHead>Producto</TableHead>
+          <TableHead>Categoría</TableHead>
+          <TableHead>Descripción</TableHead>
           <TableHead className="text-center">Cantidad</TableHead>
-          <TableHead className="text-center">Costo unitario</TableHead>
+          {((type === 'VENTA' && isRoot) || type === 'COMPRA') && (
+            <TableHead className="text-center">Costo unitario</TableHead>
+          )}
           <TableHead className="text-center">Precio ud.</TableHead>
           {type === 'VENTA' && (
             <TableHead className="text-center">Descuento</TableHead>
@@ -47,14 +53,20 @@ export const ProductSale = ({
         {products.map((item) => (
           <TableRow key={item.productId + item.price} className="h-[50px]">
             <TableCell>{item.productName}</TableCell>
-            <TableCell className="text-center">{item.quantity}</TableCell>
             <TableCell className="text-center">
-              {coin}
-              {typeof item?.costoUnitario === 'object' &&
-              item?.costoUnitario?.$numberDecimal
-                ? parseFloat(item.costoUnitario.$numberDecimal.toString())
-                : Number(item?.costoUnitario)}
+              {item.groupName ?? '-'}
             </TableCell>
+            <TableCell>{item.descripcion}</TableCell>
+            <TableCell className="text-center">{item.quantity}</TableCell>
+            {((type === 'VENTA' && isRoot) || type === 'COMPRA') && (
+              <TableCell className="text-center">
+                {coin}
+                {typeof item?.costoUnitario === 'object' &&
+                item?.costoUnitario?.$numberDecimal
+                  ? parseFloat(item.costoUnitario.$numberDecimal.toString())
+                  : Number(item?.costoUnitario)}
+              </TableCell>
+            )}
             <TableCell className="text-center">
               {coin}
               {item.price.toFixed(2)}
