@@ -146,6 +146,9 @@ const ProductForm = ({
     }));
   };
 
+  console.log("prueba");
+  
+
   return (
     <>
       {!initialData && (
