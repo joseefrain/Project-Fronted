@@ -88,7 +88,7 @@ export const UserTableRow = ({
       <TableCell>{user.sucursalId?.nombre ?? '-'}</TableCell>
       <TableCell className="truncate max-w-[20px]">{user.role}</TableCell>
       <TableCell className="truncate max-w-[20px]">
-        {user.roles.map((role) => role.name).join(', ')}{' '}
+        {user?.roles?.map((role) => role?.name).join(', ')}{' '}
       </TableCell>
       {(acccess.update || acccess.delete) && (
         <TableCell className="flex items-center justify-center gap-3">
