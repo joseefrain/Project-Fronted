@@ -26,6 +26,7 @@ import { toast, Toaster } from 'sonner';
 import { CategoriesCard } from './Categories';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 
 export default function Categories() {
   const access = useRoleAccess(PAGES_MODULES.CATEGORIAS);
@@ -97,6 +98,18 @@ export default function Categories() {
   const filteredCategories = categories.filter((branch) =>
     branch.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(8);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredCategories?.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+  const totalPages = Math.ceil(
+    (filteredCategories ?? []).length / itemsPerPage
+  );
 
   return (
     <>
@@ -105,7 +118,7 @@ export default function Categories() {
         <h1 className="text-4xl font-bold text-gray-800 font-onest w-[38%] dark:text-white">
           Categorías
         </h1>
-        <nav className="flex flex-col gap-5 mb-6 space-y-4 mt-9 sm:flex-row sm:items-center sm:space-y-0 justify-between">
+        <nav className="flex flex-col justify-between gap-5 mb-6 space-y-4 mt-9 sm:flex-row sm:items-center sm:space-y-0">
           <div className="flex items-center space-x-4">
             <Input
               placeholder="Buscar categorías"
@@ -114,6 +127,7 @@ export default function Categories() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+
           {access.create && (
             <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
               <Button
@@ -183,9 +197,9 @@ export default function Categories() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-        <div className="flex flex-row flex-wrap gap-4 justify-center">
-          {filteredCategories.length > 0 &&
-            filteredCategories.map((branch) => (
+        <div className="flex flex-row flex-wrap justify-center gap-4">
+          {currentItems.length > 0 &&
+            currentItems.map((branch) => (
               <CategoriesCard
                 key={branch._id}
                 categoriesData={branch}
@@ -194,6 +208,13 @@ export default function Categories() {
                 access={access}
               />
             ))}
+        </div>
+        <div className="flex justify-center mt-8">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </div>
     </>
