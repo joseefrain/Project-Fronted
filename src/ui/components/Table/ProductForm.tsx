@@ -127,13 +127,11 @@ const ProductForm = ({
       id: 'nombre',
       label: 'Nombre',
       type: 'text',
-      readOnly: !!initialData,
     },
     {
       id: 'descripcion',
       label: 'Descripcion',
       type: 'text',
-      readOnly: !!initialData,
     },
     { id: 'precio', label: 'Precio', type: 'number' },
     { id: 'stock', label: 'Stock', type: 'number', min: '0' },
@@ -155,7 +153,7 @@ const ProductForm = ({
       )}
       <form onSubmit={handleSubmit}>
         <div className="grid gap-4 py-4">
-          {fields.map(({ id, label, type, step, min, readOnly }) => (
+          {fields.map(({ id, label, type, step, min }) => (
             <div key={id} className="grid items-center grid-cols-4 gap-4">
               <Label htmlFor={id} className="text-right">
                 {label}
@@ -168,13 +166,8 @@ const ProductForm = ({
                 onChange={handleInputChange}
                 step={step}
                 min={min}
-                className={`col-span-3 ${
-                  initialData && (id === 'nombre' || id === 'descripcion')
-                    ? 'disabled'
-                    : ''
-                }`}
+                className={`col-span-3`}
                 required
-                readOnly={readOnly}
               />
             </div>
           ))}
