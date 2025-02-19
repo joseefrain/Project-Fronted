@@ -13,6 +13,8 @@ import ProductForm from './ProductForm';
 import { formatNumber } from '../../../shared/helpers/Branchs';
 import { useAppSelector } from '../../../app/hooks';
 import { ExportToExcel } from '../../../shared/components/ui/ExportToExcel/ExportToExcel';
+import { useLocation } from 'react-router-dom';
+import { getFormatedDate } from '../../../shared/helpers/transferHelper';
 
 interface SearchAndFilterProps {
   searchTerm: string;
@@ -125,6 +127,12 @@ export function AddProduct({
     )}`,
   }));
 
+  const location = useLocation();
+  const path = location.pathname === '/purchase';
+
+  const dateToday = new Date();
+  const fileName = ` ${getFormatedDate(dateToday)}-Registros de productos.xlsx`;
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -133,17 +141,17 @@ export function AddProduct({
           <span>Agregar</span>
         </Button>
       </DialogTrigger>
-
-      <ExportToExcel
-        data={formattedProducts || []}
-        columns={columns}
-        filename="Productos.xlsx"
-        totalRow={{
-          label: 'Total de Inventario',
-          value: formatNumber(totalCosto),
-        }} // Se agrega solo en Excel
-      />
-
+      {!path && (
+        <ExportToExcel
+          data={formattedProducts || []}
+          columns={columns}
+          filename={fileName}
+          totalRow={{
+            label: 'Total de Inventario',
+            value: formatNumber(totalCosto),
+          }}
+        />
+      )}
       <DialogContent className="font-onest">
         <DialogHeader>
           <DialogTitle>Agregar Producto</DialogTitle>
