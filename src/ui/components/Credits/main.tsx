@@ -15,6 +15,10 @@ import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import { TablaCredits } from './table';
 import { getCreditsByBranch } from '../../../app/slices/credits';
 import { getSelectedBranchFromLocalStorage } from '../../../shared/helpers/branchHelpers';
+import { ITransacionCredit } from '../../../interfaces/creditsInterfaces';
+import { getFormatedDate } from '../../../shared/helpers/transferHelper';
+import { ExportToExcel } from '../../../shared/components/ui/ExportToExcel/ExportToExcel';
+import { formatNumber } from '../../../shared/helpers/Branchs';
 
 interface MainContactsProps {
   filterType: string;
@@ -23,9 +27,7 @@ interface MainContactsProps {
 export const MainCredits = ({ filterType }: MainContactsProps) => {
   const user = useAppSelector((state) => state.auth.signIn.user);
   const branchStoraged = getSelectedBranchFromLocalStorage();
-
   const Credits = useAppSelector((state) => state.credits.credits);
-
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -59,7 +61,44 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
     store.dispatch(getCreditsByBranch(branchId)).unwrap();
   }, [branchStoraged, user?.sucursalId]);
 
-  console.log(Credits);
+  const columns: { key: string; label: string }[] = [
+    { key: 'usuario', label: 'Usuario de alta' },
+    {
+      key: 'entities',
+      label: 'Tipo de cliente',
+    },
+    { key: 'entidadName', label: 'cliente' },
+    { key: 'modalidad', label: 'Modalidad' },
+    { key: 'estado', label: 'Estado' },
+    { key: 'estadoTrasaccion', label: 'Estado de transacción' },
+    { key: 'fecha', label: 'Fecha' },
+    { key: 'saldoPendiente', label: 'Saldo Pendiente' },
+    { key: 'saldoCredito', label: 'Saldo Crédito' },
+    { key: 'ventacompra', label: 'Venta/Compra' },
+  ];
+
+  const formattedProducts = Credits?.map((product: ITransacionCredit) => ({
+    entidadName: product.credito?.entidadId?.generalInformation?.name,
+    entities: product.credito?.entidadId?.entities,
+    modalidad: product.credito?.modalidadCredito,
+    estado: product.credito?.estadoCredito,
+    //@ts-ignore
+    estadoTrasaccion: product.credito?.transaccionId?.estadoTrasaccion,
+    //@ts-ignore
+    fecha: getFormatedDate(product.credito?.transaccionId.fechaRegistro),
+    saldoPendiente: product.credito?.saldoPendiente.$numberDecimal ?? 0,
+    saldoCredito: product.credito?.saldoCredito.$numberDecimal ?? 0,
+    usuario: product.credito?.transaccionId?.usuarioId.username,
+    ventacompra: product.credito?.transaccionId?.tipoTransaccion,
+  }));
+  console.log(formattedProducts);
+
+  const totalCosto = Credits?.reduce((acc, product) => {
+    return acc + Number(product.credito?.saldoCredito.$numberDecimal ?? 0);
+  }, 0);
+
+  const dateToday = new Date();
+  const fileName = ` ${getFormatedDate(dateToday)}-Registros de créditos.xlsx`;
 
   return (
     <div className="flex flex-col w-full font-onest">
@@ -92,6 +131,15 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
                 searchTerm={searchTerm}
                 placeholder="Buscar créditos..."
                 setSearchTerm={setSearchTerm}
+              />
+              <ExportToExcel
+                data={formattedProducts}
+                columns={columns}
+                filename={fileName}
+                totalRow={{
+                  label: 'Total de Saldo Crédito',
+                  value: formatNumber(totalCosto),
+                }}
               />
             </div>
 
