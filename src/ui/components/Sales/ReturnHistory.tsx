@@ -42,8 +42,11 @@ import { DateRange } from 'react-day-picker';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import {
   dataCoins,
+  ISale,
   ITypeTransaction,
 } from '../../../interfaces/salesInterfaces';
+import { ExportToExcel } from '../../../shared/components/ui/ExportToExcel/ExportToExcel';
+import { formatNumber } from '../../../shared/helpers/Branchs';
 
 export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
   const branchStoraged = getSelectedBranchFromLocalStorage();
@@ -91,6 +94,26 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
   const currentItems = filteredReturn.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredReturn.length / itemsPerPage);
 
+  const columns: { key: keyof ISale; label: string }[] = [
+    { key: 'fechaRegistro', label: 'Fecha' },
+    { key: 'username', label: 'Usuario' },
+    { key: 'total', label: 'Total' },
+    { key: 'montoExterno', label: 'Monto externo' },
+    { key: 'paymentMethod', label: 'Método de pago' },
+  ];
+
+  const formattedProducts = returnHistory?.map((product: any) => ({
+    ...product,
+    fechaRegistro: getFormatedDate(product.fechaRegistro),
+  }));
+
+  const totalCosto = returnHistory?.reduce((acc, product) => {
+    return acc + Number(product.total);
+  }, 0);
+
+  const dateToday = new Date();
+  const fileName = ` ${getFormatedDate(dateToday)}-Registros de devoluciones.xlsx`;
+
   return (
     <Card>
       <CardHeader>
@@ -101,39 +124,52 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
         <CardDescription>
           Ver los detalles de las devoluciones realizadas
         </CardDescription>
-        <div className="flex justify-end mb-4">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline">
-                <Calendar className="w-4 h-4 mr-2" />
-                {selectedDateRange
-                  ? `${
-                      selectedDateRange.from &&
-                      !isNaN(selectedDateRange.from.getTime())
-                        ? format(selectedDateRange.from, 'P', { locale: es })
-                        : ''
-                    } - 
+        <div>
+          <div className="flex justify-end mb-4">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  {selectedDateRange
+                    ? `${
+                        selectedDateRange.from &&
+                        !isNaN(selectedDateRange.from.getTime())
+                          ? format(selectedDateRange.from, 'P', { locale: es })
+                          : ''
+                      } - 
                   ${
                     selectedDateRange.to &&
                     !isNaN(selectedDateRange.to.getTime())
                       ? format(selectedDateRange.to, 'P', { locale: es })
                       : ''
                   }`
-                  : 'Seleccionar Fechas'}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="end">
-              <CalendarComponent
-                selected={selectedDateRange}
-                onSelect={(dateRange) =>
-                  dateRange && handleDateRangeSelect(dateRange)
-                }
-                mode="range"
-                numberOfMonths={2}
-                locale={es}
-              />
-            </PopoverContent>
-          </Popover>
+                    : 'Seleccionar Fechas'}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <CalendarComponent
+                  selected={selectedDateRange}
+                  onSelect={(dateRange) =>
+                    dateRange && handleDateRangeSelect(dateRange)
+                  }
+                  mode="range"
+                  numberOfMonths={2}
+                  locale={es}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <div>
+            <ExportToExcel
+              data={formattedProducts || []}
+              columns={columns}
+              filename={fileName}
+              totalRow={{
+                label: 'Total de Devoluciones',
+                value: formatNumber(totalCosto),
+              }}
+            />
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -161,8 +197,8 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
                   </TableCell>
                   <TableCell className="text-center">
                     $
-                    {sale.montoExterno
-                      ? sale.montoExterno.$numberDecimal.toFixed(2)
+                    {sale?.montoExterno
+                      ? Number(sale?.montoExterno?.$numberDecimal).toFixed(2)
                       : 0}
                   </TableCell>
                   <TableCell>${sale.total.toFixed(2)}</TableCell>
