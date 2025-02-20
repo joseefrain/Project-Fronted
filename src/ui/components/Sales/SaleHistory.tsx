@@ -44,14 +44,19 @@ import { SaleReturnContainer } from './SaleReturnContainer';
 import { dataCoins, ISale } from '../../../interfaces/salesInterfaces';
 import { ExportToExcel } from '../../../shared/components/ui/ExportToExcel/ExportToExcel';
 import { formatNumber } from '../../../shared/helpers/Branchs';
+import { SearchComponent } from '../../../shared/components/ui/Search';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 
 export const SaleHistory = () => {
   const branchStoraged = getSelectedBranchFromLocalStorage();
   const user = useAppSelector((state) => state.auth.signIn.user);
+  const access = useRoleAccess(PAGES_MODULES.CONTACTOS);
   const salesHistory = useAppSelector((state) => state.sales.branchSales);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const coin = dataCoins.currentS;
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     store
@@ -64,7 +69,7 @@ export const SaleHistory = () => {
     DateRange | undefined
   >(undefined);
 
-  const filteredSales = selectedDateRange
+  const filteredSalesRange = selectedDateRange
     ? salesHistory.filter((entry) => {
         const aperturaDate = entry.fechaRegistro
           ? new Date(entry.fechaRegistro)
@@ -79,6 +84,10 @@ export const SaleHistory = () => {
   const handleDateRangeSelect = (dateRange: DateRange) => {
     setSelectedDateRange(dateRange);
   };
+
+  const filteredSales = filteredSalesRange?.filter((sale) =>
+    sale?.id?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -117,51 +126,63 @@ export const SaleHistory = () => {
         <CardDescription>
           Ver los detalles de las ventas realizadas
         </CardDescription>
-        <div className="flex justify-end gap-4">
-          <div className="flex justify-end mb-4">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  {selectedDateRange
-                    ? `${
-                        selectedDateRange.from &&
-                        !isNaN(selectedDateRange.from.getTime())
-                          ? format(selectedDateRange.from, 'P', { locale: es })
-                          : ''
-                      } - 
+
+        <div className="flex justify-between">
+          <div className="flex items-center justify-between ">
+            <SearchComponent
+              searchTerm={searchTerm}
+              placeholder="Buscar productos"
+              setSearchTerm={setSearchTerm}
+            />
+          </div>
+          <div className="flex items-baseline justify-between gap-4">
+            <div className="flex justify-end mb-4">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    {selectedDateRange
+                      ? `${
+                          selectedDateRange.from &&
+                          !isNaN(selectedDateRange.from.getTime())
+                            ? format(selectedDateRange.from, 'P', {
+                                locale: es,
+                              })
+                            : ''
+                        } - 
                   ${
                     selectedDateRange.to &&
                     !isNaN(selectedDateRange.to.getTime())
                       ? format(selectedDateRange.to, 'P', { locale: es })
                       : ''
                   }`
-                    : 'Seleccionar Fechas'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="end">
-                <CalendarComponent
-                  selected={selectedDateRange}
-                  onSelect={(dateRange) =>
-                    dateRange && handleDateRangeSelect(dateRange)
-                  }
-                  mode="range"
-                  numberOfMonths={2}
-                  locale={es}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-          <div>
-            <ExportToExcel
-              data={formattedProducts || []}
-              columns={columns}
-              filename={fileName}
-              totalRow={{
-                label: 'Total de Ventas',
-                value: formatNumber(totalCosto),
-              }}
-            />
+                      : 'Seleccionar Fechas'}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <CalendarComponent
+                    selected={selectedDateRange}
+                    onSelect={(dateRange) =>
+                      dateRange && handleDateRangeSelect(dateRange)
+                    }
+                    mode="range"
+                    numberOfMonths={2}
+                    locale={es}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            {(access.update || access.delete) && (
+              <ExportToExcel
+                data={formattedProducts || []}
+                columns={columns}
+                filename={fileName}
+                totalRow={{
+                  label: 'Total de Ventas',
+                  value: formatNumber(totalCosto),
+                }}
+              />
+            )}
           </div>
         </div>
       </CardHeader>
