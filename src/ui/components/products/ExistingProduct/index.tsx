@@ -89,8 +89,12 @@ export function ProductFormExist() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filteredProducts = findData.filter((product) =>
-    product.productoId.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = findData.filter(
+    (product) =>
+      product.productoId.nombre
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      product?.groupName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
