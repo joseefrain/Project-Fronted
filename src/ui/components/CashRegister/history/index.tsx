@@ -131,50 +131,53 @@ export const HistoryCahier = ({
           />
         )}
       </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Fecha</TableHead>
-            <TableHead className="text-center">Monto Inicial</TableHead>
-            {(access.update || access.delete) && (
-              <>
-                <TableHead className="text-center">Diferencia</TableHead>
-                <TableHead className="text-center">Monto Esperado</TableHead>
-              </>
-            )}
-            <TableHead className="text-center">Monto Final</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {currentItems.map((entry, index) => (
-            <TableRow key={index}>
-              <TableCell>
-                {format(new Date(entry.fechaApertura), 'P', { locale: es })}
-              </TableCell>
-              <TableCell className="text-center">
-                C$
-                {parseFloat(
-                  entry.montoInicial?.$numberDecimal?.toString() ?? '0'
-                ).toLocaleString('es-ES')}
-              </TableCell>
-              <TableCell className="text-center">
-                ${/* @ts-ignore */}
-                {entry.diferencia?.$numberDecimal?.toString()}
-              </TableCell>
-              <TableCell className="text-center">
-                C$
-                {parseFloat(
-                  entry.montoEsperado?.$numberDecimal?.toString() ?? '0'
-                ).toLocaleString('es-ES')}
-              </TableCell>
-              <TableCell className="text-center">
-                C${/* @ts-ignore */}
-                {entry.montoFinalDeclarado?.$numberDecimal?.toString()}
-              </TableCell>
+      <div className="overflow-x-auto">
+        <Table className="min-w-[768px]">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Fecha</TableHead>
+              <TableHead className="text-center">Monto Inicial</TableHead>
+              {(access.update || access.delete) && (
+                <>
+                  <TableHead className="text-center">Diferencia</TableHead>
+                  <TableHead className="text-center">Monto Esperado</TableHead>
+                </>
+              )}
+              <TableHead className="text-center">Monto Final</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {currentItems.map((entry, index) => (
+              <TableRow key={index} className="h-[50px]">
+                <TableCell>
+                  {format(new Date(entry.fechaApertura), 'P', { locale: es })}
+                </TableCell>
+                <TableCell className="text-center">
+                  C$
+                  {parseFloat(
+                    entry.montoInicial?.$numberDecimal?.toString() ?? '0'
+                  ).toLocaleString('es-ES')}
+                </TableCell>
+                <TableCell className="text-center">
+                  ${/* @ts-ignore */}
+                  {entry.diferencia?.$numberDecimal?.toString()}
+                </TableCell>
+                <TableCell className="text-center">
+                  C$
+                  {parseFloat(
+                    entry.montoEsperado?.$numberDecimal?.toString() ?? '0'
+                  ).toLocaleString('es-ES')}
+                </TableCell>
+                <TableCell className="text-center">
+                  C${/* @ts-ignore */}
+                  {entry.montoFinalDeclarado?.$numberDecimal?.toString()}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
       <CardFooter className="flex items-center justify-between">
         <Pagination
           currentPage={currentPage}

@@ -56,10 +56,6 @@
 .containerModalCardContent {
   @apply w-full;
 
-  //   @media (max-width: 480px) {
-  //     @apply w-[51.5%] max-w-[60%];
-  //   }
-
   &__into {
     @apply grid grid-cols-1 gap-4 mb-6 md:grid-cols-3;
   }
@@ -110,5 +106,29 @@
     @media (min-width: 375px) and (max-width: 400px) {
       @apply w-[51.5%] max-w-[58.5%];
     }
+  }
+}
+
+.container-temp {
+  @apply flex justify-between;
+
+  @media (max-width: 480px) {
+    @apply flex-col;
+  }
+}
+
+.container-tempinto {
+  @apply flex items-baseline justify-between gap-4;
+
+  @media (max-width: 480px) {
+    @apply flex-col gap-0;
+  }
+}
+
+.container-returnstyle {
+  @apply flex items-start justify-between gap-4;
+
+  @media (max-width: 480px) {
+    @apply flex-col gap-0;
   }
 }

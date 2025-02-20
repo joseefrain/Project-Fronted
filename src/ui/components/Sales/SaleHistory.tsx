@@ -127,7 +127,7 @@ export const SaleHistory = () => {
           Ver los detalles de las ventas realizadas
         </CardDescription>
 
-        <div className="flex justify-between">
+        <div className="container-temp">
           <div className="flex items-center justify-between ">
             <SearchComponent
               searchTerm={searchTerm}
@@ -135,7 +135,7 @@ export const SaleHistory = () => {
               setSearchTerm={setSearchTerm}
             />
           </div>
-          <div className="flex items-baseline justify-between gap-4">
+          <div className="container-tempinto">
             <div className="flex justify-end mb-4">
               <Popover>
                 <PopoverTrigger asChild>

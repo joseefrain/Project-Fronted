@@ -17,6 +17,7 @@ import { useLocation } from 'react-router-dom';
 import { getFormatedDate } from '../../../shared/helpers/transferHelper';
 import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import './styles.scss';
 
 interface SearchAndFilterProps {
   searchTerm: string;
@@ -49,7 +50,7 @@ const SearchAndFilter = ({
   const textSearch = 'Nombre, Código ';
 
   return (
-    <div className="flex items-center justify-between mb-4">
+    <div className="container-subSection">
       <div className="flex items-center gap-2">
         <div className="relative">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -139,22 +140,24 @@ export function AddProduct({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" className="h-8 gap-1">
-          <PlusCircle className="h-3.5 w-3.5" />
-          <span>Agregar</span>
-        </Button>
+        <div className="container-exportToExcel">
+          <Button size="sm" className="h-8 gap-1">
+            <PlusCircle className="h-3.5 w-3.5" />
+            <span>Agregar</span>
+          </Button>
+          {!path && (access.update || access.delete) && (
+            <ExportToExcel
+              data={formattedProducts || []}
+              columns={columns}
+              filename={fileName}
+              totalRow={{
+                label: 'Total de Inventario',
+                value: formatNumber(totalCosto),
+              }}
+            />
+          )}
+        </div>
       </DialogTrigger>
-      {!path && (access.update || access.delete) && (
-        <ExportToExcel
-          data={formattedProducts || []}
-          columns={columns}
-          filename={fileName}
-          totalRow={{
-            label: 'Total de Inventario',
-            value: formatNumber(totalCosto),
-          }}
-        />
-      )}
       <DialogContent className="font-onest">
         <DialogHeader>
           <DialogTitle>Agregar Producto</DialogTitle>

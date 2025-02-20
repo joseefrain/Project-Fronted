@@ -129,7 +129,7 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 max-[480px]:flex-col">
               <SearchComponent
                 searchTerm={searchTerm}
                 placeholder="Buscar créditos..."

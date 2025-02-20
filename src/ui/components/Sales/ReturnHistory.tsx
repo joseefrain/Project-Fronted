@@ -133,7 +133,7 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
         <CardDescription>
           Ver los detalles de las devoluciones realizadas
         </CardDescription>
-        <div className="flex items-baseline justify-between gap-4">
+        <div className="container-returnstyle">
           <div className="flex items-center justify-between ">
             <SearchComponent
               searchTerm={searchTerm}
@@ -141,7 +141,7 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
               setSearchTerm={setSearchTerm}
             />
           </div>
-          <div className="flex items-baseline justify-between gap-4">
+          <div className="container-returnstyle">
             <div className="flex justify-end mb-4">
               <Popover>
                 <PopoverTrigger asChild>

@@ -10,6 +10,10 @@
 
 .sidebar-list {
   @apply flex flex-col gap-4 p-4 mt-[5.7rem] overflow-auto;
+
+  @media (max-width: 768px) {
+    @apply max-h-[86%];
+  }
 }
 
 .sidebar-item {

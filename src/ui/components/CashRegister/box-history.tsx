@@ -53,8 +53,8 @@ export const ModalHistory = ({ data, isOpen, onClose }: ICajaHistory) => {
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
+        <DialogContent className="max-w-4xl max-[480px]:w-[95%]">
+          <DialogHeader className=" max-w-4xl max-[480px]:w-[47%] max-[768px]:w-[94%]">
             <DialogTitle>Historial de Caja # {data.consecutivo}</DialogTitle>
             <ViewHistorialcashier
               data={data}

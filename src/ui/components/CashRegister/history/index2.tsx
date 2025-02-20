@@ -107,106 +107,109 @@ export const HistoryCahierCount = ({ data, access }: IHistoryCahier) => {
   return (
     <>
       <div>
-        <div>
-          <div className="flex justify-end gap-6 mb-4">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  {selectedDateRange
-                    ? `${
-                        selectedDateRange.from &&
-                        !isNaN(selectedDateRange.from.getTime())
-                          ? format(selectedDateRange.from, 'P', {
-                              locale: es,
-                            })
-                          : ''
-                      } - 
+        <div className="flex justify-end gap-6 mb-4">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline">
+                <Calendar className="w-4 h-4 mr-2" />
+                {selectedDateRange
+                  ? `${
+                      selectedDateRange.from &&
+                      !isNaN(selectedDateRange.from.getTime())
+                        ? format(selectedDateRange.from, 'P', {
+                            locale: es,
+                          })
+                        : ''
+                    } - 
                   ${
                     selectedDateRange.to &&
                     !isNaN(selectedDateRange.to.getTime())
                       ? format(selectedDateRange.to, 'P', { locale: es })
                       : ''
                   }`
-                    : 'Seleccionar Fechas'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="end">
-                <CalendarComponent
-                  selected={selectedDateRange}
-                  onSelect={(dateRange) =>
-                    dateRange && handleDateRangeSelect(dateRange)
-                  }
-                  mode="range"
-                  numberOfMonths={2}
-                  locale={es}
-                />
-              </PopoverContent>
-            </Popover>
-            {(access.update || access.delete) && (
-              <ExportToExcel
-                data={formattedProducts || []}
-                columns={columns}
-                filename={fileName}
-                //   totalRow={{
-                //     label: 'Total de monto',
-                //     value: formatNumber(totalCosto),
-                //   }}
+                  : 'Seleccionar Fechas'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <CalendarComponent
+                selected={selectedDateRange}
+                onSelect={(dateRange) =>
+                  dateRange && handleDateRangeSelect(dateRange)
+                }
+                mode="range"
+                numberOfMonths={2}
+                locale={es}
               />
-            )}
-          </div>
+            </PopoverContent>
+          </Popover>
+          {(access.update || access.delete) && (
+            <ExportToExcel
+              data={formattedProducts || []}
+              columns={columns}
+              filename={fileName}
+              //   totalRow={{
+              //     label: 'Total de monto',
+              //     value: formatNumber(totalCosto),
+              //   }}
+            />
+          )}
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Fecha</TableHead>
-              <TableHead className="text-center">Total Ventas</TableHead>
-              {(access.update || access.delete) && (
-                <>
-                  <TableHead className="text-center">Total Compras</TableHead>
-                  <TableHead className="text-center">Monto Esperado</TableHead>
-                </>
-              )}
-              <TableHead className="text-center">Compras</TableHead>
-              <TableHead className="text-center">Ventas</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentItems?.map((entry, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  {entry.fecha
-                    ? getFormatedDate(
-                        new Date(
-                          new Date(entry.fecha).setDate(
-                            new Date(entry.fecha).getDate() + 1
+        <div className="overflow-x-auto">
+          <Table className="min-w-[768px]">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Fecha</TableHead>
+                <TableHead className="text-center">Total Ventas</TableHead>
+                {(access.update || access.delete) && (
+                  <>
+                    <TableHead className="text-center">Total Compras</TableHead>
+                    <TableHead className="text-center">
+                      Monto Esperado
+                    </TableHead>
+                  </>
+                )}
+                <TableHead className="text-center">Compras</TableHead>
+                <TableHead className="text-center">Ventas</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {currentItems?.map((entry, index) => (
+                <TableRow key={index} className="h-[50px]">
+                  <TableCell>
+                    {entry.fecha
+                      ? getFormatedDate(
+                          new Date(
+                            new Date(entry.fecha).setDate(
+                              new Date(entry.fecha).getDate() + 1
+                            )
                           )
                         )
-                      )
-                    : 'N/A'}
-                </TableCell>
-                <TableCell className="text-center">
-                  C$
-                  {entry.totalVentas?.$numberDecimal?.toString()}
-                </TableCell>
-                <TableCell className="text-center">
-                  C$
-                  {entry.totalCompras?.$numberDecimal?.toString()}
-                </TableCell>
-                <TableCell className="text-center">
-                  C$
-                  {entry.montoFinalSistema?.$numberDecimal?.toString()}
-                </TableCell>
-                <TableCell className="text-center">
-                  {entry.compras.length}
-                </TableCell>
-                <TableCell className="text-center">
-                  {entry.ventas.length}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                      : 'N/A'}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    C$
+                    {entry.totalVentas?.$numberDecimal?.toString()}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    C$
+                    {entry.totalCompras?.$numberDecimal?.toString()}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    C$
+                    {entry.montoFinalSistema?.$numberDecimal?.toString()}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {entry.compras.length}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {entry.ventas.length}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
         <CardFooter className="flex items-center justify-between pt-6">
           <Pagination
             currentPage={currentPage}
