@@ -128,6 +128,7 @@ export function Products() {
             </CardHeader>
             <CardContent>
               <SearchAndFilter
+                currentProducts={dataProducts}
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
                 filterStatus={filterStatus}

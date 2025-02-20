@@ -142,18 +142,28 @@ const ProductForm = ({
   const handleBarcodeScanned = (barcode: string) => {
     setFormData((prevData) => ({
       ...prevData,
-      barCode: barcode,
+      barCode: prevData.barCode ? prevData.barCode : barcode,
     }));
   };
-
-  console.log("prueba");
-  
 
   return (
     <>
       {!initialData && (
-        <BarcodeScanner onBarcodeScanned={handleBarcodeScanned} />
+        <BarcodeScanner
+          onBarcodeScanned={handleBarcodeScanned}
+          defaultBarcode={formData?.barCode || ''}
+        />
       )}
+
+      {initialData && (
+        <span className="flex items-center justify-center gap-2 text-sm text-center text-gray-500">
+          <BarcodeScanner
+            onBarcodeScanned={handleBarcodeScanned}
+            defaultBarcode={formData?.barCode || ''}
+          />
+        </span>
+      )}
+
       <form onSubmit={handleSubmit}>
         <div className="grid gap-4 py-4">
           {fields.map(({ id, label, type, step, min }) => (

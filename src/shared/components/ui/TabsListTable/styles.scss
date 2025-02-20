@@ -39,3 +39,11 @@
     }
   }
 }
+
+.containerCredit {
+  @apply gap-4 font-bold text-white bg-black font-onest;
+
+  @media (max-width: 480px) {
+    @apply flex-col my-20;
+  }
+}

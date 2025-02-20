@@ -81,6 +81,7 @@ const ProductsTable = ({
           <TableRow>
             <TableHead className="text-center">Sucursal</TableHead>
             <TableHead className="text-center">Nombre</TableHead>
+            <TableHead className="text-center">Categoria</TableHead>
             <TableHead className="">Descripcion</TableHead>
             <TableHead className="text-center">Minimo Stock</TableHead>
             <TableHead className="text-center">In Stock</TableHead>
@@ -104,10 +105,13 @@ const ProductsTable = ({
               <TableCell className="text-center">
                 {product.productoId.nombre}
               </TableCell>
+              <TableCell className="text-center">
+                {product?.groupName}
+              </TableCell>
               <TableCell>
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger className="w-64 overflow-hidden whitespace-nowrap text-ellipsis text-center">
+                    <TooltipTrigger className="w-64 overflow-hidden text-center whitespace-nowrap text-ellipsis">
                       {product.productoId.descripcion}
                     </TooltipTrigger>
                     <TooltipContent>

@@ -10,7 +10,7 @@ export const Credits = () => {
           <h1 className="text-4xl font-bold text-gray-800 font-onest dark:text-white">
             Créditos
           </h1>
-          <TabsList className="gap-4 font-bold text-white bg-black font-onest">
+          <TabsList className="containerCredit">
             <TabsTrigger
               className="bg-black text-[#ffffff] font-bold"
               value="all"

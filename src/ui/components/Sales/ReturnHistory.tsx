@@ -42,16 +42,24 @@ import { DateRange } from 'react-day-picker';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import {
   dataCoins,
+  ISale,
   ITypeTransaction,
 } from '../../../interfaces/salesInterfaces';
+import { ExportToExcel } from '../../../shared/components/ui/ExportToExcel/ExportToExcel';
+import { formatNumber } from '../../../shared/helpers/Branchs';
+import { SearchComponent } from '../../../shared/components/ui/Search';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 
 export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
   const branchStoraged = getSelectedBranchFromLocalStorage();
+  const access = useRoleAccess(PAGES_MODULES.CONTACTOS);
   const user = useAppSelector((state) => state.auth.signIn.user);
   const returnHistory = useAppSelector((state) => state.sales.returns);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const coin = dataCoins.currentS;
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     store
@@ -69,7 +77,7 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
     DateRange | undefined
   >(undefined);
 
-  const filteredReturn = selectedDateRange
+  const filteredReturnRange = selectedDateRange
     ? returnHistory.filter((entry) => {
         const aperturaDate = entry.fechaRegistro
           ? new Date(entry.fechaRegistro)
@@ -86,10 +94,34 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
     setSelectedDateRange(dateRange);
   };
 
+  const filteredReturn = filteredReturnRange?.filter((sale) =>
+    sale?.id?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredReturn.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredReturn.length / itemsPerPage);
+
+  const columns: { key: keyof ISale; label: string }[] = [
+    { key: 'fechaRegistro', label: 'Fecha' },
+    { key: 'username', label: 'Usuario' },
+    { key: 'total', label: 'Total' },
+    { key: 'montoExterno', label: 'Monto externo' },
+    { key: 'paymentMethod', label: 'Método de pago' },
+  ];
+
+  const formattedProducts = returnHistory?.map((product: any) => ({
+    ...product,
+    fechaRegistro: getFormatedDate(product.fechaRegistro),
+  }));
+
+  const totalCosto = returnHistory?.reduce((acc, product) => {
+    return acc + Number(product.total);
+  }, 0);
+
+  const dateToday = new Date();
+  const fileName = ` ${getFormatedDate(dateToday)}-Registros de devoluciones.xlsx`;
 
   return (
     <Card>
@@ -101,39 +133,65 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
         <CardDescription>
           Ver los detalles de las devoluciones realizadas
         </CardDescription>
-        <div className="flex justify-end mb-4">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline">
-                <Calendar className="w-4 h-4 mr-2" />
-                {selectedDateRange
-                  ? `${
-                      selectedDateRange.from &&
-                      !isNaN(selectedDateRange.from.getTime())
-                        ? format(selectedDateRange.from, 'P', { locale: es })
-                        : ''
-                    } - 
+        <div className="container-returnstyle">
+          <div className="flex items-center justify-between ">
+            <SearchComponent
+              searchTerm={searchTerm}
+              placeholder="Buscar productos"
+              setSearchTerm={setSearchTerm}
+            />
+          </div>
+          <div className="container-returnstyle">
+            <div className="flex justify-end mb-4">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    {selectedDateRange
+                      ? `${
+                          selectedDateRange.from &&
+                          !isNaN(selectedDateRange.from.getTime())
+                            ? format(selectedDateRange.from, 'P', {
+                                locale: es,
+                              })
+                            : ''
+                        } - 
                   ${
                     selectedDateRange.to &&
                     !isNaN(selectedDateRange.to.getTime())
                       ? format(selectedDateRange.to, 'P', { locale: es })
                       : ''
                   }`
-                  : 'Seleccionar Fechas'}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="end">
-              <CalendarComponent
-                selected={selectedDateRange}
-                onSelect={(dateRange) =>
-                  dateRange && handleDateRangeSelect(dateRange)
-                }
-                mode="range"
-                numberOfMonths={2}
-                locale={es}
-              />
-            </PopoverContent>
-          </Popover>
+                      : 'Seleccionar Fechas'}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <CalendarComponent
+                    selected={selectedDateRange}
+                    onSelect={(dateRange) =>
+                      dateRange && handleDateRangeSelect(dateRange)
+                    }
+                    mode="range"
+                    numberOfMonths={2}
+                    locale={es}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div>
+              {(access.update || access.delete) && (
+                <ExportToExcel
+                  data={formattedProducts || []}
+                  columns={columns}
+                  filename={fileName}
+                  totalRow={{
+                    label: 'Total de Devoluciones',
+                    value: formatNumber(totalCosto),
+                  }}
+                />
+              )}
+            </div>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -161,8 +219,8 @@ export const ReturnHistory = ({ type }: { type: ITypeTransaction }) => {
                   </TableCell>
                   <TableCell className="text-center">
                     $
-                    {sale.montoExterno
-                      ? sale.montoExterno.$numberDecimal.toFixed(2)
+                    {sale?.montoExterno
+                      ? Number(sale?.montoExterno?.$numberDecimal).toFixed(2)
                       : 0}
                   </TableCell>
                   <TableCell>${sale.total.toFixed(2)}</TableCell>

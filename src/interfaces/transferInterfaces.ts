@@ -193,6 +193,7 @@ export interface InventarioSucursalWithPopulated {
   deleted_at: string | null;
   created_at: string;
   update_at: string;
+  groupName?: string;
 }
 
 export interface ListItemDePedido {

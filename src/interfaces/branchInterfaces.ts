@@ -74,6 +74,7 @@ export interface ITablaBranch {
   ultimo_movimiento?: string;
   puntoReCompra?: number;
   costoUnitario: { $numberDecimal: number };
+  totalInventario?: string;
   groupName?: string;
 }
 
