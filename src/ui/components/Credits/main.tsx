@@ -19,6 +19,8 @@ import { ITransacionCredit } from '../../../interfaces/creditsInterfaces';
 import { getFormatedDate } from '../../../shared/helpers/transferHelper';
 import { ExportToExcel } from '../../../shared/components/ui/ExportToExcel/ExportToExcel';
 import { formatNumber } from '../../../shared/helpers/Branchs';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
 
 interface MainContactsProps {
   filterType: string;
@@ -26,6 +28,7 @@ interface MainContactsProps {
 
 export const MainCredits = ({ filterType }: MainContactsProps) => {
   const user = useAppSelector((state) => state.auth.signIn.user);
+  const access = useRoleAccess(PAGES_MODULES.CONTACTOS);
   const branchStoraged = getSelectedBranchFromLocalStorage();
   const Credits = useAppSelector((state) => state.credits.credits);
   const [searchTerm, setSearchTerm] = useState('');
@@ -132,15 +135,17 @@ export const MainCredits = ({ filterType }: MainContactsProps) => {
                 placeholder="Buscar créditos..."
                 setSearchTerm={setSearchTerm}
               />
-              <ExportToExcel
-                data={formattedProducts}
-                columns={columns}
-                filename={fileName}
-                totalRow={{
-                  label: 'Total de Saldo Crédito',
-                  value: formatNumber(totalCosto),
-                }}
-              />
+              {(access.update || access.delete) && (
+                <ExportToExcel
+                  data={formattedProducts}
+                  columns={columns}
+                  filename={fileName}
+                  totalRow={{
+                    label: 'Total de Saldo Crédito',
+                    value: formatNumber(totalCosto),
+                  }}
+                />
+              )}
             </div>
 
             {currentItems.length === 0 ? (

@@ -99,7 +99,7 @@ export default function Categories() {
     branch.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(8);
+  const [itemsPerPage] = useState(12);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;

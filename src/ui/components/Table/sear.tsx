@@ -15,6 +15,8 @@ import { useAppSelector } from '../../../app/hooks';
 import { ExportToExcel } from '../../../shared/components/ui/ExportToExcel/ExportToExcel';
 import { useLocation } from 'react-router-dom';
 import { getFormatedDate } from '../../../shared/helpers/transferHelper';
+import { useRoleAccess } from '../../../shared/hooks/useRoleAccess';
+import { PAGES_MODULES } from '../../../shared/helpers/roleHelper';
 
 interface SearchAndFilterProps {
   searchTerm: string;
@@ -93,6 +95,7 @@ export function AddProduct({
   currentProducts,
 }: AddProductProps) {
   const user = useAppSelector((state) => state.auth.signIn.user);
+  const access = useRoleAccess(PAGES_MODULES.CONTACTOS);
   const dataIdBranchs = user?.sucursalId?.nombre;
   const total = currentProducts?.reduce((acc, product) => {
     return acc + Number(product.costoUnitario.$numberDecimal);
@@ -141,7 +144,7 @@ export function AddProduct({
           <span>Agregar</span>
         </Button>
       </DialogTrigger>
-      {!path && (
+      {!path && (access.update || access.delete) && (
         <ExportToExcel
           data={formattedProducts || []}
           columns={columns}
