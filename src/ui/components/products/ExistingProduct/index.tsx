@@ -17,13 +17,12 @@ import { InventarioSucursalWithPopulated } from '@/interfaces/transferInterfaces
 import Pagination from '@/shared/components/ui/Pagination/Pagination';
 import { GetBranches } from '@/shared/helpers/Branchs';
 import { Boxes } from 'lucide-react';
+import { SearchComponent } from '../../../../shared/components/ui/Search';
 
 export function ProductFormExist() {
   const user = useAppSelector((state) => state.auth.signIn.user);
-
+  const [searchTerm, setSearchTerm] = useState('');
   const [, setProducts] = useState<ITablaBranch[]>([]);
-  const [searchTerm] = useState('');
-
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const GroupsAll = useAppSelector((state) => state.categories.groups);
@@ -113,6 +112,14 @@ export function ProductFormExist() {
             </div>
             <CardDescription>Gestione sus productos</CardDescription>
           </CardHeader>
+          <div className="flex items-center justify-between p-6">
+            <SearchComponent
+              searchTerm={searchTerm}
+              placeholder="Buscar productos"
+              setSearchTerm={setSearchTerm}
+            />
+          </div>
+
           <CardContent>
             {currentItems.length === 0 ? (
               <span className="flex justify-center w-full text-sm text-center text-muted-foreground">

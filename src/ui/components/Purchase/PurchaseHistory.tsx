@@ -42,6 +42,7 @@ import { DateRange } from 'react-day-picker';
 import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 import { dataCoins } from '../../../interfaces/salesInterfaces';
 import { SaleReturnContainer } from '../Sales/SaleReturnContainer';
+import { SearchComponent } from '../../../shared/components/ui/Search';
 
 export const PurchaseHistory = () => {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -52,6 +53,8 @@ export const PurchaseHistory = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const coin = dataCoins.currentS;
+
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     store
@@ -66,7 +69,7 @@ export const PurchaseHistory = () => {
     DateRange | undefined
   >(undefined);
 
-  const filteredSales = selectedDateRange
+  const filteredSalesRange = selectedDateRange
     ? purchasesHistory.filter((entry) => {
         const aperturaDate = entry.fechaRegistro
           ? new Date(entry.fechaRegistro)
@@ -81,6 +84,10 @@ export const PurchaseHistory = () => {
   const handleDateRangeSelect = (dateRange: DateRange) => {
     setSelectedDateRange(dateRange);
   };
+
+  const filteredSales = filteredSalesRange?.filter((sale) =>
+    sale?.id?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -97,7 +104,14 @@ export const PurchaseHistory = () => {
         <CardDescription>
           Ver los detalles de las compras realizadas
         </CardDescription>
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-between mb-4">
+          <div className="flex items-center pt-4">
+            <SearchComponent
+              searchTerm={searchTerm}
+              placeholder="Buscar productos"
+              setSearchTerm={setSearchTerm}
+            />
+          </div>
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline">
