@@ -24,6 +24,9 @@ import {
 import { Button } from '../../../../components/ui/button';
 import { CardFooter } from '../../../../components/ui/card';
 import Pagination from '../../../../shared/components/ui/Pagination/Pagination';
+import { getFormatedDate } from '../../../../shared/helpers/transferHelper';
+import { ExportToExcel } from '../../../../shared/components/ui/ExportToExcel/ExportToExcel';
+import { formatNumber } from '../../../../shared/helpers/Branchs';
 
 interface IHistoryCahier {
   data: ICajaBrach;
@@ -40,6 +43,7 @@ interface IHistoryCahier {
 
 export const HistoryCahier = ({
   access,
+  data,
   currentPage,
   totalPages,
   onPageChange,
@@ -47,9 +51,41 @@ export const HistoryCahier = ({
   selectedDateRange,
   currentItems,
 }: IHistoryCahier) => {
+  const cahsHistory = data.historico;
+  const consecutivo = data.consecutivo;
+  const columns: { key: string; label: string }[] = [
+    { key: 'fechaApertura', label: 'Fecha' },
+    { key: 'consecutivo', label: 'Numero de caja' },
+    { key: 'ganancia', label: 'Ganancia' },
+    { key: 'montoInicial', label: 'Monto Inicial' },
+    { key: 'montoFinalDeclarado', label: 'Monto Final' },
+    { key: 'diferencia', label: 'Diferencia' },
+    { key: 'montoEsperado', label: 'Monto Real' },
+  ];
+
+  const formattedProducts = cahsHistory?.map((product: any) => ({
+    ...product,
+    fechaApertura: product.fechaApertura
+      ? getFormatedDate(product.fechaApertura)
+      : '',
+    consecutivo: consecutivo ?? '',
+    ganancia: product?.ganancia?.$numberDecimal,
+    montoInicial: product?.montoInicial?.$numberDecimal,
+    montoFinalDeclarado: product?.montoFinalDeclarado?.$numberDecimal,
+    diferencia: product?.diferencia?.$numberDecimal,
+    montoEsperado: product?.montoEsperado?.$numberDecimal,
+  }));
+
+  const totalCosto = cahsHistory?.reduce((acc, product) => {
+    return acc + Number(product.montoEsperado?.$numberDecimal);
+  }, 0);
+
+  const dateToday = new Date();
+  const fileName = ` ${getFormatedDate(dateToday)}-Registros de cajas.xlsx`;
+
   return (
     <div>
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end gap-6 mb-4">
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline">
@@ -83,6 +119,17 @@ export const HistoryCahier = ({
             />
           </PopoverContent>
         </Popover>
+        {(access.update || access.delete) && (
+          <ExportToExcel
+            data={formattedProducts || []}
+            columns={columns}
+            filename={fileName}
+            totalRow={{
+              label: 'Total de monto',
+              value: formatNumber(totalCosto),
+            }}
+          />
+        )}
       </div>
       <Table>
         <TableHeader>

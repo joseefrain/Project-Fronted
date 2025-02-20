@@ -48,7 +48,7 @@ export const ViewHistorialcashier = ({
               className="bg-black text-[#ffffff] font-bold"
               value="arqueo"
             >
-              Historial de
+              Historial de Arqueo
             </TabsTrigger>
           </TabsList>
         </div>
