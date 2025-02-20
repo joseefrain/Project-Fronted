@@ -3,15 +3,24 @@ import './styles.scss';
 
 interface BarcodeScannerProps {
   onBarcodeScanned: (barcode: string) => void;
+  defaultBarcode?: string;
 }
 
 export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
   onBarcodeScanned,
+  defaultBarcode,
 }) => {
   const scannerRef = useRef<HTMLDivElement>(null);
-  const [barcode, setBarcode] = useState('');
+  const [barcode, setBarcode] = useState(defaultBarcode);
+
+  useEffect(() => {
+    if (defaultBarcode) {
+      setBarcode(defaultBarcode);
+    }
+  }, [defaultBarcode]);
+
   const [isScanning, setIsScanning] = useState(true);
-  const [isCodeComplete, setIsCodeComplete] = useState(false);
+  const [isCodeComplete, setIsCodeComplete] = useState(!!defaultBarcode);
 
   useEffect(() => {
     if (scannerRef.current && isScanning) {
@@ -23,9 +32,9 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
     event.stopPropagation();
     if (!isScanning) return;
     if (event.key === 'Enter') {
-      if (barcode.trim() !== '') {
+      if (barcode?.trim() !== '') {
         setIsCodeComplete(true);
-        onBarcodeScanned(barcode);
+        onBarcodeScanned(barcode || '');
         setIsScanning(false);
       }
     } else {

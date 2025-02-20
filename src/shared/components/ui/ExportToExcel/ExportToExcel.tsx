@@ -50,5 +50,9 @@ export const ExportToExcel = ({
     XLSX.writeFile(wb, filename);
   };
 
-  return <Button onClick={handleExport}>Exportar a Excel</Button>;
+  return (
+    <Button className="h-8" onClick={handleExport}>
+      Exportar a Excel
+    </Button>
+  );
 };
