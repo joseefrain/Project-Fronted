@@ -94,6 +94,8 @@ export const Sale = ({ productSale, setProductSale }: ISaleProps) => {
       clientType: supplierMode ? 'Proveedor' : 'Regular',
       inventarioSucursalId: selectedProduct?.inventarioSucursalId ?? '',
       costoUnitario: selectedProduct?.costoUnitario ?? { $numberDecimal: 0 },
+      groupName: selectedProduct?.groupName ?? '',
+      descripcion: selectedProduct?.descripcion ?? '',
     };
 
     const isExistentProduct = productSale.find(

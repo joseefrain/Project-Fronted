@@ -98,6 +98,8 @@ export interface IProductSale {
     minimoCompra: { $numberDecimal: string };
     minimoCantidad: number;
   };
+  groupName?: string;
+  descripcion?: string;
 }
 
 export interface IDescuentoAplicado {

@@ -75,6 +75,7 @@ export interface ITablaBranch {
   puntoReCompra?: number;
   costoUnitario: { $numberDecimal: number };
   totalInventario?: string;
+  groupName?: string;
 }
 
 export interface IProductosGrupos {

@@ -86,8 +86,10 @@ const ProductForm = ({
     costoUnitario: initialData?.costoUnitario.$numberDecimal || 0,
   });
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
 
     const productData: ITablaBranch = {
       ...formData,
@@ -100,7 +102,7 @@ const ProductForm = ({
       nombre: initialData?.productoId.nombre || '',
       descripcion: initialData?.productoId.descripcion || '',
       puntoReCompra: parseInt(formData?.puntoReCompra.toString(), 0),
-      costoUnitario: formData?.costoUnitario.$numberDecimal,
+      costoUnitario: formData?.costoUnitario,
     };
 
     onSubmit(productData);
