@@ -16,7 +16,7 @@ import Pagination from '../../../../shared/components/ui/Pagination/Pagination';
 import ProductsTable from './Table';
 
 export const Allproducts = () => {
-  const textSearch = 'Nombre, Código o Sucursal';
+  const textSearch = 'Nombre, Código, Cat, o Sucursal';
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -37,7 +37,8 @@ export const Allproducts = () => {
       product?.nombreSucursal
         ?.toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      product?.barCode?.toLowerCase().includes(searchTerm.toLowerCase())
+      product?.barCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product?.groupName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;

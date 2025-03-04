@@ -105,6 +105,7 @@ const ProductsTable = ({
             <TableHead>ID</TableHead>
             <TableHead>Nombre</TableHead>
             <TableHead>Descripcion</TableHead>
+            <TableHead>Categorias</TableHead>
             <TableHead className="text-center">Minimo Stock</TableHead>
             <TableHead className="text-center">Stock</TableHead>
             {(access.update || access.delete) && (
@@ -137,6 +138,7 @@ const ProductsTable = ({
                   </Tooltip>
                 </TooltipProvider>
               </TableCell>
+              <TableCell className="font-medium">{product.groupName}</TableCell>
               <TableCell className="text-center">
                 {product?.puntoReCompra || '0'}
               </TableCell>

@@ -54,7 +54,8 @@ export function Products() {
     ? dataProducts.filter(
         (product) =>
           product?.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product?.barCode?.toLowerCase().includes(searchTerm.toLowerCase())
+          product?.barCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product?.groupName?.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
 

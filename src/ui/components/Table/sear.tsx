@@ -47,7 +47,7 @@ const SearchAndFilter = ({
   showAddProductBtn,
   currentProducts,
 }: SearchAndFilterProps) => {
-  const textSearch = 'Nombre, Código ';
+  const textSearch = 'Nombre, Código o Categoría ';
 
   return (
     <div className="container-subSection">

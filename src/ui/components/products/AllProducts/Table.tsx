@@ -38,6 +38,7 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
           <TableRow>
             <TableHead>Nombre</TableHead>
             <TableHead>Descripcion</TableHead>
+            <TableHead>Categorias</TableHead>
             <TableHead className="text-center">Sucursal</TableHead>
             <TableHead className="text-center">Minimo Stock</TableHead>
             <TableHead className="text-center">Stock</TableHead>
@@ -57,6 +58,7 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
                   <TooltipContent>{product.descripcion}</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+              <TableCell className="font-medium">{product.groupName}</TableCell>
               <TableCell className="text-center">
                 {product.nombreSucursal}
               </TableCell>
