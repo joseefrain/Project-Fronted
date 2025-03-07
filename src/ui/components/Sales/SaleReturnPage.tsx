@@ -145,9 +145,10 @@ export default function SalesReturnPage({
     }
 
     const formattedProducts: IProductReturn[] = [];
-    for (const [key, value] of Object.entries(returnQuantities)) {
+
+    Object.entries(returnQuantities).forEach(([key, value]) => {
       const product = saleDetails.products.find((p) => p.productId === key);
-      if (!product) break;
+      if (!product) return;
 
       const newQuantity = product.quantity - value.quantity;
 
@@ -157,7 +158,7 @@ export default function SalesReturnPage({
           quantity: value.quantity,
           discountApplied: false,
         });
-        break;
+        return;
       }
 
       const hasActiveDiscount = isDiscountApplied(
@@ -171,7 +172,7 @@ export default function SalesReturnPage({
         quantity: value.quantity,
         discountApplied: hasActiveDiscount,
       });
-    }
+    });
 
     const saleReturn: ITransactionReturn = {
       cajaId: cashRegister.id ?? '',
