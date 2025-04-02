@@ -16,6 +16,10 @@
 
 .branch__grid {
   @apply grid gap-6 md:grid-cols-2 lg:h-[50vh] md:h-[35vh] h-[50rem] max-md:w-[100%] max-md:max-w-[385.5px] max-md:h-[0%];
+
+  @media (max-width: 480px) {
+    display: block;
+  }
 }
 
 .branch__consolidate {
@@ -36,4 +40,16 @@
 
 .tool__skeleton {
   @apply w-full h-[40px] #{!important};
+}
+
+.containerTranslado {
+  @apply container mx-auto font-onest;
+
+  @media (max-width: 768px) {
+    @apply h-[80vh];
+  }
+
+  @media (max-width: 480px) {
+    @apply h-[133vh];
+  }
 }

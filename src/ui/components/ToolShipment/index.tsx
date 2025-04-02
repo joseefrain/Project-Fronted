@@ -22,6 +22,7 @@ import { ConsolidatedShipment } from './consolidatedShipment';
 import './styles.scss';
 import { SummaryTools } from './summaryTools';
 import { ToolTransfer } from './toolTransfer';
+import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 
 export default function ToolShipment() {
   const user = useAppSelector((state) => state.auth.signIn.user);
@@ -36,6 +37,13 @@ export default function ToolShipment() {
   const filteredTools = tools.filter((tool) =>
     tool.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [toolsPerPage] = useState(10);
+
+  const indexOfLastItem = currentPage * toolsPerPage;
+  const indexOfFirstItem = indexOfLastItem - toolsPerPage;
+  const currentItems = filteredTools.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredTools.length / toolsPerPage);
 
   const handleQuantityChange = (id: string, quantity: number) => {
     const updatedTools = tools.map((tool) =>
@@ -138,7 +146,7 @@ export default function ToolShipment() {
   }, []);
 
   return (
-    <div className="container mx-auto font-onest">
+    <div className="containerTranslado">
       <TabsContent value="send">
         <div className="branch__grid">
           <Card className="product__list">
@@ -166,7 +174,7 @@ export default function ToolShipment() {
                     <TableHead>Stock mínimo</TableHead>
                     <TableHead>Disponible</TableHead>
                     <TableHead>Cantidad</TableHead>
-                    <TableHead></TableHead>
+                    {/* <TableHead></TableHead> */}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -175,7 +183,7 @@ export default function ToolShipment() {
                       <ShipmentSkeleton key={item} />
                     ))}
                   {!loading &&
-                    filteredTools.map((tool) => (
+                    currentItems.map((tool) => (
                       <TableRow key={tool.id}>
                         <TableCell>{tool.nombre}</TableCell>
                         <TableCell className="text-center">
@@ -223,6 +231,13 @@ export default function ToolShipment() {
                 </TableBody>
               </Table>
             </CardContent>
+            <div className="flex p-4">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
           </Card>
           <div className="branch__consolidate">
             <ConsolidatedShipment
