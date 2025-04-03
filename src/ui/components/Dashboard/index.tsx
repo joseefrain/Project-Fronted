@@ -33,6 +33,7 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 import { IResponseGetProductMetrics } from '../../../interfaces/dashboardInterface';
 import './styles.scss';
+import Pagination from '../../../shared/components/ui/Pagination/Pagination';
 
 export default function DashboardProducts() {
   const [activeTab, setActiveTab] = useState<'venta' | 'compra'>('venta');
@@ -121,6 +122,13 @@ export default function DashboardProducts() {
       );
     return 0;
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [toolsPerPage] = useState(10);
+
+  const indexOfLastItem = currentPage * toolsPerPage;
+  const indexOfFirstItem = indexOfLastItem - toolsPerPage;
+  const currentItems = sortedProductos.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(sortedProductos.length / toolsPerPage);
 
   return (
     <div className="p-8 bg-gray-50 dark:bg-gray-950 font-onest">
@@ -287,7 +295,7 @@ export default function DashboardProducts() {
           <CardHeader className="container-DashboardTable">
             <CardTitle>
               Detalles de Productos
-              {activeTab === 'venta' ? 'de Ventas' : 'de Compras'}
+              {activeTab === 'venta' ? ' Ventas' : ' Compras'}
             </CardTitle>
             <div className="container-DashboardTable__container">
               <Popover>
@@ -349,7 +357,7 @@ export default function DashboardProducts() {
                     </td>
                   </tr>
                 ) : (
-                  sortedProductos.slice(0, 10).map((product, index) => (
+                  currentItems.map((product, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">
                         {product.nombre}
@@ -376,6 +384,13 @@ export default function DashboardProducts() {
               </TableBody>
             </Table>
           </CardContent>
+          <div className="flex p-4">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
         </Card>
       </motion.div>
     </div>
