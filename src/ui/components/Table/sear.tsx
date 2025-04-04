@@ -138,38 +138,41 @@ export function AddProduct({
   const fileName = ` ${getFormatedDate(dateToday)}-Registros de productos.xlsx`;
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <div className="container-exportToExcel">
-          <Button size="sm" className="h-8 gap-1">
-            <PlusCircle className="h-3.5 w-3.5" />
-            <span>Agregar</span>
-          </Button>
-          {!path && (access.update || access.delete) && (
-            <ExportToExcel
-              data={formattedProducts || []}
-              columns={columns}
-              filename={fileName}
-              totalRow={{
-                label: 'Total de Inventario',
-                value: formatNumber(totalCosto),
-              }}
+    <>
+      <div className="container-exportToExcel flex gap-2">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button size="sm" className="h-8 gap-1">
+              <PlusCircle className="h-3.5 w-3.5" />
+              <span>Agregar</span>
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent className="font-onest">
+            <DialogHeader>
+              <DialogTitle>Agregar Producto</DialogTitle>
+            </DialogHeader>
+            <ProductForm
+              handleSelectChange={handleSelectChange}
+              selectedGroup={selectedGroup}
+              groups={groups}
+              onSubmit={onAddProduct}
+              sucursalId={sucursalId}
             />
-          )}
-        </div>
-      </DialogTrigger>
-      <DialogContent className="font-onest">
-        <DialogHeader>
-          <DialogTitle>Agregar Producto</DialogTitle>
-        </DialogHeader>
-        <ProductForm
-          handleSelectChange={handleSelectChange}
-          selectedGroup={selectedGroup}
-          groups={groups}
-          onSubmit={onAddProduct}
-          sucursalId={sucursalId}
-        />
-      </DialogContent>
-    </Dialog>
+          </DialogContent>
+        </Dialog>
+        {!path && (access.update || access.delete) && (
+          <ExportToExcel
+            data={formattedProducts || []}
+            columns={columns}
+            filename={fileName}
+            totalRow={{
+              label: 'Total de Inventario',
+              value: formatNumber(totalCosto),
+            }}
+          />
+        )}
+      </div>
+    </>
   );
 }
