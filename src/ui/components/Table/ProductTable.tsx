@@ -126,7 +126,7 @@ const ProductsTable = ({
           {products?.map((product) => (
             <TableRow key={product.id}>
               <TableCell>{product.id}</TableCell>
-              <TableCell className="font-medium">{product.nombre}</TableCell>
+              <TableCell className="font-medium">{product?.nombre}</TableCell>
 
               <TableCell>
                 <TooltipProvider>

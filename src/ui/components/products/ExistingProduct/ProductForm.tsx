@@ -86,10 +86,8 @@ const ProductForm = ({
     costoUnitario: initialData?.costoUnitario.$numberDecimal || 0,
   });
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
 
     const productData: ITablaBranch = {
       ...formData,
@@ -160,7 +158,7 @@ const ProductForm = ({
         </div>
         <DialogFooter>
           <Button type="submit">
-            {initialData ? 'Save Changes' : 'Add Product'}
+            {initialData ? 'Guardar Cambios' : 'Agregar Producto'}
           </Button>
         </DialogFooter>
       </form>
