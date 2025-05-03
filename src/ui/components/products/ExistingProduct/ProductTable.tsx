@@ -58,12 +58,17 @@ const ProductsTable = ({
   const [isEditing, setIsEditing] = useState(false);
 
   const handleEditProduct = (updatedProduct: ITablaBranch) => {
+    if (!updatedProduct.groupId) {
+      toast.error('No se ha seleccionado una categoría');
+      return;
+    }
     try {
       store.dispatch(updateProduct(updatedProduct)).unwrap();
       toast.success('Product updated successfully');
     } catch (error) {
-      console.log(error);
-      toast.error('Error updating product: ');
+      const errorMessage = (error as Error).message ?? 'unknown error';
+      console.error('Error updating product:', error);
+      toast.error(`Error updating product: ${errorMessage}`);
     }
   };
 
