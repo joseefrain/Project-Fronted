@@ -71,9 +71,7 @@ export const Purchase = ({ productSale, setProductSale }: ISaleProps) => {
 
   const handleQuantityChange = (productId: string, quantity: number) => {
     const product = products.find((p) => p.id === productId);
-    product
-      ? setQuantity(quantity > product.stock ? product.stock : quantity)
-      : setQuantity(0);
+    product ? setQuantity(quantity) : setQuantity(0);
   };
 
   const handlePriceChange = (productId: string, price: number) => {
@@ -346,7 +344,6 @@ export const Purchase = ({ productSale, setProductSale }: ISaleProps) => {
                 )
               }
               min={0}
-              max={selectedProduct?.stock ?? 0}
               className="w-full"
             />
           </div>
